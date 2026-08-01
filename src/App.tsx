@@ -6,6 +6,7 @@ import { MobileBottomNav } from './components/MobileBottomNav';
 import { CitySelectorModal } from './components/CitySelectorModal';
 import { FeaturedHeroStory } from './components/FeaturedHeroStory';
 import { NewsGridSection } from './components/NewsGridSection';
+import { OrangeCountyMarketTrends } from './components/OrangeCountyMarketTrends';
 import { ArticleReaderModal } from './components/ArticleReaderModal';
 import { SavedArticlesDrawer } from './components/SavedArticlesDrawer';
 import { Sparkles, Building2, Utensils, Flame, Compass, ChevronRight } from 'lucide-react';
@@ -230,73 +231,114 @@ export function App() {
       {/* Main Layout Content */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-3.5 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-6 sm:space-y-10 pb-28 sm:pb-12">
         
-        {/* Apple Style City Masthead Hero Banner */}
-        <div className="relative rounded-3xl bg-white border border-slate-200/90 p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xs">
-          <div className="max-w-2xl">
-            <h2 className="text-3xl sm:text-4xl font-black font-serif text-slate-900 tracking-tight">
-              {currentCity.name}
-            </h2>
-          </div>
+        {/* If Market Trends category is selected, render the dedicated Tesla/Apple Market Trends Dashboard */}
+        {activeCategory === 'market-trends' ? (
+          <OrangeCountyMarketTrends
+            onSelectCity={(city) => {
+              setCurrentCity(city);
+              showToast(`Selected ${city.name}`);
+            }}
+          />
+        ) : (
+          <>
+            {/* Apple Style City Masthead Hero Banner */}
+            <div className="relative rounded-3xl bg-white border border-slate-200/90 p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xs">
+              <div className="max-w-2xl">
+                <h2 className="text-3xl sm:text-4xl font-black font-serif text-slate-900 tracking-tight">
+                  {currentCity.name}
+                </h2>
+              </div>
 
-          <div className="flex flex-col sm:flex-row gap-2.5 w-full sm:w-auto shrink-0">
-            <button
-              onClick={() => setIsCitySelectorOpen(true)}
-              className="px-5 py-3 rounded-xl bg-[#FA2D48] hover:bg-[#E0263E] text-white font-bold text-xs flex items-center justify-center space-x-2 shadow-xs transition-all cursor-pointer"
-            >
-              <span>Explore Cities</span>
-              <ChevronRight className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
-
-        {/* Featured Hero / Top Stories */}
-        {heroArticle && (
-          <section className="space-y-3">
-            <div className="flex items-center justify-between pb-1">
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black font-sans tracking-tighter text-[#FA2D48] leading-none">
-                Top Stories
-              </h2>
+              <div className="flex flex-col sm:flex-row gap-2.5 w-full sm:w-auto shrink-0">
+                <button
+                  onClick={() => setIsCitySelectorOpen(true)}
+                  className="px-5 py-3 rounded-xl bg-[#FA2D48] hover:bg-[#E0263E] text-white font-bold text-xs flex items-center justify-center space-x-2 shadow-xs transition-all cursor-pointer"
+                >
+                  <span>Explore Cities</span>
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
             </div>
 
-            <FeaturedHeroStory
-              article={heroArticle}
+            {/* Featured Hero / Top Stories */}
+            {heroArticle && (
+              <section className="space-y-3">
+                <div className="flex items-center justify-between pb-1">
+                  <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black font-sans tracking-tighter text-[#FA2D48] leading-none">
+                    Top Stories
+                  </h2>
+                </div>
+
+                <FeaturedHeroStory
+                  article={heroArticle}
+                  onSelectArticle={setSelectedArticle}
+                  isBookmarked={bookmarkedIds.has(heroArticle.id)}
+                  onToggleBookmark={toggleBookmark}
+                />
+              </section>
+            )}
+
+            {/* Tesla / Apple Style Callout Banner for Orange County City Price & SqFt Index */}
+            <div 
+              onClick={() => {
+                setActiveCategory('market-trends');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="bg-slate-950 text-white rounded-3xl p-6 sm:p-8 border border-slate-900 shadow-xl cursor-pointer hover:border-[#FA2D48]/50 transition-all duration-300 group relative overflow-hidden flex flex-col sm:flex-row items-center justify-between gap-6"
+            >
+              <div className="relative z-10 space-y-2 text-center sm:text-left">
+                <div className="inline-flex items-center space-x-2 text-[11px] font-mono uppercase tracking-widest text-[#FA2D48] font-bold">
+                  <span className="w-2 h-2 rounded-full bg-[#FA2D48] animate-pulse" />
+                  <span>Orange County Real Estate Data Center</span>
+                </div>
+                <h3 className="text-2xl sm:text-3xl font-black font-sans tracking-tight text-white group-hover:text-[#FA2D48] transition-colors">
+                  View Price / SqFt & Sales Data for All 34 OC Cities
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-400 max-w-xl">
+                  Explore live median home prices, avg $/sqft, YTD sales volume, homes sold, and active pending escrows with zero AI token cost.
+                </p>
+              </div>
+
+              <div className="relative z-10 shrink-0">
+                <span className="px-5 py-3 rounded-2xl bg-[#FA2D48] group-hover:bg-[#E0263E] text-white font-black text-xs inline-flex items-center space-x-2 shadow-md active:scale-95 transition-all">
+                  <span>Open Market Trends Page</span>
+                  <ChevronRight className="w-4 h-4" />
+                </span>
+              </div>
+            </div>
+
+            {/* Section 1: Real Estate & Housing Market */}
+            <NewsGridSection
+              title={`Real Estate & Housing in ${currentCity.name}`}
+              icon={<Building2 className="w-5 h-5 text-amber-600" />}
+              articles={realEstateArticles.length > 0 ? realEstateArticles : remainingArticles.slice(0, 3)}
               onSelectArticle={setSelectedArticle}
-              isBookmarked={bookmarkedIds.has(heroArticle.id)}
+              bookmarkedIds={bookmarkedIds}
               onToggleBookmark={toggleBookmark}
             />
-          </section>
-        )}
 
-        {/* Section 1: Real Estate & Housing Market */}
-        <NewsGridSection
-          title={`Real Estate & Housing in ${currentCity.name}`}
-          icon={<Building2 className="w-5 h-5 text-amber-600" />}
-          articles={realEstateArticles.length > 0 ? realEstateArticles : remainingArticles.slice(0, 3)}
-          onSelectArticle={setSelectedArticle}
-          bookmarkedIds={bookmarkedIds}
-          onToggleBookmark={toggleBookmark}
-        />
+            {/* Section 2: Hot New Restaurant & Bar Openings */}
+            <NewsGridSection
+              title={`New Restaurant & Bar Debuts in ${currentCity.name}`}
+              icon={<Utensils className="w-5 h-5 text-emerald-600" />}
+              articles={diningArticles.length > 0 ? diningArticles : remainingArticles.slice(3, 6)}
+              onSelectArticle={setSelectedArticle}
+              bookmarkedIds={bookmarkedIds}
+              onToggleBookmark={toggleBookmark}
+            />
 
-        {/* Section 2: Hot New Restaurant & Bar Openings */}
-        <NewsGridSection
-          title={`New Restaurant & Bar Debuts in ${currentCity.name}`}
-          icon={<Utensils className="w-5 h-5 text-emerald-600" />}
-          articles={diningArticles.length > 0 ? diningArticles : remainingArticles.slice(3, 6)}
-          onSelectArticle={setSelectedArticle}
-          bookmarkedIds={bookmarkedIds}
-          onToggleBookmark={toggleBookmark}
-        />
-
-        {/* Section 3: City Developments & Zoning Updates */}
-        {developmentArticles.length > 0 && (
-          <NewsGridSection
-            title={`Urban Developments, Zoning & Lifestyle`}
-            icon={<Compass className="w-5 h-5 text-[#FA2D48]" />}
-            articles={developmentArticles}
-            onSelectArticle={setSelectedArticle}
-            bookmarkedIds={bookmarkedIds}
-            onToggleBookmark={toggleBookmark}
-          />
+            {/* Section 3: City Developments & Zoning Updates */}
+            {developmentArticles.length > 0 && (
+              <NewsGridSection
+                title={`Urban Developments, Zoning & Lifestyle`}
+                icon={<Compass className="w-5 h-5 text-[#FA2D48]" />}
+                articles={developmentArticles}
+                onSelectArticle={setSelectedArticle}
+                bookmarkedIds={bookmarkedIds}
+                onToggleBookmark={toggleBookmark}
+              />
+            )}
+          </>
         )}
 
       </main>
