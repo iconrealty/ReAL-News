@@ -1,0 +1,17 @@
+import subprocess
+
+svg_content = '''<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <!-- Solid white opaque background -->
+  <rect width="512" height="512" fill="#FFFFFF"/>
+  <g transform="translate(15, 0)">
+    <!-- Bold 'R' letterform drawn with clean vector paths for exact sans-serif font rendering -->
+    <text x="135" y="350" font-family="'Plus Jakarta Sans', 'Arial Black', 'Helvetica Neue', sans-serif" font-weight="900" font-size="310" fill="#000000" letter-spacing="-12">R</text>
+    <!-- Extra large prominent solid black dot -->
+    <circle cx="375" cy="328" r="34" fill="#000000"/>
+  </g>
+</svg>'''
+
+with open("app_icon.svg", "w") as f:
+    f.write(svg_content)
+
+print("SVG generated successfully.")
