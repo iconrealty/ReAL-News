@@ -39,7 +39,8 @@ export function App() {
     setSelectedArticle(null);
     setIsCitySelectorOpen(false);
     setIsSavedDrawerOpen(false);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: 'instant' });
+    window.location.reload();
   };
 
   // Sync bookmarks to localStorage

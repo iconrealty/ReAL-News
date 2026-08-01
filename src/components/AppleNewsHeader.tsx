@@ -52,11 +52,12 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
               onClick={() => {
                 if (onResetToMain) {
                   onResetToMain();
+                } else {
+                  window.location.reload();
                 }
-                window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
-              className="text-left space-y-0.5 group cursor-pointer focus:outline-none active:scale-98 transition-transform"
-              title="Return to Main Top Stories Feed"
+              className="text-left space-y-0.5 group cursor-pointer focus:outline-none active:scale-95 transition-transform touch-manipulation select-none"
+              title="Refresh App & Return to Main Feed"
             >
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black font-sans tracking-tighter text-slate-950 group-hover:text-[#FA2D48] transition-colors leading-none flex items-baseline">
                 <span>ReaL</span>
