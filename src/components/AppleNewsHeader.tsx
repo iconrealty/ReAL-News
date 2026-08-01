@@ -101,6 +101,7 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
             <div className="relative flex-1 sm:w-64">
               <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-2.5" />
               <input
+                id="header-search-input"
                 type="text"
                 value={searchQuery}
                 onChange={(e) => onSearchChange(e.target.value)}
