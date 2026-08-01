@@ -10,7 +10,8 @@ export interface CityInfo {
   id: string;
   name: string;
   state: string;
-  tagline: string;
+  avgSqftPrice: string;
+  tagline?: string;
   image: string;
 }
 
