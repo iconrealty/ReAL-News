@@ -34,14 +34,10 @@ export const FeaturedHeroStory: React.FC<FeaturedHeroStoryProps> = ({
 
         <h2
           onClick={() => onSelectArticle(article)}
-          className="text-2xl sm:text-3xl lg:text-4xl font-black font-serif text-slate-900 tracking-tight leading-tight cursor-pointer hover:text-[#FA2D48] transition-colors"
+          className="text-3xl sm:text-4xl lg:text-5xl font-black font-serif text-slate-900 tracking-tight leading-snug cursor-pointer hover:text-[#FA2D48] transition-colors"
         >
           {cleanText(article.title)}
         </h2>
-
-        <p className="text-sm sm:text-base text-slate-600 leading-relaxed font-sans border-l-2 border-[#FA2D48] pl-3 py-0.5 max-w-4xl">
-          {cleanText(article.subtitle)}
-        </p>
 
         {article.sourceCitation && (
           <div className="text-[11px] text-slate-500 font-mono">

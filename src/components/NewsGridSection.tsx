@@ -47,14 +47,9 @@ export const NewsGridSection: React.FC<NewsGridSectionProps> = ({
                 </div>
 
                 {/* Title */}
-                <h4 className="text-base font-bold font-serif text-slate-900 group-hover:text-[#FA2D48] transition-colors line-clamp-2 leading-snug">
+                <h4 className="text-xl sm:text-2xl font-bold font-serif text-slate-900 group-hover:text-[#FA2D48] transition-colors leading-snug">
                   {cleanText(article.title)}
                 </h4>
-
-                {/* Subtitle */}
-                <p className="text-xs text-slate-600 line-clamp-3 leading-relaxed font-sans">
-                  {cleanText(article.subtitle)}
-                </p>
 
 
               </div>
