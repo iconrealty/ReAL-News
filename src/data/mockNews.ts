@@ -5,7 +5,7 @@ export const CITIES: CityInfo[] = [
     id: 'orange-county',
     name: 'Orange County',
     state: 'CA',
-    avgSqftPrice: '$810 / sqft',
+    avgSqftPrice: '$810 sqft',
     tagline: 'Countywide Metro News & Real Estate Trends',
     image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80',
   },
@@ -13,7 +13,7 @@ export const CITIES: CityInfo[] = [
     id: 'aliso-viejo',
     name: 'Aliso Viejo',
     state: 'CA',
-    avgSqftPrice: '$720 / sqft',
+    avgSqftPrice: '$720 sqft',
     tagline: 'Aliso Viejo Real Estate & Community Updates',
     image: 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=1200&q=80',
   },
@@ -21,7 +21,7 @@ export const CITIES: CityInfo[] = [
     id: 'anaheim',
     name: 'Anaheim',
     state: 'CA',
-    avgSqftPrice: '$650 / sqft',
+    avgSqftPrice: '$650 sqft',
     tagline: 'Anaheim Real Estate & Resort District Developments',
     image: 'https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?auto=format&fit=crop&w=1200&q=80',
   },
@@ -29,7 +29,7 @@ export const CITIES: CityInfo[] = [
     id: 'brea',
     name: 'Brea',
     state: 'CA',
-    avgSqftPrice: '$640 / sqft',
+    avgSqftPrice: '$640 sqft',
     tagline: 'Brea Real Estate & Downtown Commercial News',
     image: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1200&q=80',
   },
@@ -37,7 +37,7 @@ export const CITIES: CityInfo[] = [
     id: 'buena-park',
     name: 'Buena Park',
     state: 'CA',
-    avgSqftPrice: '$610 / sqft',
+    avgSqftPrice: '$610 sqft',
     tagline: 'Buena Park Entertainment & Residential Trends',
     image: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1200&q=80',
   },
@@ -45,7 +45,7 @@ export const CITIES: CityInfo[] = [
     id: 'costa-mesa',
     name: 'Costa Mesa',
     state: 'CA',
-    avgSqftPrice: '$720 / sqft',
+    avgSqftPrice: '$720 sqft',
     tagline: 'Costa Mesa Arts District & Housing Trends',
     image: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80',
   },
@@ -53,7 +53,7 @@ export const CITIES: CityInfo[] = [
     id: 'cypress',
     name: 'Cypress',
     state: 'CA',
-    avgSqftPrice: '$630 / sqft',
+    avgSqftPrice: '$630 sqft',
     tagline: 'Cypress Housing & Corporate Parks',
     image: 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=1200&q=80',
   },
@@ -61,7 +61,7 @@ export const CITIES: CityInfo[] = [
     id: 'dana-point',
     name: 'Dana Point',
     state: 'CA',
-    avgSqftPrice: '$1,080 / sqft',
+    avgSqftPrice: '$1,080 sqft',
     tagline: 'Dana Point Harbor & Coastal Housing Trends',
     image: 'https://images.unsplash.com/photo-1506966953602-c20cc11f75e3?auto=format&fit=crop&w=1200&q=80',
   },
@@ -69,7 +69,7 @@ export const CITIES: CityInfo[] = [
     id: 'fountain-valley',
     name: 'Fountain Valley',
     state: 'CA',
-    avgSqftPrice: '$670 / sqft',
+    avgSqftPrice: '$670 sqft',
     tagline: 'Fountain Valley Residential & Mile Square Park News',
     image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80',
   },
@@ -77,7 +77,7 @@ export const CITIES: CityInfo[] = [
     id: 'fullerton',
     name: 'Fullerton',
     state: 'CA',
-    avgSqftPrice: '$680 / sqft',
+    avgSqftPrice: '$680 sqft',
     tagline: 'Fullerton Historic Downtown & University Housing',
     image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=80',
   },
@@ -85,7 +85,7 @@ export const CITIES: CityInfo[] = [
     id: 'garden-grove',
     name: 'Garden Grove',
     state: 'CA',
-    avgSqftPrice: '$590 / sqft',
+    avgSqftPrice: '$590 sqft',
     tagline: 'Garden Grove Town Center & Commercial Developments',
     image: 'https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=1200&q=80',
   },
@@ -93,7 +93,7 @@ export const CITIES: CityInfo[] = [
     id: 'huntington-beach',
     name: 'Huntington Beach',
     state: 'CA',
-    avgSqftPrice: '$890 / sqft',
+    avgSqftPrice: '$890 sqft',
     tagline: 'Huntington Beach Coastal Real Estate & Main St',
     image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80',
   },
@@ -101,7 +101,7 @@ export const CITIES: CityInfo[] = [
     id: 'irvine',
     name: 'Irvine',
     state: 'CA',
-    avgSqftPrice: '$790 / sqft',
+    avgSqftPrice: '$790 sqft',
     tagline: 'Irvine Great Park & Spectrum Housing Market',
     image: 'https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&w=1200&q=80',
   },
@@ -109,7 +109,7 @@ export const CITIES: CityInfo[] = [
     id: 'la-habra',
     name: 'La Habra',
     state: 'CA',
-    avgSqftPrice: '$580 / sqft',
+    avgSqftPrice: '$580 sqft',
     tagline: 'La Habra Local Housing & Civic News',
     image: 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=1200&q=80',
   },
@@ -117,7 +117,7 @@ export const CITIES: CityInfo[] = [
     id: 'la-palma',
     name: 'La Palma',
     state: 'CA',
-    avgSqftPrice: '$620 / sqft',
+    avgSqftPrice: '$620 sqft',
     tagline: 'La Palma Residential Neighborhoods',
     image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80',
   },
@@ -125,7 +125,7 @@ export const CITIES: CityInfo[] = [
     id: 'laguna-beach',
     name: 'Laguna Beach',
     state: 'CA',
-    avgSqftPrice: '$2,250 / sqft',
+    avgSqftPrice: '$2,250 sqft',
     tagline: 'Laguna Beach Luxury Coastal Real Estate',
     image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
   },
@@ -133,7 +133,7 @@ export const CITIES: CityInfo[] = [
     id: 'laguna-hills',
     name: 'Laguna Hills',
     state: 'CA',
-    avgSqftPrice: '$710 / sqft',
+    avgSqftPrice: '$710 sqft',
     tagline: 'Laguna Hills Civic Center & Residential Market',
     image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80',
   },
@@ -141,7 +141,7 @@ export const CITIES: CityInfo[] = [
     id: 'laguna-niguel',
     name: 'Laguna Niguel',
     state: 'CA',
-    avgSqftPrice: '$830 / sqft',
+    avgSqftPrice: '$830 sqft',
     tagline: 'Laguna Niguel Master Planned Neighborhoods',
     image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80',
   },
@@ -149,7 +149,7 @@ export const CITIES: CityInfo[] = [
     id: 'laguna-woods',
     name: 'Laguna Woods',
     state: 'CA',
-    avgSqftPrice: '$490 / sqft',
+    avgSqftPrice: '$490 sqft',
     tagline: 'Laguna Woods Village & Active Living Housing',
     image: 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=1200&q=80',
   },
@@ -157,7 +157,7 @@ export const CITIES: CityInfo[] = [
     id: 'lake-forest',
     name: 'Lake Forest',
     state: 'CA',
-    avgSqftPrice: '$690 / sqft',
+    avgSqftPrice: '$690 sqft',
     tagline: 'Lake Forest Foothills & Sports Park Living',
     image: 'https://images.unsplash.com/photo-1449844908441-8829872d2607?auto=format&fit=crop&w=1200&q=80',
   },
@@ -165,7 +165,7 @@ export const CITIES: CityInfo[] = [
     id: 'los-alamitos',
     name: 'Los Alamitos',
     state: 'CA',
-    avgSqftPrice: '$710 / sqft',
+    avgSqftPrice: '$710 sqft',
     tagline: 'Los Alamitos Community & Race Course District',
     image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80',
   },
@@ -173,7 +173,7 @@ export const CITIES: CityInfo[] = [
     id: 'mission-viejo',
     name: 'Mission Viejo',
     state: 'CA',
-    avgSqftPrice: '$690 / sqft',
+    avgSqftPrice: '$690 sqft',
     tagline: 'Mission Viejo Lake & Civic Center Real Estate',
     image: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1200&q=80',
   },
@@ -181,7 +181,7 @@ export const CITIES: CityInfo[] = [
     id: 'newport-beach',
     name: 'Newport Beach',
     state: 'CA',
-    avgSqftPrice: '$1,420 / sqft',
+    avgSqftPrice: '$1,420 sqft',
     tagline: 'Newport Beach Harbor & Oceanfront Estates',
     image: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1200&q=80',
   },
@@ -189,7 +189,7 @@ export const CITIES: CityInfo[] = [
     id: 'orange',
     name: 'Orange',
     state: 'CA',
-    avgSqftPrice: '$740 / sqft',
+    avgSqftPrice: '$740 sqft',
     tagline: 'Old Towne Orange Plaza Preservation & Housing',
     image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1200&q=80',
   },
@@ -197,7 +197,7 @@ export const CITIES: CityInfo[] = [
     id: 'placentia',
     name: 'Placentia',
     state: 'CA',
-    avgSqftPrice: '$620 / sqft',
+    avgSqftPrice: '$620 sqft',
     tagline: 'Placentia Town Center & Residential Neighborhoods',
     image: 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=1200&q=80',
   },
@@ -205,7 +205,7 @@ export const CITIES: CityInfo[] = [
     id: 'rancho-santa-margarita',
     name: 'Rancho Santa Margarita',
     state: 'CA',
-    avgSqftPrice: '$670 / sqft',
+    avgSqftPrice: '$670 sqft',
     tagline: 'Rancho Santa Margarita Lake & Foothills',
     image: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1200&q=80',
   },
@@ -213,7 +213,7 @@ export const CITIES: CityInfo[] = [
     id: 'san-clemente',
     name: 'San Clemente',
     state: 'CA',
-    avgSqftPrice: '$980 / sqft',
+    avgSqftPrice: '$980 sqft',
     tagline: 'San Clemente Pier Bowl & Spanish Village Real Estate',
     image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80',
   },
@@ -221,7 +221,7 @@ export const CITIES: CityInfo[] = [
     id: 'san-juan-capistrano',
     name: 'San Juan Capistrano',
     state: 'CA',
-    avgSqftPrice: '$850 / sqft',
+    avgSqftPrice: '$850 sqft',
     tagline: 'San Juan Capistrano Historic Mission Estates',
     image: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1200&q=80',
   },
@@ -229,7 +229,7 @@ export const CITIES: CityInfo[] = [
     id: 'santa-ana',
     name: 'Santa Ana',
     state: 'CA',
-    avgSqftPrice: '$580 / sqft',
+    avgSqftPrice: '$580 sqft',
     tagline: 'Santa Ana Historic Downtown & Arts District',
     image: 'https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=1200&q=80',
   },
@@ -237,7 +237,7 @@ export const CITIES: CityInfo[] = [
     id: 'seal-beach',
     name: 'Seal Beach',
     state: 'CA',
-    avgSqftPrice: '$920 / sqft',
+    avgSqftPrice: '$920 sqft',
     tagline: 'Seal Beach Pier & Old Town Coastal Living',
     image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80',
   },
@@ -245,7 +245,7 @@ export const CITIES: CityInfo[] = [
     id: 'stanton',
     name: 'Stanton',
     state: 'CA',
-    avgSqftPrice: '$560 / sqft',
+    avgSqftPrice: '$560 sqft',
     tagline: 'Stanton Town Center & Housing Revitalization',
     image: 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=1200&q=80',
   },
@@ -253,7 +253,7 @@ export const CITIES: CityInfo[] = [
     id: 'tustin',
     name: 'Tustin',
     state: 'CA',
-    avgSqftPrice: '$740 / sqft',
+    avgSqftPrice: '$740 sqft',
     tagline: 'Tustin Legacy & Historic Old Town Real Estate',
     image: 'https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?auto=format&fit=crop&w=1200&q=80',
   },
@@ -261,7 +261,7 @@ export const CITIES: CityInfo[] = [
     id: 'villa-park',
     name: 'Villa Park',
     state: 'CA',
-    avgSqftPrice: '$890 / sqft',
+    avgSqftPrice: '$890 sqft',
     tagline: 'Villa Park Custom Estates & Equestrian Living',
     image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80',
   },
@@ -269,7 +269,7 @@ export const CITIES: CityInfo[] = [
     id: 'westminster',
     name: 'Westminster',
     state: 'CA',
-    avgSqftPrice: '$600 / sqft',
+    avgSqftPrice: '$600 sqft',
     tagline: 'Westminster Civic Center & Housing Market',
     image: 'https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=1200&q=80',
   },
@@ -277,7 +277,7 @@ export const CITIES: CityInfo[] = [
     id: 'yorba-linda',
     name: 'Yorba Linda',
     state: 'CA',
-    avgSqftPrice: '$710 / sqft',
+    avgSqftPrice: '$710 sqft',
     tagline: 'Yorba Linda Foothill Estates & Trails',
     image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
   },
@@ -795,6 +795,626 @@ The expansion introduces additional sports courts, expanded playground zones, an
       avgSqftPrice: '$850/sqft',
       trend: 'up',
       keyStat: 'Historic 1776 Heritage Protection'
+    }
+  },
+
+  // 15. ALISO VIEJO
+  {
+    id: 'gov-aliso-viejo-1',
+    title: 'City of Aliso Viejo Expands Town Center Master Plan & Ridge Housing Trail Networks',
+    subtitle: 'City Council approves modern residential parkside updates and Town Center retail enhancements.',
+    category: 'city-developments',
+    cityName: 'Aliso Viejo',
+    publisher: 'City of Aliso Viejo Official Site',
+    publisherLogo: '🏛️',
+    publishedAt: 'Today',
+    readTime: '4 min read',
+    heroImage: 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=1200&q=80',
+    sourceUrl: 'https://www.cityofalisoviejo.com',
+    sourceCitation: 'City of Aliso Viejo Planning Commission Report 2026-04',
+    isBreaking: false,
+    isFeatured: false,
+    keyTakeaways: [
+      'Aliso Viejo Town Center upgrades approved with walkable plazas and alfresco dining.',
+      'Average home values reached $720/sqft with steady demand near Soka University.',
+      'New wilderness trail access added to Aliso and Wood Canyons Wilderness Park.'
+    ],
+    content: `The City of Aliso Viejo has published a comprehensive master planning update for the Town Center commercial corridor. The project introduces enhanced pedestrian connections, electric vehicle charging hubs, and updated residential zoning around Soka University and Wood Canyons Wilderness Park.`,
+    realEstateData: {
+      neighborhood: 'Town Center & Ridge Communities',
+      priceRange: '$850,000 - $2,100,000',
+      avgSqftPrice: '$720/sqft',
+      trend: 'up',
+      keyStat: '100% Master-Planned Neighborhoods'
+    }
+  },
+
+  // 16. BREA
+  {
+    id: 'gov-brea-1',
+    title: 'City of Brea Unveils Downtown Commercial & Foothill Master Plan Enhancements',
+    subtitle: 'City Council approves Brea Mall neighborhood expansion and Birch Street promenade upgrades.',
+    category: 'real-estate',
+    cityName: 'Brea',
+    publisher: 'City of Brea Official Site',
+    publisherLogo: '🏛️',
+    publishedAt: 'Yesterday',
+    readTime: '4 min read',
+    heroImage: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1200&q=80',
+    sourceUrl: 'https://www.cityofbrea.net',
+    sourceCitation: 'City of Brea City Council Ordinance 2026-08',
+    isBreaking: false,
+    isFeatured: false,
+    keyTakeaways: [
+      'Brea Mall redevelopment project adds luxury residential apartments and open-air dining.',
+      'Foothill single-family luxury residences average $640/sqft.',
+      'Birch Street Promenade receives expanded outdoor seating and art installations.'
+    ],
+    content: `Brea's City Council has greenlit major streetscape and mixed-use housing initiatives along Birch Street and Brea Mall. The new development combines upscale housing with accessible retail, reinforcing Brea's status as North Orange County's premier commercial hub.`,
+    realEstateData: {
+      neighborhood: 'Downtown Brea & Brea Hills',
+      priceRange: '$780,000 - $1,950,000',
+      avgSqftPrice: '$640/sqft',
+      trend: 'up',
+      keyStat: 'North OC Premier Shopping & Living'
+    }
+  },
+
+  // 17. BUENA PARK
+  {
+    id: 'gov-buena-park-1',
+    title: 'City of Buena Park Advances Beach Boulevard Entertainment District Master Plan',
+    subtitle: 'New residential housing developments and promenade parks greenlit along Beach Blvd Corridor.',
+    category: 'city-developments',
+    cityName: 'Buena Park',
+    publisher: 'City of Buena Park Official Site',
+    publisherLogo: '🏛️',
+    publishedAt: 'Yesterday',
+    readTime: '3 min read',
+    heroImage: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1200&q=80',
+    sourceUrl: 'https://www.buenapark.com',
+    sourceCitation: 'City of Buena Park Redevelopment Plan 2026-11',
+    isBreaking: false,
+    isFeatured: false,
+    keyTakeaways: [
+      'Beach Blvd revitalized with modern townhouse communities and expanded dining options.',
+      'Median home pricing steadily rising with average price at $610/sqft.',
+      'Knott’s Berry Farm corridor enhances safety and pedestrian streetscapes.'
+    ],
+    content: `The City of Buena Park has approved major zoning adjustments along the Beach Boulevard Entertainment Zone. The initiative creates transit-oriented housing, green pedestrian corridors, and new commercial spaces for local businesses.`,
+    realEstateData: {
+      neighborhood: 'Beach Blvd Corridor & Los Coyotes',
+      priceRange: '$650,000 - $1,400,000',
+      avgSqftPrice: '$610/sqft',
+      trend: 'up',
+      keyStat: 'Entertainment Corridor Growth'
+    }
+  },
+
+  // 18. CYPRESS
+  {
+    id: 'gov-cypress-1',
+    title: 'City of Cypress Completes Katella Smart Park & Corporate Center Housing Initiative',
+    subtitle: 'City Council approves modern residential infill project near Cypress College and corporate centers.',
+    category: 'market-trends',
+    cityName: 'Cypress',
+    publisher: 'City of Cypress Official Site',
+    publisherLogo: '🏛️',
+    publishedAt: '2 days ago',
+    readTime: '3 min read',
+    heroImage: 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=1200&q=80',
+    sourceUrl: 'https://www.cypressca.org',
+    sourceCitation: 'City of Cypress Housing Element 2026-03',
+    isBreaking: false,
+    isFeatured: false,
+    keyTakeaways: [
+      'New single-family and townhouse developments near Katella Avenue approved.',
+      'Cypress housing market averages $630/sqft with high school district demand.',
+      'Expanded green parkways and solar-powered street lighting installed.'
+    ],
+    content: `Cypress City Council has ratified an updated land use plan converting underutilized office footprint into modern, eco-friendly residential neighborhoods near Cypress College.`,
+    realEstateData: {
+      neighborhood: 'Katella District & Cypress College Corridor',
+      priceRange: '$750,000 - $1,600,000',
+      avgSqftPrice: '$630/sqft',
+      trend: 'up',
+      keyStat: 'Top-Rated Oxford Academy District'
+    }
+  },
+
+  // 19. FOUNTAIN VALLEY
+  {
+    id: 'gov-fountain-valley-1',
+    title: 'City of Fountain Valley Upgrades Mile Square Regional Park & Warner Avenue Master Plan',
+    subtitle: 'New residential green housing and parkside pedestrian plazas approved by City Council.',
+    category: 'city-developments',
+    cityName: 'Fountain Valley',
+    publisher: 'City of Fountain Valley Official Site',
+    publisherLogo: '🏛️',
+    publishedAt: 'Today',
+    readTime: '4 min read',
+    heroImage: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80',
+    sourceUrl: 'https://www.fountainvalley.org',
+    sourceCitation: 'City of Fountain Valley Community Development Report 2026-02',
+    isBreaking: false,
+    isFeatured: false,
+    keyTakeaways: [
+      'Mile Square Park adjacent residential communities see steady demand at $670/sqft.',
+      'Warner Avenue corridor receives updated bike lanes and parkside landscaping.',
+      'Civic Center upgrades include solar canopy installations and EV charging parks.'
+    ],
+    content: `Fountain Valley municipal leaders have announced major infrastructure enhancements surrounding Mile Square Regional Park. The initiative aligns green park preservation with modern single-family housing upgrades.`,
+    realEstateData: {
+      neighborhood: 'Mile Square Park & Warner Corridor',
+      priceRange: '$820,000 - $1,800,000',
+      avgSqftPrice: '$670/sqft',
+      trend: 'up',
+      keyStat: 'Mile Square Park Green Living'
+    }
+  },
+
+  // 20. GARDEN GROVE
+  {
+    id: 'gov-garden-grove-1',
+    title: 'City of Garden Grove Breaks Ground on Brookhurst Street Mixed-Use District',
+    subtitle: 'City Council approves modern housing and Little Saigon commercial promenade improvements.',
+    category: 'real-estate',
+    cityName: 'Garden Grove',
+    publisher: 'City of Garden Grove Official Site',
+    publisherLogo: '🏛️',
+    publishedAt: 'Yesterday',
+    readTime: '4 min read',
+    heroImage: 'https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=1200&q=80',
+    sourceUrl: 'https://www.ggcity.org',
+    sourceCitation: 'City of Garden Grove Economic Development Report 2026-07',
+    isBreaking: false,
+    isFeatured: false,
+    keyTakeaways: [
+      'Brookhurst Street commercial zone expanded with modern multi-family and retail housing.',
+      'Average home prices at $590/sqft drawing strong first-time buyer demand.',
+      'Historic Main Street pedestrian square receives tree canopy and fountain enhancements.'
+    ],
+    content: `Garden Grove's City Council has officially initiated the Brookhurst Corridor Improvement Project. The development delivers updated townhomes, green plazas, and updated storefronts near Historic Main Street.`,
+    realEstateData: {
+      neighborhood: 'Brookhurst Corridor & Historic Main St',
+      priceRange: '$620,000 - $1,350,000',
+      avgSqftPrice: '$590/sqft',
+      trend: 'up',
+      keyStat: 'Transit-Oriented Town Center'
+    }
+  },
+
+  // 21. LA HABRA
+  {
+    id: 'gov-la-habra-1',
+    title: 'City of La Habra Enhances La Habra Boulevard Historic & Residential District',
+    subtitle: 'City Council approves Westridge residential enhancements and civic park upgrades.',
+    category: 'market-trends',
+    cityName: 'La Habra',
+    publisher: 'City of La Habra Official Site',
+    publisherLogo: '🏛️',
+    publishedAt: '3 days ago',
+    readTime: '3 min read',
+    heroImage: 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=1200&q=80',
+    sourceUrl: 'https://www.lahabraca.gov',
+    sourceCitation: 'City of La Habra General Plan Update 2026-05',
+    isBreaking: false,
+    isFeatured: false,
+    keyTakeaways: [
+      'La Habra Westridge area housing demand strong with median pricing at $580/sqft.',
+      'La Habra Blvd streetscape revitalized with historic lighting and native landscaping.',
+      'New community park and youth athletics facility greenlit.'
+    ],
+    content: `The City of La Habra has approved a revitalized master plan for the La Habra Boulevard corridor. The initiative includes historic neighborhood preservation, modern single-family home upgrades, and expanded community park spaces.`,
+    realEstateData: {
+      neighborhood: 'Westridge & La Habra Hills',
+      priceRange: '$630,000 - $1,450,000',
+      avgSqftPrice: '$580/sqft',
+      trend: 'up',
+      keyStat: 'Family-Centric Foothill Living'
+    }
+  },
+
+  // 22. LA PALMA
+  {
+    id: 'gov-la-palma-1',
+    title: 'City of La Palma Celebrates Top Safety Rating & Residential Park Renewal',
+    subtitle: 'City Council approves Central Park enhancements and tree-lined neighborhood streetscapes.',
+    category: 'city-developments',
+    cityName: 'La Palma',
+    publisher: 'City of La Palma Official Site',
+    publisherLogo: '🏛️',
+    publishedAt: '2 days ago',
+    readTime: '3 min read',
+    heroImage: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80',
+    sourceUrl: 'https://www.cityoflapalma.org',
+    sourceCitation: 'City of La Palma Annual Civic Progress Report 2026-01',
+    isBreaking: false,
+    isFeatured: false,
+    keyTakeaways: [
+      'La Palma ranked among safest cities in California with high community stability.',
+      'Average home pricing holding strong at $620/sqft.',
+      'La Palma Central Park upgrades feature new tennis courts and solar walking trails.'
+    ],
+    content: `La Palma municipal officials have released the annual civic report highlighting neighborhood preservation and safety metrics. Central Park improvements and updated street lighting lead the city's residential investment initiatives.`,
+    realEstateData: {
+      neighborhood: 'Central La Palma & Walker Corridor',
+      priceRange: '$720,000 - $1,300,000',
+      avgSqftPrice: '$620/sqft',
+      trend: 'stable',
+      keyStat: 'Top-Ranked Safe Community'
+    }
+  },
+
+  // 23. LAGUNA HILLS
+  {
+    id: 'gov-laguna-hills-1',
+    title: 'City of Laguna Hills Approves Community Center & Ridge Housing Upgrades',
+    subtitle: 'City Council greenlights Moulton Parkway residential improvements and parkland preservation.',
+    category: 'real-estate',
+    cityName: 'Laguna Hills',
+    publisher: 'City of Laguna Hills Official Site',
+    publisherLogo: '🏛️',
+    publishedAt: 'Yesterday',
+    readTime: '4 min read',
+    heroImage: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80',
+    sourceUrl: 'https://www.lagunahillsca.gov',
+    sourceCitation: 'City of Laguna Hills Council Report 2026-06',
+    isBreaking: false,
+    isFeatured: false,
+    keyTakeaways: [
+      'Moulton Parkway residential homes holding average price of $710/sqft.',
+      'Laguna Hills Community Center grounds expand with new pickleball courts and gardens.',
+      'Equestrian trails along Nellie Gail Ranch preserved in open space easement.'
+    ],
+    content: `The City Council of Laguna Hills has approved a comprehensive parkland and housing improvement plan. Highlights include updated equestrian trail maintenance, solar energy incentive programs for homeowners, and Moulton Parkway landscaping.`,
+    realEstateData: {
+      neighborhood: 'Nellie Gail Ranch & Moulton Corridor',
+      priceRange: '$880,000 - $3,200,000',
+      avgSqftPrice: '$710/sqft',
+      trend: 'up',
+      keyStat: 'Luxury Equestrian & Estate Homes'
+    }
+  },
+
+  // 24. LAGUNA NIGUEL
+  {
+    id: 'gov-laguna-niguel-1',
+    title: 'City of Laguna Niguel Expands Town Center Master Plan & Crown Valley Corridor',
+    subtitle: 'City Council approves modern civic plaza, luxury single-family homes, and trail connections.',
+    category: 'city-developments',
+    cityName: 'Laguna Niguel',
+    publisher: 'City of Laguna Niguel Official Site',
+    publisherLogo: '🏛️',
+    publishedAt: 'Today',
+    readTime: '4 min read',
+    heroImage: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80',
+    sourceUrl: 'https://www.cityoflagunaniguel.org',
+    sourceCitation: 'City of Laguna Niguel Town Center Master Plan 2026-09',
+    isBreaking: false,
+    isFeatured: false,
+    keyTakeaways: [
+      'Laguna Niguel Town Center breaking ground with outdoor plazas and boutique dining.',
+      'Average luxury single-family homes pricing at $830/sqft.',
+      'Crown Valley Community Park trail link to Salt Creek Beach enhanced.'
+    ],
+    content: `Laguna Niguel municipal leadership has finalized entitlements for the Town Center redevelopment. The project introduces walkable suburban living, outdoor dining, and direct trail access connecting to the coastal ridge.`,
+    realEstateData: {
+      neighborhood: 'Bear Brand & Crown Valley',
+      priceRange: '$1,100,000 - $4,200,000',
+      avgSqftPrice: '$830/sqft',
+      trend: 'up',
+      keyStat: 'Master-Planned Coastal Foothills'
+    }
+  },
+
+  // 25. LAGUNA WOODS
+  {
+    id: 'gov-laguna-woods-1',
+    title: 'City of Laguna Woods Modernizes Active Living Housing & Community Amenities',
+    subtitle: 'City Council and Village leadership launch green energy retrofits and shuttle service upgrades.',
+    category: 'market-trends',
+    cityName: 'Laguna Woods',
+    publisher: 'City of Laguna Woods Official Site',
+    publisherLogo: '🏛️',
+    publishedAt: '2 days ago',
+    readTime: '3 min read',
+    heroImage: 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=1200&q=80',
+    sourceUrl: 'https://www.cityoflagunawoods.org',
+    sourceCitation: 'City of Laguna Woods Senior Housing Progress Report 2026-02',
+    isBreaking: false,
+    isFeatured: false,
+    keyTakeaways: [
+      'Laguna Woods Village home pricing averages accessible $490/sqft.',
+      'New electric shuttle fleet deployed across all community gates.',
+      'Solar roofing retrofits and golf course water recycling facilities completed.'
+    ],
+    content: `The City of Laguna Woods has partnered with community leaders to deliver comprehensive sustainability retrofits. Solar power installations and EV transport upgrades position Laguna Woods as a premier active adult community.`,
+    realEstateData: {
+      neighborhood: 'Laguna Woods Village',
+      priceRange: '$350,000 - $950,000',
+      avgSqftPrice: '$490/sqft',
+      trend: 'stable',
+      keyStat: 'Premier Active Adult Living'
+    }
+  },
+
+  // 26. LOS ALAMITOS
+  {
+    id: 'gov-los-alamitos-1',
+    title: 'City of Los Alamitos Enhances Katella Downtown Promenade & Joint Forces Training Base Corridor',
+    subtitle: 'City Council approves streetscape improvements and civic park improvements.',
+    category: 'city-developments',
+    cityName: 'Los Alamitos',
+    publisher: 'City of Los Alamitos Official Site',
+    publisherLogo: '🏛️',
+    publishedAt: 'Yesterday',
+    readTime: '3 min read',
+    heroImage: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80',
+    sourceUrl: 'https://www.cityoflosalamitos.org',
+    sourceCitation: 'City of Los Alamitos Downtown Vision Plan 2026-03',
+    isBreaking: false,
+    isFeatured: false,
+    keyTakeaways: [
+      'Katella Avenue corridor upgraded with wider sidewalks and oak shade trees.',
+      'Average home pricing holding strong at $710/sqft with top school district demand.',
+      'Los Alamitos Race Course adjacent district master plan underway.'
+    ],
+    content: `The City Council of Los Alamitos has adopted the Katella Corridor Pedestrian Master Plan. The project enhances downtown retail connectivity while preserving the town's close-knit residential charm.`,
+    realEstateData: {
+      neighborhood: 'Katella District & Suburbia Estates',
+      priceRange: '$880,000 - $1,900,000',
+      avgSqftPrice: '$710/sqft',
+      trend: 'up',
+      keyStat: 'Top School District Demand'
+    }
+  },
+
+  // 27. PLACENTIA
+  {
+    id: 'gov-placentia-1',
+    title: 'City of Placentia Opens New Metrolink Transit District & Old Town Housing',
+    subtitle: 'City Council approves modern transit-oriented village with cafes and pedestrian plazas.',
+    category: 'real-estate',
+    cityName: 'Placentia',
+    publisher: 'City of Placentia Official Site',
+    publisherLogo: '🏛️',
+    publishedAt: 'Today',
+    readTime: '4 min read',
+    heroImage: 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=1200&q=80',
+    sourceUrl: 'https://www.placentia.org',
+    sourceCitation: 'City of Placentia Transit District Ordinance 2026-10',
+    isBreaking: false,
+    isFeatured: false,
+    keyTakeaways: [
+      'Placentia Metrolink Transit District features 400 new luxury residential units.',
+      'Average home prices at $620/sqft attracting commuters to LA and Orange County hubs.',
+      'Old Town Placentia revitalized with brick plazas and local craft breweries.'
+    ],
+    content: `Placentia's transit-oriented development plan has reached key construction milestones. The project combines passenger rail access with high-density modern housing and historic Old Town pedestrian plazas.`,
+    realEstateData: {
+      neighborhood: 'Old Town Placentia & Transit Village',
+      priceRange: '$680,000 - $1,400,000',
+      avgSqftPrice: '$620/sqft',
+      trend: 'up',
+      keyStat: 'Transit-Oriented Rail Access'
+    }
+  },
+
+  // 28. RANCHO SANTA MARGARITA
+  {
+    id: 'gov-rsm-1',
+    title: 'City of Rancho Santa Margarita Upgrades RSM Lake Park & Foothill Town Center',
+    subtitle: 'City Council approves lakefront promenade lighting, sports park enhancements, and home retrofits.',
+    category: 'city-developments',
+    cityName: 'Rancho Santa Margarita',
+    publisher: 'City of Rancho Santa Margarita Official Site',
+    publisherLogo: '🏛️',
+    publishedAt: '2 days ago',
+    readTime: '3 min read',
+    heroImage: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1200&q=80',
+    sourceUrl: 'https://www.cityofrsm.org',
+    sourceCitation: 'City of RSM Master Plan Review 2026-04',
+    isBreaking: false,
+    isFeatured: false,
+    keyTakeaways: [
+      'Rancho Santa Margarita Lake path enhanced with LED lights and water features.',
+      'Foothill single-family homes averaging $670/sqft with high buyer demand.',
+      'Saddleback Valley views and hiking trail amenities expanded.'
+    ],
+    content: `Rancho Santa Margarita municipal leaders have announced improvements to the RSM Lakefront Park and Town Center promenade. The community remains one of OC's most desirable master-planned foothill destinations.`,
+    realEstateData: {
+      neighborhood: 'RSM Lakefront & Foothill Ranch',
+      priceRange: '$750,000 - $1,750,000',
+      avgSqftPrice: '$670/sqft',
+      trend: 'up',
+      keyStat: 'Saddleback Foothill Views'
+    }
+  },
+
+  // 29. SANTA ANA
+  {
+    id: 'gov-santa-ana-1',
+    title: 'City of Santa Ana Advances Downtown Historic Arts District Master Plan',
+    subtitle: 'City Council approves modern urban housing infill and OC Streetcar transit corridor.',
+    category: 'city-developments',
+    cityName: 'Santa Ana',
+    publisher: 'City of Santa Ana Official Site',
+    publisherLogo: '🏛️',
+    publishedAt: 'Today',
+    readTime: '4 min read',
+    heroImage: 'https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=1200&q=80',
+    sourceUrl: 'https://www.santa-ana.org',
+    sourceCitation: 'City of Santa Ana Downtown Strategic Plan 2026-12',
+    isBreaking: false,
+    isFeatured: false,
+    keyTakeaways: [
+      'OC Streetcar transit corridor nearing full commercial operation in Downtown Santa Ana.',
+      'Average home pricing holding at $580/sqft with historic Floral Park homes commanding premium.',
+      '4th Street Artists Village receives expanded patio dining permissions.'
+    ],
+    content: `Santa Ana's City Council has ratified the latest phase of the Downtown Arts District revitalization. The project integrates transit line access with loft housing, historic restoration, and local dining hubs.`,
+    realEstateData: {
+      neighborhood: 'Downtown Arts District & Floral Park',
+      priceRange: '$580,000 - $1,650,000',
+      avgSqftPrice: '$580/sqft',
+      trend: 'up',
+      keyStat: 'Historic Architecture & Streetcar'
+    }
+  },
+
+  // 30. SEAL BEACH
+  {
+    id: 'gov-seal-beach-1',
+    title: 'City of Seal Beach Restores Historic Wooden Pier & Main Street Coastal Quarter',
+    subtitle: 'City Council approves beach preservation funding and historic downtown lighting.',
+    category: 'real-estate',
+    cityName: 'Seal Beach',
+    publisher: 'City of Seal Beach Official Site',
+    publisherLogo: '🏛️',
+    publishedAt: 'Yesterday',
+    readTime: '4 min read',
+    heroImage: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80',
+    sourceUrl: 'https://www.sealbeachca.gov',
+    sourceCitation: 'City of Seal Beach Coastal Resources Report 2026-02',
+    isBreaking: false,
+    isFeatured: false,
+    keyTakeaways: [
+      'Seal Beach wooden pier structure retrofitted with eco-friendly timber and ocean view seating.',
+      'Coastal single-family homes averaging $920/sqft with high oceanfront demand.',
+      'Main Street historic shops receive updated brick sidewalks and landscaping.'
+    ],
+    content: `The City of Seal Beach has approved a capital improvement grant for the historic 1,835-foot Seal Beach Pier and Main Street promenade. The coastal community maintains its coveted small-town beach vibe.`,
+    realEstateData: {
+      neighborhood: 'Old Town Seal Beach & Hill Cove',
+      priceRange: '$1,200,000 - $4,800,000',
+      avgSqftPrice: '$920/sqft',
+      trend: 'up',
+      keyStat: 'Small-Town Coastal Charm'
+    }
+  },
+
+  // 31. STANTON
+  {
+    id: 'gov-stanton-1',
+    title: 'City of Stanton Launches Town Center Plaza & Beach Blvd Infill Housing Project',
+    subtitle: 'City Council approves modern residential parkside units and commercial redevelopment.',
+    category: 'city-developments',
+    cityName: 'Stanton',
+    publisher: 'City of Stanton Official Site',
+    publisherLogo: '🏛️',
+    publishedAt: '3 days ago',
+    readTime: '3 min read',
+    heroImage: 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=1200&q=80',
+    sourceUrl: 'https://www.ci.stanton.ca.us',
+    sourceCitation: 'City of Stanton Urban Renewal Plan 2026-05',
+    isBreaking: false,
+    isFeatured: false,
+    keyTakeaways: [
+      'Stanton Central Park adjacent housing developments added with modern family townhomes.',
+      'Average home pricing at $560/sqft with high investment growth.',
+      'Beach Blvd corridor features new outdoor dining court and community park.'
+    ],
+    content: `Stanton municipal leadership has greenlit the Beach Boulevard Commercial Revitalization Project. The initiative delivers new affordable and market-rate housing options alongside green public plazas.`,
+    realEstateData: {
+      neighborhood: 'Stanton Central & Beach Corridor',
+      priceRange: '$550,000 - $1,150,000',
+      avgSqftPrice: '$560/sqft',
+      trend: 'up',
+      keyStat: 'Infill Renewal Project'
+    }
+  },
+
+  // 32. VILLA PARK
+  {
+    id: 'gov-villa-park-1',
+    title: 'City of Villa Park Preserves Custom Estate Zoning & Santiago Creek Open Space',
+    subtitle: 'City Council affirms low-density custom estate guidelines and equestrian trail maintenance.',
+    category: 'market-trends',
+    cityName: 'Villa Park',
+    publisher: 'City of Villa Park Official Site',
+    publisherLogo: '🏛️',
+    publishedAt: '2 days ago',
+    readTime: '3 min read',
+    heroImage: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80',
+    sourceUrl: 'https://www.villapark.org',
+    sourceCitation: 'City of Villa Park Planning Commission Resolution 2026-01',
+    isBreaking: false,
+    isFeatured: false,
+    keyTakeaways: [
+      'Villa Park custom estate homes average $890/sqft with half-acre minimum lot sizes.',
+      'Town Center shopping plaza upgraded with new boutique grocery and pharmacy.',
+      'Santiago Creek greenbelt trail protection ordinance unanimously extended.'
+    ],
+    content: `The City Council of Villa Park has reaffirmed its commitment to maintaining low-density estate residential zoning. Villa Park, Orange County's smallest city, continues to offer half-acre lot custom homes and equestrian lifestyle features.`,
+    realEstateData: {
+      neighborhood: 'Villa Park Custom Estates',
+      priceRange: '$1,850,000 - $5,500,000',
+      avgSqftPrice: '$890/sqft',
+      trend: 'up',
+      keyStat: 'Half-Acre Minimum Custom Estates'
+    }
+  },
+
+  // 33. WESTMINSTER
+  {
+    id: 'gov-westminster-1',
+    title: 'City of Westminster Approves Civic Center Redevelopment & Little Saigon Plaza Plan',
+    subtitle: 'City Council approves modern multi-family housing, public amphitheater, and green park.',
+    category: 'city-developments',
+    cityName: 'Westminster',
+    publisher: 'City of Westminster Official Site',
+    publisherLogo: '🏛️',
+    publishedAt: 'Yesterday',
+    readTime: '4 min read',
+    heroImage: 'https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=1200&q=80',
+    sourceUrl: 'https://www.westminster-ca.gov',
+    sourceCitation: 'City of Westminster Civic Master Plan 2026-08',
+    isBreaking: false,
+    isFeatured: false,
+    keyTakeaways: [
+      'Westminster Civic Center master plan includes 500 new residential units and civic hall.',
+      'Average home pricing holding at $600/sqft.',
+      'Bolsa Avenue Little Saigon cultural corridor enhancements approved.'
+    ],
+    content: `Westminster's City Council has approved final designs for the Civic Center Revitalization Master Plan. The project brings modern parkside housing, an outdoor performance plaza, and upgraded municipal services.`,
+    realEstateData: {
+      neighborhood: 'Civic Center & Little Saigon District',
+      priceRange: '$650,000 - $1,450,000',
+      avgSqftPrice: '$600/sqft',
+      trend: 'up',
+      keyStat: 'Civic Center Renewal'
+    }
+  },
+
+  // 34. YORBA LINDA
+  {
+    id: 'gov-yorba-linda-1',
+    title: 'City of Yorba Linda Expands Town Center & Equestrian Trail Preservation',
+    subtitle: 'City Council approves single-family foothill developments and Main Street park enhancements.',
+    category: 'real-estate',
+    cityName: 'Yorba Linda',
+    publisher: 'City of Yorba Linda Official Site',
+    publisherLogo: '🏛️',
+    publishedAt: 'Today',
+    readTime: '4 min read',
+    heroImage: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
+    sourceUrl: 'https://www.yorbalindaca.gov',
+    sourceCitation: 'City of Yorba Linda Foothill Plan 2026-11',
+    isBreaking: false,
+    isFeatured: false,
+    keyTakeaways: [
+      'Yorba Linda Town Center promenade features new dining options and outdoor cinema lawn.',
+      'Foothill luxury single-family homes averaging $710/sqft.',
+      'Over 100 miles of equestrian and hiking trails protected in open space trust.'
+    ],
+    content: `The City of Yorba Linda has announced master plan updates for the Yorba Linda Town Center and foothill residential developments. Known as the "Land of Gracious Living," Yorba Linda continues to expand parks and trails while offering premier estate homes.`,
+    realEstateData: {
+      neighborhood: 'Yorba Linda Town Center & East Lake',
+      priceRange: '$1,050,000 - $3,800,000',
+      avgSqftPrice: '$710/sqft',
+      trend: 'up',
+      keyStat: '100+ Miles Equestrian Trails'
     }
   }
 ];

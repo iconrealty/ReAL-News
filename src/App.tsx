@@ -56,19 +56,51 @@ export function App() {
     }
   }, [bookmarkedIds]);
 
-  // Load articles from Firebase Firestore on mount
+  // Load articles from Firebase Firestore on mount and merge with INITIAL_ARTICLES
   useEffect(() => {
     fetch('/api/news/articles')
       .then(res => res.json())
       .then(data => {
         if (data.success && Array.isArray(data.articles) && data.articles.length > 0) {
-          setArticles(data.articles);
+          setArticles(prev => {
+            const map = new Map<string, NewsArticle>();
+            // Keep initial articles always available for all 34 OC cities
+            INITIAL_ARTICLES.forEach(art => map.set(art.id, art));
+            // Merge custom/stored articles on top
+            data.articles.forEach((art: NewsArticle) => map.set(art.id, art));
+            return Array.from(map.values());
+          });
         }
       })
       .catch(err => {
         console.warn("Could not load articles from Firebase API, using local fallback", err);
       });
   }, []);
+
+  // Fetch live city news when city or category changes
+  useEffect(() => {
+    if (!currentCity) return;
+    
+    fetch('/api/fetch-city-news', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ cityName: currentCity.name, category: activeCategory })
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && Array.isArray(data.articles) && data.articles.length > 0) {
+          setArticles(prev => {
+            const map = new Map<string, NewsArticle>();
+            prev.forEach(art => map.set(art.id, art));
+            data.articles.forEach((art: NewsArticle) => map.set(art.id, art));
+            return Array.from(map.values());
+          });
+        }
+      })
+      .catch(err => {
+        console.warn("Live city news fetch quiet error:", err);
+      });
+  }, [currentCity, activeCategory]);
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -93,14 +125,38 @@ export function App() {
 
   // Filter articles based on city, category, and search query
   const filteredArticles = useMemo(() => {
-    return articles.filter(art => {
-      // City match
-      const isOrangeCountyAll = currentCity.id === 'orange-county';
-      const matchesCity = isOrangeCountyAll || 
-                          art.cityName.toLowerCase().includes(currentCity.name.toLowerCase()) || 
-                          currentCity.name.toLowerCase().includes(art.cityName.toLowerCase()) ||
-                          art.isLiveAi;
+    const isOrangeCountyAll = currentCity.id === 'orange-county';
+    const cName = currentCity.name.toLowerCase().trim();
 
+    let matched: NewsArticle[] = [];
+
+    if (isOrangeCountyAll) {
+      matched = [...articles];
+    } else {
+      // Direct city matches
+      const directMatches = articles.filter(art => {
+        const artCity = art.cityName.toLowerCase();
+        const artTitle = art.title.toLowerCase();
+        const artSub = art.subtitle.toLowerCase();
+        const artNbhd = art.realEstateData?.neighborhood?.toLowerCase() || '';
+
+        return (
+          artCity.includes(cName) ||
+          cName.includes(artCity) ||
+          artTitle.includes(cName) ||
+          artSub.includes(cName) ||
+          artNbhd.includes(cName)
+        );
+      });
+
+      // Put city direct matches FIRST, followed by regional articles if needed
+      const existingIds = new Set(directMatches.map(a => a.id));
+      const remainingArticles = articles.filter(a => !existingIds.has(a.id));
+      matched = [...directMatches, ...remainingArticles];
+    }
+
+    // Category & Search query filtering
+    return matched.filter(art => {
       // Category match
       const matchesCat = activeCategory === 'all' || art.category === activeCategory;
 
@@ -113,7 +169,7 @@ export function App() {
         (art.venueDetails?.name && art.venueDetails.name.toLowerCase().includes(q)) ||
         (art.realEstateData?.neighborhood && art.realEstateData.neighborhood.toLowerCase().includes(q));
 
-      return matchesCity && matchesCat && matchesQuery;
+      return matchesCat && matchesQuery;
     });
   }, [articles, currentCity, activeCategory, searchQuery]);
 
@@ -193,14 +249,13 @@ export function App() {
           </div>
         </div>
 
-        {/* Featured Hero Lead Story */}
+        {/* Featured Hero / Top Stories */}
         {heroArticle && (
           <section className="space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-mono uppercase tracking-widest font-bold text-[#FA2D48] flex items-center gap-1.5">
-                <Flame className="w-4 h-4 text-[#FA2D48]" />
-                <span>Featured Lead Story</span>
-              </span>
+            <div className="flex items-center justify-between pb-1">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black font-sans tracking-tighter text-[#FA2D48] leading-none">
+                Top Stories
+              </h2>
             </div>
 
             <FeaturedHeroStory
