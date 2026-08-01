@@ -284,23 +284,20 @@ export function App() {
                 setActiveCategory('market-trends');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
-              className="bg-slate-950 text-white rounded-3xl p-6 sm:p-8 border border-slate-900 shadow-xl cursor-pointer hover:border-[#FA2D48]/50 transition-all duration-300 group relative overflow-hidden flex flex-col sm:flex-row items-center justify-between gap-6"
+              className="bg-white text-slate-950 rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-xs cursor-pointer hover:border-slate-300 hover:shadow-md transition-all duration-300 group relative overflow-hidden flex flex-col sm:flex-row items-center justify-between gap-6"
             >
-              <div className="relative z-10 space-y-2 text-center sm:text-left">
+              <div className="relative z-10 space-y-1.5 text-center sm:text-left">
                 <div className="inline-flex items-center space-x-2 text-[11px] font-mono uppercase tracking-widest text-[#FA2D48] font-bold">
                   <span className="w-2 h-2 rounded-full bg-[#FA2D48] animate-pulse" />
-                  <span>Orange County Real Estate Data Center</span>
+                  <span>Orange County Real Estate Data</span>
                 </div>
-                <h3 className="text-2xl sm:text-3xl font-black font-sans tracking-tight text-white group-hover:text-[#FA2D48] transition-colors">
+                <h3 className="text-2xl sm:text-3xl font-black font-sans tracking-tight text-slate-950 group-hover:text-[#FA2D48] transition-colors">
                   View Price / SqFt & Sales Data for All 34 OC Cities
                 </h3>
-                <p className="text-xs sm:text-sm text-slate-400 max-w-xl">
-                  Explore live median home prices, avg $/sqft, YTD sales volume, homes sold, and active pending escrows with zero AI token cost.
-                </p>
               </div>
 
               <div className="relative z-10 shrink-0">
-                <span className="px-5 py-3 rounded-2xl bg-[#FA2D48] group-hover:bg-[#E0263E] text-white font-black text-xs inline-flex items-center space-x-2 shadow-md active:scale-95 transition-all">
+                <span className="px-5 py-3 rounded-2xl bg-[#FA2D48] group-hover:bg-[#E0263E] text-white font-black text-xs inline-flex items-center space-x-2 shadow-xs active:scale-95 transition-all">
                   <span>Open Market Trends Page</span>
                   <ChevronRight className="w-4 h-4" />
                 </span>

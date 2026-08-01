@@ -118,30 +118,20 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
 
   return (
     <div className="space-y-6 sm:space-y-8 animate-fade-in">
-      {/* Tesla / Apple Minimalist Header Banner */}
-      <div className="bg-slate-950 text-white rounded-3xl p-6 sm:p-10 border border-slate-900 shadow-2xl relative overflow-hidden">
-        {/* Subtle accent glow */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-[#FA2D48]/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
-
-        <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
-          <div className="space-y-3 max-w-2xl">
-            <div className="flex items-center space-x-2 text-xs font-mono uppercase tracking-widest text-[#FA2D48]">
-              <span className="w-2 h-2 rounded-full bg-[#FA2D48] animate-pulse" />
-              <span>Orange County MLS • Live Market Intelligence</span>
-            </div>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black font-sans tracking-tight text-white leading-tight">
-              Orange County Real Estate Market Trends
+      {/* Apple Minimalist Light Header Banner */}
+      <div className="bg-white text-slate-950 rounded-3xl p-6 sm:p-10 border border-slate-200/90 shadow-xs relative overflow-hidden">
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="space-y-1 max-w-2xl">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black font-sans tracking-tight text-slate-950 leading-tight">
+              Orange County
             </h1>
-            <p className="text-sm sm:text-base text-slate-400 font-normal leading-relaxed">
-              Complete city-by-city index of real price per sqft, year-to-date sales volume, homes sold, and active pending escrows across all 34 Orange County municipalities.
-            </p>
           </div>
 
-          <div className="flex items-center space-x-2 shrink-0 bg-slate-900/90 border border-slate-800 p-1.5 rounded-2xl backdrop-blur-md">
+          <div className="flex items-center space-x-2 shrink-0 bg-slate-100 border border-slate-200/80 p-1.5 rounded-2xl">
             <button
               onClick={() => setViewMode('grid')}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center space-x-2 ${
-                viewMode === 'grid' ? 'bg-[#FA2D48] text-white shadow-xs' : 'text-slate-400 hover:text-white'
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center space-x-2 cursor-pointer ${
+                viewMode === 'grid' ? 'bg-slate-900 text-white shadow-xs' : 'text-slate-600 hover:text-slate-950'
               }`}
             >
               <LayoutGrid className="w-4 h-4" />
@@ -149,8 +139,8 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
             </button>
             <button
               onClick={() => setViewMode('table')}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center space-x-2 ${
-                viewMode === 'table' ? 'bg-[#FA2D48] text-white shadow-xs' : 'text-slate-400 hover:text-white'
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center space-x-2 cursor-pointer ${
+                viewMode === 'table' ? 'bg-slate-900 text-white shadow-xs' : 'text-slate-600 hover:text-slate-950'
               }`}
             >
               <TableIcon className="w-4 h-4" />
@@ -159,23 +149,23 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
           </div>
         </div>
 
-        {/* 4 Core Tesla Key Metric Summary Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mt-8 pt-6 border-t border-slate-800/80">
-          <div className="bg-slate-900/60 border border-slate-800 p-4 rounded-2xl">
-            <div className="text-xs font-mono text-slate-400 uppercase tracking-wider">County Avg $/SqFt</div>
-            <div className="text-2xl sm:text-3xl font-black font-mono text-white pt-1">{overallStats.avgSqft} <span className="text-xs font-sans text-slate-400 font-normal">/ sqft</span></div>
+        {/* 4 Core Tesla / Apple Style Key Metric Summary Cards */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mt-6 pt-6 border-t border-slate-100">
+          <div className="bg-slate-50/90 border border-slate-200/80 p-4 rounded-2xl">
+            <div className="text-xs font-mono text-slate-500 uppercase tracking-wider">County Avg $/SqFt</div>
+            <div className="text-2xl sm:text-3xl font-black font-mono text-slate-950 pt-1">{overallStats.avgSqft} <span className="text-xs font-sans text-slate-500 font-normal">/ sqft</span></div>
           </div>
-          <div className="bg-slate-900/60 border border-slate-800 p-4 rounded-2xl">
-            <div className="text-xs font-mono text-slate-400 uppercase tracking-wider">Median OC Home Price</div>
+          <div className="bg-slate-50/90 border border-slate-200/80 p-4 rounded-2xl">
+            <div className="text-xs font-mono text-slate-500 uppercase tracking-wider">Median OC Home Price</div>
             <div className="text-2xl sm:text-3xl font-black font-mono text-[#FA2D48] pt-1">{overallStats.avgMedian}</div>
           </div>
-          <div className="bg-slate-900/60 border border-slate-800 p-4 rounded-2xl">
-            <div className="text-xs font-mono text-slate-400 uppercase tracking-wider">YTD Total Sales Vol</div>
-            <div className="text-2xl sm:text-3xl font-black font-mono text-white pt-1">{overallStats.totalVolume}</div>
+          <div className="bg-slate-50/90 border border-slate-200/80 p-4 rounded-2xl">
+            <div className="text-xs font-mono text-slate-500 uppercase tracking-wider">YTD Total Sales Vol</div>
+            <div className="text-2xl sm:text-3xl font-black font-mono text-slate-950 pt-1">{overallStats.totalVolume}</div>
           </div>
-          <div className="bg-slate-900/60 border border-slate-800 p-4 rounded-2xl">
-            <div className="text-xs font-mono text-slate-400 uppercase tracking-wider">Active Escrow / Pending</div>
-            <div className="text-2xl sm:text-3xl font-black font-mono text-emerald-400 pt-1">{overallStats.totalPending} <span className="text-xs font-sans text-slate-400 font-normal">homes</span></div>
+          <div className="bg-emerald-50/80 border border-emerald-100 p-4 rounded-2xl">
+            <div className="text-xs font-mono text-emerald-800 uppercase tracking-wider">Active Escrow / Pending</div>
+            <div className="text-2xl sm:text-3xl font-black font-mono text-emerald-700 pt-1">{overallStats.totalPending} <span className="text-xs font-sans text-emerald-800 font-normal">homes</span></div>
           </div>
         </div>
       </div>
@@ -275,48 +265,48 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
         <div className="bg-white border border-slate-200/90 rounded-3xl shadow-xs overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs text-slate-700">
-              <thead className="bg-slate-950 text-white text-[11px] font-mono uppercase tracking-wider">
+              <thead className="bg-slate-100 text-slate-900 text-[11px] font-mono uppercase tracking-wider border-b border-slate-200">
                 <tr>
-                  <th onClick={() => handleSort('name')} className="py-3.5 px-5 cursor-pointer hover:bg-slate-900">
+                  <th onClick={() => handleSort('name')} className="py-3.5 px-5 cursor-pointer hover:bg-slate-200/80">
                     <div className="flex items-center space-x-1">
                       <span>City</span>
-                      <ArrowUpDown className="w-3 h-3 text-slate-400" />
+                      <ArrowUpDown className="w-3 h-3 text-slate-500" />
                     </div>
                   </th>
-                  <th onClick={() => handleSort('avgSqftPrice')} className="py-3.5 px-4 cursor-pointer hover:bg-slate-900 text-right">
+                  <th onClick={() => handleSort('avgSqftPrice')} className="py-3.5 px-4 cursor-pointer hover:bg-slate-200/80 text-right">
                     <div className="flex items-center justify-end space-x-1">
                       <span>$/SqFt</span>
-                      <ArrowUpDown className="w-3 h-3 text-slate-400" />
+                      <ArrowUpDown className="w-3 h-3 text-slate-500" />
                     </div>
                   </th>
-                  <th onClick={() => handleSort('medianPrice')} className="py-3.5 px-4 cursor-pointer hover:bg-slate-900 text-right">
+                  <th onClick={() => handleSort('medianPrice')} className="py-3.5 px-4 cursor-pointer hover:bg-slate-200/80 text-right">
                     <div className="flex items-center justify-end space-x-1">
                       <span>Median Price</span>
-                      <ArrowUpDown className="w-3 h-3 text-slate-400" />
+                      <ArrowUpDown className="w-3 h-3 text-slate-500" />
                     </div>
                   </th>
-                  <th onClick={() => handleSort('ytdSalesRaw')} className="py-3.5 px-4 cursor-pointer hover:bg-slate-900 text-right">
+                  <th onClick={() => handleSort('ytdSalesRaw')} className="py-3.5 px-4 cursor-pointer hover:bg-slate-200/80 text-right">
                     <div className="flex items-center justify-end space-x-1">
                       <span>YTD Sales Vol</span>
-                      <ArrowUpDown className="w-3 h-3 text-slate-400" />
+                      <ArrowUpDown className="w-3 h-3 text-slate-500" />
                     </div>
                   </th>
-                  <th onClick={() => handleSort('homesSoldYtd')} className="py-3.5 px-4 cursor-pointer hover:bg-slate-900 text-right">
+                  <th onClick={() => handleSort('homesSoldYtd')} className="py-3.5 px-4 cursor-pointer hover:bg-slate-200/80 text-right">
                     <div className="flex items-center justify-end space-x-1">
                       <span>Sold YTD</span>
-                      <ArrowUpDown className="w-3 h-3 text-slate-400" />
+                      <ArrowUpDown className="w-3 h-3 text-slate-500" />
                     </div>
                   </th>
-                  <th onClick={() => handleSort('pendingHomes')} className="py-3.5 px-4 cursor-pointer hover:bg-slate-900 text-right">
+                  <th onClick={() => handleSort('pendingHomes')} className="py-3.5 px-4 cursor-pointer hover:bg-slate-200/80 text-right">
                     <div className="flex items-center justify-end space-x-1">
                       <span>Pending</span>
-                      <ArrowUpDown className="w-3 h-3 text-slate-400" />
+                      <ArrowUpDown className="w-3 h-3 text-slate-500" />
                     </div>
                   </th>
-                  <th onClick={() => handleSort('yoyGrowth')} className="py-3.5 px-5 cursor-pointer hover:bg-slate-900 text-right">
+                  <th onClick={() => handleSort('yoyGrowth')} className="py-3.5 px-5 cursor-pointer hover:bg-slate-200/80 text-right">
                     <div className="flex items-center justify-end space-x-1">
                       <span>YoY %</span>
-                      <ArrowUpDown className="w-3 h-3 text-slate-400" />
+                      <ArrowUpDown className="w-3 h-3 text-slate-500" />
                     </div>
                   </th>
                 </tr>
