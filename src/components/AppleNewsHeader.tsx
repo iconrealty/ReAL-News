@@ -63,7 +63,7 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
                 <span>ReaL</span>
                 <span className="text-5xl sm:text-6xl lg:text-7xl font-black leading-none pl-0.5">.</span>
               </h1>
-              <p className="text-xs sm:text-sm font-black uppercase tracking-wider text-[#8E8E93] font-sans">
+              <p className="text-2xl sm:text-3xl lg:text-4xl font-black uppercase tracking-tight text-[#8E8E93] font-sans leading-none pt-1">
                 {monthDay}
               </p>
             </button>
