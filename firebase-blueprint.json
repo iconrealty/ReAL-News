@@ -1,0 +1,29 @@
+{
+  "entities": {
+    "articles": {
+      "title": "Articles",
+      "description": "Local municipal and county news articles retained for 14 days",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "subtitle": { "type": "string" },
+        "category": { "type": "string" },
+        "cityName": { "type": "string" },
+        "publisher": { "type": "string" },
+        "publisherLogo": { "type": "string" },
+        "publishedAt": { "type": "string" },
+        "createdAtMs": { "type": "number" },
+        "readTime": { "type": "string" },
+        "heroImage": { "type": "string" },
+        "sourceUrl": { "type": "string" },
+        "sourceCitation": { "type": "string" },
+        "isBreaking": { "type": "boolean" },
+        "isFeatured": { "type": "boolean" },
+        "keyTakeaways": { "type": "array", "items": { "type": "string" } },
+        "content": { "type": "string" }
+      },
+      "required": ["id", "title", "category", "cityName", "createdAtMs"]
+    }
+  }
+}

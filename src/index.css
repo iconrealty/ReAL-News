@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+@theme {
+  --font-serif: -apple-system-ui-serif, 'New York', 'Newsreader', Georgia, serif;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-mono: 'SF Mono', ui-monospace, Menlo, Monaco, Consolas, monospace;
+}
+
+/* Custom scrollbar and article reader typography helpers */
+.prose p {
+  line-height: 1.75;
+  margin-bottom: 1.25rem;
+  letter-spacing: -0.01em;
+}
+
+.custom-map-pin {
+  background: transparent;
+  border: none;
+}

@@ -1,0 +1,167 @@
+import React from 'react';
+import { CityInfo, NewsCategory } from '../types';
+import { Bookmark, Search, MapPin } from 'lucide-react';
+
+interface AppleNewsHeaderProps {
+  currentCity: CityInfo;
+  onOpenCitySelector: () => void;
+  onSelectCity?: (city: CityInfo) => void;
+  activeCategory: NewsCategory;
+  onSelectCategory: (cat: NewsCategory) => void;
+  savedCount: number;
+  onOpenSavedDrawer: () => void;
+  searchQuery: string;
+  onSearchChange: (q: string) => void;
+  onResetToMain?: () => void;
+}
+
+export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
+  currentCity,
+  onOpenCitySelector,
+  activeCategory,
+  onSelectCategory,
+  savedCount,
+  onOpenSavedDrawer,
+  searchQuery,
+  onSearchChange,
+  onResetToMain,
+}) => {
+  const monthDay = new Date().toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+  }).toUpperCase();
+
+  const categories: { id: NewsCategory; label: string }[] = [
+    { id: 'all', label: 'Top Stories' },
+    { id: 'real-estate', label: 'Real Estate & Housing' },
+    { id: 'restaurants-bars', label: 'New Restaurants & Bars' },
+    { id: 'city-developments', label: 'City Developments' },
+    { id: 'market-trends', label: 'Market Trends' },
+  ];
+
+  return (
+    <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200/90 text-slate-900 shadow-xs pt-safe">
+      <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 py-2.5 sm:py-3.5 space-y-2.5 sm:space-y-3">
+        
+        {/* Top Header Row: Title on Left, Controls on Right */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+          
+          {/* Top Left: Logo & Title with "RL." typography */}
+          <div className="flex items-center justify-between sm:justify-start gap-3">
+            <button 
+              onClick={() => {
+                if (onResetToMain) {
+                  onResetToMain();
+                }
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="text-left space-y-0.5 group cursor-pointer focus:outline-none active:scale-98 transition-transform"
+              title="Return to Main Top Stories Feed"
+            >
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black font-sans tracking-tighter text-slate-950 group-hover:text-[#FA2D48] transition-colors leading-none flex items-baseline">
+                <span>ReaL</span>
+                <span className="text-5xl sm:text-6xl lg:text-7xl font-black leading-none pl-0.5">.</span>
+              </h1>
+              <p className="text-xs sm:text-sm font-black uppercase tracking-wider text-[#8E8E93] font-sans">
+                {monthDay}
+              </p>
+            </button>
+
+            {/* Mobile Top Controls (Quick City & Bookmarks) */}
+            <div className="flex items-center gap-2 sm:hidden">
+              <button
+                onClick={onOpenCitySelector}
+                className="px-3 py-1.5 rounded-full bg-[#EBEBEF] active:bg-slate-300 border border-slate-200/80 text-slate-800 font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer min-h-[38px]"
+              >
+                <MapPin className="w-3.5 h-3.5 text-[#FA2D48]" />
+                <span className="truncate max-w-[90px]">{currentCity.name}</span>
+              </button>
+
+              <button
+                onClick={onOpenSavedDrawer}
+                className="p-2.5 rounded-full bg-[#EBEBEF] active:bg-slate-300 border border-slate-200/80 text-slate-800 relative transition-all cursor-pointer min-h-[38px] min-w-[38px] flex items-center justify-center"
+                title="Saved Bookmarks"
+              >
+                <Bookmark className="w-4 h-4 text-[#FA2D48]" />
+                {savedCount > 0 && (
+                  <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#FA2D48] text-white font-bold text-[10px] flex items-center justify-center shadow-xs">
+                    {savedCount}
+                  </span>
+                )}
+              </button>
+            </div>
+          </div>
+
+          {/* Search & Controls (Tablet / Desktop Row) */}
+          <div className="flex items-center space-x-2 w-full sm:w-auto">
+            {/* Search Input */}
+            <div className="relative flex-1 sm:w-64">
+              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-2.5" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => onSearchChange(e.target.value)}
+                placeholder="Search news, venues..."
+                className="w-full bg-[#EBEBEF] focus:bg-white border border-transparent focus:border-[#FA2D48] focus:ring-1 focus:ring-[#FA2D48] rounded-full pl-9 pr-4 py-2 text-xs text-slate-900 placeholder-slate-400 transition-all outline-none min-h-[38px]"
+              />
+            </div>
+
+            {/* Desktop City Selector Button */}
+            <button
+              onClick={onOpenCitySelector}
+              className="hidden sm:flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-[#EBEBEF] hover:bg-slate-200 border border-slate-200 text-slate-700 font-bold text-xs transition-all shrink-0 cursor-pointer"
+            >
+              <MapPin className="w-3.5 h-3.5 text-[#FA2D48]" />
+              <span>{currentCity.name}</span>
+            </button>
+
+            {/* Desktop Saved Bookmarks Button */}
+            <button
+              onClick={onOpenSavedDrawer}
+              className="hidden sm:flex p-2.5 rounded-full bg-[#EBEBEF] hover:bg-slate-200 border border-slate-200 text-slate-700 relative transition-all cursor-pointer shrink-0"
+              title="Saved Bookmarks"
+            >
+              <Bookmark className="w-4 h-4 text-[#FA2D48]" />
+              {savedCount > 0 && (
+                <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#FA2D48] text-white font-bold text-[10px] flex items-center justify-center shadow-xs">
+                  {savedCount}
+                </span>
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Mini Pills Horizontal Tabs */}
+        <div className="pt-2 border-t border-slate-100 overflow-x-auto scrollbar-none -mx-3.5 px-3.5 sm:mx-0 sm:px-0">
+          <div className="flex items-center space-x-2 py-0.5 min-w-max">
+            {categories.map((cat) => {
+              const isActive = activeCategory === cat.id;
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => {
+                    if (cat.id === 'all' && onResetToMain) {
+                      onResetToMain();
+                    } else {
+                      onSelectCategory(cat.id);
+                    }
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className={`px-3.5 py-2 rounded-full text-xs font-semibold transition-all cursor-pointer shrink-0 active:scale-95 touch-manipulation min-h-[36px] flex items-center ${
+                    isActive
+                      ? 'bg-[#FA2D48] text-white shadow-xs font-bold'
+                      : 'bg-[#EBEBEF] text-slate-700 hover:text-slate-900 active:bg-slate-300 border border-transparent'
+                  }`}
+                >
+                  {cat.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+      </div>
+    </header>
+  );
+};
+
