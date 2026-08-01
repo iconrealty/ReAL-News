@@ -19,7 +19,7 @@ export const ArticleReaderModal: React.FC<ArticleReaderModalProps> = ({
   onToggleBookmark,
   onShowToast,
 }) => {
-  const [fontSize, setFontSize] = useState<FontSize>('md');
+  const [fontSize, setFontSize] = useState<FontSize>('xl');
   const [showMenu, setShowMenu] = useState(false);
 
   if (!article) return null;
@@ -36,16 +36,16 @@ export const ArticleReaderModal: React.FC<ArticleReaderModalProps> = ({
   const fontSizes: FontSize[] = ['sm', 'md', 'lg', 'xl'];
   const fontSizeLabels: Record<FontSize, string> = {
     sm: 'Small',
-    md: 'Default',
+    md: 'Medium',
     lg: 'Large',
-    xl: 'Extra Large',
+    xl: 'Extra Large (Default)',
   };
 
   const bodyFontSizeClass: Record<FontSize, string> = {
-    sm: 'text-xs sm:text-sm leading-relaxed',
-    md: 'text-sm sm:text-base leading-relaxed',
-    lg: 'text-base sm:text-lg leading-relaxed',
-    xl: 'text-lg sm:text-xl leading-relaxed',
+    sm: 'text-sm sm:text-base leading-relaxed',
+    md: 'text-base sm:text-lg leading-relaxed',
+    lg: 'text-lg sm:text-xl leading-relaxed',
+    xl: 'text-xl sm:text-2xl leading-relaxed font-sans text-slate-900',
   };
 
   const decreaseFontSize = () => {
@@ -145,16 +145,16 @@ export const ArticleReaderModal: React.FC<ArticleReaderModalProps> = ({
           
 
           {/* Header Title & Subtitle */}
-          <div className="space-y-3">
+          <div className="space-y-4">
             <div className="flex items-center space-x-2 flex-wrap gap-1">
-              <span className="text-xs font-mono text-slate-500">{article.publishedAt}</span>
+              <span className="text-sm font-mono text-slate-600 font-bold">{article.publishedAt}</span>
             </div>
 
-            <h1 className="text-3xl sm:text-4xl font-black font-serif text-slate-900 tracking-tight leading-tight">
+            <h1 className="text-3xl sm:text-5xl font-black font-serif text-black tracking-tight leading-tight">
               {cleanText(article.title)}
             </h1>
 
-            <p className="text-base sm:text-lg text-slate-600 font-sans leading-relaxed border-l-2 border-slate-300 pl-4 py-1 italic">
+            <p className="text-lg sm:text-2xl text-slate-800 font-sans leading-relaxed border-l-4 border-[#FA2D48] pl-4 py-1.5 font-bold italic">
               {cleanText(article.subtitle)}
             </p>
           </div>
@@ -190,9 +190,9 @@ export const ArticleReaderModal: React.FC<ArticleReaderModalProps> = ({
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-full bg-slate-900 text-white hover:bg-slate-800 text-xs font-semibold tracking-tight transition-all duration-200 group hover:shadow-md active:scale-95 cursor-pointer shrink-0"
-              title={`Visit Official ${article.cityName} Portal`}
+              title={`Visit Official ${article.cityName} Site`}
             >
-              <span>Visit Official City Portal</span>
+              <span>Visit Official City Site</span>
               <ArrowUpRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
             </a>
           </div>

@@ -171,18 +171,10 @@ export function App() {
         
         {/* Apple Style City Masthead Hero Banner */}
         <div className="relative rounded-3xl bg-white border border-slate-200/90 p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xs">
-          <div className="space-y-2 max-w-2xl">
-            <div className="flex items-center space-x-2 text-xs font-mono text-[#FA2D48] uppercase tracking-widest font-bold">
-              <span>{currentCity.state} EDITION</span>
-              <span>•</span>
-              <span>{currentCity.name} METRO INTELLIGENCE</span>
-            </div>
+          <div className="max-w-2xl">
             <h2 className="text-3xl sm:text-4xl font-black font-serif text-slate-900 tracking-tight">
-              {currentCity.name} City Pulse & Real Estate Chronicle
+              {currentCity.name}
             </h2>
-            <p className="text-sm text-slate-600 font-sans">
-              {currentCity.tagline}
-            </p>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-2.5 w-full sm:w-auto shrink-0">
@@ -215,9 +207,9 @@ export function App() {
           </section>
         )}
 
-        {/* Section 1: Real Estate & Housing Market Pulse */}
+        {/* Section 1: Real Estate & Housing Market */}
         <NewsGridSection
-          title={`Real Estate & Housing Pulse in ${currentCity.name}`}
+          title={`Real Estate & Housing in ${currentCity.name}`}
           icon={<Building2 className="w-5 h-5 text-amber-600" />}
           articles={realEstateArticles.length > 0 ? realEstateArticles : remainingArticles.slice(0, 3)}
           onSelectArticle={setSelectedArticle}

@@ -12,98 +12,98 @@ export const CITIES: CityInfo[] = [
     id: 'irvine',
     name: 'Irvine',
     state: 'CA',
-    tagline: 'Official City Portal: Great Park Master Plan, Spectrum Innovation & Green Housing',
+    tagline: 'Official City Site: Great Park Master Plan, Spectrum Innovation & Green Housing',
     image: 'https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&w=1200&q=80',
   },
   {
     id: 'costa-mesa',
     name: 'Costa Mesa',
     state: 'CA',
-    tagline: 'Official City Portal: Arts District Master Plan, South Coast Plaza & Housing Element',
+    tagline: 'Official City Site: Arts District Master Plan, South Coast Plaza & Housing Element',
     image: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80',
   },
   {
     id: 'newport-beach',
     name: 'Newport Beach',
     state: 'CA',
-    tagline: 'Official City Portal: Harbor Dredging, Coastal Zoning & Balboa Island Updates',
+    tagline: 'Official City Site: Harbor Dredging, Coastal Zoning & Balboa Island Updates',
     image: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1200&q=80',
   },
   {
     id: 'orange',
     name: 'Orange',
     state: 'CA',
-    tagline: 'Official City Portal: Old Towne Orange Plaza Preservation & Chapman Campus Planning',
+    tagline: 'Official City Site: Old Towne Orange Plaza Preservation & Chapman Campus Planning',
     image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1200&q=80',
   },
   {
     id: 'huntington-beach',
     name: 'Huntington Beach',
     state: 'CA',
-    tagline: 'Official City Portal: Pier Plaza Revitalization, Beach Protection & Main St Downtown',
+    tagline: 'Official City Site: Pier Plaza Revitalization, Beach Protection & Main St Downtown',
     image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80',
   },
   {
     id: 'laguna-beach',
     name: 'Laguna Beach',
     state: 'CA',
-    tagline: 'Official City Portal: Coastal Bluff Preservation, Artist Colony & Downtown Promenade',
+    tagline: 'Official City Site: Coastal Bluff Preservation, Artist Colony & Downtown Promenade',
     image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
   },
   {
     id: 'anaheim',
     name: 'Anaheim',
     state: 'CA',
-    tagline: 'Official City Portal: $4B ocVIBE District, Anaheim Hills Housing & Resort Corridor',
+    tagline: 'Official City Site: $4B ocVIBE District, Anaheim Hills Housing & Resort Corridor',
     image: 'https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?auto=format&fit=crop&w=1200&q=80',
   },
   {
     id: 'dana-point',
     name: 'Dana Point',
     state: 'CA',
-    tagline: 'Official City Portal: $500M Harbor Revitalization, Lantern District & Marina Slips',
+    tagline: 'Official City Site: $500M Harbor Revitalization, Lantern District & Marina Slips',
     image: 'https://images.unsplash.com/photo-1506966953602-c20cc11f75e3?auto=format&fit=crop&w=1200&q=80',
   },
   {
     id: 'san-clemente',
     name: 'San Clemente',
     state: 'CA',
-    tagline: 'Official City Portal: Spanish Village by the Sea, Pier Bowl Preservation & Beach Trails',
+    tagline: 'Official City Site: Spanish Village by the Sea, Pier Bowl Preservation & Beach Trails',
     image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80',
   },
   {
     id: 'fullerton',
     name: 'Fullerton',
     state: 'CA',
-    tagline: 'Official City Portal: Downtown Historic Plaza, University Corridor & Parks Initiative',
+    tagline: 'Official City Site: Downtown Historic Plaza, University Corridor & Parks Initiative',
     image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=80',
   },
   {
     id: 'mission-viejo',
     name: 'Mission Viejo',
     state: 'CA',
-    tagline: 'Official City Portal: Core City Center Project, Lake Mission Viejo & Civic Center',
+    tagline: 'Official City Site: Core City Center Project, Lake Mission Viejo & Civic Center',
     image: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1200&q=80',
   },
   {
     id: 'lake-forest',
     name: 'Lake Forest',
     state: 'CA',
-    tagline: 'Official City Portal: Civic Center Campus, Sports Park Expansion & Business Parks',
+    tagline: 'Official City Site: Civic Center Campus, Sports Park Expansion & Business Parks',
     image: 'https://images.unsplash.com/photo-1449844908441-8829872d2607?auto=format&fit=crop&w=1200&q=80',
   },
   {
     id: 'tustin',
     name: 'Tustin',
     state: 'CA',
-    tagline: 'Official City Portal: Tustin Legacy Park District, Historic Old Town & Innovation Campus',
+    tagline: 'Official City Site: Tustin Legacy Park District, Historic Old Town & Innovation Campus',
     image: 'https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?auto=format&fit=crop&w=1200&q=80',
   },
   {
     id: 'san-juan-capistrano',
     name: 'San Juan Capistrano',
     state: 'CA',
-    tagline: 'Official City Portal: Historic Downtown District, Mission Preservation & Farm Corridors',
+    tagline: 'Official City Site: Historic Downtown District, Mission Preservation & Farm Corridors',
     image: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1200&q=80',
   },
 ];
@@ -116,7 +116,7 @@ export const INITIAL_ARTICLES: NewsArticle[] = [
     subtitle: 'Official County Government Report funds major corridor upgrades connecting Irvine, Costa Mesa, Newport Beach, and City of Orange.',
     category: 'city-developments',
     cityName: 'Orange County',
-    publisher: 'County of Orange Official Government Portal',
+    publisher: 'County of Orange Official Government Site',
     publisherLogo: '🏛️',
     publishedAt: 'Today at 08:00 AM',
     readTime: '5 min read',
@@ -132,7 +132,7 @@ export const INITIAL_ARTICLES: NewsArticle[] = [
     ],
     content: `The County of Orange Board of Supervisors has officially approved a milestone $140 million regional infrastructure strategy during its regular meeting at the County Administration South building in Santa Ana.
 
-According to official public records published on the County portal, the multi-city framework prioritizes high-capacity transit corridors and smart signal synchronization linking key urban hubs including Irvine, Costa Mesa, Newport Beach, and Orange.
+According to official public records published on the County site, the multi-city framework prioritizes high-capacity transit corridors and smart signal synchronization linking key urban hubs including Irvine, Costa Mesa, Newport Beach, and Orange.
 
 "This landmark countywide initiative ensures seamless mobility, environmental protection, and economic integration across central and coastal Orange County," declared the Board Chairman in the official county release.
 
@@ -152,7 +152,7 @@ Key highlights include expanded electric bus transit routes, regional storm drai
     subtitle: 'Official City Council Report approves harbor maintenance to safeguard marine navigation, Balboa Island seawalls, and dock safety.',
     category: 'city-developments',
     cityName: 'Newport Beach',
-    publisher: 'City of Newport Beach Official Municipal Portal',
+    publisher: 'City of Newport Beach Official Municipal Site',
     publisherLogo: '🏛️',
     publishedAt: 'Today at 09:30 AM',
     readTime: '4 min read',
@@ -168,7 +168,7 @@ Key highlights include expanded electric bus transit routes, regional storm drai
     ],
     content: `The City Council of Newport Beach has officially approved a $22 million capital improvement package targeting Newport Harbor sediment management and seawall structural preservation.
 
-According to official public works documentation released on the City's municipal portal, the initiative will restore navigational depth across channels serving Lido Isle, Balboa Peninsula, and Mariners Mile.
+According to official public works documentation released on the City's municipal site, the initiative will restore navigational depth across channels serving Lido Isle, Balboa Peninsula, and Mariners Mile.
 
 "Maintaining the depth and coastal resilience of Newport Harbor is vital to protecting public safety, private boat slips, and municipal marine infrastructure," stated the Newport Beach City Manager in the official briefing.
 
@@ -188,7 +188,7 @@ Additionally, public dock access points along Balboa Island and the Fun Zone boa
     subtitle: 'Official Irvine City Council resolution authorizes groundbreaking on $1B+ municipal urban park master plan.',
     category: 'city-developments',
     cityName: 'Irvine',
-    publisher: 'City of Irvine Official Municipal Portal',
+    publisher: 'City of Irvine Official Municipal Site',
     publisherLogo: '🏛️',
     publishedAt: 'Yesterday at 04:15 PM',
     readTime: '5 min read',
@@ -241,7 +241,7 @@ Sustainability guidelines published by the City mandate 100% recycled water irri
     ],
     content: `The City Council of Costa Mesa has formally adopted the Arts District & Urban Village Master Plan update, establishing a forward-thinking zoning framework for the city's central cultural hub.
 
-As detailed in official notices published on the municipal portal, the ordinance enables property owners near South Coast Plaza and Segerstrom Center to develop pedestrian-friendly residential apartments above ground-floor dining and retail.
+As detailed in official notices published on the municipal site, the ordinance enables property owners near South Coast Plaza and Segerstrom Center to develop pedestrian-friendly residential apartments above ground-floor dining and retail.
 
 "Costa Mesa is proud to be the City of the Arts," stated the Costa Mesa Development Services Director. "Our updated Housing Element ensures new residential units are built in walkable, transit-oriented centers with direct access to fine art, dining, and open space."`,
     realEstateData: {
@@ -276,7 +276,7 @@ As detailed in official notices published on the municipal portal, the ordinance
     ],
     content: `The City of Huntington Beach has released its official Downtown & Pier Plaza Revitalization Plan following formal approval by the City Council.
 
-Published on the municipal government portal, the public works initiative funds sweeping beautification of the historic 1,850-foot Huntington Beach Pier entrance, Main Street pedestrian walkways, and beachfront amphitheater facilities.
+Published on the municipal government site, the public works initiative funds sweeping beautification of the historic 1,850-foot Huntington Beach Pier entrance, Main Street pedestrian walkways, and beachfront amphitheater facilities.
 
 "Huntington Beach Pier is a globally recognized landmark," said the Huntington Beach Mayor. "This investment enhances visitor safety, supports our local merchants, and preserves Surf City USA's heritage for future generations."`,
     venueDetails: {
@@ -329,7 +329,7 @@ Simultaneously, the City finalized permanent status for the Promenade on Forest 
     subtitle: 'Anaheim City Council ratifies development agreements for 95-acre entertainment hub around Honda Center and ARTIC.',
     category: 'city-developments',
     cityName: 'Anaheim',
-    publisher: 'City of Anaheim Municipal Portal',
+    publisher: 'City of Anaheim Municipal Site',
     publisherLogo: '🏛️',
     publishedAt: '6 hours ago',
     readTime: '5 min read',
@@ -343,7 +343,7 @@ Simultaneously, the City finalized permanent status for the Promenade on Forest 
       'Integrates 1,500 residential units, 35 restaurants, a 5,700-capacity concert hall, and 20 acres of public parks.',
       'Directly connects to ARTIC regional rail terminal and Santa Ana River bike trail network.'
     ],
-    content: `In an official meeting streamed on the City of Anaheim's public portal, the Anaheim City Council granted final approval for the ocVIBE master development agreement.
+    content: `In an official meeting streamed on the City of Anaheim's public site, the Anaheim City Council granted final approval for the ocVIBE master development agreement.
 
 The 95-acre project surrounding the Honda Center creates a walkable urban center featuring public plazas, boutique hotels, market halls, and residential housing.
 
@@ -379,7 +379,7 @@ The 95-acre project surrounding the Honda Center creates a walkable urban center
     ],
     content: `The City of Dana Point has issued an official progress briefing on the $500 million public-private partnership transforming Dana Point Harbor into a modern marine venue.
 
-As detailed on the municipal portal, construction teams are installing floating dock fingers, upgrading whale watching vessel docks, and laying foundation work for the new harbor dining village.
+As detailed on the municipal site, construction teams are installing floating dock fingers, upgrading whale watching vessel docks, and laying foundation work for the new harbor dining village.
 
 "Dana Point Harbor is the crown jewel of South Orange County," stated the City Manager. "This project balances modern boat slip amenities with public park access and classic coastal California charm."`,
     realEstateData: {
@@ -449,7 +449,7 @@ The City Council authorized public works teams to deposit over 250,000 cubic yar
     ],
     content: `The City Council of Fullerton has officially approved the Downtown District Enhancement Initiative, aimed at boosting economic vitality in historic downtown Fullerton.
 
-As reported on the municipal portal, the municipal investment funds decorative brick crosswalks, outdoor cafe seating expansions, and historic storefront restoration grants.
+As reported on the municipal site, the municipal investment funds decorative brick crosswalks, outdoor cafe seating expansions, and historic storefront restoration grants.
 
 "Downtown Fullerton is renowned for its rich history, vibrant dining, and music culture," stated Fullerton economic development representatives.`,
     venueDetails: {
@@ -502,7 +502,7 @@ The City Council resolution ensures that all commercial renovations within the n
     subtitle: 'Official municipal report highlights $35M investment in walkable civic gathering spaces near La Paz Road.',
     category: 'city-developments',
     cityName: 'Mission Viejo',
-    publisher: 'City of Mission Viejo Official Portal',
+    publisher: 'City of Mission Viejo Official Site',
     publisherLogo: '🏛️',
     publishedAt: '1 day ago',
     readTime: '4 min read',
@@ -516,7 +516,7 @@ The City Council resolution ensures that all commercial renovations within the n
       'Creates a 5-acre civic plaza with outdoor dining, community garden amphitheater, and splash pad parks.',
       'Integrates public trails connecting directly to Lake Mission Viejo beaches and recreation docks.'
     ],
-    content: `The City Council of Mission Viejo has authorized Phase 1 construction for the Core City Center project, as announced on the municipal portal.
+    content: `The City Council of Mission Viejo has authorized Phase 1 construction for the Core City Center project, as announced on the municipal site.
 
 The initiative transforms city-owned land into a vibrant civic square with coffee shops, community pavilions, and open green space.
 
@@ -550,7 +550,7 @@ The initiative transforms city-owned land into a vibrant civic square with coffe
       'Adds lighted synthetic turf fields, pickleball courts, and native oak tree shade structures.',
       'Updated zoning for commercial technology parks along Towne Centre Drive.'
     ],
-    content: `As published on the municipal portal, the City Council of Lake Forest has approved expanding the Lake Forest Sports Park—one of Orange County's largest municipal recreation facilities.
+    content: `As published on the municipal site, the City Council of Lake Forest has approved expanding the Lake Forest Sports Park—one of Orange County's largest municipal recreation facilities.
 
 The expansion introduces additional sports courts, expanded playground zones, and high-efficiency solar lighting for evening youth leagues.`,
     realEstateData: {
@@ -583,7 +583,7 @@ The expansion introduces additional sports courts, expanded playground zones, an
       'Expands Veterans Sports Park and the Tustin Legacy Central Park regional trail system.',
       'Connects the historic Tustin Hangar district to the District at Tustin Legacy shopping center.'
     ],
-    content: `The City of Tustin has issued an official development update for Tustin Legacy on the municipal portal. The 1,600-acre master-planned community on the site of the former Marine Corps Air Station continues its transformation into a model urban ecosystem with parks, housing, and bioscience commercial space.`,
+    content: `The City of Tustin has issued an official development update for Tustin Legacy on the municipal site. The 1,600-acre master-planned community on the site of the former Marine Corps Air Station continues its transformation into a model urban ecosystem with parks, housing, and bioscience commercial space.`,
     venueDetails: {
       name: 'Tustin Legacy Central Park & Civic Campus',
       type: 'development',
