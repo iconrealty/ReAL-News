@@ -53,7 +53,9 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
                 if (onResetToMain) {
                   onResetToMain();
                 } else {
-                  window.location.reload();
+                  const origin = window.location.origin;
+                  const pathname = window.location.pathname;
+                  window.location.href = `${origin}${pathname}?refresh=${Date.now()}`;
                 }
               }}
               className="text-left space-y-0.5 group cursor-pointer focus:outline-none active:scale-95 transition-transform touch-manipulation select-none"

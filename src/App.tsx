@@ -40,7 +40,11 @@ export function App() {
     setIsCitySelectorOpen(false);
     setIsSavedDrawerOpen(false);
     window.scrollTo({ top: 0, behavior: 'instant' });
-    window.location.reload();
+    
+    // Force a complete browser refresh with timestamp cache-buster to fetch new app versions on mobile & desktop
+    const origin = window.location.origin;
+    const pathname = window.location.pathname;
+    window.location.href = `${origin}${pathname}?refresh=${Date.now()}`;
   };
 
   // Sync bookmarks to localStorage
