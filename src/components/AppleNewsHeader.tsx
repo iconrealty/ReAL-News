@@ -33,11 +33,11 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
 
   const categories: { id: NewsCategory; label: string }[] = [
     { id: 'all', label: 'Top Stories' },
+    { id: 'market-trends', label: 'Market Trends' },
+    { id: 'mortgage-calculator', label: 'Mortgage Calculator' },
     { id: 'real-estate', label: 'Real Estate & Housing' },
     { id: 'restaurants-bars', label: 'New Restaurants & Bars' },
     { id: 'city-developments', label: 'City Developments' },
-    { id: 'market-trends', label: 'Market Trends' },
-    { id: 'mortgage-calculator', label: 'Mortgage Calculator' },
   ];
 
   return (
