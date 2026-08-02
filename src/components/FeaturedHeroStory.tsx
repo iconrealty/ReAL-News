@@ -34,10 +34,6 @@ export const FeaturedHeroStory: React.FC<FeaturedHeroStoryProps> = ({
         </h2>
       </div>
 
-      {/* Footer CTA */}
-      <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-slate-500">
-        <span className="text-slate-400 font-medium">{article.readTime || '3 min read'}</span>
-      </div>
     </div>
   );
 };

@@ -74,8 +74,6 @@ export const ArticleReaderModal: React.FC<ArticleReaderModalProps> = ({
         <div className="flex items-center justify-between p-4 px-6 border-b border-slate-200 bg-white/95 backdrop-blur-md sticky top-0 z-20">
           <div className="flex items-center space-x-2 text-xs text-slate-500">
             <span className="font-extrabold text-slate-900 text-sm">{article.cityName}, CA</span>
-            <span className="text-slate-300">•</span>
-            <span className="font-medium text-slate-600">{cleanText(article.publisher)}</span>
           </div>
 
           <div className="flex items-center space-x-2">
@@ -149,8 +147,6 @@ export const ArticleReaderModal: React.FC<ArticleReaderModalProps> = ({
           <div className="space-y-4">
             <div className="flex items-center space-x-2 flex-wrap gap-2 text-xs font-semibold text-slate-500">
               <span className="bg-slate-100 text-slate-700 px-2.5 py-1 rounded-full font-bold">{article.publishedAt}</span>
-              <span>•</span>
-              <span>{article.readTime}</span>
             </div>
 
             <h1 className="text-2xl sm:text-4xl font-black text-slate-950 tracking-tight leading-tight">
