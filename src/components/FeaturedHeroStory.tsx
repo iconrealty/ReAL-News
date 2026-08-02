@@ -20,29 +20,23 @@ export const FeaturedHeroStory: React.FC<FeaturedHeroStoryProps> = ({
       {/* Header Metadata Row */}
       <div className="flex items-center justify-between text-xs text-slate-600 pb-3 border-b border-slate-100 font-sans">
         <div className="flex items-center space-x-2">
-          <span className="font-bold text-[#FA2D48] text-sm">{cleanText(article.publisher)}</span>
+          <span className="font-extrabold text-slate-900 text-sm tracking-tight">{article.cityName}, CA</span>
           <span>•</span>
-          <span className="text-slate-600 font-semibold">{article.cityName}, CA</span>
+          <span className="text-slate-500 font-medium">{cleanText(article.publisher)}</span>
         </div>
         <span className="text-slate-400 text-xs font-semibold">{article.publishedAt}</span>
       </div>
 
-      {/* Main Title & Subtitle */}
-      <div className="space-y-2">
+      {/* Main Title */}
+      <div>
         <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-950 tracking-tight leading-snug group-hover:text-[#FA2D48] transition-colors">
           {cleanText(article.title)}
         </h2>
-        {article.subtitle && (
-          <p className="text-base font-medium text-slate-600 leading-relaxed line-clamp-3">
-            {cleanText(article.subtitle)}
-          </p>
-        )}
       </div>
 
       {/* Footer CTA */}
       <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-slate-500">
         <span className="text-slate-400 font-medium">{article.readTime || '3 min read'}</span>
-        <span className="text-[#FA2D48]">Read Full Article →</span>
       </div>
     </div>
   );

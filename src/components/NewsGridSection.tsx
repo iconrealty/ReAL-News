@@ -40,27 +40,20 @@ export const NewsGridSection: React.FC<NewsGridSectionProps> = ({
             >
               {/* Content */}
               <div className="space-y-2.5">
-                <div className="flex items-center justify-between text-xs text-slate-500">
-                  <span className="font-bold text-[#FA2D48] truncate">{cleanText(article.publisher)}</span>
-                  <span className="text-slate-500 font-semibold">{article.cityName}</span>
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-bold text-slate-900 text-sm truncate">{article.cityName}</span>
+                  <span className="text-slate-500 font-medium text-xs truncate pl-2">{cleanText(article.publisher)}</span>
                 </div>
 
                 {/* Title */}
                 <h4 className="text-lg font-bold text-slate-900 group-hover:text-[#FA2D48] transition-colors leading-snug">
                   {cleanText(article.title)}
                 </h4>
-
-                {article.subtitle && (
-                  <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">
-                    {cleanText(article.subtitle)}
-                  </p>
-                )}
               </div>
 
               {/* Card Footer */}
               <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
                 <span className="font-medium">{article.publishedAt}</span>
-                <span className="text-[#FA2D48] font-bold group-hover:underline">Read Story →</span>
               </div>
             </div>
           );

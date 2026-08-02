@@ -73,9 +73,9 @@ export const ArticleReaderModal: React.FC<ArticleReaderModalProps> = ({
         {/* Top Floating Control Bar */}
         <div className="flex items-center justify-between p-4 px-6 border-b border-slate-200 bg-white/95 backdrop-blur-md sticky top-0 z-20">
           <div className="flex items-center space-x-2 text-xs text-slate-500">
-            <span className="font-bold text-[#FA2D48] text-sm">{cleanText(article.publisher)}</span>
+            <span className="font-extrabold text-slate-900 text-sm">{article.cityName}, CA</span>
             <span className="text-slate-300">•</span>
-            <span className="font-semibold text-slate-600">{article.cityName}</span>
+            <span className="font-medium text-slate-600">{cleanText(article.publisher)}</span>
           </div>
 
           <div className="flex items-center space-x-2">
