@@ -616,188 +616,203 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
 
           </div>
 
-          {/* 4. Optional Extra Expenses Section (Property Taxes, Insurance, HOA) */}
-          <div className="pt-4 border-t border-slate-100 space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h4 className="text-sm font-black text-slate-900">
-                  Taxes, Insurance & HOA Dues
-                </h4>
-              </div>
+          {/* 4. Optional Extra Expenses Section (Property Taxes, Insurance, HOA, PMI) */}
+          <div className="pt-4 border-t border-slate-100 space-y-3">
+            <div className="flex items-center justify-between px-1">
+              <h4 className="text-sm font-black text-slate-900">
+                Taxes, Insurance & HOA
+              </h4>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div className="bg-slate-50/70 border border-slate-200/80 rounded-2xl divide-y divide-slate-200/60 overflow-hidden">
               
-              {/* Yearly Property Taxes */}
-              <div className={`p-3.5 rounded-2xl transition-all border space-y-2.5 ${includeTaxes ? 'bg-white border-slate-200 shadow-2xs' : 'bg-slate-50/70 border-slate-200/60'}`}>
-                <div className="flex items-center justify-between gap-1">
-                  <div className="flex items-center space-x-2">
-                    <AppleToggle
-                      enabled={includeTaxes}
-                      onChange={setIncludeTaxes}
-                      label="Include Property Taxes"
-                      id="taxes-toggle"
-                    />
-                    <label htmlFor="taxes-toggle" className="text-[11px] font-black text-slate-800 uppercase tracking-wider cursor-pointer">
+              {/* Row 1: Property Taxes */}
+              <div className={`p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-colors ${includeTaxes ? 'bg-white' : ''}`}>
+                <div className="flex items-center space-x-3 shrink-0">
+                  <AppleToggle
+                    enabled={includeTaxes}
+                    onChange={setIncludeTaxes}
+                    label="Include Property Taxes"
+                    id="taxes-toggle"
+                  />
+                  <div>
+                    <label htmlFor="taxes-toggle" className="text-xs font-black text-slate-900 cursor-pointer block">
                       Property Taxes
                     </label>
-                  </div>
-
-                  <div className="flex items-center gap-0.5 bg-slate-100 p-0.5 rounded-md text-[10px]">
-                    <button
-                      type="button"
-                      onClick={() => toggleTaxMode('percent')}
-                      className={`px-1.5 py-0.5 rounded ${yearlyTaxesMode === 'percent' ? 'bg-[#FA2D48] text-white font-bold' : 'text-slate-600'}`}
-                    >
-                      %
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => toggleTaxMode('dollar')}
-                      className={`px-1.5 py-0.5 rounded ${yearlyTaxesMode === 'dollar' ? 'bg-[#FA2D48] text-white font-bold' : 'text-slate-600'}`}
-                    >
-                      $
-                    </button>
+                    <span className="text-[10px] text-slate-400 font-medium">Yearly tax rate or dollar amount</span>
                   </div>
                 </div>
 
-                <div className={`relative flex items-center transition-opacity ${includeTaxes ? 'opacity-100' : 'opacity-50'}`}>
-                  {yearlyTaxesMode === 'dollar' && (
-                    <span className="absolute left-3 text-slate-400 font-bold text-xs">$</span>
-                  )}
-                  <input
-                    id="yearly-taxes-input"
-                    type="number"
-                    value={yearlyTaxesMode === 'percent' ? yearlyTaxesPercent : yearlyTaxesDollar}
-                    onChange={(e) => {
-                      const raw = e.target.value;
-                      const val = raw === '' ? '' : Number(raw);
-                      if (yearlyTaxesMode === 'percent') {
-                        handleTaxPercentChange(val);
-                      } else {
-                        handleTaxDollarChange(val);
-                      }
-                    }}
-                    className={`w-full py-2 rounded-xl bg-slate-50 border border-slate-200 focus:border-[#FA2D48] font-bold text-slate-900 text-sm outline-none ${
-                      yearlyTaxesMode === 'dollar' ? 'pl-7 pr-3' : 'pl-3 pr-7'
-                    }`}
-                    step={yearlyTaxesMode === 'percent' ? '0.1' : '500'}
-                  />
-                  {yearlyTaxesMode === 'percent' && (
-                    <span className="absolute right-3 text-slate-400 font-bold text-xs">%</span>
-                  )}
-                </div>
+                <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto">
+                  <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-0.5 bg-slate-100 p-0.5 rounded-lg text-[10px]">
+                      <button
+                        type="button"
+                        onClick={() => toggleTaxMode('percent')}
+                        className={`px-2 py-0.5 rounded-md font-bold transition-all ${yearlyTaxesMode === 'percent' ? 'bg-[#FA2D48] text-white shadow-2xs' : 'text-slate-600'}`}
+                      >
+                        %
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => toggleTaxMode('dollar')}
+                        className={`px-2 py-0.5 rounded-md font-bold transition-all ${yearlyTaxesMode === 'dollar' ? 'bg-[#FA2D48] text-white shadow-2xs' : 'text-slate-600'}`}
+                      >
+                        $
+                      </button>
+                    </div>
 
-                <div className="text-[10px]">
-                  <span className={`font-semibold ${includeTaxes ? 'text-slate-600' : 'text-slate-400'}`}>
-                    {includeTaxes ? `$${Math.round(rawMonthlyTaxes).toLocaleString()}/mo` : '$0/mo'}
-                  </span>
-                </div>
-              </div>
-
-              {/* Yearly Insurance */}
-              <div className={`p-3.5 rounded-2xl transition-all border space-y-2.5 ${includeInsurance ? 'bg-white border-slate-200 shadow-2xs' : 'bg-slate-50/70 border-slate-200/60'}`}>
-                <div className="flex items-center justify-between gap-1">
-                  <div className="flex items-center space-x-2">
-                    <AppleToggle
-                      enabled={includeInsurance}
-                      onChange={setIncludeInsurance}
-                      label="Include Home Insurance"
-                      id="insurance-toggle"
-                    />
-                    <label htmlFor="insurance-toggle" className="text-[11px] font-black text-slate-800 uppercase tracking-wider cursor-pointer">
-                      Insurance ($)
-                    </label>
-                  </div>
-                </div>
-
-                <div className={`relative flex items-center transition-opacity ${includeInsurance ? 'opacity-100' : 'opacity-50'}`}>
-                  <span className="absolute left-3 text-slate-400 font-bold text-xs">$</span>
-                  <input
-                    id="yearly-insurance-input"
-                    type="number"
-                    value={yearlyInsurance}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      setYearlyInsurance(val === '' ? '' : Number(val));
-                    }}
-                    className="w-full pl-7 pr-3 py-2 rounded-xl bg-slate-50 border border-slate-200 focus:border-[#FA2D48] font-bold text-slate-900 text-sm outline-none"
-                    step="100"
-                  />
-                </div>
-
-                <div className="text-[10px]">
-                  <span className={`font-semibold ${includeInsurance ? 'text-slate-600' : 'text-slate-400'}`}>
-                    {includeInsurance ? `$${Math.round(rawMonthlyInsurance).toLocaleString()}/mo` : '$0/mo'}
-                  </span>
-                </div>
-              </div>
-
-              {/* Monthly HOA Dues */}
-              <div className={`p-3.5 rounded-2xl transition-all border space-y-2.5 ${includeHoa ? 'bg-white border-slate-200 shadow-2xs' : 'bg-slate-50/70 border-slate-200/60'}`}>
-                <div className="flex items-center justify-between gap-1">
-                  <div className="flex items-center space-x-2">
-                    <AppleToggle
-                      enabled={includeHoa}
-                      onChange={setIncludeHoa}
-                      label="Include HOA Dues"
-                      id="hoa-toggle"
-                    />
-                    <label htmlFor="hoa-toggle" className="text-[11px] font-black text-slate-800 uppercase tracking-wider cursor-pointer">
-                      Monthly HOA ($)
-                    </label>
-                  </div>
-                </div>
-
-                <div className={`relative flex items-center transition-opacity ${includeHoa ? 'opacity-100' : 'opacity-50'}`}>
-                  <span className="absolute left-3 text-slate-400 font-bold text-xs">$</span>
-                  <input
-                    id="monthly-hoa-input"
-                    type="number"
-                    value={monthlyHoa}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      setMonthlyHoa(val === '' ? '' : Number(val));
-                    }}
-                    className="w-full pl-7 pr-3 py-2 rounded-xl bg-slate-50 border border-slate-200 focus:border-[#FA2D48] font-bold text-slate-900 text-sm outline-none"
-                    step="25"
-                  />
-                </div>
-
-                <div className="text-[10px]">
-                  <span className={`font-semibold ${includeHoa ? 'text-slate-600' : 'text-slate-400'}`}>
-                    {includeHoa ? `$${Math.round(rawMonthlyHoa).toLocaleString()}/mo` : '$0/mo'}
-                  </span>
-                </div>
-              </div>
-
-              {/* PMI Option (Active when down payment < 20%) */}
-              {downPaymentActualPct < 20 && (
-                <div className={`p-3.5 rounded-2xl transition-all border space-y-2.5 ${includePmi ? 'bg-white border-slate-200 shadow-2xs' : 'bg-slate-50/70 border-slate-200/60'}`}>
-                  <div className="flex items-center justify-between gap-1">
-                    <div className="flex items-center space-x-2">
-                      <AppleToggle
-                        enabled={includePmi}
-                        onChange={setIncludePmi}
-                        label="Include PMI"
-                        id="pmi-toggle"
+                    <div className={`relative flex items-center transition-opacity w-28 ${includeTaxes ? 'opacity-100' : 'opacity-50'}`}>
+                      {yearlyTaxesMode === 'dollar' && (
+                        <span className="absolute left-2.5 text-slate-400 font-bold text-xs">$</span>
+                      )}
+                      <input
+                        id="yearly-taxes-input"
+                        type="number"
+                        value={yearlyTaxesMode === 'percent' ? yearlyTaxesPercent : yearlyTaxesDollar}
+                        onChange={(e) => {
+                          const raw = e.target.value;
+                          const val = raw === '' ? '' : Number(raw);
+                          if (yearlyTaxesMode === 'percent') {
+                            handleTaxPercentChange(val);
+                          } else {
+                            handleTaxDollarChange(val);
+                          }
+                        }}
+                        className={`w-full py-1.5 rounded-xl bg-slate-100/80 border border-slate-200 focus:border-[#FA2D48] font-bold text-slate-900 text-xs outline-none ${
+                          yearlyTaxesMode === 'dollar' ? 'pl-6 pr-2' : 'pl-2.5 pr-6'
+                        }`}
+                        step={yearlyTaxesMode === 'percent' ? '0.1' : '500'}
                       />
-                      <label htmlFor="pmi-toggle" className="text-[11px] font-black text-slate-800 uppercase tracking-wider cursor-pointer">
-                        PMI
-                      </label>
+                      {yearlyTaxesMode === 'percent' && (
+                        <span className="absolute right-2.5 text-slate-400 font-bold text-xs">%</span>
+                      )}
                     </div>
                   </div>
 
-                  <div className="text-[10px] pt-1">
-                    <span className={`font-semibold ${includePmi ? 'text-slate-600' : 'text-slate-400'}`}>
-                      {includePmi ? `$${Math.round(monthlyPmi).toLocaleString()}/mo` : '$0/mo'}
+                  <div className="text-right w-20 shrink-0">
+                    <span className={`text-xs font-bold ${includeTaxes ? 'text-slate-900' : 'text-slate-400'}`}>
+                      {includeTaxes ? `$${Math.round(rawMonthlyTaxes).toLocaleString()}` : '$0'}
                     </span>
+                    <span className="text-[10px] text-slate-400 block font-normal">/mo</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Row 2: Homeowners Insurance */}
+              <div className={`p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-colors ${includeInsurance ? 'bg-white' : ''}`}>
+                <div className="flex items-center space-x-3 shrink-0">
+                  <AppleToggle
+                    enabled={includeInsurance}
+                    onChange={setIncludeInsurance}
+                    label="Include Home Insurance"
+                    id="insurance-toggle"
+                  />
+                  <div>
+                    <label htmlFor="insurance-toggle" className="text-xs font-black text-slate-900 cursor-pointer block">
+                      Homeowners Insurance
+                    </label>
+                    <span className="text-[10px] text-slate-400 font-medium">Yearly premium ($)</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto">
+                  <div className={`relative flex items-center transition-opacity w-32 ${includeInsurance ? 'opacity-100' : 'opacity-50'}`}>
+                    <span className="absolute left-2.5 text-slate-400 font-bold text-xs">$</span>
+                    <input
+                      id="yearly-insurance-input"
+                      type="number"
+                      value={yearlyInsurance}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setYearlyInsurance(val === '' ? '' : Number(val));
+                      }}
+                      className="w-full pl-6 pr-2.5 py-1.5 rounded-xl bg-slate-100/80 border border-slate-200 focus:border-[#FA2D48] font-bold text-slate-900 text-xs outline-none"
+                      step="100"
+                    />
+                  </div>
+
+                  <div className="text-right w-20 shrink-0">
+                    <span className={`text-xs font-bold ${includeInsurance ? 'text-slate-900' : 'text-slate-400'}`}>
+                      {includeInsurance ? `$${Math.round(rawMonthlyInsurance).toLocaleString()}` : '$0'}
+                    </span>
+                    <span className="text-[10px] text-slate-400 block font-normal">/mo</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Row 3: HOA Dues */}
+              <div className={`p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-colors ${includeHoa ? 'bg-white' : ''}`}>
+                <div className="flex items-center space-x-3 shrink-0">
+                  <AppleToggle
+                    enabled={includeHoa}
+                    onChange={setIncludeHoa}
+                    label="Include HOA Dues"
+                    id="hoa-toggle"
+                  />
+                  <div>
+                    <label htmlFor="hoa-toggle" className="text-xs font-black text-slate-900 cursor-pointer block">
+                      HOA Dues
+                    </label>
+                    <span className="text-[10px] text-slate-400 font-medium">Monthly association fee ($)</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto">
+                  <div className={`relative flex items-center transition-opacity w-32 ${includeHoa ? 'opacity-100' : 'opacity-50'}`}>
+                    <span className="absolute left-2.5 text-slate-400 font-bold text-xs">$</span>
+                    <input
+                      id="monthly-hoa-input"
+                      type="number"
+                      value={monthlyHoa}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setMonthlyHoa(val === '' ? '' : Number(val));
+                      }}
+                      className="w-full pl-6 pr-2.5 py-1.5 rounded-xl bg-slate-100/80 border border-slate-200 focus:border-[#FA2D48] font-bold text-slate-900 text-xs outline-none"
+                      step="25"
+                    />
+                  </div>
+
+                  <div className="text-right w-20 shrink-0">
+                    <span className={`text-xs font-bold ${includeHoa ? 'text-slate-900' : 'text-slate-400'}`}>
+                      {includeHoa ? `$${Math.round(rawMonthlyHoa).toLocaleString()}` : '$0'}
+                    </span>
+                    <span className="text-[10px] text-slate-400 block font-normal">/mo</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Row 4: PMI (when down payment < 20%) */}
+              {downPaymentActualPct < 20 && (
+                <div className={`p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-colors ${includePmi ? 'bg-white' : ''}`}>
+                  <div className="flex items-center space-x-3 shrink-0">
+                    <AppleToggle
+                      enabled={includePmi}
+                      onChange={setIncludePmi}
+                      label="Include PMI"
+                      id="pmi-toggle"
+                    />
+                    <div>
+                      <label htmlFor="pmi-toggle" className="text-xs font-black text-slate-900 cursor-pointer block">
+                        PMI (Private Mortgage Insurance)
+                      </label>
+                      <span className="text-[10px] text-slate-400 font-medium">Required for down payments &lt; 20%</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto">
+                    <div className="text-right w-20 shrink-0 ml-auto">
+                      <span className={`text-xs font-bold ${includePmi ? 'text-slate-900' : 'text-slate-400'}`}>
+                        {includePmi ? `$${Math.round(monthlyPmi).toLocaleString()}` : '$0'}
+                      </span>
+                      <span className="text-[10px] text-slate-400 block font-normal">/mo</span>
+                    </div>
                   </div>
                 </div>
               )}
 
             </div>
-
           </div>
 
         </div>
@@ -906,34 +921,7 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
 
           </div>
 
-          {/* Loan Overview Stats Grid */}
-          <div className="bg-white rounded-3xl border border-slate-200/90 p-5 sm:p-6 shadow-xs space-y-4">
-            <h4 className="text-xs font-black uppercase tracking-wider text-slate-500">
-              Lifetime Loan Cost Summary
-            </h4>
 
-            <div className="grid grid-cols-2 gap-3 text-xs">
-              <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100 space-y-0.5">
-                <span className="text-slate-500 font-semibold block">Loan Principal</span>
-                <span className="text-base font-black text-slate-900">${loanAmount.toLocaleString()}</span>
-              </div>
-
-              <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100 space-y-0.5">
-                <span className="text-slate-500 font-semibold block">Total Interest Paid</span>
-                <span className="text-base font-black text-[#FA2D48]">${Math.round(totalInterestPaid).toLocaleString()}</span>
-              </div>
-
-              <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100 space-y-0.5">
-                <span className="text-slate-500 font-semibold block">Total Payments</span>
-                <span className="text-base font-black text-slate-900">${Math.round(totalLoanRepayment).toLocaleString()}</span>
-              </div>
-
-              <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100 space-y-0.5">
-                <span className="text-slate-500 font-semibold block">Payoff Year</span>
-                <span className="text-base font-black text-slate-900">{estimatedPayoffYear}</span>
-              </div>
-            </div>
-          </div>
 
         </div>
 
