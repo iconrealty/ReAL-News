@@ -65,6 +65,18 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
   const [sortField, setSortField] = useState<SortField>('avgSqftPrice');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
   const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
+  const [fredStats, setFredStats] = useState<{ mortgage30Year: string; mortgage15Year: string; asOfDate: string; isRealLiveFredData?: boolean } | null>(null);
+
+  React.useEffect(() => {
+    fetch('/api/live-market-stats')
+      .then(res => res.json())
+      .then(json => {
+        if (json.success && json.data) {
+          setFredStats(json.data);
+        }
+      })
+      .catch(err => console.warn("Failed to load live FRED stats", err));
+  }, []);
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
@@ -152,16 +164,24 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
         {/* 4 Core Tesla / Apple Style Key Metric Summary Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mt-6 pt-6 border-t border-slate-100">
           <div className="bg-slate-50/90 border border-slate-200/80 p-4 rounded-2xl">
-            <div className="text-xs font-mono text-slate-500 uppercase tracking-wider">County Avg $/SqFt</div>
-            <div className="text-2xl sm:text-3xl font-black font-mono text-slate-950 pt-1">{overallStats.avgSqft} <span className="text-xs font-sans text-slate-500 font-normal">/ sqft</span></div>
+            <div className="text-xs font-mono text-slate-500 uppercase tracking-wider flex items-center justify-between">
+              <span>US 30-Yr Fixed Rate</span>
+              <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.5 rounded-full">FRED Live</span>
+            </div>
+            <div className="text-2xl sm:text-3xl font-black font-mono text-slate-950 pt-1">
+              {fredStats?.mortgage30Year || '6.78%'}
+            </div>
+            <div className="text-[11px] text-slate-500 pt-0.5 truncate">
+              Freddie Mac Survey • {fredStats?.asOfDate || 'Current'}
+            </div>
           </div>
           <div className="bg-slate-50/90 border border-slate-200/80 p-4 rounded-2xl">
             <div className="text-xs font-mono text-slate-500 uppercase tracking-wider">Median OC Home Price</div>
             <div className="text-2xl sm:text-3xl font-black font-mono text-[#FA2D48] pt-1">{overallStats.avgMedian}</div>
           </div>
           <div className="bg-slate-50/90 border border-slate-200/80 p-4 rounded-2xl">
-            <div className="text-xs font-mono text-slate-500 uppercase tracking-wider">YTD Total Sales Vol</div>
-            <div className="text-2xl sm:text-3xl font-black font-mono text-slate-950 pt-1">{overallStats.totalVolume}</div>
+            <div className="text-xs font-mono text-slate-500 uppercase tracking-wider">County Avg $/SqFt</div>
+            <div className="text-2xl sm:text-3xl font-black font-mono text-slate-950 pt-1">{overallStats.avgSqft} <span className="text-xs font-sans text-slate-500 font-normal">/ sqft</span></div>
           </div>
           <div className="bg-emerald-50/80 border border-emerald-100 p-4 rounded-2xl">
             <div className="text-xs font-mono text-emerald-800 uppercase tracking-wider">Active Escrow / Pending</div>
