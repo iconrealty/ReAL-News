@@ -804,100 +804,83 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
         <div className="lg:col-span-5 space-y-6">
           
           {/* Main Monthly Payment Card */}
-          <div className="bg-slate-950 text-white rounded-3xl p-6 sm:p-7 shadow-xl space-y-6 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-[#FA2D48]/20 rounded-full blur-3xl pointer-events-none" />
+          <div className="bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-7 shadow-xs space-y-6">
 
             {/* Header / Actions */}
-            <div className="flex items-center justify-between relative z-10">
-              <span className="text-xs font-black uppercase tracking-widest text-[#FA2D48] bg-[#FA2D48]/10 px-3 py-1 rounded-full border border-[#FA2D48]/30">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-black uppercase tracking-wider text-slate-500">
                 Estimated Monthly Payment
               </span>
               <button
                 onClick={handleShare}
-                className="text-xs font-bold text-slate-400 hover:text-white transition-colors cursor-pointer px-2.5 py-1 rounded-full hover:bg-slate-800 border border-slate-800"
+                className="text-xs font-bold text-slate-500 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 transition-colors cursor-pointer px-3 py-1 rounded-full"
                 title="Share or Copy Summary"
               >
-                {copiedSuccess ? <span className="text-emerald-400">Copied!</span> : <span>Share</span>}
+                {copiedSuccess ? <span className="text-emerald-600 font-extrabold">Copied!</span> : <span>Share</span>}
               </button>
             </div>
 
             {/* Big Price Display */}
-            <div className="space-y-1 relative z-10">
-              <div className="flex items-baseline space-x-1">
-                <span className="text-4xl sm:text-5xl font-black font-sans tracking-tight text-white">
+            <div className="space-y-1">
+              <div className="flex items-baseline space-x-1.5">
+                <span className="text-4xl sm:text-5xl font-black font-sans tracking-tight text-slate-900">
                   ${Math.round(totalMonthlyPayment).toLocaleString()}
                 </span>
                 <span className="text-slate-400 text-lg font-bold">/ mo</span>
               </div>
-              <p className="text-xs text-slate-400 font-medium">
-                Based on ${homePrice.toLocaleString()} home price & {interestRate}% interest
+              <p className="text-xs text-slate-500 font-medium">
+                Based on ${homePrice.toLocaleString()} home price &amp; {interestRate}% interest rate
               </p>
             </div>
 
-            {/* Visual Color Breakdown Bar */}
-            <div className="space-y-2 relative z-10">
-              <div className="h-3.5 w-full bg-slate-800 rounded-full overflow-hidden flex">
-                <div style={{ width: `${p_i_pct}%` }} className="bg-blue-500 h-full transition-all duration-300" title="Principal & Interest" />
-                <div style={{ width: `${tax_pct}%` }} className="bg-[#FA2D48] h-full transition-all duration-300" title="Property Taxes" />
-                <div style={{ width: `${ins_pct}%` }} className="bg-amber-400 h-full transition-all duration-300" title="Home Insurance" />
-                <div style={{ width: `${hoa_pct}%` }} className="bg-emerald-400 h-full transition-all duration-300" title="HOA Dues" />
-                {monthlyPmi > 0 && (
-                  <div style={{ width: `${pmi_pct}%` }} className="bg-purple-400 h-full transition-all duration-300" title="PMI" />
+            {/* Itemized Payment Breakdown List */}
+            <div className="space-y-2 pt-4 border-t border-slate-100">
+              <h4 className="text-xs font-extrabold uppercase tracking-wider text-slate-400">
+                Payment Breakdown
+              </h4>
+
+              <div className="space-y-2 text-xs">
+                <div className="flex items-center justify-between py-2 px-3 rounded-xl bg-slate-50 border border-slate-100">
+                  <span className="text-slate-600 font-medium">Principal &amp; Interest</span>
+                  <span className="font-bold text-slate-900">${Math.round(monthlyPrincipalInterest).toLocaleString()}</span>
+                </div>
+
+                {includeTaxes && (
+                  <div className="flex items-center justify-between py-2 px-3 rounded-xl bg-slate-50 border border-slate-100">
+                    <span className="text-slate-600 font-medium">Property Taxes</span>
+                    <span className="font-bold text-slate-900">${Math.round(monthlyTaxes).toLocaleString()}</span>
+                  </div>
                 )}
-              </div>
 
-              {/* Itemized Legend */}
-              <div className="grid grid-cols-2 gap-2 text-xs pt-2">
-                <div className="flex items-center justify-between p-2 rounded-xl bg-slate-900/80 border border-slate-800">
-                  <div className="flex items-center space-x-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-blue-500" />
-                    <span className="text-slate-300 font-medium">Principal & Interest</span>
+                {includeInsurance && (
+                  <div className="flex items-center justify-between py-2 px-3 rounded-xl bg-slate-50 border border-slate-100">
+                    <span className="text-slate-600 font-medium">Homeowners Insurance</span>
+                    <span className="font-bold text-slate-900">${Math.round(monthlyInsurance).toLocaleString()}</span>
                   </div>
-                  <span className="font-bold text-white">${Math.round(monthlyPrincipalInterest).toLocaleString()}</span>
-                </div>
+                )}
 
-                <div className="flex items-center justify-between p-2 rounded-xl bg-slate-900/80 border border-slate-800">
-                  <div className="flex items-center space-x-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#FA2D48]" />
-                    <span className="text-slate-300 font-medium">Property Taxes</span>
+                {includeHoa && (
+                  <div className="flex items-center justify-between py-2 px-3 rounded-xl bg-slate-50 border border-slate-100">
+                    <span className="text-slate-600 font-medium">HOA Dues</span>
+                    <span className="font-bold text-slate-900">${Math.round(effectiveMonthlyHoa).toLocaleString()}</span>
                   </div>
-                  <span className="font-bold text-white">${Math.round(monthlyTaxes).toLocaleString()}</span>
-                </div>
+                )}
 
-                <div className="flex items-center justify-between p-2 rounded-xl bg-slate-900/80 border border-slate-800">
-                  <div className="flex items-center space-x-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-amber-400" />
-                    <span className="text-slate-300 font-medium">Home Insurance</span>
-                  </div>
-                  <span className="font-bold text-white">${Math.round(monthlyInsurance).toLocaleString()}</span>
-                </div>
-
-                <div className="flex items-center justify-between p-2 rounded-xl bg-slate-900/80 border border-slate-800">
-                  <div className="flex items-center space-x-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
-                    <span className="text-slate-300 font-medium">HOA Dues</span>
-                  </div>
-                  <span className="font-bold text-white">${Math.round(monthlyHoa).toLocaleString()}</span>
-                </div>
-
-                {monthlyPmi > 0 && (
-                  <div className="col-span-2 flex items-center justify-between p-2 rounded-xl bg-slate-900/80 border border-slate-800">
-                    <div className="flex items-center space-x-2">
-                      <span className="w-2.5 h-2.5 rounded-full bg-purple-400" />
-                      <span className="text-slate-300 font-medium">Private Mortgage Insurance (PMI)</span>
-                    </div>
-                    <span className="font-bold text-white">${Math.round(monthlyPmi).toLocaleString()}</span>
+                {downPaymentActualPct < 20 && includePmi && monthlyPmi > 0 && (
+                  <div className="flex items-center justify-between py-2 px-3 rounded-xl bg-slate-50 border border-slate-100">
+                    <span className="text-slate-600 font-medium">PMI</span>
+                    <span className="font-bold text-slate-900">${Math.round(monthlyPmi).toLocaleString()}</span>
                   </div>
                 )}
               </div>
             </div>
 
             {/* Income qualification helper */}
-            <div className="pt-4 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
+            <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
               <span className="font-medium">
                 Est. Qualifying Income (28% DTI):
               </span>
-              <span className="font-bold text-white">
+              <span className="font-bold text-slate-900">
                 ~${Math.round(estRequiredIncomeMonthly * 12).toLocaleString()} / yr
               </span>
             </div>
