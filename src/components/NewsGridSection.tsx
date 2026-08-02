@@ -42,7 +42,6 @@ export const NewsGridSection: React.FC<NewsGridSectionProps> = ({
               <div className="space-y-2.5">
                 <div className="flex items-center justify-between text-xs">
                   <span className="font-bold text-slate-900 text-sm truncate">{article.cityName}</span>
-                  <span className="text-slate-500 font-medium text-xs truncate pl-2">{cleanText(article.publisher)}</span>
                 </div>
 
                 {/* Title */}

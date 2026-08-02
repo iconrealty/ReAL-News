@@ -19,11 +19,7 @@ export const FeaturedHeroStory: React.FC<FeaturedHeroStoryProps> = ({
     >
       {/* Header Metadata Row */}
       <div className="flex items-center justify-between text-xs text-slate-600 pb-3 border-b border-slate-100 font-sans">
-        <div className="flex items-center space-x-2">
-          <span className="font-extrabold text-slate-900 text-sm tracking-tight">{article.cityName}, CA</span>
-          <span>•</span>
-          <span className="text-slate-500 font-medium">{cleanText(article.publisher)}</span>
-        </div>
+        <span className="font-extrabold text-slate-900 text-sm tracking-tight">{article.cityName}, CA</span>
         <span className="text-slate-400 text-xs font-semibold">{article.publishedAt}</span>
       </div>
 
