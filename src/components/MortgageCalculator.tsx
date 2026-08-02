@@ -332,7 +332,6 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
   const handleShare = async () => {
     const lines = [
       `MORTGAGE PAYMENT ESTIMATE`,
-      `━━━━━━━━━━━━━━━━━━━━━━━━━━`,
       `• Home Price: $${homePrice.toLocaleString()}`,
       `• Down Payment: $${Math.round(calculatedDownPayment).toLocaleString()} (${downPaymentActualPct}%)`,
       `• Loan Amount: $${Math.round(loanAmount).toLocaleString()}`,
@@ -340,7 +339,6 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
       `• Loan Term: ${loanTermYears} Years`,
       ``,
       `ESTIMATED MONTHLY PAYMENT: $${Math.round(totalMonthlyPayment).toLocaleString()}/mo`,
-      `──────────────────────────`,
       `• Principal & Interest: $${Math.round(monthlyPrincipalInterest).toLocaleString()}`,
     ];
 
