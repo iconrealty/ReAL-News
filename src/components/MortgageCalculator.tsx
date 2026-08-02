@@ -565,14 +565,9 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
             
             {/* Interest Rate */}
             <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <label htmlFor="interest-rate-input" className="text-xs font-extrabold uppercase tracking-wider text-slate-700 block">
-                  Interest Rate (%)
-                </label>
-                <span className="text-[10px] bg-emerald-50 text-emerald-700 font-extrabold px-2 py-0.5 rounded-full border border-emerald-200">
-                  FRED Live: {fred30Num}%
-                </span>
-              </div>
+              <label htmlFor="interest-rate-input" className="text-xs font-extrabold uppercase tracking-wider text-slate-700 block">
+                Interest Rate (%)
+              </label>
               <div className="relative flex items-center">
                 <input
                   id="interest-rate-input"
@@ -635,12 +630,9 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                     label="Include Property Taxes"
                     id="taxes-toggle"
                   />
-                  <div>
-                    <label htmlFor="taxes-toggle" className="text-xs font-black text-slate-900 cursor-pointer block">
-                      Property Taxes
-                    </label>
-                    <span className="text-[10px] text-slate-400 font-medium">Yearly tax rate or dollar amount</span>
-                  </div>
+                  <label htmlFor="taxes-toggle" className="text-sm font-black text-slate-900 cursor-pointer block">
+                    Property Taxes
+                  </label>
                 </div>
 
                 <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto">
@@ -708,12 +700,9 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                     label="Include Home Insurance"
                     id="insurance-toggle"
                   />
-                  <div>
-                    <label htmlFor="insurance-toggle" className="text-xs font-black text-slate-900 cursor-pointer block">
-                      Homeowners Insurance
-                    </label>
-                    <span className="text-[10px] text-slate-400 font-medium">Yearly premium ($)</span>
-                  </div>
+                  <label htmlFor="insurance-toggle" className="text-sm font-black text-slate-900 cursor-pointer block">
+                    Homeowners Insurance
+                  </label>
                 </div>
 
                 <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto">
@@ -750,12 +739,9 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                     label="Include HOA Dues"
                     id="hoa-toggle"
                   />
-                  <div>
-                    <label htmlFor="hoa-toggle" className="text-xs font-black text-slate-900 cursor-pointer block">
-                      HOA Dues
-                    </label>
-                    <span className="text-[10px] text-slate-400 font-medium">Monthly association fee ($)</span>
-                  </div>
+                  <label htmlFor="hoa-toggle" className="text-sm font-black text-slate-900 cursor-pointer block">
+                    HOA Dues
+                  </label>
                 </div>
 
                 <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto">
@@ -793,12 +779,9 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                       label="Include PMI"
                       id="pmi-toggle"
                     />
-                    <div>
-                      <label htmlFor="pmi-toggle" className="text-xs font-black text-slate-900 cursor-pointer block">
-                        PMI (Private Mortgage Insurance)
-                      </label>
-                      <span className="text-[10px] text-slate-400 font-medium">Required for down payments &lt; 20%</span>
-                    </div>
+                    <label htmlFor="pmi-toggle" className="text-sm font-black text-slate-900 cursor-pointer block">
+                      PMI (Private Mortgage Insurance)
+                    </label>
                   </div>
 
                   <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto">
