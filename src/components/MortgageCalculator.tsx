@@ -626,7 +626,7 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               
               {/* Yearly Property Taxes */}
               <div className={`p-3.5 rounded-2xl transition-all border space-y-2.5 ${includeTaxes ? 'bg-white border-slate-200 shadow-2xs' : 'bg-slate-50/70 border-slate-200/60'}`}>
@@ -771,26 +771,32 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                 </div>
               </div>
 
-            </div>
+              {/* PMI Option (Active when down payment < 20%) */}
+              {downPaymentActualPct < 20 && (
+                <div className={`p-3.5 rounded-2xl transition-all border space-y-2.5 ${includePmi ? 'bg-white border-slate-200 shadow-2xs' : 'bg-slate-50/70 border-slate-200/60'}`}>
+                  <div className="flex items-center justify-between gap-1">
+                    <div className="flex items-center space-x-2">
+                      <AppleToggle
+                        enabled={includePmi}
+                        onChange={setIncludePmi}
+                        label="Include PMI"
+                        id="pmi-toggle"
+                      />
+                      <label htmlFor="pmi-toggle" className="text-[11px] font-black text-slate-800 uppercase tracking-wider cursor-pointer">
+                        PMI
+                      </label>
+                    </div>
+                  </div>
 
-            {/* PMI Toggle */}
-            {downPaymentActualPct < 20 && (
-              <div className="bg-amber-50 border border-amber-200/80 rounded-2xl p-3.5 flex items-center justify-between text-xs">
-                <div>
-                  <p className="font-extrabold text-amber-950">
-                    Private Mortgage Insurance (PMI)
-                  </p>
-                  <p className="text-amber-800 text-[11px]">
-                    Required for down payments under 20% (~${Math.round(monthlyPmi)}/mo)
-                  </p>
+                  <div className="text-[10px] pt-1">
+                    <span className={`font-semibold ${includePmi ? 'text-slate-600' : 'text-slate-400'}`}>
+                      {includePmi ? `$${Math.round(monthlyPmi).toLocaleString()}/mo` : '$0/mo'}
+                    </span>
+                  </div>
                 </div>
-                <AppleToggle
-                  enabled={includePmi}
-                  onChange={setIncludePmi}
-                  label="Include PMI"
-                />
-              </div>
-            )}
+              )}
+
+            </div>
 
           </div>
 
