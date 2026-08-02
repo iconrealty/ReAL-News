@@ -96,8 +96,6 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
   const [monthlyHoa, setMonthlyHoa] = useState<number | ''>(350); // $350/mo
   const [includePmi, setIncludePmi] = useState<boolean>(true);
 
-  // View state for Amortization vs Breakdown
-  const [activeTab, setActiveTab] = useState<'breakdown' | 'schedule'>('breakdown');
   const [copiedSuccess, setCopiedSuccess] = useState(false);
 
   // Synchronize Down Payment when Home Price or Mode changes
@@ -852,12 +850,12 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
 
             {/* Header / Actions */}
             <div className="flex items-center justify-between">
-              <span className="text-xs font-black uppercase tracking-wider text-slate-500">
+              <span className="text-xs font-black uppercase tracking-wider text-black">
                 Estimated Monthly Payment
               </span>
               <button
                 onClick={handleShare}
-                className="text-xs font-bold text-slate-500 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 transition-colors cursor-pointer px-3 py-1 rounded-full"
+                className="text-xs font-bold text-slate-700 hover:text-black bg-slate-100 hover:bg-slate-200 transition-colors cursor-pointer px-3 py-1 rounded-full"
                 title="Share or Copy Summary"
               >
                 {copiedSuccess ? <span className="text-emerald-600 font-extrabold">Copied!</span> : <span>Share</span>}
@@ -867,64 +865,64 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
             {/* Big Price Display */}
             <div className="space-y-1">
               <div className="flex items-baseline space-x-1.5">
-                <span className="text-4xl sm:text-5xl font-black font-sans tracking-tight text-slate-900">
+                <span className="text-4xl sm:text-5xl font-black font-sans tracking-tight text-black">
                   ${Math.round(totalMonthlyPayment).toLocaleString()}
                 </span>
-                <span className="text-slate-400 text-lg font-bold">/ mo</span>
+                <span className="text-black text-lg font-bold">/ mo</span>
               </div>
-              <p className="text-xs text-slate-500 font-medium">
+              <p className="text-xs text-black font-medium">
                 Based on ${homePrice.toLocaleString()} home price &amp; {interestRate}% interest rate
               </p>
             </div>
 
             {/* Itemized Payment Breakdown List */}
             <div className="space-y-2 pt-4 border-t border-slate-100">
-              <h4 className="text-xs font-extrabold uppercase tracking-wider text-slate-400">
+              <h4 className="text-xs font-black uppercase tracking-wider text-black">
                 Payment Breakdown
               </h4>
 
               <div className="space-y-2 text-xs">
                 <div className="flex items-center justify-between py-2 px-3 rounded-xl bg-slate-50 border border-slate-100">
-                  <span className="text-slate-600 font-medium">Principal &amp; Interest</span>
-                  <span className="font-bold text-slate-900">${Math.round(monthlyPrincipalInterest).toLocaleString()}</span>
+                  <span className="text-black font-semibold">Principal &amp; Interest</span>
+                  <span className="font-extrabold text-black">${Math.round(monthlyPrincipalInterest).toLocaleString()}</span>
                 </div>
 
                 {includeTaxes && (
                   <div className="flex items-center justify-between py-2 px-3 rounded-xl bg-slate-50 border border-slate-100">
-                    <span className="text-slate-600 font-medium">Property Taxes</span>
-                    <span className="font-bold text-slate-900">${Math.round(monthlyTaxes).toLocaleString()}</span>
+                    <span className="text-black font-semibold">Property Taxes</span>
+                    <span className="font-extrabold text-black">${Math.round(monthlyTaxes).toLocaleString()}</span>
                   </div>
                 )}
 
                 {includeInsurance && (
                   <div className="flex items-center justify-between py-2 px-3 rounded-xl bg-slate-50 border border-slate-100">
-                    <span className="text-slate-600 font-medium">Homeowners Insurance</span>
-                    <span className="font-bold text-slate-900">${Math.round(monthlyInsurance).toLocaleString()}</span>
+                    <span className="text-black font-semibold">Homeowners Insurance</span>
+                    <span className="font-extrabold text-black">${Math.round(monthlyInsurance).toLocaleString()}</span>
                   </div>
                 )}
 
                 {includeHoa && (
                   <div className="flex items-center justify-between py-2 px-3 rounded-xl bg-slate-50 border border-slate-100">
-                    <span className="text-slate-600 font-medium">HOA Dues</span>
-                    <span className="font-bold text-slate-900">${Math.round(effectiveMonthlyHoa).toLocaleString()}</span>
+                    <span className="text-black font-semibold">HOA Dues</span>
+                    <span className="font-extrabold text-black">${Math.round(effectiveMonthlyHoa).toLocaleString()}</span>
                   </div>
                 )}
 
                 {downPaymentActualPct < 20 && includePmi && monthlyPmi > 0 && (
                   <div className="flex items-center justify-between py-2 px-3 rounded-xl bg-slate-50 border border-slate-100">
-                    <span className="text-slate-600 font-medium">PMI</span>
-                    <span className="font-bold text-slate-900">${Math.round(monthlyPmi).toLocaleString()}</span>
+                    <span className="text-black font-semibold">PMI</span>
+                    <span className="font-extrabold text-black">${Math.round(monthlyPmi).toLocaleString()}</span>
                   </div>
                 )}
               </div>
             </div>
 
             {/* Income qualification helper */}
-            <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-              <span className="font-medium">
+            <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-black">
+              <span className="font-semibold">
                 Est. Qualifying Income (28% DTI):
               </span>
-              <span className="font-bold text-slate-900">
+              <span className="font-extrabold text-black">
                 ~${Math.round(estRequiredIncomeMonthly * 12).toLocaleString()} / yr
               </span>
             </div>
@@ -933,69 +931,6 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
 
 
 
-        </div>
-
-      </div>
-
-      {/* Bottom Amortization Schedule & Insights Drawer/Section */}
-      <div className="bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-8 shadow-xs space-y-6">
-        
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
-          <div>
-            <h3 className="text-xl font-black text-slate-950">
-              Yearly Amortization Schedule
-            </h3>
-            <p className="text-xs text-slate-500 font-medium">
-              See how your loan balance decreases and principal balance accumulates over {loanTermYears} years.
-            </p>
-          </div>
-
-          <div className="flex items-center space-x-2 bg-slate-100 p-1 rounded-2xl border border-slate-200 text-xs font-bold">
-            <button
-              onClick={() => setActiveTab('breakdown')}
-              className={`px-4 py-2 rounded-xl transition-all cursor-pointer ${
-                activeTab === 'breakdown'
-                  ? 'bg-white text-slate-900 shadow-2xs'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              Annual Summary
-            </button>
-            <button
-              onClick={() => setActiveTab('schedule')}
-              className={`px-4 py-2 rounded-xl transition-all cursor-pointer ${
-                activeTab === 'schedule'
-                  ? 'bg-white text-slate-900 shadow-2xs'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              First 5 Years
-            </button>
-          </div>
-        </div>
-
-        {/* Amortization Table */}
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs text-slate-700 font-sans border-collapse">
-            <thead>
-              <tr className="border-b border-slate-200 text-slate-400 uppercase tracking-wider font-extrabold text-[11px] bg-slate-50">
-                <th className="py-3 px-4 rounded-l-xl">Year</th>
-                <th className="py-3 px-4">Principal Paid</th>
-                <th className="py-3 px-4">Interest Paid</th>
-                <th className="py-3 px-4 rounded-r-xl">Remaining Balance</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {(activeTab === 'schedule' ? amortizationSchedule.slice(0, 5) : amortizationSchedule).map((row) => (
-                <tr key={row.year} className="hover:bg-slate-50/80 transition-colors">
-                  <td className="py-3.5 px-4 font-bold text-slate-900">Year {row.year}</td>
-                  <td className="py-3.5 px-4 font-semibold text-emerald-600">${row.principalPaid.toLocaleString()}</td>
-                  <td className="py-3.5 px-4 font-semibold text-[#FA2D48]">${row.interestPaid.toLocaleString()}</td>
-                  <td className="py-3.5 px-4 font-extrabold text-slate-900">${row.balance.toLocaleString()}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
         </div>
 
       </div>
