@@ -15,6 +15,34 @@ interface MortgageCalculatorProps {
 const PRICE_PRESETS = [750000, 1150000, 1500000, 2000000, 3000000];
 const DOWN_PERCENT_PRESETS = [3.5, 5, 10, 15, 20, 25, 30];
 
+interface AppleToggleProps {
+  enabled: boolean;
+  onChange: (enabled: boolean) => void;
+  label?: string;
+  id?: string;
+}
+
+const AppleToggle: React.FC<AppleToggleProps> = ({ enabled, onChange, label, id }) => (
+  <button
+    type="button"
+    role="switch"
+    aria-checked={enabled}
+    id={id}
+    onClick={() => onChange(!enabled)}
+    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:ring-offset-1 ${
+      enabled ? 'bg-emerald-500' : 'bg-slate-300'
+    }`}
+  >
+    <span className="sr-only">{label || 'Toggle option'}</span>
+    <span
+      aria-hidden="true"
+      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
+        enabled ? 'translate-x-5' : 'translate-x-0'
+      }`}
+    />
+  </button>
+);
+
 export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
   currentCity,
   fredStats,
@@ -54,6 +82,11 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
       setInterestRate(fred30Num);
     }
   }, [fred30Num]);
+
+  // Optional Extra Costs Toggles (iPhone/Apple style green/grey toggle, set by default to inactive false)
+  const [includeTaxes, setIncludeTaxes] = useState<boolean>(false);
+  const [includeInsurance, setIncludeInsurance] = useState<boolean>(false);
+  const [includeHoa, setIncludeHoa] = useState<boolean>(false);
 
   // Optional Extra Costs Inputs
   const [yearlyTaxesMode, setYearlyTaxesMode] = useState<'percent' | 'dollar'>('percent');
@@ -199,8 +232,8 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
     return isNaN(monthly) ? 0 : monthly;
   }, [loanAmount, numericInterestRate, loanTermYears]);
 
-  // Monthly Taxes
-  const monthlyTaxes = useMemo(() => {
+  // Monthly Taxes (Raw & Active)
+  const rawMonthlyTaxes = useMemo(() => {
     if (yearlyTaxesMode === 'percent') {
       const pct = yearlyTaxesPercent === '' ? 0 : yearlyTaxesPercent;
       return (numericHomePrice * (pct / 100)) / 12;
@@ -209,10 +242,27 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
     return dlr / 12;
   }, [numericHomePrice, yearlyTaxesMode, yearlyTaxesPercent, yearlyTaxesDollar]);
 
-  // Monthly Insurance
-  const monthlyInsurance = useMemo(() => {
+  const monthlyTaxes = useMemo(() => {
+    return includeTaxes ? rawMonthlyTaxes : 0;
+  }, [includeTaxes, rawMonthlyTaxes]);
+
+  // Monthly Insurance (Raw & Active)
+  const rawMonthlyInsurance = useMemo(() => {
     return numericYearlyInsurance / 12;
   }, [numericYearlyInsurance]);
+
+  const monthlyInsurance = useMemo(() => {
+    return includeInsurance ? rawMonthlyInsurance : 0;
+  }, [includeInsurance, rawMonthlyInsurance]);
+
+  // Monthly HOA (Raw & Active)
+  const rawMonthlyHoa = useMemo(() => {
+    return numericMonthlyHoa;
+  }, [numericMonthlyHoa]);
+
+  const effectiveMonthlyHoa = useMemo(() => {
+    return includeHoa ? rawMonthlyHoa : 0;
+  }, [includeHoa, rawMonthlyHoa]);
 
   // Monthly PMI (Private Mortgage Insurance if down payment < 20%)
   const monthlyPmi = useMemo(() => {
@@ -223,8 +273,8 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
 
   // Total Monthly Payment
   const totalMonthlyPayment = useMemo(() => {
-    return monthlyPrincipalInterest + monthlyTaxes + monthlyInsurance + numericMonthlyHoa + monthlyPmi;
-  }, [monthlyPrincipalInterest, monthlyTaxes, monthlyInsurance, numericMonthlyHoa, monthlyPmi]);
+    return monthlyPrincipalInterest + monthlyTaxes + monthlyInsurance + effectiveMonthlyHoa + monthlyPmi;
+  }, [monthlyPrincipalInterest, monthlyTaxes, monthlyInsurance, effectiveMonthlyHoa, monthlyPmi]);
 
   // Lifetime Loan Metrics
   const totalInterestPaid = useMemo(() => {
@@ -290,7 +340,7 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
   const p_i_pct = totalMonthlyPayment > 0 ? (monthlyPrincipalInterest / totalMonthlyPayment) * 100 : 0;
   const tax_pct = totalMonthlyPayment > 0 ? (monthlyTaxes / totalMonthlyPayment) * 100 : 0;
   const ins_pct = totalMonthlyPayment > 0 ? (monthlyInsurance / totalMonthlyPayment) * 100 : 0;
-  const hoa_pct = totalMonthlyPayment > 0 ? (monthlyHoa / totalMonthlyPayment) * 100 : 0;
+  const hoa_pct = totalMonthlyPayment > 0 ? (effectiveMonthlyHoa / totalMonthlyPayment) * 100 : 0;
   const pmi_pct = totalMonthlyPayment > 0 ? (monthlyPmi / totalMonthlyPayment) * 100 : 0;
 
   return (
@@ -353,6 +403,9 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                 setDownPaymentDollar(230000);
                 setInterestRate(fred30Num);
                 setLoanTermYears(30);
+                setIncludeTaxes(false);
+                setIncludeInsurance(false);
+                setIncludeHoa(false);
                 setYearlyTaxesPercent(1.1);
                 setYearlyTaxesDollar(12650);
                 setYearlyInsurance(1800);
@@ -566,17 +619,33 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
           {/* 4. Optional Extra Expenses Section (Property Taxes, Insurance, HOA) */}
           <div className="pt-4 border-t border-slate-100 space-y-4">
             <div className="flex items-center justify-between">
-              <h4 className="text-sm font-black text-slate-900">
-                <span>Taxes, Insurance & HOA Dues (Optional)</span>
-              </h4>
+              <div>
+                <h4 className="text-sm font-black text-slate-900">
+                  Taxes, Insurance & HOA Dues
+                </h4>
+                <p className="text-xs text-slate-500 font-medium">
+                  Toggle on/off to include or exclude in your estimated monthly payment calculation.
+                </p>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               
               {/* Yearly Property Taxes */}
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <label htmlFor="yearly-taxes-input" className="text-[11px] font-extrabold text-slate-600 uppercase">Yearly Tax</label>
+              <div className={`p-3.5 rounded-2xl transition-all border space-y-2.5 ${includeTaxes ? 'bg-white border-slate-200 shadow-2xs' : 'bg-slate-50/70 border-slate-200/60'}`}>
+                <div className="flex items-center justify-between gap-1">
+                  <div className="flex items-center space-x-2">
+                    <AppleToggle
+                      enabled={includeTaxes}
+                      onChange={setIncludeTaxes}
+                      label="Include Property Taxes"
+                      id="taxes-toggle"
+                    />
+                    <label htmlFor="taxes-toggle" className="text-[11px] font-black text-slate-800 uppercase tracking-wider cursor-pointer">
+                      Property Taxes
+                    </label>
+                  </div>
+
                   <div className="flex items-center gap-0.5 bg-slate-100 p-0.5 rounded-md text-[10px]">
                     <button
                       type="button"
@@ -595,7 +664,7 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                   </div>
                 </div>
 
-                <div className="relative flex items-center">
+                <div className={`relative flex items-center transition-opacity ${includeTaxes ? 'opacity-100' : 'opacity-50'}`}>
                   {yearlyTaxesMode === 'dollar' && (
                     <span className="absolute left-3 text-slate-400 font-bold text-xs">$</span>
                   )}
@@ -621,17 +690,34 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                     <span className="absolute right-3 text-slate-400 font-bold text-xs">%</span>
                   )}
                 </div>
-                <span className="text-[10px] text-slate-400 font-semibold block">
-                  ${Math.round(monthlyTaxes).toLocaleString()}/mo
-                </span>
+
+                <div className="flex items-center justify-between text-[10px]">
+                  <span className={`font-semibold ${includeTaxes ? 'text-slate-600' : 'text-slate-400'}`}>
+                    {includeTaxes ? `$${Math.round(rawMonthlyTaxes).toLocaleString()}/mo` : '$0/mo'}
+                  </span>
+                  <span className={`font-extrabold px-1.5 py-0.5 rounded-full ${includeTaxes ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200 text-slate-600'}`}>
+                    {includeTaxes ? 'Active' : 'Inactive'}
+                  </span>
+                </div>
               </div>
 
               {/* Yearly Insurance */}
-              <div className="space-y-1.5">
-                <label htmlFor="yearly-insurance-input" className="text-[11px] font-extrabold text-slate-600 uppercase block">
-                  Yearly Insurance ($)
-                </label>
-                <div className="relative flex items-center">
+              <div className={`p-3.5 rounded-2xl transition-all border space-y-2.5 ${includeInsurance ? 'bg-white border-slate-200 shadow-2xs' : 'bg-slate-50/70 border-slate-200/60'}`}>
+                <div className="flex items-center justify-between gap-1">
+                  <div className="flex items-center space-x-2">
+                    <AppleToggle
+                      enabled={includeInsurance}
+                      onChange={setIncludeInsurance}
+                      label="Include Home Insurance"
+                      id="insurance-toggle"
+                    />
+                    <label htmlFor="insurance-toggle" className="text-[11px] font-black text-slate-800 uppercase tracking-wider cursor-pointer">
+                      Insurance ($)
+                    </label>
+                  </div>
+                </div>
+
+                <div className={`relative flex items-center transition-opacity ${includeInsurance ? 'opacity-100' : 'opacity-50'}`}>
                   <span className="absolute left-3 text-slate-400 font-bold text-xs">$</span>
                   <input
                     id="yearly-insurance-input"
@@ -645,17 +731,34 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                     step="100"
                   />
                 </div>
-                <span className="text-[10px] text-slate-400 font-semibold block">
-                  ${Math.round(monthlyInsurance).toLocaleString()}/mo
-                </span>
+
+                <div className="flex items-center justify-between text-[10px]">
+                  <span className={`font-semibold ${includeInsurance ? 'text-slate-600' : 'text-slate-400'}`}>
+                    {includeInsurance ? `$${Math.round(rawMonthlyInsurance).toLocaleString()}/mo` : '$0/mo'}
+                  </span>
+                  <span className={`font-extrabold px-1.5 py-0.5 rounded-full ${includeInsurance ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200 text-slate-600'}`}>
+                    {includeInsurance ? 'Active' : 'Inactive'}
+                  </span>
+                </div>
               </div>
 
               {/* Monthly HOA Dues */}
-              <div className="space-y-1.5">
-                <label htmlFor="monthly-hoa-input" className="text-[11px] font-extrabold text-slate-600 uppercase block">
-                  Monthly HOA ($)
-                </label>
-                <div className="relative flex items-center">
+              <div className={`p-3.5 rounded-2xl transition-all border space-y-2.5 ${includeHoa ? 'bg-white border-slate-200 shadow-2xs' : 'bg-slate-50/70 border-slate-200/60'}`}>
+                <div className="flex items-center justify-between gap-1">
+                  <div className="flex items-center space-x-2">
+                    <AppleToggle
+                      enabled={includeHoa}
+                      onChange={setIncludeHoa}
+                      label="Include HOA Dues"
+                      id="hoa-toggle"
+                    />
+                    <label htmlFor="hoa-toggle" className="text-[11px] font-black text-slate-800 uppercase tracking-wider cursor-pointer">
+                      Monthly HOA ($)
+                    </label>
+                  </div>
+                </div>
+
+                <div className={`relative flex items-center transition-opacity ${includeHoa ? 'opacity-100' : 'opacity-50'}`}>
                   <span className="absolute left-3 text-slate-400 font-bold text-xs">$</span>
                   <input
                     id="monthly-hoa-input"
@@ -669,9 +772,15 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                     step="25"
                   />
                 </div>
-                <span className="text-[10px] text-slate-400 font-semibold block">
-                  Association Dues
-                </span>
+
+                <div className="flex items-center justify-between text-[10px]">
+                  <span className={`font-semibold ${includeHoa ? 'text-slate-600' : 'text-slate-400'}`}>
+                    {includeHoa ? `$${Math.round(rawMonthlyHoa).toLocaleString()}/mo` : '$0/mo'}
+                  </span>
+                  <span className={`font-extrabold px-1.5 py-0.5 rounded-full ${includeHoa ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200 text-slate-600'}`}>
+                    {includeHoa ? 'Active' : 'Inactive'}
+                  </span>
+                </div>
               </div>
 
             </div>
@@ -687,11 +796,10 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                     Required for down payments under 20% (~${Math.round(monthlyPmi)}/mo)
                   </p>
                 </div>
-                <input
-                  type="checkbox"
-                  checked={includePmi}
-                  onChange={(e) => setIncludePmi(e.target.checked)}
-                  className="w-4 h-4 accent-[#FA2D48] cursor-pointer"
+                <AppleToggle
+                  enabled={includePmi}
+                  onChange={setIncludePmi}
+                  label="Include PMI"
                 />
               </div>
             )}
