@@ -328,12 +328,58 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
     return schedule;
   }, [loanAmount, interestRate, loanTermYears, monthlyPrincipalInterest]);
 
-  // Share / Copy Link
-  const handleShare = () => {
-    const text = `Mortgage Estimate for $${homePrice.toLocaleString()}: $${Math.round(totalMonthlyPayment).toLocaleString()}/mo (${interestRate}% interest, ${loanTermYears}yr term, $${calculatedDownPayment.toLocaleString()} down)`;
-    navigator.clipboard.writeText(text);
-    setCopiedSuccess(true);
-    setTimeout(() => setCopiedSuccess(false), 2500);
+  // Share / Copy Text Breakdown
+  const handleShare = async () => {
+    const lines = [
+      `MORTGAGE PAYMENT ESTIMATE`,
+      `━━━━━━━━━━━━━━━━━━━━━━━━━━`,
+      `• Home Price: $${homePrice.toLocaleString()}`,
+      `• Down Payment: $${Math.round(calculatedDownPayment).toLocaleString()} (${downPaymentActualPct}%)`,
+      `• Loan Amount: $${Math.round(loanAmount).toLocaleString()}`,
+      `• Interest Rate: ${interestRate}%`,
+      `• Loan Term: ${loanTermYears} Years`,
+      ``,
+      `ESTIMATED MONTHLY PAYMENT: $${Math.round(totalMonthlyPayment).toLocaleString()}/mo`,
+      `──────────────────────────`,
+      `• Principal & Interest: $${Math.round(monthlyPrincipalInterest).toLocaleString()}`,
+    ];
+
+    if (includeTaxes) {
+      lines.push(`• Property Taxes: $${Math.round(monthlyTaxes).toLocaleString()}`);
+    }
+    if (includeInsurance) {
+      lines.push(`• Homeowners Insurance: $${Math.round(monthlyInsurance).toLocaleString()}`);
+    }
+    if (includeHoa && effectiveMonthlyHoa > 0) {
+      lines.push(`• HOA Dues: $${Math.round(effectiveMonthlyHoa).toLocaleString()}`);
+    }
+    if (downPaymentActualPct < 20 && includePmi && monthlyPmi > 0) {
+      lines.push(`• PMI: $${Math.round(monthlyPmi).toLocaleString()}`);
+    }
+
+    const shareText = lines.join('\n');
+
+    if (navigator.share && typeof navigator.share === 'function') {
+      try {
+        await navigator.share({
+          title: `Mortgage Estimate - $${homePrice.toLocaleString()}`,
+          text: shareText,
+        });
+        setCopiedSuccess(true);
+        setTimeout(() => setCopiedSuccess(false), 2500);
+        return;
+      } catch (err) {
+        // User cancelled share dialog or unsupported, fallback to clipboard
+      }
+    }
+
+    try {
+      await navigator.clipboard.writeText(shareText);
+      setCopiedSuccess(true);
+      setTimeout(() => setCopiedSuccess(false), 2500);
+    } catch (e) {
+      console.error('Failed to copy text', e);
+    }
   };
 
   // Percentages for payment visual bar
