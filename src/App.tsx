@@ -7,6 +7,7 @@ import { CitySelectorModal } from './components/CitySelectorModal';
 import { FeaturedHeroStory } from './components/FeaturedHeroStory';
 import { NewsGridSection } from './components/NewsGridSection';
 import { OrangeCountyMarketTrends } from './components/OrangeCountyMarketTrends';
+import { MortgageCalculator } from './components/MortgageCalculator';
 import { ArticleReaderModal } from './components/ArticleReaderModal';
 import { SavedArticlesDrawer } from './components/SavedArticlesDrawer';
 import { Sparkles, Building2, Utensils, Flame, Compass, ChevronRight } from 'lucide-react';
@@ -231,8 +232,16 @@ export function App() {
       {/* Main Layout Content */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-3.5 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-6 sm:space-y-10 pb-28 sm:pb-12">
         
-        {/* If Market Trends category is selected, render the dedicated Tesla/Apple Market Trends Dashboard */}
-        {activeCategory === 'market-trends' ? (
+        {/* Category Views */}
+        {activeCategory === 'mortgage-calculator' ? (
+          <MortgageCalculator
+            currentCity={currentCity}
+            onSelectCity={(city) => {
+              setCurrentCity(city);
+              showToast(`Selected ${city.name}`);
+            }}
+          />
+        ) : activeCategory === 'market-trends' ? (
           <OrangeCountyMarketTrends
             onSelectCity={(city) => {
               setCurrentCity(city);

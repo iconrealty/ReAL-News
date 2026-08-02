@@ -4,6 +4,7 @@ export type NewsCategory =
   | 'restaurants-bars' 
   | 'city-developments' 
   | 'market-trends' 
+  | 'mortgage-calculator'
   | 'lifestyle';
 
 export interface CityInfo {

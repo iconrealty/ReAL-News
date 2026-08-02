@@ -1,6 +1,6 @@
 import React from 'react';
 import { CityInfo, NewsCategory } from '../types';
-import { Bookmark, Search, MapPin } from 'lucide-react';
+import { Bookmark, Search } from 'lucide-react';
 
 interface AppleNewsHeaderProps {
   currentCity: CityInfo;
@@ -37,6 +37,7 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
     { id: 'restaurants-bars', label: 'New Restaurants & Bars' },
     { id: 'city-developments', label: 'City Developments' },
     { id: 'market-trends', label: 'Market Trends' },
+    { id: 'mortgage-calculator', label: 'Mortgage Calculator' },
   ];
 
   return (
@@ -70,19 +71,24 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
               </p>
             </button>
 
-            {/* Mobile Top Controls (Quick City & Bookmarks) */}
-            <div className="flex items-center gap-2 sm:hidden">
+            {/* Mobile Top Controls (Quick Mortgage Rate Feed & Bookmarks) */}
+            <div className="flex items-center gap-3 sm:hidden">
               <button
-                onClick={onOpenCitySelector}
-                className="px-3 py-1.5 rounded-full bg-[#EBEBEF] active:bg-slate-300 border border-slate-200/80 text-slate-800 font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer min-h-[38px]"
+                onClick={() => onSelectCategory('mortgage-calculator')}
+                className="text-right group cursor-pointer hover:opacity-80 transition-opacity"
+                title="30-Day Avg Mortgage Rate Feed - Click for Mortgage Calculator"
               >
-                <MapPin className="w-3.5 h-3.5 text-[#FA2D48]" />
-                <span className="truncate max-w-[90px]">{currentCity.name}</span>
+                <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#FA2D48] leading-none block">
+                  30-Yr Rate
+                </span>
+                <span className="text-xl font-black text-slate-950 font-sans tracking-tight leading-none group-hover:text-[#FA2D48] transition-colors pt-0.5 block">
+                  6.85%
+                </span>
               </button>
 
               <button
                 onClick={onOpenSavedDrawer}
-                className="p-2.5 rounded-full bg-[#EBEBEF] active:bg-slate-300 border border-slate-200/80 text-slate-800 relative transition-all cursor-pointer min-h-[38px] min-w-[38px] flex items-center justify-center"
+                className="p-2 rounded-full bg-[#EBEBEF] active:bg-slate-300 border border-slate-200/80 text-slate-800 relative transition-all cursor-pointer min-h-[38px] min-w-[38px] flex items-center justify-center"
                 title="Saved Bookmarks"
               >
                 <Bookmark className="w-4 h-4 text-[#FA2D48]" />
@@ -96,7 +102,21 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
           </div>
 
           {/* Search & Controls (Tablet / Desktop Row) */}
-          <div className="flex items-center space-x-2 w-full sm:w-auto">
+          <div className="flex items-center space-x-4 w-full sm:w-auto">
+            {/* Desktop 30-Day Mortgage Rate Display - Large Text Outside Pill */}
+            <button
+              onClick={() => onSelectCategory('mortgage-calculator')}
+              className="hidden sm:flex flex-col items-end text-right group cursor-pointer hover:opacity-80 transition-opacity shrink-0 px-1"
+              title="30-Day Avg Mortgage Rate Feed - Click for Mortgage Calculator"
+            >
+              <span className="text-[10px] font-black uppercase tracking-wider text-[#FA2D48] leading-none block">
+                Avg 30-Yr Rate
+              </span>
+              <span className="text-2xl lg:text-3xl font-black text-slate-950 font-sans tracking-tight leading-none group-hover:text-[#FA2D48] transition-colors pt-0.5 block">
+                6.85%
+              </span>
+            </button>
+
             {/* Search Input */}
             <div className="relative flex-1 sm:w-64">
               <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-2.5" />
@@ -109,15 +129,6 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
                 className="w-full bg-[#EBEBEF] focus:bg-white border border-transparent focus:border-[#FA2D48] focus:ring-1 focus:ring-[#FA2D48] rounded-full pl-9 pr-4 py-2 text-xs text-slate-900 placeholder-slate-400 transition-all outline-none min-h-[38px]"
               />
             </div>
-
-            {/* Desktop City Selector Button */}
-            <button
-              onClick={onOpenCitySelector}
-              className="hidden sm:flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-[#EBEBEF] hover:bg-slate-200 border border-slate-200 text-slate-700 font-bold text-xs transition-all shrink-0 cursor-pointer"
-            >
-              <MapPin className="w-3.5 h-3.5 text-[#FA2D48]" />
-              <span>{currentCity.name}</span>
-            </button>
 
             {/* Desktop Saved Bookmarks Button */}
             <button
