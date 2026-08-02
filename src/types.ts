@@ -89,16 +89,11 @@ export const CITY_ROOT_URLS: Record<string, string> = {
 };
 
 export function getCityRootUrl(cityName?: string, sourceUrl?: string): string {
+  if (sourceUrl && (sourceUrl.startsWith('http://') || sourceUrl.startsWith('https://'))) {
+    return sourceUrl;
+  }
   if (cityName && CITY_ROOT_URLS[cityName]) {
     return CITY_ROOT_URLS[cityName];
-  }
-  if (sourceUrl) {
-    try {
-      const url = new URL(sourceUrl);
-      return url.origin;
-    } catch {
-      // fallback
-    }
   }
   return 'https://www.ocgov.com';
 }

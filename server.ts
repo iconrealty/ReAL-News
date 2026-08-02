@@ -11,6 +11,59 @@ const rssParser = new Parser({
   }
 });
 
+function getTopicSpecificImage(title: string, category: string, index: number): string {
+  const lower = (title || '').toLowerCase();
+  
+  // Restaurant / Bar / Dining / Food
+  if (category === 'restaurants-bars' || lower.includes('restaurant') || lower.includes('dining') || lower.includes('bar') || lower.includes('chef') || lower.includes('cafe') || lower.includes('food') || lower.includes('baking') || lower.includes('menu') || lower.includes('eatery')) {
+    const restaurantImages = [
+      "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1200&q=80"
+    ];
+    return restaurantImages[index % restaurantImages.length];
+  }
+
+  // City Developments / Construction / Architecture / Infrastructure
+  if (category === 'city-developments' || lower.includes('development') || lower.includes('construction') || lower.includes('council') || lower.includes('project') || lower.includes('building') || lower.includes('park') || lower.includes('transit') || lower.includes('harbor') || lower.includes('renovation')) {
+    const developmentImages = [
+      "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1541888946425-d0fbb186a5b3?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1506966953602-c20cc11f75e3?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1200&q=80"
+    ];
+    return developmentImages[index % developmentImages.length];
+  }
+
+  // Market Trends / Financial / Rates
+  if (category === 'market-trends' || lower.includes('mortgage') || lower.includes('rate') || lower.includes('price') || lower.includes('market') || lower.includes('fed') || lower.includes('growth') || lower.includes('trend') || lower.includes('economy')) {
+    const marketImages = [
+      "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=1200&q=80"
+    ];
+    return marketImages[index % marketImages.length];
+  }
+
+  // Coastal / Beach
+  if (lower.includes('coast') || lower.includes('beach') || lower.includes('newport') || lower.includes('dana point') || lower.includes('laguna') || lower.includes('ocean')) {
+    const coastalImages = [
+      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1506966953602-c20cc11f75e3?auto=format&fit=crop&w=1200&q=80"
+    ];
+    return coastalImages[index % coastalImages.length];
+  }
+
+  // Default Real Estate / Residential
+  const homeImages = [
+    "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80"
+  ];
+  return homeImages[index % homeImages.length];
+}
+
 async function fetchLivePublicRssNews(cityName: string, category: string) {
   try {
     let queryCategory = 'real estate housing market development';
@@ -23,14 +76,6 @@ async function fetchLivePublicRssNews(cityName: string, category: string) {
     const feed = await rssParser.parseURL(feedUrl);
     
     if (feed.items && feed.items.length > 0) {
-      const heroImages = [
-        "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80",
-        "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80",
-        "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80",
-        "https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?auto=format&fit=crop&w=1200&q=80",
-        "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=80"
-      ];
-
       const mappedArticles = feed.items.slice(0, 5).map((item, index) => {
         let rawTitle = item.title || `${cityName} Real Estate Update`;
         let publisher = "Local News";
@@ -48,16 +93,18 @@ async function fetchLivePublicRssNews(cityName: string, category: string) {
         const rawSnippet = item.contentSnippet || item.content || `Live reported news coverage regarding ${cityName} real estate and city developments.`;
         const cleanSnippet = rawSnippet.replace(/<[^>]*>/g, '').trim();
 
+        const detectedCat = category === 'all' ? (index % 2 === 0 ? 'real-estate' : 'market-trends') : category;
+
         return {
           id: `news-rss-${Date.now()}-${index}`,
           title: rawTitle,
           subtitle: cleanSnippet.length > 180 ? cleanSnippet.substring(0, 180) + "..." : cleanSnippet,
-          category: category === 'all' ? (index % 2 === 0 ? 'real-estate' : 'market-trends') : category,
+          category: detectedCat,
           cityName: cityName,
           publisher: publisher,
           publishedAt: publishedAtStr,
           readTime: `${3 + (index % 3)} min read`,
-          heroImage: heroImages[index % heroImages.length],
+          heroImage: getTopicSpecificImage(rawTitle, detectedCat, index),
           sourceUrl: item.link || "https://news.google.com",
           sourceCitation: `Live Public Feed • ${publisher}`,
           isLivePublicRss: true,

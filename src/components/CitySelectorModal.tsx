@@ -87,8 +87,6 @@ export const CitySelectorModal: React.FC<CitySelectorModalProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
             {filteredCities.map((city) => {
               const isSelected = currentCity.id === city.id;
-              // Clean up price string to ensure no slash /
-              const formattedPrice = city.avgSqftPrice.replace(/\s*\/\s*/g, ' ');
               return (
                 <button
                   key={city.id}
@@ -105,9 +103,6 @@ export const CitySelectorModal: React.FC<CitySelectorModalProps> = ({
                   <div className="flex flex-col">
                     <span className="text-base sm:text-lg font-bold font-serif tracking-tight text-slate-950">
                       {city.name}
-                    </span>
-                    <span className="text-xs sm:text-sm font-sans font-medium text-slate-600 mt-0.5">
-                      Avg. {formattedPrice}
                     </span>
                   </div>
 

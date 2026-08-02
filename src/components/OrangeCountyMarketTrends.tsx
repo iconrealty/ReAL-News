@@ -61,7 +61,6 @@ interface OrangeCountyMarketTrendsProps {
 
 export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> = ({ onSelectCity }) => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedRegion, setSelectedRegion] = useState<string>('All');
   const [sortField, setSortField] = useState<SortField>('avgSqftPrice');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
   const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
@@ -91,8 +90,7 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
     return OC_MARKET_DATA.filter(city => {
       const q = searchQuery.toLowerCase().trim();
       const matchesSearch = !q || city.name.toLowerCase().includes(q) || city.region.toLowerCase().includes(q);
-      const matchesRegion = selectedRegion === 'All' || city.region === selectedRegion;
-      return matchesSearch && matchesRegion;
+      return matchesSearch;
     }).sort((a, b) => {
       let valA = a[sortField];
       let valB = b[sortField];
@@ -106,7 +104,7 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
       if (valA > valB) return sortDirection === 'asc' ? 1 : -1;
       return 0;
     });
-  }, [searchQuery, selectedRegion, sortField, sortDirection]);
+  }, [searchQuery, sortField, sortDirection]);
 
   // Aggregate totals
   const overallStats = useMemo(() => {
@@ -162,119 +160,104 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
         </div>
 
         {/* 4 Core Tesla / Apple Style Key Metric Summary Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mt-6 pt-6 border-t border-slate-100">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mt-6 pt-6 border-t border-slate-100 font-sans">
           <div className="bg-slate-50/90 border border-slate-200/80 p-4 rounded-2xl">
-            <div className="text-xs font-mono text-slate-500 uppercase tracking-wider flex items-center justify-between">
+            <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider flex items-center justify-between">
               <span>US 30-Yr Fixed Rate</span>
               <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.5 rounded-full">FRED Live</span>
             </div>
-            <div className="text-2xl sm:text-3xl font-black font-mono text-slate-950 pt-1">
+            <div className="text-2xl sm:text-3xl font-black text-slate-950 pt-1 tracking-tight">
               {fredStats?.mortgage30Year || '6.78%'}
             </div>
-            <div className="text-[11px] text-slate-500 pt-0.5 truncate">
+            <div className="text-[11px] text-slate-500 pt-0.5 truncate font-medium">
               Freddie Mac Survey • {fredStats?.asOfDate || 'Current'}
             </div>
           </div>
           <div className="bg-slate-50/90 border border-slate-200/80 p-4 rounded-2xl">
-            <div className="text-xs font-mono text-slate-500 uppercase tracking-wider">Median OC Home Price</div>
-            <div className="text-2xl sm:text-3xl font-black font-mono text-[#FA2D48] pt-1">{overallStats.avgMedian}</div>
+            <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Median OC Home Price</div>
+            <div className="text-2xl sm:text-3xl font-black text-[#FA2D48] pt-1 tracking-tight">{overallStats.avgMedian}</div>
           </div>
           <div className="bg-slate-50/90 border border-slate-200/80 p-4 rounded-2xl">
-            <div className="text-xs font-mono text-slate-500 uppercase tracking-wider">County Avg $/SqFt</div>
-            <div className="text-2xl sm:text-3xl font-black font-mono text-slate-950 pt-1">{overallStats.avgSqft} <span className="text-xs font-sans text-slate-500 font-normal">/ sqft</span></div>
+            <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">County Avg $/SqFt</div>
+            <div className="text-2xl sm:text-3xl font-black text-slate-950 pt-1 tracking-tight">{overallStats.avgSqft} <span className="text-xs text-slate-500 font-normal">/ sqft</span></div>
           </div>
           <div className="bg-emerald-50/80 border border-emerald-100 p-4 rounded-2xl">
-            <div className="text-xs font-mono text-emerald-800 uppercase tracking-wider">Active Escrow / Pending</div>
-            <div className="text-2xl sm:text-3xl font-black font-mono text-emerald-700 pt-1">{overallStats.totalPending} <span className="text-xs font-sans text-emerald-800 font-normal">homes</span></div>
+            <div className="text-xs font-semibold text-emerald-800 uppercase tracking-wider">Active Escrow / Pending</div>
+            <div className="text-2xl sm:text-3xl font-black text-emerald-700 pt-1 tracking-tight">{overallStats.totalPending} <span className="text-xs text-emerald-800 font-normal">homes</span></div>
           </div>
         </div>
       </div>
 
       {/* Filter & Search Bar */}
-      <div className="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div className="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-3 font-sans">
         {/* Search Input */}
-        <div className="relative w-full sm:w-80">
+        <div className="relative w-full sm:w-96">
           <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
           <input
             type="text"
             placeholder="Search Orange County city..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-slate-50 border border-slate-200/80 rounded-xl pl-10 pr-4 py-2 text-xs font-medium text-slate-900 focus:outline-none focus:border-[#FA2D48] focus:bg-white transition-all"
+            className="w-full bg-slate-50 border border-slate-200/80 rounded-xl pl-10 pr-4 py-2 text-xs font-semibold text-slate-900 focus:outline-none focus:border-[#FA2D48] focus:bg-white transition-all"
           />
         </div>
 
-        {/* Region Filter Buttons */}
-        <div className="flex items-center space-x-1.5 overflow-x-auto w-full sm:w-auto scrollbar-none pb-1 sm:pb-0">
-          {['All', 'Coastal', 'South OC', 'North OC', 'Central OC'].map(region => (
-            <button
-              key={region}
-              onClick={() => setSelectedRegion(region)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
-                selectedRegion === region
-                  ? 'bg-slate-950 text-white shadow-xs'
-                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-              }`}
-            >
-              {region}
-            </button>
-          ))}
+        {/* City Count Indicator */}
+        <div className="text-xs font-bold text-slate-500 tracking-wide">
+          Showing <span className="text-slate-900 font-black">{filteredAndSortedData.length}</span> Orange County Cities
         </div>
       </div>
 
       {/* Content Rendering: Grid vs Table */}
       {viewMode === 'grid' ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 font-sans">
           {filteredAndSortedData.map(city => (
             <div
               key={city.id}
               className="bg-white border border-slate-200/90 rounded-3xl p-6 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col justify-between space-y-5 group relative"
             >
               {/* Card Header */}
-              <div className="flex items-start justify-between border-b border-slate-100 pb-4">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-4">
                 <div>
-                  <span className="text-[10px] font-mono uppercase tracking-wider px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 font-semibold">
-                    {city.region}
-                  </span>
-                  <h3 className="text-xl font-black font-sans text-slate-950 tracking-tight pt-2 group-hover:text-[#FA2D48] transition-colors">
+                  <h3 className="text-xl font-black text-slate-950 tracking-tight group-hover:text-[#FA2D48] transition-colors">
                     {city.name}
                   </h3>
                 </div>
-                <div className="text-right font-mono">
-                  <div className="text-2xl font-black text-[#FA2D48] leading-none">${city.avgSqftPrice}</div>
-                  <div className="text-[10px] text-slate-500 uppercase tracking-widest pt-1">per sqft</div>
+                <div className="text-right">
+                  <div className="text-2xl font-black text-[#FA2D48] leading-none tracking-tight">${city.avgSqftPrice}</div>
+                  <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider pt-1">per sqft</div>
                 </div>
               </div>
 
               {/* Data Grid Metrics */}
               <div className="grid grid-cols-2 gap-3 text-xs">
                 <div className="bg-slate-50/80 border border-slate-100 p-3 rounded-2xl">
-                  <span className="text-[11px] font-mono text-slate-500 block">Median Home Price</span>
-                  <span className="text-base font-black font-mono text-slate-900">{formatCurrency(city.medianPrice)}</span>
+                  <span className="text-[11px] font-semibold text-slate-500 block">Median Home Price</span>
+                  <span className="text-base font-black text-slate-900 tracking-tight">{formatCurrency(city.medianPrice)}</span>
                 </div>
                 <div className="bg-slate-50/80 border border-slate-100 p-3 rounded-2xl">
-                  <span className="text-[11px] font-mono text-slate-500 block">YTD Sales Volume</span>
-                  <span className="text-base font-black font-mono text-slate-900">{city.ytdSalesVolume}</span>
+                  <span className="text-[11px] font-semibold text-slate-500 block">YTD Sales Volume</span>
+                  <span className="text-base font-black text-slate-900 tracking-tight">{city.ytdSalesVolume}</span>
                 </div>
                 <div className="bg-slate-50/80 border border-slate-100 p-3 rounded-2xl">
-                  <span className="text-[11px] font-mono text-slate-500 block">Homes Sold YTD</span>
-                  <span className="text-sm font-bold font-mono text-slate-800">{city.homesSoldYtd.toLocaleString()}</span>
+                  <span className="text-[11px] font-semibold text-slate-500 block">Homes Sold YTD</span>
+                  <span className="text-sm font-black text-slate-800">{city.homesSoldYtd.toLocaleString()}</span>
                 </div>
                 <div className="bg-emerald-50/60 border border-emerald-100 p-3 rounded-2xl">
-                  <span className="text-[11px] font-mono text-emerald-700 block">Active Pending Escrows</span>
-                  <span className="text-sm font-bold font-mono text-emerald-800">{city.pendingHomes} homes</span>
+                  <span className="text-[11px] font-semibold text-emerald-700 block">Active Pending Escrows</span>
+                  <span className="text-sm font-black text-emerald-800">{city.pendingHomes} homes</span>
                 </div>
               </div>
 
               {/* Footer Metrics */}
-              <div className="flex items-center justify-between text-xs font-mono pt-2 text-slate-600">
-                <div className="flex items-center space-x-1 text-emerald-600 font-bold">
+              <div className="flex items-center justify-between text-xs pt-2 text-slate-600">
+                <div className="flex items-center space-x-1 text-emerald-600 font-extrabold">
                   <TrendingUp className="w-3.5 h-3.5" />
                   <span>+{city.yoyGrowth}% YoY</span>
                 </div>
-                <div className="text-slate-500">
+                <div className="text-slate-500 font-medium">
                   <span>Avg DOM: </span>
-                  <strong className="text-slate-900">{city.daysOnMarket} days</strong>
+                  <strong className="text-slate-900 font-bold">{city.daysOnMarket} days</strong>
                 </div>
               </div>
             </div>
@@ -282,10 +265,10 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
         </div>
       ) : (
         /* Apple Minimalist Compact Data Table View */
-        <div className="bg-white border border-slate-200/90 rounded-3xl shadow-xs overflow-hidden">
+        <div className="bg-white border border-slate-200/90 rounded-3xl shadow-xs overflow-hidden font-sans">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs text-slate-700">
-              <thead className="bg-slate-100 text-slate-900 text-[11px] font-mono uppercase tracking-wider border-b border-slate-200">
+              <thead className="bg-slate-100 text-slate-900 text-[11px] font-bold uppercase tracking-wider border-b border-slate-200">
                 <tr>
                   <th onClick={() => handleSort('name')} className="py-3.5 px-5 cursor-pointer hover:bg-slate-200/80">
                     <div className="flex items-center space-x-1">
@@ -332,30 +315,27 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 font-sans">
-                {filteredAndSortedData.map((city, idx) => (
+                {filteredAndSortedData.map((city) => (
                   <tr key={city.id} className="hover:bg-slate-50/90 transition-colors">
                     <td className="py-3.5 px-5 font-black text-slate-950">
-                      <div className="flex items-center space-x-2">
-                        <span>{city.name}</span>
-                        <span className="text-[10px] font-mono text-slate-400 font-normal">({city.region})</span>
-                      </div>
+                      <span>{city.name}</span>
                     </td>
-                    <td className="py-3.5 px-4 text-right font-mono font-black text-[#FA2D48]">
+                    <td className="py-3.5 px-4 text-right font-black text-[#FA2D48] tracking-tight">
                       ${city.avgSqftPrice}
                     </td>
-                    <td className="py-3.5 px-4 text-right font-mono font-bold text-slate-900">
+                    <td className="py-3.5 px-4 text-right font-extrabold text-slate-900 tracking-tight">
                       {formatCurrency(city.medianPrice)}
                     </td>
-                    <td className="py-3.5 px-4 text-right font-mono text-slate-700">
+                    <td className="py-3.5 px-4 text-right font-bold text-slate-700">
                       {city.ytdSalesVolume}
                     </td>
-                    <td className="py-3.5 px-4 text-right font-mono text-slate-700">
+                    <td className="py-3.5 px-4 text-right font-bold text-slate-700">
                       {city.homesSoldYtd.toLocaleString()}
                     </td>
-                    <td className="py-3.5 px-4 text-right font-mono font-bold text-emerald-600">
+                    <td className="py-3.5 px-4 text-right font-extrabold text-emerald-600">
                       {city.pendingHomes}
                     </td>
-                    <td className="py-3.5 px-5 text-right font-mono font-bold text-emerald-600">
+                    <td className="py-3.5 px-5 text-right font-extrabold text-emerald-600">
                       +{city.yoyGrowth}%
                     </td>
                   </tr>
