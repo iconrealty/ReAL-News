@@ -4,36 +4,63 @@ import { CityInfo } from '../types';
 interface MortgageCalculatorProps {
   currentCity?: CityInfo;
   onSelectCity?: (city: CityInfo) => void;
+  fredStats?: {
+    mortgage30Year?: string;
+    mortgage15Year?: string;
+    asOfDate?: string;
+    source?: string;
+  } | null;
 }
 
-const LIVE_RATES = [
-  { label: '30-Yr Fixed', rate: 6.85, term: 30, tag: 'Most Popular' },
-  { label: '15-Yr Fixed', rate: 6.12, term: 15, tag: 'Lower Rate' },
-  { label: 'FHA 30-Yr', rate: 6.35, term: 30, tag: 'Low Down' },
-  { label: 'VA 30-Yr', rate: 6.25, term: 30, tag: 'Veterans' },
-  { label: '5/1 ARM', rate: 6.45, term: 30, tag: 'Adjustable' },
-];
-
 const PRICE_PRESETS = [750000, 1150000, 1500000, 2000000, 3000000];
-const DOWN_PERCENT_PRESETS = [5, 10, 15, 20, 25, 30];
+const DOWN_PERCENT_PRESETS = [3.5, 5, 10, 15, 20, 25, 30];
 
 export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
   currentCity,
+  fredStats,
 }) => {
+  // Parse numeric rates from FRED stats if available (e.g. "6.78%" -> 6.78)
+  const fred30Num = useMemo(() => {
+    if (!fredStats?.mortgage30Year) return 6.78;
+    const val = parseFloat(fredStats.mortgage30Year.replace('%', ''));
+    return isNaN(val) ? 6.78 : val;
+  }, [fredStats?.mortgage30Year]);
+
+  const fred15Num = useMemo(() => {
+    if (!fredStats?.mortgage15Year) return 5.98;
+    const val = parseFloat(fredStats.mortgage15Year.replace('%', ''));
+    return isNaN(val) ? 5.98 : val;
+  }, [fredStats?.mortgage15Year]);
+
+  const liveRates = useMemo(() => [
+    { label: '30-Yr Fixed (FRED)', rate: fred30Num, term: 30, tag: 'Official FRED' },
+    { label: '15-Yr Fixed (FRED)', rate: fred15Num, term: 15, tag: 'Official FRED' },
+    { label: 'FHA 30-Yr', rate: parseFloat((fred30Num - 0.43).toFixed(2)), term: 30, tag: 'Low Down' },
+    { label: 'VA 30-Yr', rate: parseFloat((fred30Num - 0.53).toFixed(2)), term: 30, tag: 'Veterans' },
+    { label: '5/1 ARM', rate: parseFloat((fred30Num - 0.33).toFixed(2)), term: 30, tag: 'Adjustable' },
+  ], [fred30Num, fred15Num]);
+
   // Core Loan Inputs
-  const [homePrice, setHomePrice] = useState<number>(1150000); // Default Orange County home price
+  const [homePrice, setHomePrice] = useState<number | ''>(1150000); // Default Orange County home price
   const [downPaymentMode, setDownPaymentMode] = useState<'percent' | 'dollar'>('percent');
-  const [downPaymentPercent, setDownPaymentPercent] = useState<number>(20);
-  const [downPaymentDollar, setDownPaymentDollar] = useState<number>(230000);
-  const [interestRate, setInterestRate] = useState<number>(6.85); // Current actual interest rate
+  const [downPaymentPercent, setDownPaymentPercent] = useState<number | ''>(20);
+  const [downPaymentDollar, setDownPaymentDollar] = useState<number | ''>(230000);
+  const [interestRate, setInterestRate] = useState<number | ''>(fred30Num);
   const [loanTermYears, setLoanTermYears] = useState<number>(30);
+
+  // Sync interestRate when FRED stats load
+  React.useEffect(() => {
+    if (fred30Num) {
+      setInterestRate(fred30Num);
+    }
+  }, [fred30Num]);
 
   // Optional Extra Costs Inputs
   const [yearlyTaxesMode, setYearlyTaxesMode] = useState<'percent' | 'dollar'>('percent');
-  const [yearlyTaxesPercent, setYearlyTaxesPercent] = useState<number>(1.1); // ~1.1% OC property tax
-  const [yearlyTaxesDollar, setYearlyTaxesDollar] = useState<number>(12650);
-  const [yearlyInsurance, setYearlyInsurance] = useState<number>(1800); // $150/mo
-  const [monthlyHoa, setMonthlyHoa] = useState<number>(350); // $350/mo
+  const [yearlyTaxesPercent, setYearlyTaxesPercent] = useState<number | ''>(1.1); // ~1.1% OC property tax
+  const [yearlyTaxesDollar, setYearlyTaxesDollar] = useState<number | ''>(12650);
+  const [yearlyInsurance, setYearlyInsurance] = useState<number | ''>(1800); // $150/mo
+  const [monthlyHoa, setMonthlyHoa] = useState<number | ''>(350); // $350/mo
   const [includePmi, setIncludePmi] = useState<boolean>(true);
 
   // View state for Amortization vs Breakdown
@@ -41,102 +68,151 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
   const [copiedSuccess, setCopiedSuccess] = useState(false);
 
   // Synchronize Down Payment when Home Price or Mode changes
-  const handleHomePriceChange = (newPrice: number) => {
+  const handleHomePriceChange = (newPrice: number | '') => {
+    if (newPrice === '') {
+      setHomePrice('');
+      setDownPaymentDollar('');
+      setYearlyTaxesDollar('');
+      return;
+    }
     const val = Math.max(0, newPrice);
     setHomePrice(val);
+    const currentPct = downPaymentPercent === '' ? 0 : downPaymentPercent;
+    const currentTaxPct = yearlyTaxesPercent === '' ? 0 : yearlyTaxesPercent;
     if (downPaymentMode === 'percent') {
-      setDownPaymentDollar(Math.round((val * downPaymentPercent) / 100));
+      setDownPaymentDollar(Math.round((val * currentPct) / 100));
     } else {
-      const pct = val > 0 ? (downPaymentDollar / val) * 100 : 0;
+      const currentDollar = downPaymentDollar === '' ? 0 : downPaymentDollar;
+      const pct = val > 0 ? (currentDollar / val) * 100 : 0;
       setDownPaymentPercent(parseFloat(pct.toFixed(2)));
     }
     // Also sync tax dollar if in percent mode
     if (yearlyTaxesMode === 'percent') {
-      setYearlyTaxesDollar(Math.round((val * yearlyTaxesPercent) / 100));
+      setYearlyTaxesDollar(Math.round((val * currentTaxPct) / 100));
     }
   };
 
-  const handleDownPercentChange = (pct: number) => {
+  const handleDownPercentChange = (pct: number | '') => {
+    if (pct === '') {
+      setDownPaymentPercent('');
+      setDownPaymentDollar('');
+      return;
+    }
     const cleanPct = Math.min(100, Math.max(0, pct));
     setDownPaymentPercent(cleanPct);
-    setDownPaymentDollar(Math.round((homePrice * cleanPct) / 100));
+    const hp = homePrice === '' ? 0 : homePrice;
+    setDownPaymentDollar(Math.round((hp * cleanPct) / 100));
   };
 
-  const handleDownDollarChange = (dlr: number) => {
+  const handleDownDollarChange = (dlr: number | '') => {
+    if (dlr === '') {
+      setDownPaymentDollar('');
+      setDownPaymentPercent('');
+      return;
+    }
     const cleanDlr = Math.max(0, dlr);
     setDownPaymentDollar(cleanDlr);
-    const pct = homePrice > 0 ? (cleanDlr / homePrice) * 100 : 0;
+    const hp = homePrice === '' ? 0 : homePrice;
+    const pct = hp > 0 ? (cleanDlr / hp) * 100 : 0;
     setDownPaymentPercent(parseFloat(pct.toFixed(2)));
   };
 
   const toggleDownPaymentMode = (mode: 'percent' | 'dollar') => {
     setDownPaymentMode(mode);
+    const hp = homePrice === '' ? 0 : homePrice;
+    const currentPct = downPaymentPercent === '' ? 0 : downPaymentPercent;
+    const currentDollar = downPaymentDollar === '' ? 0 : downPaymentDollar;
     if (mode === 'percent') {
-      setDownPaymentDollar(Math.round((homePrice * downPaymentPercent) / 100));
+      setDownPaymentDollar(Math.round((hp * currentPct) / 100));
     } else {
-      const pct = homePrice > 0 ? (downPaymentDollar / homePrice) * 100 : 0;
+      const pct = hp > 0 ? (currentDollar / hp) * 100 : 0;
       setDownPaymentPercent(parseFloat(pct.toFixed(2)));
     }
   };
 
-  const handleTaxPercentChange = (pct: number) => {
+  const handleTaxPercentChange = (pct: number | '') => {
+    if (pct === '') {
+      setYearlyTaxesPercent('');
+      setYearlyTaxesDollar('');
+      return;
+    }
     setYearlyTaxesPercent(pct);
-    setYearlyTaxesDollar(Math.round((homePrice * pct) / 100));
+    const hp = homePrice === '' ? 0 : homePrice;
+    setYearlyTaxesDollar(Math.round((hp * pct) / 100));
   };
 
-  const handleTaxDollarChange = (dlr: number) => {
+  const handleTaxDollarChange = (dlr: number | '') => {
+    if (dlr === '') {
+      setYearlyTaxesDollar('');
+      setYearlyTaxesPercent('');
+      return;
+    }
     setYearlyTaxesDollar(dlr);
-    const pct = homePrice > 0 ? (dlr / homePrice) * 100 : 0;
+    const hp = homePrice === '' ? 0 : homePrice;
+    const pct = hp > 0 ? (dlr / hp) * 100 : 0;
     setYearlyTaxesPercent(parseFloat(pct.toFixed(2)));
   };
 
   const toggleTaxMode = (mode: 'percent' | 'dollar') => {
     setYearlyTaxesMode(mode);
+    const hp = homePrice === '' ? 0 : homePrice;
+    const currentPct = yearlyTaxesPercent === '' ? 0 : yearlyTaxesPercent;
+    const currentTaxDollar = yearlyTaxesDollar === '' ? 0 : yearlyTaxesDollar;
     if (mode === 'percent') {
-      setYearlyTaxesDollar(Math.round((homePrice * yearlyTaxesPercent) / 100));
+      setYearlyTaxesDollar(Math.round((hp * currentPct) / 100));
     } else {
-      const pct = homePrice > 0 ? (yearlyTaxesDollar / homePrice) * 100 : 0;
+      const pct = hp > 0 ? (currentTaxDollar / hp) * 100 : 0;
       setYearlyTaxesPercent(parseFloat(pct.toFixed(2)));
     }
   };
 
+  // Safe numeric values for calculations
+  const numericHomePrice = useMemo(() => (homePrice === '' ? 0 : homePrice), [homePrice]);
+  const numericInterestRate = useMemo(() => (interestRate === '' ? 0 : interestRate), [interestRate]);
+  const numericYearlyInsurance = useMemo(() => (yearlyInsurance === '' ? 0 : yearlyInsurance), [yearlyInsurance]);
+  const numericMonthlyHoa = useMemo(() => (monthlyHoa === '' ? 0 : monthlyHoa), [monthlyHoa]);
+
   // Calculations
   const calculatedDownPayment = useMemo(() => {
-    return downPaymentMode === 'percent' 
-      ? Math.round((homePrice * downPaymentPercent) / 100) 
-      : downPaymentDollar;
-  }, [homePrice, downPaymentMode, downPaymentPercent, downPaymentDollar]);
+    if (downPaymentMode === 'percent') {
+      const pct = downPaymentPercent === '' ? 0 : downPaymentPercent;
+      return Math.round((numericHomePrice * pct) / 100);
+    }
+    return downPaymentDollar === '' ? 0 : downPaymentDollar;
+  }, [numericHomePrice, downPaymentMode, downPaymentPercent, downPaymentDollar]);
 
   const downPaymentActualPct = useMemo(() => {
-    return homePrice > 0 ? (calculatedDownPayment / homePrice) * 100 : 0;
-  }, [homePrice, calculatedDownPayment]);
+    return numericHomePrice > 0 ? (calculatedDownPayment / numericHomePrice) * 100 : 0;
+  }, [numericHomePrice, calculatedDownPayment]);
 
   const loanAmount = useMemo(() => {
-    return Math.max(0, homePrice - calculatedDownPayment);
-  }, [homePrice, calculatedDownPayment]);
+    return Math.max(0, numericHomePrice - calculatedDownPayment);
+  }, [numericHomePrice, calculatedDownPayment]);
 
   // Monthly Principal & Interest
   const monthlyPrincipalInterest = useMemo(() => {
     if (loanAmount <= 0) return 0;
-    const r = interestRate / 100 / 12;
+    const r = numericInterestRate / 100 / 12;
     const n = loanTermYears * 12;
     if (r === 0) return loanAmount / n;
     const monthly = loanAmount * ((r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1));
     return isNaN(monthly) ? 0 : monthly;
-  }, [loanAmount, interestRate, loanTermYears]);
+  }, [loanAmount, numericInterestRate, loanTermYears]);
 
   // Monthly Taxes
   const monthlyTaxes = useMemo(() => {
     if (yearlyTaxesMode === 'percent') {
-      return (homePrice * (yearlyTaxesPercent / 100)) / 12;
+      const pct = yearlyTaxesPercent === '' ? 0 : yearlyTaxesPercent;
+      return (numericHomePrice * (pct / 100)) / 12;
     }
-    return yearlyTaxesDollar / 12;
-  }, [homePrice, yearlyTaxesMode, yearlyTaxesPercent, yearlyTaxesDollar]);
+    const dlr = yearlyTaxesDollar === '' ? 0 : yearlyTaxesDollar;
+    return dlr / 12;
+  }, [numericHomePrice, yearlyTaxesMode, yearlyTaxesPercent, yearlyTaxesDollar]);
 
   // Monthly Insurance
   const monthlyInsurance = useMemo(() => {
-    return yearlyInsurance / 12;
-  }, [yearlyInsurance]);
+    return numericYearlyInsurance / 12;
+  }, [numericYearlyInsurance]);
 
   // Monthly PMI (Private Mortgage Insurance if down payment < 20%)
   const monthlyPmi = useMemo(() => {
@@ -147,8 +223,8 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
 
   // Total Monthly Payment
   const totalMonthlyPayment = useMemo(() => {
-    return monthlyPrincipalInterest + monthlyTaxes + monthlyInsurance + monthlyHoa + monthlyPmi;
-  }, [monthlyPrincipalInterest, monthlyTaxes, monthlyInsurance, monthlyHoa, monthlyPmi]);
+    return monthlyPrincipalInterest + monthlyTaxes + monthlyInsurance + numericMonthlyHoa + monthlyPmi;
+  }, [monthlyPrincipalInterest, monthlyTaxes, monthlyInsurance, numericMonthlyHoa, monthlyPmi]);
 
   // Lifetime Loan Metrics
   const totalInterestPaid = useMemo(() => {
@@ -237,7 +313,7 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
               <span>Live Avg Rate Presets</span>
             </div>
             <div className="flex flex-wrap gap-2">
-              {LIVE_RATES.map((r) => (
+              {liveRates.map((r) => (
                 <button
                   key={r.label}
                   onClick={() => {
@@ -275,7 +351,7 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                 setDownPaymentMode('percent');
                 setDownPaymentPercent(20);
                 setDownPaymentDollar(230000);
-                setInterestRate(6.85);
+                setInterestRate(fred30Num);
                 setLoanTermYears(30);
                 setYearlyTaxesPercent(1.1);
                 setYearlyTaxesDollar(12650);
@@ -304,8 +380,11 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
               <input
                 id="home-price-input"
                 type="number"
-                value={homePrice || ''}
-                onChange={(e) => handleHomePriceChange(Number(e.target.value))}
+                value={homePrice}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  handleHomePriceChange(val === '' ? '' : Number(val));
+                }}
                 className="w-full pl-9 pr-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 focus:border-[#FA2D48] focus:bg-white focus:ring-2 focus:ring-[#FA2D48]/20 font-bold text-slate-900 text-lg outline-none transition-all"
                 placeholder="1,150,000"
                 step="10000"
@@ -377,7 +456,8 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                   type="number"
                   value={downPaymentMode === 'percent' ? downPaymentPercent : downPaymentDollar}
                   onChange={(e) => {
-                    const val = Number(e.target.value);
+                    const raw = e.target.value;
+                    const val = raw === '' ? '' : Number(raw);
                     if (downPaymentMode === 'percent') {
                       handleDownPercentChange(val);
                     } else {
@@ -387,7 +467,7 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                   className={`w-full py-3 rounded-2xl bg-slate-50 border border-slate-200 focus:border-[#FA2D48] focus:bg-white focus:ring-2 focus:ring-[#FA2D48]/20 font-bold text-slate-900 text-lg outline-none transition-all ${
                     downPaymentMode === 'dollar' ? 'pl-9 pr-4' : 'pl-4 pr-9'
                   }`}
-                  step={downPaymentMode === 'percent' ? '1' : '5000'}
+                  step={downPaymentMode === 'percent' ? '0.1' : '5000'}
                 />
                 {downPaymentMode === 'percent' ? (
                   <span className="absolute right-4 text-slate-400 font-bold text-base">%</span>
@@ -432,15 +512,23 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
             
             {/* Interest Rate */}
             <div className="space-y-2">
-              <label htmlFor="interest-rate-input" className="text-xs font-extrabold uppercase tracking-wider text-slate-700 block">
-                Interest Rate (%)
-              </label>
+              <div className="flex items-center justify-between">
+                <label htmlFor="interest-rate-input" className="text-xs font-extrabold uppercase tracking-wider text-slate-700 block">
+                  Interest Rate (%)
+                </label>
+                <span className="text-[10px] bg-emerald-50 text-emerald-700 font-extrabold px-2 py-0.5 rounded-full border border-emerald-200">
+                  FRED Live: {fred30Num}%
+                </span>
+              </div>
               <div className="relative flex items-center">
                 <input
                   id="interest-rate-input"
                   type="number"
                   value={interestRate}
-                  onChange={(e) => setInterestRate(Number(e.target.value))}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setInterestRate(val === '' ? '' : Number(val));
+                  }}
                   className="w-full pl-4 pr-9 py-3 rounded-2xl bg-slate-50 border border-slate-200 focus:border-[#FA2D48] focus:bg-white focus:ring-2 focus:ring-[#FA2D48]/20 font-bold text-slate-900 text-lg outline-none transition-all"
                   step="0.05"
                   min="0"
@@ -516,7 +604,8 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                     type="number"
                     value={yearlyTaxesMode === 'percent' ? yearlyTaxesPercent : yearlyTaxesDollar}
                     onChange={(e) => {
-                      const val = Number(e.target.value);
+                      const raw = e.target.value;
+                      const val = raw === '' ? '' : Number(raw);
                       if (yearlyTaxesMode === 'percent') {
                         handleTaxPercentChange(val);
                       } else {
@@ -548,7 +637,10 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                     id="yearly-insurance-input"
                     type="number"
                     value={yearlyInsurance}
-                    onChange={(e) => setYearlyInsurance(Number(e.target.value))}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setYearlyInsurance(val === '' ? '' : Number(val));
+                    }}
                     className="w-full pl-7 pr-3 py-2 rounded-xl bg-slate-50 border border-slate-200 focus:border-[#FA2D48] font-bold text-slate-900 text-sm outline-none"
                     step="100"
                   />
@@ -569,7 +661,10 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                     id="monthly-hoa-input"
                     type="number"
                     value={monthlyHoa}
-                    onChange={(e) => setMonthlyHoa(Number(e.target.value))}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setMonthlyHoa(val === '' ? '' : Number(val));
+                    }}
                     className="w-full pl-7 pr-3 py-2 rounded-xl bg-slate-50 border border-slate-200 focus:border-[#FA2D48] font-bold text-slate-900 text-sm outline-none"
                     step="25"
                   />

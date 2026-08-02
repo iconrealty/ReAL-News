@@ -33,6 +33,19 @@ export function App() {
   const [isCitySelectorOpen, setIsCitySelectorOpen] = useState(false);
   const [isSavedDrawerOpen, setIsSavedDrawerOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [fredStats, setFredStats] = useState<{ mortgage30Year: string; mortgage15Year: string; asOfDate: string; isRealLiveFredData?: boolean } | null>(null);
+
+  // Fetch live FRED market stats on mount so header, mortgage calculator & trends share exact same rates
+  useEffect(() => {
+    fetch('/api/live-market-stats')
+      .then(res => res.json())
+      .then(json => {
+        if (json.success && json.data) {
+          setFredStats(json.data);
+        }
+      })
+      .catch(err => console.warn("Failed to load live FRED stats in App", err));
+  }, []);
 
   const handleResetToMain = () => {
     setCurrentCity(CITIES[0]);
@@ -227,6 +240,7 @@ export function App() {
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         onResetToMain={handleResetToMain}
+        fredRate={fredStats?.mortgage30Year}
       />
 
       {/* Main Layout Content */}
@@ -236,6 +250,7 @@ export function App() {
         {activeCategory === 'mortgage-calculator' ? (
           <MortgageCalculator
             currentCity={currentCity}
+            fredStats={fredStats}
             onSelectCity={(city) => {
               setCurrentCity(city);
               showToast(`Selected ${city.name}`);

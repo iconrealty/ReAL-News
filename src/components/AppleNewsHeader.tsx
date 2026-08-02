@@ -13,6 +13,7 @@ interface AppleNewsHeaderProps {
   searchQuery: string;
   onSearchChange: (q: string) => void;
   onResetToMain?: () => void;
+  fredRate?: string;
 }
 
 export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
@@ -25,6 +26,7 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
   searchQuery,
   onSearchChange,
   onResetToMain,
+  fredRate = '6.78%',
 }) => {
   const monthDay = new Date().toLocaleDateString('en-US', {
     month: 'long',
@@ -76,13 +78,13 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
               <button
                 onClick={() => onSelectCategory('mortgage-calculator')}
                 className="text-right group cursor-pointer hover:opacity-80 transition-opacity"
-                title="30-Day Avg Mortgage Rate Feed - Click for Mortgage Calculator"
+                title="Live FRED 30-Yr Mortgage Rate Feed - Click for Mortgage Calculator"
               >
                 <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#FA2D48] leading-none block">
-                  30-Yr Rate
+                  FRED 30-Yr Rate
                 </span>
                 <span className="text-xl font-black text-slate-950 font-sans tracking-tight leading-none group-hover:text-[#FA2D48] transition-colors pt-0.5 block">
-                  6.85%
+                  {fredRate}
                 </span>
               </button>
 
@@ -107,13 +109,13 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
             <button
               onClick={() => onSelectCategory('mortgage-calculator')}
               className="hidden sm:flex flex-col items-end text-right group cursor-pointer hover:opacity-80 transition-opacity shrink-0 px-1"
-              title="30-Day Avg Mortgage Rate Feed - Click for Mortgage Calculator"
+              title="Live FRED 30-Yr Mortgage Rate Feed - Click for Mortgage Calculator"
             >
               <span className="text-[10px] font-black uppercase tracking-wider text-[#FA2D48] leading-none block">
-                Avg 30-Yr Rate
+                FRED 30-Yr Rate
               </span>
               <span className="text-2xl lg:text-3xl font-black text-slate-950 font-sans tracking-tight leading-none group-hover:text-[#FA2D48] transition-colors pt-0.5 block">
-                6.85%
+                {fredRate}
               </span>
             </button>
 
