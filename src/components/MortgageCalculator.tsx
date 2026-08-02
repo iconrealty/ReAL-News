@@ -623,9 +623,6 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                 <h4 className="text-sm font-black text-slate-900">
                   Taxes, Insurance & HOA Dues
                 </h4>
-                <p className="text-xs text-slate-500 font-medium">
-                  Toggle on/off to include or exclude in your estimated monthly payment calculation.
-                </p>
               </div>
             </div>
 
@@ -691,12 +688,9 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                   )}
                 </div>
 
-                <div className="flex items-center justify-between text-[10px]">
+                <div className="text-[10px]">
                   <span className={`font-semibold ${includeTaxes ? 'text-slate-600' : 'text-slate-400'}`}>
                     {includeTaxes ? `$${Math.round(rawMonthlyTaxes).toLocaleString()}/mo` : '$0/mo'}
-                  </span>
-                  <span className={`font-extrabold px-1.5 py-0.5 rounded-full ${includeTaxes ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200 text-slate-600'}`}>
-                    {includeTaxes ? 'Active' : 'Inactive'}
                   </span>
                 </div>
               </div>
@@ -732,12 +726,9 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                   />
                 </div>
 
-                <div className="flex items-center justify-between text-[10px]">
+                <div className="text-[10px]">
                   <span className={`font-semibold ${includeInsurance ? 'text-slate-600' : 'text-slate-400'}`}>
                     {includeInsurance ? `$${Math.round(rawMonthlyInsurance).toLocaleString()}/mo` : '$0/mo'}
-                  </span>
-                  <span className={`font-extrabold px-1.5 py-0.5 rounded-full ${includeInsurance ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200 text-slate-600'}`}>
-                    {includeInsurance ? 'Active' : 'Inactive'}
                   </span>
                 </div>
               </div>
@@ -773,12 +764,9 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                   />
                 </div>
 
-                <div className="flex items-center justify-between text-[10px]">
+                <div className="text-[10px]">
                   <span className={`font-semibold ${includeHoa ? 'text-slate-600' : 'text-slate-400'}`}>
                     {includeHoa ? `$${Math.round(rawMonthlyHoa).toLocaleString()}/mo` : '$0/mo'}
-                  </span>
-                  <span className={`font-extrabold px-1.5 py-0.5 rounded-full ${includeHoa ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200 text-slate-600'}`}>
-                    {includeHoa ? 'Active' : 'Inactive'}
                   </span>
                 </div>
               </div>
