@@ -1,6 +1,18 @@
 import React, { useState, useMemo } from 'react';
-import { MapPin, ChevronDown } from 'lucide-react';
+import { MapPin, ChevronDown, TrendingUp, Clock, Tag, Building, Search, ArrowUpDown, ShieldCheck, AlertCircle } from 'lucide-react';
 import { CityInfo } from '../types';
+import {
+  OC_HOUSING_REPORT_METADATA,
+  OC_HOUSING_SUMMARY_BULLETS,
+  OC_MARKET_TIME_REPORT,
+  OC_PRICE_RANGE_REPORT_ALL,
+  OC_PRICE_RANGE_REPORT_ATTACHED,
+  OC_PRICE_RANGE_REPORT_DETACHED,
+  OC_SOLD_REPORT,
+  OC_SITTING_ON_MARKET_REPORT,
+  OCMarketTimeEntry,
+  OCSoldReportEntry
+} from '../data/ocHousingReportData';
 
 export interface OCCityMarketData {
   id: string;
@@ -8,65 +20,86 @@ export interface OCCityMarketData {
   region: 'Coastal' | 'South OC' | 'North OC' | 'Central OC';
   medianPrice: number;
   avgSqftPrice: number;
-  ytdSalesVolume: string; // e.g. "$2.84B"
-  ytdSalesRaw: number; // in millions for sorting
+  ytdSalesVolume: string;
+  ytdSalesRaw: number;
   homesSoldYtd: number;
   pendingHomes: number;
+  unitsClosedPastMonth: number;
   daysOnMarket: number;
-  yoyGrowth: number; // percentage e.g. 8.1
+  yoyGrowth: number;
   description?: string;
 }
 
-export const OC_MARKET_DATA: OCCityMarketData[] = [
-  { id: 'aliso-viejo', name: 'Aliso Viejo', region: 'South OC', medianPrice: 1150000, avgSqftPrice: 720, ytdSalesVolume: '$385M', ytdSalesRaw: 385, homesSoldYtd: 335, pendingHomes: 42, daysOnMarket: 21, yoyGrowth: 5.8, description: 'Master-planned community with vast parkways, top schools, and modern suburban homes.' },
-  { id: 'anaheim', name: 'Anaheim', region: 'North OC', medianPrice: 920000, avgSqftPrice: 650, ytdSalesVolume: '$1.12B', ytdSalesRaw: 1120, homesSoldYtd: 1220, pendingHomes: 145, daysOnMarket: 24, yoyGrowth: 4.9, description: 'Major Orange County hub with sports venues, resort districts, and diverse residential areas.' },
-  { id: 'brea', name: 'Brea', region: 'North OC', medianPrice: 980000, avgSqftPrice: 640, ytdSalesVolume: '$410M', ytdSalesRaw: 410, homesSoldYtd: 418, pendingHomes: 48, daysOnMarket: 23, yoyGrowth: 4.2, description: 'North OC city known for excellent shopping, hillside neighborhoods, and public services.' },
-  { id: 'buena-park', name: 'Buena Park', region: 'North OC', medianPrice: 880000, avgSqftPrice: 610, ytdSalesVolume: '$490M', ytdSalesRaw: 490, homesSoldYtd: 556, pendingHomes: 59, daysOnMarket: 22, yoyGrowth: 3.8, description: 'Entertainment hub featuring convenient transit access and accessible family home options.' },
-  { id: 'costa-mesa', name: 'Costa Mesa', region: 'Coastal', medianPrice: 1380000, avgSqftPrice: 720, ytdSalesVolume: '$890M', ytdSalesRaw: 890, homesSoldYtd: 645, pendingHomes: 72, daysOnMarket: 25, yoyGrowth: 6.1, description: 'Cultural and culinary destination adjacent to Newport Beach with stylish neighborhoods.' },
-  { id: 'cypress', name: 'Cypress', region: 'North OC', medianPrice: 940000, avgSqftPrice: 630, ytdSalesVolume: '$340M', ytdSalesRaw: 340, homesSoldYtd: 362, pendingHomes: 38, daysOnMarket: 20, yoyGrowth: 4.5, description: 'Quiet North County community with top-ranked Oxford Academy and serene streets.' },
-  { id: 'dana-point', name: 'Dana Point', region: 'Coastal', medianPrice: 2450000, avgSqftPrice: 1150, ytdSalesVolume: '$780M', ytdSalesRaw: 780, homesSoldYtd: 318, pendingHomes: 34, daysOnMarket: 34, yoyGrowth: 7.4, description: 'Harbor town offering oceanfront living, Lantern District dining, and scenic coastal bluffs.' },
-  { id: 'fountain-valley', name: 'Fountain Valley', region: 'Central OC', medianPrice: 1180000, avgSqftPrice: 690, ytdSalesVolume: '$420M', ytdSalesRaw: 420, homesSoldYtd: 356, pendingHomes: 41, daysOnMarket: 19, yoyGrowth: 5.2, description: 'Central OC suburban community with Mile Square Regional Park and high homeowner stability.' },
-  { id: 'fullerton', name: 'Fullerton', region: 'North OC', medianPrice: 960000, avgSqftPrice: 620, ytdSalesVolume: '$860M', ytdSalesRaw: 860, homesSoldYtd: 895, pendingHomes: 98, daysOnMarket: 22, yoyGrowth: 4.6, description: 'Historic university town featuring historic downtown, tree-lined streets, and diverse architecture.' },
-  { id: 'garden-grove', name: 'Garden Grove', region: 'Central OC', medianPrice: 870000, avgSqftPrice: 590, ytdSalesVolume: '$790M', ytdSalesRaw: 790, homesSoldYtd: 908, pendingHomes: 104, daysOnMarket: 20, yoyGrowth: 4.1, description: 'Central city with rich cultural districts, convenient freeway access, and steady home appreciation.' },
-  { id: 'huntington-beach', name: 'Huntington Beach', region: 'Coastal', medianPrice: 1480000, avgSqftPrice: 810, ytdSalesVolume: '$1.65B', ytdSalesRaw: 1650, homesSoldYtd: 1115, pendingHomes: 128, daysOnMarket: 26, yoyGrowth: 6.3, description: 'Vibrant beach city featuring famous coastline, downtown pier district, and strong suburban demand.' },
-  { id: 'irvine', name: 'Irvine', region: 'South OC', medianPrice: 1620000, avgSqftPrice: 845, ytdSalesVolume: '$2.84B', ytdSalesRaw: 2840, homesSoldYtd: 1753, pendingHomes: 210, daysOnMarket: 18, yoyGrowth: 8.1, description: 'Master-planned community with premier tech hubs, top-rated schools, and high residential demand.' },
-  { id: 'la-habra', name: 'La Habra', region: 'North OC', medianPrice: 850000, avgSqftPrice: 580, ytdSalesVolume: '$390M', ytdSalesRaw: 390, homesSoldYtd: 458, pendingHomes: 52, daysOnMarket: 21, yoyGrowth: 3.6, description: 'Peaceful border community nestled against North County hills with competitive entry pricing.' },
-  { id: 'la-palma', name: 'La Palma', region: 'North OC', medianPrice: 990000, avgSqftPrice: 625, ytdSalesVolume: '$140M', ytdSalesRaw: 140, homesSoldYtd: 141, pendingHomes: 16, daysOnMarket: 17, yoyGrowth: 4.0, description: 'Compact, safe community with top-ranked public safety and tight-knit neighborhoods.' },
-  { id: 'laguna-beach', name: 'Laguna Beach', region: 'Coastal', medianPrice: 4250000, avgSqftPrice: 1680, ytdSalesVolume: '$1.15B', ytdSalesRaw: 1150, homesSoldYtd: 270, pendingHomes: 28, daysOnMarket: 42, yoyGrowth: 9.2, description: 'Artistic seaside community with dramatic ocean bluffs, pristine coves, and ultra-exclusive real estate.' },
-  { id: 'laguna-hills', name: 'Laguna Hills', region: 'South OC', medianPrice: 1280000, avgSqftPrice: 710, ytdSalesVolume: '$350M', ytdSalesRaw: 350, homesSoldYtd: 273, pendingHomes: 31, daysOnMarket: 24, yoyGrowth: 5.1, description: 'South County city featuring spacious lots, rolling hills, and proximity to medical hubs.' },
-  { id: 'laguna-niguel', name: 'Laguna Niguel', region: 'South OC', medianPrice: 1550000, avgSqftPrice: 760, ytdSalesVolume: '$920M', ytdSalesRaw: 920, homesSoldYtd: 593, pendingHomes: 65, daysOnMarket: 23, yoyGrowth: 6.0, description: 'Master-planned community nestled in coastal hills with expansive trails and luxury developments.' },
-  { id: 'laguna-woods', name: 'Laguna Woods', region: 'South OC', medianPrice: 510000, avgSqftPrice: 420, ytdSalesVolume: '$280M', ytdSalesRaw: 280, homesSoldYtd: 549, pendingHomes: 62, daysOnMarket: 28, yoyGrowth: 3.2, description: 'Premier 55+ active senior community featuring golf courses, clubhouses, and low maintenance homes.' },
-  { id: 'lake-forest', name: 'Lake Forest', region: 'South OC', medianPrice: 1160000, avgSqftPrice: 695, ytdSalesVolume: '$710M', ytdSalesRaw: 710, homesSoldYtd: 612, pendingHomes: 74, daysOnMarket: 20, yoyGrowth: 5.4, description: 'Picturesque South OC community featuring eucalyptus groves, lakes, and new construction options.' },
-  { id: 'los-alamitos', name: 'Los Alamitos', region: 'North OC', medianPrice: 1320000, avgSqftPrice: 740, ytdSalesVolume: '$210M', ytdSalesRaw: 210, homesSoldYtd: 159, pendingHomes: 18, daysOnMarket: 22, yoyGrowth: 5.6, description: 'Charming small town renowned for top-tier school district and prime coastal proximity.' },
-  { id: 'mission-viejo', name: 'Mission Viejo', region: 'South OC', medianPrice: 1220000, avgSqftPrice: 680, ytdSalesVolume: '$1.08B', ytdSalesRaw: 1080, homesSoldYtd: 885, pendingHomes: 96, daysOnMarket: 21, yoyGrowth: 5.3, description: 'Acclaimed master-planned city centered around Lake Mission Viejo with tree-lined streets.' },
-  { id: 'newport-beach', name: 'Newport Beach', region: 'Coastal', medianPrice: 4650000, avgSqftPrice: 1750, ytdSalesVolume: '$3.25B', ytdSalesRaw: 3250, homesSoldYtd: 698, pendingHomes: 82, daysOnMarket: 38, yoyGrowth: 8.7, description: 'Luxury coastal enclave renowned for oceanfront estates, private harbor docks, and high-value equity.' },
-  { id: 'orange', name: 'Orange', region: 'Central OC', medianPrice: 1050000, avgSqftPrice: 660, ytdSalesVolume: '$980M', ytdSalesRaw: 980, homesSoldYtd: 933, pendingHomes: 105, daysOnMarket: 21, yoyGrowth: 4.8, description: 'Historic center with iconic Plaza Square, Chapman University, and charming vintage homes.' },
-  { id: 'placentia', name: 'Placentia', region: 'North OC', medianPrice: 930000, avgSqftPrice: 615, ytdSalesVolume: '$380M', ytdSalesRaw: 380, homesSoldYtd: 408, pendingHomes: 46, daysOnMarket: 20, yoyGrowth: 4.3, description: 'Quiet residential town with friendly neighborhoods and strong public school track record.' },
-  { id: 'rancho-santa-margarita', name: 'Rancho Santa Margarita', region: 'South OC', medianPrice: 1080000, avgSqftPrice: 670, ytdSalesVolume: '$540M', ytdSalesRaw: 540, homesSoldYtd: 500, pendingHomes: 58, daysOnMarket: 19, yoyGrowth: 5.0, description: 'Scenic foothill community with RSM Lake, mountain views, and modern family neighborhoods.' },
-  { id: 'san-clemente', name: 'San Clemente', region: 'Coastal', medianPrice: 1850000, avgSqftPrice: 890, ytdSalesVolume: '$1.12B', ytdSalesRaw: 1120, homesSoldYtd: 605, pendingHomes: 69, daysOnMarket: 27, yoyGrowth: 7.1, description: 'Spanish Village by the Sea featuring ocean-view neighborhoods and active surf culture.' },
-  { id: 'san-juan-capistrano', name: 'San Juan Capistrano', region: 'South OC', medianPrice: 1650000, avgSqftPrice: 820, ytdSalesVolume: '$480M', ytdSalesRaw: 480, homesSoldYtd: 291, pendingHomes: 33, daysOnMarket: 29, yoyGrowth: 6.5, description: 'Historic mission city featuring equestrian estates, historic downtown, and coastal valley views.' },
-  { id: 'santa-ana', name: 'Santa Ana', region: 'Central OC', medianPrice: 820000, avgSqftPrice: 560, ytdSalesVolume: '$1.02B', ytdSalesRaw: 1020, homesSoldYtd: 1243, pendingHomes: 138, daysOnMarket: 23, yoyGrowth: 4.0, description: 'County seat with vibrant downtown arts district, historic Floral Park, and government centers.' },
-  { id: 'seal-beach', name: 'Seal Beach', region: 'Coastal', medianPrice: 1390000, avgSqftPrice: 790, ytdSalesVolume: '$310M', ytdSalesRaw: 310, homesSoldYtd: 223, pendingHomes: 26, daysOnMarket: 25, yoyGrowth: 5.5, description: 'Quaint oceanfront village with historic wooden pier, Main Street shops, and quiet beach life.' },
-  { id: 'stanton', name: 'Stanton', region: 'Central OC', medianPrice: 780000, avgSqftPrice: 540, ytdSalesVolume: '$180M', ytdSalesRaw: 180, homesSoldYtd: 230, pendingHomes: 25, daysOnMarket: 22, yoyGrowth: 3.5, description: 'Revitalizing Central County city with new residential developments and community investments.' },
-  { id: 'tustin', name: 'Tustin', region: 'Central OC', medianPrice: 1150000, avgSqftPrice: 710, ytdSalesVolume: '$760M', ytdSalesRaw: 760, homesSoldYtd: 660, pendingHomes: 78, daysOnMarket: 20, yoyGrowth: 5.7, description: 'City of Trees combining historic Old Town charm with modern Tustin Legacy master development.' },
-  { id: 'villa-park', name: 'Villa Park', region: 'Central OC', medianPrice: 2350000, avgSqftPrice: 840, ytdSalesVolume: '$190M', ytdSalesRaw: 190, homesSoldYtd: 81, pendingHomes: 9, daysOnMarket: 31, yoyGrowth: 6.8, description: 'Exclusive enclave of half-acre estate lots surrounded entirely by the city of Orange.' },
-  { id: 'westminster', name: 'Westminster', region: 'Central OC', medianPrice: 890000, avgSqftPrice: 595, ytdSalesVolume: '$520M', ytdSalesRaw: 520, homesSoldYtd: 584, pendingHomes: 64, daysOnMarket: 21, yoyGrowth: 4.1, description: 'Culturally rich hub featuring Little Saigon, central location, and consistent property demand.' },
-  { id: 'yorba-linda', name: 'Yorba Linda', region: 'North OC', medianPrice: 1420000, avgSqftPrice: 710, ytdSalesVolume: '$850M', ytdSalesRaw: 850, homesSoldYtd: 598, pendingHomes: 67, daysOnMarket: 22, yoyGrowth: 5.9, description: 'Affluent equestrian city with Nixon Presidential Library, expansive trails, and top schools.' }
-];
+export function getMarketCondition(days: number) {
+  if (days < 60) {
+    return {
+      label: "Hot Market",
+      bgClass: "bg-[#FA2D48] text-white font-bold",
+      badgeText: "Hot Seller's Market (< 60 Days)",
+      description: "Sellers hold full pricing leverage with rapid inventory absorption."
+    };
+  } else if (days < 90) {
+    return {
+      label: "Slight Seller's",
+      bgClass: "bg-amber-500 text-white font-bold",
+      badgeText: "Slight Seller's Market (60–89 Days)",
+      description: "Slight seller advantage with steady sales pace."
+    };
+  } else if (days < 120) {
+    return {
+      label: "Balanced Market",
+      bgClass: "bg-blue-600 text-white font-bold",
+      badgeText: "Balanced Market (90–119 Days)",
+      description: "Equilibrium between buyers and sellers with stable pricing."
+    };
+  } else {
+    return {
+      label: "Buyer's Market",
+      bgClass: "bg-emerald-800 text-white font-bold",
+      badgeText: "Buyer's Market (120+ Days)",
+      description: "Buyers hold negotiating leverage with accumulating listings."
+    };
+  }
+}
+
+export const OC_MARKET_DATA: OCCityMarketData[] = OC_MARKET_TIME_REPORT.map((item) => {
+  const id = item.city.toLowerCase().replace(/\s+/g, '-');
+  const priceNum = parseInt(item.medianActiveListPrice.replace(/[^0-9]/g, '')) * (item.medianActiveListPrice.includes('m') ? 1000000 : 1000);
+  const soldItem = OC_SOLD_REPORT.find(s => s.city.toLowerCase() === item.city.toLowerCase());
+  const sqftPrice = soldItem ? parseInt(soldItem.medianPricePerSqFt.replace(/[^0-9]/g, '')) : 720;
+  
+  return {
+    id,
+    name: item.city,
+    region: item.region,
+    medianPrice: priceNum || 1250000,
+    avgSqftPrice: sqftPrice,
+    ytdSalesVolume: soldItem ? `$${(soldItem.unitsSoldJune2026 * (priceNum / 1000000)).toFixed(1)}M` : '$450M',
+    ytdSalesRaw: 450,
+    homesSoldYtd: soldItem ? soldItem.unitsSoldJune2026 * 6 : 300,
+    pendingHomes: item.demand30Days,
+    unitsClosedPastMonth: soldItem ? soldItem.unitsSoldJune2026 : 45,
+    daysOnMarket: item.marketTimeDays,
+    yoyGrowth: 5.2,
+    description: `Official statistics for ${item.city}, ${item.region}.`
+  };
+});
 
 interface OrangeCountyMarketTrendsProps {
   onSelectCity?: (city: CityInfo) => void;
 }
 
+type ReportTab = 'summary' | 'market-time' | 'price-range' | 'sold-report' | 'sitting-market';
+
 export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> = ({ onSelectCity }) => {
+  const [activeTab, setActiveTab] = useState<ReportTab>('summary');
   const [selectedCity, setSelectedCity] = useState<OCCityMarketData | null>(null);
   const [selectedRegion, setSelectedRegion] = useState<string>('All');
+  const [pricePropertyType, setPricePropertyType] = useState<'all' | 'attached' | 'detached'>('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortField, setSortField] = useState<string>('city');
+  const [sortAsc, setSortAsc] = useState<boolean>(true);
   const [fredStats, setFredStats] = useState<{ mortgage30Year: string; mortgage15Year: string; asOfDate: string } | null>(null);
-
-  const regionCities = useMemo(() => {
-    if (selectedRegion === 'All') return [];
-    return OC_MARKET_DATA.filter(c => c.region === selectedRegion);
-  }, [selectedRegion]);
 
   React.useEffect(() => {
     fetch('/api/live-market-stats')
@@ -79,21 +112,76 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
       .catch(err => console.warn("Failed to load live FRED stats", err));
   }, []);
 
-  // Aggregate totals
-  const overallStats = useMemo(() => {
-    const totalVolume = OC_MARKET_DATA.reduce((acc, c) => acc + c.ytdSalesRaw, 0);
-    const totalSold = OC_MARKET_DATA.reduce((acc, c) => acc + c.homesSoldYtd, 0);
-    const totalPending = OC_MARKET_DATA.reduce((acc, c) => acc + c.pendingHomes, 0);
-    const avgSqft = Math.round(OC_MARKET_DATA.reduce((acc, c) => acc + c.avgSqftPrice, 0) / OC_MARKET_DATA.length);
-    const avgMedian = Math.round(OC_MARKET_DATA.reduce((acc, c) => acc + c.medianPrice, 0) / OC_MARKET_DATA.length);
-    return {
-      totalVolume: `$${(totalVolume / 1000).toFixed(1)}B`,
-      totalSold: totalSold.toLocaleString(),
-      totalPending: totalPending.toLocaleString(),
-      avgSqft: `$${avgSqft}`,
-      avgMedian: `$${(avgMedian / 1000000).toFixed(2)}M`,
-    };
-  }, []);
+  const regionCities = useMemo(() => {
+    if (selectedRegion === 'All') return [];
+    return OC_MARKET_DATA.filter(c => c.region === selectedRegion);
+  }, [selectedRegion]);
+
+  // Filtered Market Time Report
+  const filteredMarketTimeReport = useMemo(() => {
+    let list = OC_MARKET_TIME_REPORT.filter(r => r.city !== 'ALL OF O.C.');
+    
+    if (selectedRegion !== 'All') {
+      list = list.filter(r => r.region === selectedRegion);
+    }
+    
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      list = list.filter(r => r.city.toLowerCase().includes(q));
+    }
+
+    return list.sort((a, b) => {
+      let valA: any = a[sortField as keyof OCMarketTimeEntry];
+      let valB: any = b[sortField as keyof OCMarketTimeEntry];
+
+      if (typeof valA === 'string') valA = valA.toLowerCase();
+      if (typeof valB === 'string') valB = valB.toLowerCase();
+
+      if (valA < valB) return sortAsc ? -1 : 1;
+      if (valA > valB) return sortAsc ? 1 : -1;
+      return 0;
+    });
+  }, [selectedRegion, searchQuery, sortField, sortAsc]);
+
+  // Filtered Sold Report
+  const filteredSoldReport = useMemo(() => {
+    let list = OC_SOLD_REPORT.filter(r => r.city !== 'All of O.C.');
+
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      list = list.filter(r => r.city.toLowerCase().includes(q));
+    }
+
+    return list.sort((a, b) => {
+      let valA: any = a[sortField as keyof OCSoldReportEntry] || 0;
+      let valB: any = b[sortField as keyof OCSoldReportEntry] || 0;
+
+      if (typeof valA === 'string') valA = valA.replace(/[^0-9.]/g, '');
+      if (typeof valB === 'string') valB = valB.replace(/[^0-9.]/g, '');
+
+      const numA = parseFloat(valA) || 0;
+      const numB = parseFloat(valB) || 0;
+
+      if (numA < numB) return sortAsc ? -1 : 1;
+      if (numA > numB) return sortAsc ? 1 : -1;
+      return 0;
+    });
+  }, [searchQuery, sortField, sortAsc]);
+
+  const priceRangeData = useMemo(() => {
+    if (pricePropertyType === 'attached') return OC_PRICE_RANGE_REPORT_ATTACHED;
+    if (pricePropertyType === 'detached') return OC_PRICE_RANGE_REPORT_DETACHED;
+    return OC_PRICE_RANGE_REPORT_ALL;
+  }, [pricePropertyType]);
+
+  const toggleSort = (field: string) => {
+    if (sortField === field) {
+      setSortAsc(!sortAsc);
+    } else {
+      setSortField(field);
+      setSortAsc(true);
+    }
+  };
 
   const formatCurrency = (val: number) => {
     return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(val);
@@ -102,7 +190,71 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
   return (
     <div className="space-y-6 sm:space-y-8 animate-fade-in font-sans">
       
-      {/* Top City Selector Bar (Clean Region Tabs & City Selector) */}
+      {/* Official Report Header Banner */}
+      <div className="bg-white text-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-xs relative overflow-hidden">
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="space-y-2">
+            <div className="inline-flex items-center space-x-2 px-3 py-1 bg-slate-100 border border-slate-200 rounded-full text-xs font-mono font-bold text-[#FA2D48]">
+              <span>Official OC Housing Report • {OC_HOUSING_REPORT_METADATA.reportDate}</span>
+            </div>
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black font-serif tracking-tight text-slate-950 leading-tight">
+              {OC_HOUSING_REPORT_METADATA.title}
+            </h1>
+            <p className="text-slate-600 text-sm max-w-2xl font-sans leading-relaxed">
+              {OC_HOUSING_REPORT_METADATA.subtitle}
+            </p>
+            <div className="text-xs text-slate-500 pt-1 font-mono">
+              Reported by {OC_HOUSING_REPORT_METADATA.author} ({OC_HOUSING_REPORT_METADATA.publisher})
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3 shrink-0 bg-slate-50 p-4 rounded-2xl border border-slate-200/80 text-center">
+            <div>
+              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Total Actives</div>
+              <div className="text-2xl font-black text-slate-900">{OC_HOUSING_REPORT_METADATA.countywideActives.toLocaleString()}</div>
+              <div className="text-[10px] text-emerald-600 font-bold">+7% Inventory</div>
+            </div>
+            <div>
+              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Market Time</div>
+              <div className="text-2xl font-black text-[#FA2D48]">{OC_HOUSING_REPORT_METADATA.countywideMarketTime} Days</div>
+              <div className="text-[10px] text-slate-600 font-bold">1,472 Pending</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Data Tabs Bar */}
+      <div className="bg-white border border-slate-200/90 rounded-2xl p-2 shadow-xs">
+        <div className="flex items-center space-x-1 overflow-x-auto scrollbar-none">
+          {[
+            { id: 'summary', label: 'Executive Summary' },
+            { id: 'market-time', label: 'City Market Time (DOM)' },
+            { id: 'sold-report', label: 'June Closed Sales Data' },
+            { id: 'price-range', label: 'Price Bracket Breakdown' },
+            { id: 'sitting-market', label: 'Sitting on Market (30d+)' },
+          ].map((tab) => {
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => {
+                  setActiveTab(tab.id as ReportTab);
+                  setSelectedCity(null);
+                }}
+                className={`px-4 py-3 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all cursor-pointer border-0 ${
+                  isActive
+                    ? 'bg-[#FA2D48] text-white shadow-xs outline-none ring-0'
+                    : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                }`}
+              >
+                <span>{tab.label}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* City Dropdown & Region Filters Bar */}
       <div className="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-xs space-y-4">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
           
@@ -128,7 +280,7 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                 }}
                 className="w-full bg-[#F2F2F7] hover:bg-slate-200/70 border border-slate-200/80 rounded-xl pl-3.5 pr-8 py-2 text-xs font-bold text-slate-950 focus:outline-none focus:ring-2 focus:ring-slate-950 transition-all cursor-pointer appearance-none"
               >
-                <option value="">All Orange County (Countywide Overview)</option>
+                <option value="">All Orange County (Countywide View)</option>
                 <optgroup label="Coastal OC">
                   {OC_MARKET_DATA.filter(c => c.region === 'Coastal').map(c => (
                     <option key={c.id} value={c.id}>{c.name}</option>
@@ -166,7 +318,7 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
             )}
           </div>
 
-          {/* Region Separation Tabs */}
+          {/* Region Tabs */}
           <div className="flex items-center space-x-1.5 overflow-x-auto scrollbar-none py-0.5">
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mr-1 hidden sm:inline">
               Regions:
@@ -195,7 +347,7 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
           </div>
         </div>
 
-        {/* Selected Region Cities (Only shows cities for the active region tab, avoiding the 34-pill wall) */}
+        {/* Region Pills */}
         {selectedRegion !== 'All' && (
           <div className="flex flex-wrap items-center gap-1.5 pt-3 border-t border-slate-100">
             <span className="text-xs font-bold text-slate-400 mr-1">
@@ -221,137 +373,442 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
         )}
       </div>
 
-      {/* If a city is selected, present the exact same layout as Orange County market trends but for that city */}
-      {selectedCity ? (
-        <div className="space-y-6 sm:space-y-8">
-          {/* Header Card matching OC Market Trends exactly */}
-          <div className="bg-white text-slate-950 rounded-3xl p-6 sm:p-10 border border-slate-200/90 shadow-xs">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-              <div className="space-y-1">
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-slate-950 leading-tight">
-                  {selectedCity.name}
-                </h1>
-              </div>
-            </div>
+      {/* Selected City Detail View */}
+      {selectedCity ? (() => {
+        const soldData = OC_SOLD_REPORT.find(s => s.city.toLowerCase() === selectedCity.name.toLowerCase());
+        const marketData = OC_MARKET_TIME_REPORT.find(m => m.city.toLowerCase() === selectedCity.name.toLowerCase());
 
-            {/* 4 Apple-Style Clean Metric Summary Cards matching OC Header layout */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-8 pt-6 border-t border-slate-100">
-              <div>
-                <div className="text-xs font-bold text-slate-950 uppercase tracking-wider">
-                  Median Home Price
-                </div>
-                <div className="text-2xl sm:text-3xl font-bold text-slate-900 pt-1 tracking-tight">
-                  {formatCurrency(selectedCity.medianPrice)}
-                </div>
-                <div className="text-[11px] text-emerald-600 font-bold pt-0.5">
-                  +{selectedCity.yoyGrowth}% YoY Growth
-                </div>
-              </div>
+        const yoyUnitsChange = soldData ? soldData.unitsSoldJune2026 - soldData.unitsSoldJune2025 : 0;
+        const yoyUnitsPercent = soldData && soldData.unitsSoldJune2025 > 0 
+          ? ((yoyUnitsChange / soldData.unitsSoldJune2025) * 100).toFixed(1) 
+          : '0.0';
 
-              <div>
-                <div className="text-xs font-bold text-slate-950 uppercase tracking-wider">
-                  Price Per Sq. Ft.
+        return (
+          <div className="space-y-6">
+            {/* Header & Main Stats Card */}
+            <div className="bg-white text-slate-950 rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-xs space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-5">
+                <div>
+                  <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-950">
+                    {selectedCity.name}
+                  </h2>
                 </div>
-                <div className="text-2xl sm:text-3xl font-bold text-[#FA2D48] pt-1 tracking-tight">
-                  ${selectedCity.avgSqftPrice} <span className="text-xs text-slate-500 font-normal">/ sqft</span>
-                </div>
-                <div className="text-[11px] text-emerald-600 font-bold pt-0.5">
-                  County Avg: {overallStats.avgSqft}
-                </div>
+
+                <button
+                  onClick={() => setSelectedCity(null)}
+                  className="inline-flex items-center space-x-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold rounded-xl transition-all cursor-pointer self-start sm:self-auto"
+                >
+                  <span>← Back to Countywide View</span>
+                </button>
               </div>
 
-              <div>
-                <div className="text-xs font-bold text-slate-950 uppercase tracking-wider">
-                  YTD Sales Volume
-                </div>
-                <div className="text-2xl sm:text-3xl font-bold text-slate-900 pt-1 tracking-tight">
-                  {selectedCity.ytdSalesVolume}
-                </div>
-                <div className="text-[11px] text-emerald-600 font-bold pt-0.5">
-                  {selectedCity.homesSoldYtd.toLocaleString()} Closed Sales
-                </div>
-              </div>
+              {/* JUNE CLOSED SALES DATA (From Last Page of Report) */}
+              {soldData && (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-sm font-bold uppercase tracking-wider text-slate-500 font-mono">
+                      June 2026 Closed Resales Data (Official Sold Report)
+                    </h3>
+                    <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-100">
+                      CRMLS Confirmed Sales
+                    </span>
+                  </div>
 
-              <div>
-                <div className="text-xs font-bold text-slate-950 uppercase tracking-wider">
-                  Pending / Active Escrow
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                    <div className="bg-slate-50/80 p-4 rounded-2xl border border-slate-200/70">
+                      <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">Median Sales Price</div>
+                      <div className="text-2xl sm:text-3xl font-black text-[#FA2D48] pt-1">{soldData.medianSalesPrice}</div>
+                      <div className="text-[11px] text-slate-500 pt-1 font-medium">List Price: {soldData.medianListPrice}</div>
+                    </div>
+
+                    <div className="bg-slate-50/80 p-4 rounded-2xl border border-slate-200/70">
+                      <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">Sales-to-List Ratio</div>
+                      <div className="text-2xl sm:text-3xl font-black text-emerald-600 pt-1">{soldData.salesToListRatio}</div>
+                      <div className="text-[11px] text-slate-500 pt-1 font-medium">Countywide Avg: {OC_HOUSING_REPORT_METADATA.salesToListRatio}</div>
+                    </div>
+
+                    <div className="bg-slate-50/80 p-4 rounded-2xl border border-slate-200/70">
+                      <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">Median Price / Sq. Ft.</div>
+                      <div className="text-2xl sm:text-3xl font-black text-slate-950 pt-1">{soldData.medianPricePerSqFt}</div>
+                      <div className="text-[11px] text-slate-500 pt-1 font-medium">Median Size: {soldData.medianSqFt.toLocaleString()} sq ft</div>
+                    </div>
+
+                    <div className="bg-slate-50/80 p-4 rounded-2xl border border-slate-200/70">
+                      <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">Closed Resales (June)</div>
+                      <div className="text-2xl sm:text-3xl font-black text-slate-950 pt-1">{soldData.unitsSoldJune2026} Units</div>
+                      <div className="text-[11px] text-slate-500 pt-1 font-medium">
+                        {yoyUnitsChange >= 0 ? `+${yoyUnitsChange}` : yoyUnitsChange} vs June '25 ({soldData.unitsSoldJune2025})
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                    <div className="bg-slate-50/60 p-3.5 rounded-2xl border border-slate-200/60 flex items-center justify-between text-xs">
+                      <span className="font-extrabold text-black">June Price Range (Low to High):</span>
+                      <span className="font-mono font-black text-slate-950">{soldData.lowPrice} — {soldData.highPrice}</span>
+                    </div>
+                    <div className="bg-slate-50/60 p-3.5 rounded-2xl border border-slate-200/60 flex items-center justify-between text-xs">
+                      <span className="font-extrabold text-black">Closed Days on Market (DOM):</span>
+                      <span className="font-mono font-black text-slate-950">{soldData.medianDOM} Days</span>
+                    </div>
+                  </div>
                 </div>
-                <div className="text-2xl sm:text-3xl font-bold text-slate-900 pt-1 tracking-tight">
-                  {selectedCity.pendingHomes} <span className="text-xs text-slate-500 font-normal">homes</span>
+              )}
+
+              {/* CURRENT MARKET TIME & INVENTORY (From Market Time Report) */}
+              {marketData && (
+                <div className="space-y-3 pt-2 border-t border-slate-100">
+                  <h3 className="text-sm font-bold uppercase tracking-wider text-slate-500 font-mono">
+                    Current Active Inventory & Expected Market Time (Page 11)
+                  </h3>
+
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                    {(() => {
+                      const cond = getMarketCondition(marketData.marketTimeDays);
+                      return (
+                        <div className={`${cond.bgClass} p-4 rounded-2xl flex flex-col justify-between shadow-xs space-y-1`}>
+                          <div className="flex items-center justify-between">
+                            <span className="text-[11px] font-bold uppercase tracking-wider opacity-90">Expected Market Time</span>
+                            <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded bg-white/20 text-white">
+                              {cond.label}
+                            </span>
+                          </div>
+                          <div className="text-2xl sm:text-3xl font-black pt-1 text-white">{marketData.marketTimeDays} Days</div>
+                          <div className="text-[11px] font-medium opacity-95 pt-0.5">{cond.badgeText}</div>
+                        </div>
+                      );
+                    })()}
+
+                    <div className="bg-slate-50/80 p-4 rounded-2xl border border-slate-200/70">
+                      <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">Active Inventory</div>
+                      <div className="text-2xl sm:text-3xl font-black text-slate-950 pt-1">{marketData.currentActives} Homes</div>
+                      <div className="text-[11px] text-slate-500 pt-1 font-medium">Active listings on market</div>
+                    </div>
+
+                    <div className="bg-slate-50/80 p-4 rounded-2xl border border-slate-200/70">
+                      <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">30-Day Demand</div>
+                      <div className="text-2xl sm:text-3xl font-black text-slate-950 pt-1">{marketData.demand30Days} Pending</div>
+                      <div className="text-[11px] text-slate-500 pt-1 font-medium">Recent pending escrows</div>
+                    </div>
+
+                    <div className="bg-slate-50/80 p-4 rounded-2xl border border-slate-200/70">
+                      <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">Median Active List Price</div>
+                      <div className="text-2xl sm:text-3xl font-black text-slate-950 pt-1">{marketData.medianActiveListPrice}</div>
+                      <div className="text-[11px] text-slate-500 pt-1 font-medium">Current active listings</div>
+                    </div>
+                  </div>
+
+                  {/* Historical DOM Trend Bar */}
+                  <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200/80 space-y-2">
+                    <div className="text-xs font-bold text-slate-700">Historical Expected Market Time Pace:</div>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs font-mono">
+                      <div className="bg-white p-2 rounded-xl border border-slate-200">
+                        <div className="text-[10px] text-slate-400 font-sans font-bold">2 Weeks Ago</div>
+                        <div className="font-bold text-slate-900">{marketData.marketTime2WeeksAgo} Days</div>
+                      </div>
+                      <div className="bg-white p-2 rounded-xl border border-slate-200">
+                        <div className="text-[10px] text-slate-400 font-sans font-bold">4 Weeks Ago</div>
+                        <div className="font-bold text-slate-900">{marketData.marketTime4WeeksAgo} Days</div>
+                      </div>
+                      <div className="bg-white p-2 rounded-xl border border-slate-200">
+                        <div className="text-[10px] text-slate-400 font-sans font-bold">1 Year Ago</div>
+                        <div className="font-bold text-slate-900">{marketData.marketTime1YearAgo} Days</div>
+                      </div>
+                      <div className="bg-white p-2 rounded-xl border border-slate-200">
+                        <div className="text-[10px] text-slate-400 font-sans font-bold">2 Years Ago</div>
+                        <div className="font-bold text-slate-900">{marketData.marketTime2YearsAgo} Days</div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div className="text-[11px] text-emerald-600 font-bold pt-0.5">
-                  Avg DOM: {selectedCity.daysOnMarket} Days
-                </div>
-              </div>
+              )}
             </div>
           </div>
-        </div>
-      ) : (
-        /* Default Orange County Main View */
+        );
+      })() : (
         <>
-          {/* Apple Minimalist Header & Benchmark Cards */}
-          <div className="bg-white text-slate-950 rounded-3xl p-6 sm:p-10 border border-slate-200/90 shadow-xs">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-              <div className="space-y-1">
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-slate-950 leading-tight">
-                  Orange County Market Trends
-                </h1>
+          {/* TAB 1: EXECUTIVE SUMMARY */}
+          {activeTab === 'summary' && (
+            <div className="space-y-6">
+              {/* Key Indicators */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="bg-white border border-slate-200/90 rounded-3xl p-6 shadow-xs">
+                  <div className="text-xs font-mono uppercase tracking-widest text-slate-500 font-bold">FRED 30-Year Mortgage Rate</div>
+                  <div className="text-3xl font-black text-slate-900 pt-1">{fredStats?.mortgage30Year || '6.55%'}</div>
+                  <p className="text-xs text-slate-500 mt-2">Freddie Mac Primary Market Survey. Rate hikes act as a brakes pedal for buyer demand.</p>
+                </div>
+                <div className="bg-white border border-slate-200/90 rounded-3xl p-6 shadow-xs">
+                  <div className="text-xs font-mono uppercase tracking-widest text-slate-500 font-bold">Countywide Median List Price</div>
+                  <div className="text-3xl font-black text-slate-900 pt-1">{OC_HOUSING_REPORT_METADATA.countywideMedianPrice}</div>
+                  <p className="text-xs text-slate-500 mt-2">Across 5,020 active listings in all 34 OC municipalities.</p>
+                </div>
+                <div className="bg-white border border-slate-200/90 rounded-3xl p-6 shadow-xs">
+                  <div className="text-xs font-mono uppercase tracking-widest text-slate-500 font-bold">June Closed Resales</div>
+                  <div className="text-3xl font-black text-[#FA2D48] pt-1">1,994 Sales</div>
+                  <p className="text-xs text-slate-500 mt-2">+9% compared to June 2025 (1,828 sales). Average 99.9% sales-to-list ratio.</p>
+                </div>
+              </div>
+
+              {/* Bullet Highlights Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                {OC_HOUSING_SUMMARY_BULLETS.map((bullet, idx) => (
+                  <div key={idx} className="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-xs space-y-3">
+                    <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                      <span className="text-xs font-mono font-bold text-[#FA2D48] uppercase tracking-wider">{bullet.title}</span>
+                      <span className="text-xs font-bold bg-slate-100 px-2 py-0.5 rounded-lg text-slate-700">{bullet.trend}</span>
+                    </div>
+                    <div className="text-2xl font-black text-slate-900">{bullet.stat}</div>
+                    <p className="text-xs text-slate-600 leading-relaxed">{bullet.description}</p>
+                  </div>
+                ))}
               </div>
             </div>
+          )}
 
-            {/* 4 Apple-Style Clean Metric Summary Cards (Pure Black Numbers, No Mini Badges) */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-8 pt-6 border-t border-slate-100">
-              <div>
-                <div className="text-xs font-bold text-slate-950 uppercase tracking-wider">
-                  FRED 30-Yr Fixed Rate
+          {/* TAB 2: CITY MARKET TIME REPORT */}
+          {activeTab === 'market-time' && (
+            <div className="bg-white border border-slate-200/90 rounded-3xl p-6 shadow-xs space-y-5">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-100">
+                <div>
+                  <h3 className="text-xl font-bold text-slate-900">Orange County City Market Time Report</h3>
+                  <p className="text-xs text-slate-500">Official Steven Thomas Market Time Report (July 20, 2026). Expected Market Time in days to sell all listings.</p>
                 </div>
-                <div className="text-2xl sm:text-3xl font-bold text-slate-900 pt-1 tracking-tight">
-                  {fredStats?.mortgage30Year || '6.78%'}
-                </div>
-                <div className="text-[11px] text-slate-400 pt-0.5 font-medium">
-                  Freddie Mac Survey
+                
+                {/* Search Bar */}
+                <div className="relative w-full sm:w-64">
+                  <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+                  <input
+                    type="text"
+                    placeholder="Search city..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full bg-[#F2F2F7] border border-slate-200 rounded-xl pl-9 pr-3 py-1.5 text-xs font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-950"
+                  />
                 </div>
               </div>
 
-              <div>
-                <div className="text-xs font-bold text-slate-950 uppercase tracking-wider">
-                  Median OC Home Price
-                </div>
-                <div className="text-2xl sm:text-3xl font-bold text-slate-900 pt-1 tracking-tight">
-                  {overallStats.avgMedian}
-                </div>
-                <div className="text-[11px] text-slate-400 pt-0.5 font-medium">
-                  Countywide Average
-                </div>
-              </div>
-
-              <div>
-                <div className="text-xs font-bold text-slate-950 uppercase tracking-wider">
-                  County Avg $/SqFt
-                </div>
-                <div className="text-2xl sm:text-3xl font-bold text-[#FA2D48] pt-1 tracking-tight">
-                  {overallStats.avgSqft} <span className="text-xs text-slate-500 font-normal">/ sqft</span>
-                </div>
-                <div className="text-[11px] text-slate-400 pt-0.5 font-medium">
-                  Across 34 Cities
-                </div>
-              </div>
-
-              <div>
-                <div className="text-xs font-bold text-slate-950 uppercase tracking-wider">
-                  Active Escrow / Pending
-                </div>
-                <div className="text-2xl sm:text-3xl font-bold text-slate-900 pt-1 tracking-tight">
-                  {overallStats.totalPending} <span className="text-xs text-slate-500 font-normal">homes</span>
-                </div>
-                <div className="text-[11px] text-slate-400 pt-0.5 font-medium">
-                  Under Contract
-                </div>
+              {/* Table */}
+              <div className="overflow-x-auto scrollbar-none">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="bg-slate-100/80 border-b border-slate-200 text-slate-700 font-bold uppercase tracking-wider">
+                      <th className="p-3 cursor-pointer" onClick={() => toggleSort('city')}>
+                        <div className="flex items-center space-x-1">
+                          <span>City / Community</span>
+                          <ArrowUpDown className="w-3 h-3" />
+                        </div>
+                      </th>
+                      <th className="p-3">Region</th>
+                      <th className="p-3 cursor-pointer" onClick={() => toggleSort('currentActives')}>
+                        <div className="flex items-center space-x-1">
+                          <span>Actives</span>
+                          <ArrowUpDown className="w-3 h-3" />
+                        </div>
+                      </th>
+                      <th className="p-3 cursor-pointer" onClick={() => toggleSort('demand30Days')}>
+                        <div className="flex items-center space-x-1">
+                          <span>30-Day Pending</span>
+                          <ArrowUpDown className="w-3 h-3" />
+                        </div>
+                      </th>
+                      <th className="p-3 cursor-pointer" onClick={() => toggleSort('marketTimeDays')}>
+                        <div className="flex items-center space-x-1 text-[#FA2D48]">
+                          <span>Market Time (DOM)</span>
+                          <ArrowUpDown className="w-3 h-3" />
+                        </div>
+                      </th>
+                      <th className="p-3">2w Ago</th>
+                      <th className="p-3">4w Ago</th>
+                      <th className="p-3">1y Ago</th>
+                      <th className="p-3 cursor-pointer" onClick={() => toggleSort('medianActiveListPrice')}>
+                        <div className="flex items-center space-x-1">
+                          <span>Median Price</span>
+                          <ArrowUpDown className="w-3 h-3" />
+                        </div>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {filteredMarketTimeReport.map((row, idx) => (
+                      <tr key={idx} className="hover:bg-slate-50/80 transition-colors">
+                        <td className="p-3 font-bold text-slate-900">{row.city}</td>
+                        <td className="p-3 text-slate-500 font-medium">{row.region}</td>
+                        <td className="p-3 font-semibold text-slate-800">{row.currentActives}</td>
+                        <td className="p-3 font-semibold text-slate-800">{row.demand30Days}</td>
+                        <td className="p-3 font-black text-[#FA2D48] bg-rose-50/50 rounded-lg">{row.marketTimeDays} Days</td>
+                        <td className="p-3 text-slate-600">{row.marketTime2WeeksAgo}d</td>
+                        <td className="p-3 text-slate-600">{row.marketTime4WeeksAgo}d</td>
+                        <td className="p-3 text-slate-600">{row.marketTime1YearAgo}d</td>
+                        <td className="p-3 font-bold text-slate-900">{row.medianActiveListPrice}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
-          </div>
+          )}
+
+          {/* TAB 3: JUNE CLOSED SALES REPORT */}
+          {activeTab === 'sold-report' && (
+            <div className="bg-white border border-slate-200/90 rounded-3xl p-6 shadow-xs space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-100">
+                <div>
+                  <h3 className="text-xl font-bold text-slate-900">June 2026 Closed Resales Report</h3>
+                  <p className="text-xs text-slate-500">Official CRMLS closed sales records for Orange County municipalities.</p>
+                </div>
+
+                <div className="relative w-full sm:w-64">
+                  <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+                  <input
+                    type="text"
+                    placeholder="Search city..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full bg-[#F2F2F7] border border-slate-200 rounded-xl pl-9 pr-3 py-1.5 text-xs font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-950"
+                  />
+                </div>
+              </div>
+
+              <div className="overflow-x-auto scrollbar-none">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="bg-slate-100/80 border-b border-slate-200 text-slate-700 font-bold uppercase tracking-wider">
+                      <th className="p-3 cursor-pointer" onClick={() => toggleSort('city')}>City</th>
+                      <th className="p-3 cursor-pointer" onClick={() => toggleSort('unitsSoldJune2026')}>Units Sold</th>
+                      <th className="p-3 cursor-pointer" onClick={() => toggleSort('medianSalesPrice')}>Median Sales Price</th>
+                      <th className="p-3 cursor-pointer" onClick={() => toggleSort('salesToListRatio')}>Sales/List %</th>
+                      <th className="p-3 cursor-pointer" onClick={() => toggleSort('medianPricePerSqFt')}>$/Sq. Ft.</th>
+                      <th className="p-3 cursor-pointer" onClick={() => toggleSort('medianDOM')}>Median DOM</th>
+                      <th className="p-3">Low / High Price Range</th>
+                      <th className="p-3">June 2025 Units</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {filteredSoldReport.map((row, idx) => (
+                      <tr key={idx} className="hover:bg-slate-50/80 transition-colors">
+                        <td className="p-3 font-bold text-slate-900">{row.city}</td>
+                        <td className="p-3 font-bold text-slate-950">{row.unitsSoldJune2026}</td>
+                        <td className="p-3 font-black text-[#FA2D48]">{row.medianSalesPrice}</td>
+                        <td className="p-3 font-bold text-emerald-600">{row.salesToListRatio}</td>
+                        <td className="p-3 font-bold text-slate-800">{row.medianPricePerSqFt}</td>
+                        <td className="p-3 font-bold text-slate-700">{row.medianDOM} Days</td>
+                        <td className="p-3 text-slate-500 text-[11px] font-mono">{row.lowPrice} - {row.highPrice}</td>
+                        <td className="p-3 text-slate-600">{row.unitsSoldJune2025}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 4: PRICE RANGE BREAKDOWN */}
+          {activeTab === 'price-range' && (
+            <div className="bg-white border border-slate-200/90 rounded-3xl p-6 shadow-xs space-y-5">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-100">
+                <div>
+                  <h3 className="text-xl font-bold text-slate-900">Price Range & Property Type Analysis</h3>
+                  <p className="text-xs text-slate-500">Market speed and listing inventory grouped by price tiers.</p>
+                </div>
+
+                {/* Sub Switcher */}
+                <div className="flex bg-slate-100 p-1 rounded-xl">
+                  {[
+                    { id: 'all', label: 'All Homes' },
+                    { id: 'attached', label: 'Attached (Condos)' },
+                    { id: 'detached', label: 'Detached (SFH)' },
+                  ].map((sub) => (
+                    <button
+                      key={sub.id}
+                      onClick={() => setPricePropertyType(sub.id as any)}
+                      className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all cursor-pointer ${
+                        pricePropertyType === sub.id
+                          ? 'bg-slate-950 text-white shadow-xs'
+                          : 'text-slate-600 hover:text-slate-900'
+                      }`}
+                    >
+                      {sub.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="overflow-x-auto scrollbar-none">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="bg-slate-100/80 border-b border-slate-200 text-slate-700 font-bold uppercase tracking-wider">
+                      <th className="p-3">Price Tier</th>
+                      <th className="p-3">Current Actives</th>
+                      <th className="p-3">30-Day Demand</th>
+                      <th className="p-3 text-[#FA2D48]">Market Time (DOM)</th>
+                      <th className="p-3">2w Ago</th>
+                      <th className="p-3">4w Ago</th>
+                      <th className="p-3">1y Ago</th>
+                      <th className="p-3">Median Price</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {priceRangeData.map((row, idx) => (
+                      <tr key={idx} className="hover:bg-slate-50/80 transition-colors">
+                        <td className="p-3 font-black text-slate-900">{row.priceRange}</td>
+                        <td className="p-3 font-semibold text-slate-800">{row.currentActives}</td>
+                        <td className="p-3 font-semibold text-slate-800">{row.demand30Days}</td>
+                        <td className="p-3 font-black text-[#FA2D48] bg-rose-50/50 rounded-lg">{row.marketTimeDays} Days</td>
+                        <td className="p-3 text-slate-600">{row.marketTime2WeeksAgo}d</td>
+                        <td className="p-3 text-slate-600">{row.marketTime4WeeksAgo}d</td>
+                        <td className="p-3 text-slate-600">{row.marketTime1YearAgo}d</td>
+                        <td className="p-3 font-bold text-slate-900">{row.medianActivePrice}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 5: SITTING ON MARKET ANALYSIS */}
+          {activeTab === 'sitting-market' && (
+            <div className="bg-white border border-slate-200/90 rounded-3xl p-6 shadow-xs space-y-5">
+              <div>
+                <h3 className="text-xl font-bold text-slate-900">Sitting on the Market Breakdown</h3>
+                <p className="text-xs text-slate-500">64% of all active homes have been listed for at least 1 month, and 41% surpassed 2 months.</p>
+              </div>
+
+              <div className="overflow-x-auto scrollbar-none">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="bg-slate-100/80 border-b border-slate-200 text-slate-700 font-bold uppercase tracking-wider">
+                      <th className="p-3">Price Bracket</th>
+                      <th className="p-3">Current Actives</th>
+                      <th className="p-3">30+ Days Listed</th>
+                      <th className="p-3 text-rose-600">% 30+ Days</th>
+                      <th className="p-3">60+ Days Listed</th>
+                      <th className="p-3 text-amber-600">% 60+ Days</th>
+                      <th className="p-3">Expected Market Time</th>
+                      <th className="p-3">Off-Market (Jan–June)</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {OC_SITTING_ON_MARKET_REPORT.map((row, idx) => (
+                      <tr key={idx} className={`hover:bg-slate-50/80 transition-colors ${row.priceRange === 'All of O.C.' ? 'bg-slate-100/70 font-black' : ''}`}>
+                        <td className="p-3 font-bold text-slate-900">{row.priceRange}</td>
+                        <td className="p-3 text-slate-800">{row.currentActives}</td>
+                        <td className="p-3 text-slate-800">{row.actives30PlusDays}</td>
+                        <td className="p-3 font-bold text-rose-600">{row.percent30PlusDays}</td>
+                        <td className="p-3 text-slate-800">{row.actives60PlusDays}</td>
+                        <td className="p-3 font-bold text-amber-600">{row.percent60PlusDays}</td>
+                        <td className="p-3 font-bold text-slate-900">{row.marketTimeDays} Days</td>
+                        <td className="p-3 text-slate-700">{row.offMarketJanJun} homes</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
         </>
       )}
     </div>
   );
 };
+
