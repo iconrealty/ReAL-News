@@ -47,17 +47,17 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
   currentCity,
   fredStats,
 }) => {
-  // Parse numeric rates from FRED stats if available (e.g. "6.78%" -> 6.78)
+  // Parse numeric rates from FRED stats if available (e.g. "6.66%" -> 6.66)
   const fred30Num = useMemo(() => {
-    if (!fredStats?.mortgage30Year) return 6.78;
+    if (!fredStats?.mortgage30Year) return 6.66;
     const val = parseFloat(fredStats.mortgage30Year.replace('%', ''));
-    return isNaN(val) ? 6.78 : val;
+    return isNaN(val) ? 6.66 : val;
   }, [fredStats?.mortgage30Year]);
 
   const fred15Num = useMemo(() => {
-    if (!fredStats?.mortgage15Year) return 5.98;
+    if (!fredStats?.mortgage15Year) return 6.04;
     const val = parseFloat(fredStats.mortgage15Year.replace('%', ''));
-    return isNaN(val) ? 5.98 : val;
+    return isNaN(val) ? 6.04 : val;
   }, [fredStats?.mortgage15Year]);
 
   const liveRates = useMemo(() => [

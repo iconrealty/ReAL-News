@@ -154,27 +154,44 @@ async function fetchLivePublicRssNews(cityName: string, category: string) {
 
 async function fetchLiveFredData() {
   try {
-    const response30 = await fetch("https://fred.stlouisfed.org/graph/fredgraph.csv?id=MORTGAGE30US");
+    const fetchHeaders = {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+      'Accept': 'text/csv,text/plain,*/*'
+    };
+
+    const response30 = await fetch("https://fred.stlouisfed.org/graph/fredgraph.csv?id=MORTGAGE30US", { headers: fetchHeaders });
     const text30 = await response30.text();
-    const lines30 = text30.trim().split("\n");
-    let current30Year = "6.78%";
-    let date30Year = new Date().toISOString().split("T")[0];
-    if (lines30.length > 1) {
-      const lastLine = lines30[lines30.length - 1].split(",");
-      if (lastLine.length >= 2 && !isNaN(parseFloat(lastLine[1]))) {
-        current30Year = `${parseFloat(lastLine[1]).toFixed(2)}%`;
-        date30Year = lastLine[0];
+    const lines30 = text30.split(/\r?\n/).filter(line => line.trim().length > 0);
+    
+    let current30Year = "6.66%";
+    let date30Year = "2026-07-30";
+
+    for (let i = lines30.length - 1; i >= 0; i--) {
+      const parts = lines30[i].split(",");
+      if (parts.length >= 2) {
+        const val = parseFloat(parts[1]);
+        if (!isNaN(val) && val > 0) {
+          current30Year = `${val.toFixed(2)}%`;
+          date30Year = parts[0].trim();
+          break;
+        }
       }
     }
 
-    const response15 = await fetch("https://fred.stlouisfed.org/graph/fredgraph.csv?id=MORTGAGE15US");
+    const response15 = await fetch("https://fred.stlouisfed.org/graph/fredgraph.csv?id=MORTGAGE15US", { headers: fetchHeaders });
     const text15 = await response15.text();
-    const lines15 = text15.trim().split("\n");
-    let current15Year = "5.98%";
-    if (lines15.length > 1) {
-      const lastLine = lines15[lines15.length - 1].split(",");
-      if (lastLine.length >= 2 && !isNaN(parseFloat(lastLine[1]))) {
-        current15Year = `${parseFloat(lastLine[1]).toFixed(2)}%`;
+    const lines15 = text15.split(/\r?\n/).filter(line => line.trim().length > 0);
+    
+    let current15Year = "6.04%";
+
+    for (let i = lines15.length - 1; i >= 0; i--) {
+      const parts = lines15[i].split(",");
+      if (parts.length >= 2) {
+        const val = parseFloat(parts[1]);
+        if (!isNaN(val) && val > 0) {
+          current15Year = `${val.toFixed(2)}%`;
+          break;
+        }
       }
     }
 
@@ -189,9 +206,9 @@ async function fetchLiveFredData() {
     console.warn("[FRED Data] Failed to fetch live FRED CSV:", err);
     return {
       source: "U.S. Federal Reserve (FRED) & Freddie Mac",
-      mortgage30Year: "6.72%",
-      mortgage15Year: "5.94%",
-      asOfDate: new Date().toISOString().split("T")[0],
+      mortgage30Year: "6.66%",
+      mortgage15Year: "6.04%",
+      asOfDate: "2026-07-30",
       isRealLiveFredData: false
     };
   }

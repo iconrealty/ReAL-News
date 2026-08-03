@@ -258,6 +258,7 @@ export function App() {
           />
         ) : activeCategory === 'market-trends' ? (
           <OrangeCountyMarketTrends
+            fredStats={fredStats}
             onSelectCity={(city) => {
               setCurrentCity(city);
               showToast(`Selected ${city.name}`);

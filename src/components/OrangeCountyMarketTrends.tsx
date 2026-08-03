@@ -87,11 +87,12 @@ export const OC_MARKET_DATA: OCCityMarketData[] = OC_MARKET_TIME_REPORT.map((ite
 
 interface OrangeCountyMarketTrendsProps {
   onSelectCity?: (city: CityInfo) => void;
+  fredStats?: { mortgage30Year: string; mortgage15Year: string; asOfDate: string } | null;
 }
 
 type ReportTab = 'summary' | 'market-time' | 'price-range' | 'sold-report' | 'sitting-market';
 
-export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> = ({ onSelectCity }) => {
+export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> = ({ onSelectCity, fredStats: propFredStats }) => {
   const [activeTab, setActiveTab] = useState<ReportTab>('summary');
   const [selectedCity, setSelectedCity] = useState<OCCityMarketData | null>(null);
   const [selectedRegion, setSelectedRegion] = useState<string>('All');
@@ -99,9 +100,13 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
   const [searchQuery, setSearchQuery] = useState('');
   const [sortField, setSortField] = useState<string>('city');
   const [sortAsc, setSortAsc] = useState<boolean>(true);
-  const [fredStats, setFredStats] = useState<{ mortgage30Year: string; mortgage15Year: string; asOfDate: string } | null>(null);
+  const [fredStats, setFredStats] = useState<{ mortgage30Year: string; mortgage15Year: string; asOfDate: string } | null>(propFredStats || null);
 
   React.useEffect(() => {
+    if (propFredStats) {
+      setFredStats(propFredStats);
+      return;
+    }
     fetch('/api/live-market-stats')
       .then(res => res.json())
       .then(json => {
@@ -110,7 +115,7 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
         }
       })
       .catch(err => console.warn("Failed to load live FRED stats", err));
-  }, []);
+  }, [propFredStats]);
 
   const regionCities = useMemo(() => {
     if (selectedRegion === 'All') return [];
@@ -194,7 +199,7 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
       <div className="bg-white text-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-xs relative overflow-hidden">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2">
-            <div className="inline-flex items-center space-x-2 px-3 py-1 bg-slate-100 border border-slate-200 rounded-full text-xs font-mono font-bold text-[#FA2D48]">
+            <div className="inline-flex items-center space-x-2 px-3 py-1 bg-slate-100 border border-slate-200 rounded-full text-xs font-sans font-bold text-[#FA2D48]">
               <span>Official OC Housing Report • {OC_HOUSING_REPORT_METADATA.reportDate}</span>
             </div>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black font-serif tracking-tight text-slate-950 leading-tight">
@@ -203,7 +208,7 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
             <p className="text-slate-600 text-sm max-w-2xl font-sans leading-relaxed">
               {OC_HOUSING_REPORT_METADATA.subtitle}
             </p>
-            <div className="text-xs text-slate-500 pt-1 font-mono">
+            <div className="text-xs text-slate-500 pt-1 font-sans">
               Reported by {OC_HOUSING_REPORT_METADATA.author} ({OC_HOUSING_REPORT_METADATA.publisher})
             </div>
           </div>
@@ -406,7 +411,7 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
               {soldData && (
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 font-mono">
+                    <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 font-sans">
                       June 2026
                     </h3>
                   </div>
@@ -442,11 +447,11 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
                     <div className="py-2.5 px-3 flex items-center justify-between text-xs border-b border-slate-100 sm:border-b-0">
                       <span className="font-medium text-slate-600">June Price Range (Low to High):</span>
-                      <span className="font-mono font-bold text-slate-900">{soldData.lowPrice} — {soldData.highPrice}</span>
+                      <span className="font-sans font-bold text-slate-900">{soldData.lowPrice} — {soldData.highPrice}</span>
                     </div>
                     <div className="py-2.5 px-3 flex items-center justify-between text-xs">
                       <span className="font-medium text-slate-600">Closed Days on Market (DOM):</span>
-                      <span className="font-mono font-bold text-slate-900">{soldData.medianDOM} Days</span>
+                      <span className="font-sans font-bold text-slate-900">{soldData.medianDOM} Days</span>
                     </div>
                   </div>
                 </div>
@@ -455,7 +460,7 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
               {/* CURRENT MARKET TIME & INVENTORY (From Market Time Report) */}
               {marketData && (
                 <div className="space-y-3 pt-2 border-t border-slate-100">
-                  <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 font-mono">
+                  <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 font-sans">
                     Current Active Inventory & Expected Market Time (Page 11)
                   </h3>
 
@@ -498,7 +503,7 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                   {/* Historical DOM Trend Bar */}
                   <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200/80 space-y-2">
                     <div className="text-xs font-bold text-slate-700">Historical Expected Market Time Pace:</div>
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs font-mono">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs font-sans">
                       <div className="bg-white p-2 rounded-xl border border-slate-200 flex flex-col justify-between">
                         <div>
                           <div className="text-[10px] text-slate-400 font-sans font-bold">2 Weeks Ago</div>
@@ -550,17 +555,19 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
               {/* Key Indicators */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="bg-white border border-slate-200/90 rounded-3xl p-6 shadow-xs">
-                  <div className="text-xs font-mono uppercase tracking-widest text-black font-extrabold">FRED 30-Year Mortgage Rate</div>
-                  <div className="text-3xl font-black text-slate-900 pt-1">{fredStats?.mortgage30Year || '6.55%'}</div>
-                  <p className="text-xs text-slate-500 mt-2">Freddie Mac Primary Market Survey. Rate hikes act as a brakes pedal for buyer demand.</p>
+                  <div className="text-xs font-sans uppercase tracking-widest text-black font-extrabold">FRED 30-Year Mortgage Rate</div>
+                  <div className="text-3xl font-black text-slate-900 pt-1">{fredStats?.mortgage30Year || '6.66%'}</div>
+                  <p className="text-xs text-slate-500 mt-2">
+                    Freddie Mac Primary Market Survey {fredStats?.asOfDate ? `(As of ${fredStats.asOfDate})` : ''}. Live Federal Reserve FRED benchmark.
+                  </p>
                 </div>
                 <div className="bg-white border border-slate-200/90 rounded-3xl p-6 shadow-xs">
-                  <div className="text-xs font-mono uppercase tracking-widest text-black font-extrabold">Countywide Median List Price</div>
+                  <div className="text-xs font-sans uppercase tracking-widest text-black font-extrabold">Countywide Median List Price</div>
                   <div className="text-3xl font-black text-slate-900 pt-1">{OC_HOUSING_REPORT_METADATA.countywideMedianPrice}</div>
                   <p className="text-xs text-slate-500 mt-2">Across 5,020 active listings in all 34 OC municipalities.</p>
                 </div>
                 <div className="bg-white border border-slate-200/90 rounded-3xl p-6 shadow-xs">
-                  <div className="text-xs font-mono uppercase tracking-widest text-black font-extrabold">June Closed Resales</div>
+                  <div className="text-xs font-sans uppercase tracking-widest text-black font-extrabold">June Closed Resales</div>
                   <div className="text-3xl font-black text-[#FA2D48] pt-1">1,994 Sales</div>
                   <p className="text-xs text-slate-500 mt-2">+9% compared to June 2025 (1,828 sales). Average 99.9% sales-to-list ratio.</p>
                 </div>
@@ -571,7 +578,7 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                 {OC_HOUSING_SUMMARY_BULLETS.map((bullet, idx) => (
                   <div key={idx} className="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-xs space-y-3">
                     <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-                      <span className="text-xs font-mono font-bold text-[#FA2D48] uppercase tracking-wider">{bullet.title}</span>
+                      <span className="text-xs font-sans font-bold text-[#FA2D48] uppercase tracking-wider">{bullet.title}</span>
                       <span className="text-xs font-bold bg-slate-100 px-2 py-0.5 rounded-lg text-slate-700">{bullet.trend}</span>
                     </div>
                     <div className="text-2xl font-black text-slate-900">{bullet.stat}</div>
@@ -709,7 +716,7 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                         <td className="p-3 font-bold text-emerald-600">{row.salesToListRatio}</td>
                         <td className="p-3 font-bold text-slate-800">{row.medianPricePerSqFt}</td>
                         <td className="p-3 font-bold text-slate-700">{row.medianDOM} Days</td>
-                        <td className="p-3 text-slate-500 text-[11px] font-mono">{row.lowPrice} - {row.highPrice}</td>
+                        <td className="p-3 text-slate-500 text-[11px] font-sans">{row.lowPrice} - {row.highPrice}</td>
                         <td className="p-3 text-slate-600">{row.unitsSoldJune2025}</td>
                       </tr>
                     ))}
