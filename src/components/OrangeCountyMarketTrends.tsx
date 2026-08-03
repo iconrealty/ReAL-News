@@ -100,7 +100,9 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
   const [searchQuery, setSearchQuery] = useState('');
   const [sortField, setSortField] = useState<string>('city');
   const [sortAsc, setSortAsc] = useState<boolean>(true);
-  const [fredStats, setFredStats] = useState<{ mortgage30Year: string; mortgage15Year: string; asOfDate: string } | null>(propFredStats || null);
+  const [fredStats, setFredStats] = useState<{ mortgage30Year: string; mortgage15Year: string; asOfDate: string }>(
+    propFredStats || { mortgage30Year: '6.66%', mortgage15Year: '6.04%', asOfDate: '2026-07-30' }
+  );
 
   React.useEffect(() => {
     if (propFredStats) {

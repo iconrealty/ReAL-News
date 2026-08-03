@@ -33,7 +33,11 @@ export function App() {
   const [isCitySelectorOpen, setIsCitySelectorOpen] = useState(false);
   const [isSavedDrawerOpen, setIsSavedDrawerOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
-  const [fredStats, setFredStats] = useState<{ mortgage30Year: string; mortgage15Year: string; asOfDate: string; isRealLiveFredData?: boolean } | null>(null);
+  const [fredStats, setFredStats] = useState<{ mortgage30Year: string; mortgage15Year: string; asOfDate: string; isRealLiveFredData?: boolean }>({
+    mortgage30Year: '6.66%',
+    mortgage15Year: '6.04%',
+    asOfDate: '2026-07-30'
+  });
 
   // Fetch live FRED market stats on mount so header, mortgage calculator & trends share exact same rates
   useEffect(() => {

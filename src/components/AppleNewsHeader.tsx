@@ -26,7 +26,7 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
   searchQuery,
   onSearchChange,
   onResetToMain,
-  fredRate = '6.78%',
+  fredRate = '6.66%',
 }) => {
   const monthDay = new Date().toLocaleDateString('en-US', {
     month: 'long',
