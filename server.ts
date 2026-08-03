@@ -6,6 +6,12 @@ import Parser from "rss-parser";
 import { getArticlesFromDb, saveArticleToDb, pruneOldArticles } from "./src/lib/firebaseDb.js";
 
 const rssParser = new Parser({
+  headers: {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+    'Accept': 'application/rss+xml, application/xml, text/xml, */*',
+    'Accept-Language': 'en-US,en;q=0.9',
+  },
+  timeout: 6000,
   customFields: {
     item: [['source', 'sourceName']],
   }
@@ -73,10 +79,29 @@ async function fetchLivePublicRssNews(cityName: string, category: string) {
 
     const feedUrl = `https://news.google.com/rss/search?q=${encodeURIComponent(cityName + ' California ' + queryCategory)}&hl=en-US&gl=US&ceid=US:en`;
     
-    const feed = await rssParser.parseURL(feedUrl);
+    let feed: any = null;
+    try {
+      const res = await fetch(feedUrl, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+          'Accept': 'application/rss+xml, application/xml, text/xml, */*',
+          'Accept-Language': 'en-US,en;q=0.9',
+        },
+        signal: AbortSignal.timeout(6000)
+      });
+      if (res.ok) {
+        const xmlText = await res.text();
+        feed = await rssParser.parseString(xmlText);
+      } else {
+        console.log(`[Public RSS Feed] Google News RSS returned status ${res.status} for ${cityName}, switching to curated news generator.`);
+      }
+    } catch (fetchErr) {
+      // Fallback to direct parseURL attempt
+      feed = await rssParser.parseURL(feedUrl).catch(() => null);
+    }
     
-    if (feed.items && feed.items.length > 0) {
-      const mappedArticles = feed.items.slice(0, 5).map((item, index) => {
+    if (feed && feed.items && feed.items.length > 0) {
+      const mappedArticles = feed.items.slice(0, 5).map((item: any, index: number) => {
         let rawTitle = item.title || `${cityName} Real Estate Update`;
         let publisher = "Local News";
         
@@ -122,7 +147,7 @@ async function fetchLivePublicRssNews(cityName: string, category: string) {
       return mappedArticles;
     }
   } catch (rssErr) {
-    console.warn(`[Public RSS Feed] Error fetching Google News RSS for ${cityName}:`, rssErr);
+    console.log(`[Public RSS Feed] Notice: Google News RSS unavailable for ${cityName}, utilizing curated news feed.`);
   }
   return null;
 }
