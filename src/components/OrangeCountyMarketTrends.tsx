@@ -60,7 +60,13 @@ interface OrangeCountyMarketTrendsProps {
 
 export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> = ({ onSelectCity }) => {
   const [selectedCity, setSelectedCity] = useState<OCCityMarketData | null>(null);
+  const [selectedRegion, setSelectedRegion] = useState<string>('All');
   const [fredStats, setFredStats] = useState<{ mortgage30Year: string; mortgage15Year: string; asOfDate: string } | null>(null);
+
+  const regionCities = useMemo(() => {
+    if (selectedRegion === 'All') return [];
+    return OC_MARKET_DATA.filter(c => c.region === selectedRegion);
+  }, [selectedRegion]);
 
   React.useEffect(() => {
     fetch('/api/live-market-stats')
@@ -96,8 +102,8 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
   return (
     <div className="space-y-6 sm:space-y-8 animate-fade-in font-sans">
       
-      {/* Top City Selector Bar (Clean Dropdown & Region Filter Bar) */}
-      <div className="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-xs space-y-3">
+      {/* Top City Selector Bar (Clean Region Tabs & City Selector) */}
+      <div className="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-xs space-y-4">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
           
           {/* Direct City Dropdown Selector */}
@@ -114,7 +120,10 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                     setSelectedCity(null);
                   } else {
                     const city = OC_MARKET_DATA.find(c => c.id === val);
-                    if (city) setSelectedCity(city);
+                    if (city) {
+                      setSelectedCity(city);
+                      setSelectedRegion(city.region);
+                    }
                   }
                 }}
                 className="w-full bg-[#F2F2F7] hover:bg-slate-200/70 border border-slate-200/80 rounded-xl pl-3.5 pr-8 py-2 text-xs font-bold text-slate-950 focus:outline-none focus:ring-2 focus:ring-slate-950 transition-all cursor-pointer appearance-none"
@@ -146,45 +155,70 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
 
             {selectedCity && (
               <button
-                onClick={() => setSelectedCity(null)}
+                onClick={() => {
+                  setSelectedCity(null);
+                  setSelectedRegion('All');
+                }}
                 className="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-all cursor-pointer whitespace-nowrap"
               >
-                All OC View
+                Reset Selection
               </button>
             )}
           </div>
+
+          {/* Region Separation Tabs */}
+          <div className="flex items-center space-x-1.5 overflow-x-auto scrollbar-none py-0.5">
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mr-1 hidden sm:inline">
+              Regions:
+            </span>
+            {['All', 'Coastal', 'South OC', 'Central OC', 'North OC'].map((region) => {
+              const isActive = selectedRegion === region;
+              return (
+                <button
+                  key={region}
+                  onClick={() => {
+                    setSelectedRegion(region);
+                    if (region !== 'All' && selectedCity && selectedCity.region !== region) {
+                      setSelectedCity(null);
+                    }
+                  }}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
+                    isActive
+                      ? 'bg-slate-950 text-white shadow-xs'
+                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200 border border-slate-200/50'
+                  }`}
+                >
+                  {region === 'All' ? 'All Regions' : region}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
-        {/* Clean wrapped city pills */}
-        <div className="flex flex-wrap items-center gap-1.5 pt-3 border-t border-slate-100">
-          <button
-            onClick={() => setSelectedCity(null)}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold tracking-tight transition-all cursor-pointer ${
-              selectedCity === null
-                ? 'bg-slate-950 text-white shadow-xs'
-                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-            }`}
-          >
-            All Orange County
-          </button>
-
-          {OC_MARKET_DATA.map((city) => {
-            const isSelected = selectedCity?.id === city.id;
-            return (
-              <button
-                key={city.id}
-                onClick={() => setSelectedCity(city)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold tracking-tight transition-all cursor-pointer ${
-                  isSelected
-                    ? 'bg-slate-950 text-white shadow-xs'
-                    : 'bg-slate-50 text-slate-700 border border-slate-200/60 hover:bg-slate-100'
-                }`}
-              >
-                {city.name}
-              </button>
-            );
-          })}
-        </div>
+        {/* Selected Region Cities (Only shows cities for the active region tab, avoiding the 34-pill wall) */}
+        {selectedRegion !== 'All' && (
+          <div className="flex flex-wrap items-center gap-1.5 pt-3 border-t border-slate-100">
+            <span className="text-xs font-bold text-slate-400 mr-1">
+              {selectedRegion} Cities:
+            </span>
+            {regionCities.map((city) => {
+              const isSelected = selectedCity?.id === city.id;
+              return (
+                <button
+                  key={city.id}
+                  onClick={() => setSelectedCity(city)}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold tracking-tight transition-all cursor-pointer ${
+                    isSelected
+                      ? 'bg-slate-950 text-white shadow-xs'
+                      : 'bg-slate-50 text-slate-700 border border-slate-200/60 hover:bg-slate-100'
+                  }`}
+                >
+                  {city.name}
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* If a city is selected, present the exact same layout as Orange County market trends but for that city */}
