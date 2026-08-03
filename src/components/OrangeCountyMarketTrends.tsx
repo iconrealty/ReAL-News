@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Search, ArrowUpDown } from 'lucide-react';
+import { MapPin, ChevronDown } from 'lucide-react';
 import { CityInfo } from '../types';
 
 export interface OCCityMarketData {
@@ -54,17 +54,12 @@ export const OC_MARKET_DATA: OCCityMarketData[] = [
   { id: 'yorba-linda', name: 'Yorba Linda', region: 'North OC', medianPrice: 1420000, avgSqftPrice: 710, ytdSalesVolume: '$850M', ytdSalesRaw: 850, homesSoldYtd: 598, pendingHomes: 67, daysOnMarket: 22, yoyGrowth: 5.9, description: 'Affluent equestrian city with Nixon Presidential Library, expansive trails, and top schools.' }
 ];
 
-type SortField = 'name' | 'medianPrice' | 'avgSqftPrice' | 'ytdSalesRaw' | 'homesSoldYtd' | 'pendingHomes' | 'yoyGrowth';
-
 interface OrangeCountyMarketTrendsProps {
   onSelectCity?: (city: CityInfo) => void;
 }
 
 export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> = ({ onSelectCity }) => {
   const [selectedCity, setSelectedCity] = useState<OCCityMarketData | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [sortField, setSortField] = useState<SortField>('avgSqftPrice');
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
   const [fredStats, setFredStats] = useState<{ mortgage30Year: string; mortgage15Year: string; asOfDate: string } | null>(null);
 
   React.useEffect(() => {
@@ -77,35 +72,6 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
       })
       .catch(err => console.warn("Failed to load live FRED stats", err));
   }, []);
-
-  const handleSort = (field: SortField) => {
-    if (sortField === field) {
-      setSortDirection(prev => (prev === 'asc' ? 'desc' : 'asc'));
-    } else {
-      setSortField(field);
-      setSortDirection('desc');
-    }
-  };
-
-  const filteredAndSortedData = useMemo(() => {
-    return OC_MARKET_DATA.filter(city => {
-      const q = searchQuery.toLowerCase().trim();
-      const matchesSearch = !q || city.name.toLowerCase().includes(q) || city.region.toLowerCase().includes(q);
-      return matchesSearch;
-    }).sort((a, b) => {
-      let valA = a[sortField];
-      let valB = b[sortField];
-
-      if (typeof valA === 'string') {
-        valA = (valA as string).toLowerCase();
-        valB = (valB as string).toLowerCase();
-      }
-
-      if (valA < valB) return sortDirection === 'asc' ? -1 : 1;
-      if (valA > valB) return sortDirection === 'asc' ? 1 : -1;
-      return 0;
-    });
-  }, [searchQuery, sortField, sortDirection]);
 
   // Aggregate totals
   const overallStats = useMemo(() => {
@@ -130,21 +96,70 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
   return (
     <div className="space-y-6 sm:space-y-8 animate-fade-in font-sans">
       
-      {/* Top City Selector Tab Bar (Sleek Apple Segment Bar) */}
-      <div className="bg-white border border-slate-200/90 rounded-2xl p-3 shadow-xs">
-        <div className="flex items-center justify-between px-2 pb-2">
-          <div className="text-[11px] font-black uppercase tracking-wider text-slate-400">
-            Select Market View
-          </div>
-          <div className="text-xs font-bold text-slate-500">
-            {selectedCity ? `Viewing: ${selectedCity.name}` : 'Viewing: All Orange County'}
+      {/* Top City Selector Bar (Clean Dropdown & Region Filter Bar) */}
+      <div className="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-xs space-y-3">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+          
+          {/* Direct City Dropdown Selector */}
+          <div className="flex items-center space-x-2.5">
+            <div className="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center text-slate-700 shrink-0">
+              <MapPin className="w-4 h-4 text-[#FA2D48]" />
+            </div>
+            <div className="relative flex-1 sm:w-72">
+              <select
+                value={selectedCity?.id || ''}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  if (!val) {
+                    setSelectedCity(null);
+                  } else {
+                    const city = OC_MARKET_DATA.find(c => c.id === val);
+                    if (city) setSelectedCity(city);
+                  }
+                }}
+                className="w-full bg-[#F2F2F7] hover:bg-slate-200/70 border border-slate-200/80 rounded-xl pl-3.5 pr-8 py-2 text-xs font-bold text-slate-950 focus:outline-none focus:ring-2 focus:ring-slate-950 transition-all cursor-pointer appearance-none"
+              >
+                <option value="">All Orange County (Countywide Overview)</option>
+                <optgroup label="Coastal OC">
+                  {OC_MARKET_DATA.filter(c => c.region === 'Coastal').map(c => (
+                    <option key={c.id} value={c.id}>{c.name}</option>
+                  ))}
+                </optgroup>
+                <optgroup label="Central OC">
+                  {OC_MARKET_DATA.filter(c => c.region === 'Central OC').map(c => (
+                    <option key={c.id} value={c.id}>{c.name}</option>
+                  ))}
+                </optgroup>
+                <optgroup label="South OC">
+                  {OC_MARKET_DATA.filter(c => c.region === 'South OC').map(c => (
+                    <option key={c.id} value={c.id}>{c.name}</option>
+                  ))}
+                </optgroup>
+                <optgroup label="North OC">
+                  {OC_MARKET_DATA.filter(c => c.region === 'North OC').map(c => (
+                    <option key={c.id} value={c.id}>{c.name}</option>
+                  ))}
+                </optgroup>
+              </select>
+              <ChevronDown className="w-4 h-4 text-slate-500 absolute right-2.5 top-2.5 pointer-events-none" />
+            </div>
+
+            {selectedCity && (
+              <button
+                onClick={() => setSelectedCity(null)}
+                className="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-all cursor-pointer whitespace-nowrap"
+              >
+                All OC View
+              </button>
+            )}
           </div>
         </div>
-        
-        <div className="flex items-center space-x-1.5 overflow-x-auto scrollbar-none py-1 px-1">
+
+        {/* Clean wrapped city pills */}
+        <div className="flex flex-wrap items-center gap-1.5 pt-3 border-t border-slate-100">
           <button
             onClick={() => setSelectedCity(null)}
-            className={`px-4 py-2 rounded-xl text-xs font-black tracking-tight whitespace-nowrap transition-all cursor-pointer ${
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold tracking-tight transition-all cursor-pointer ${
               selectedCity === null
                 ? 'bg-slate-950 text-white shadow-xs'
                 : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
@@ -159,9 +174,9 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
               <button
                 key={city.id}
                 onClick={() => setSelectedCity(city)}
-                className={`px-3.5 py-2 rounded-xl text-xs font-bold tracking-tight whitespace-nowrap transition-all cursor-pointer ${
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold tracking-tight transition-all cursor-pointer ${
                   isSelected
-                    ? 'bg-slate-950 text-white shadow-xs font-black'
+                    ? 'bg-slate-950 text-white shadow-xs'
                     : 'bg-slate-50 text-slate-700 border border-slate-200/60 hover:bg-slate-100'
                 }`}
               >
@@ -179,8 +194,8 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
           <div className="bg-white text-slate-950 rounded-3xl p-6 sm:p-10 border border-slate-200/90 shadow-xs">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
               <div className="space-y-1">
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-slate-950 leading-tight">
-                  {selectedCity.name} Market Trends
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-slate-950 leading-tight">
+                  {selectedCity.name}
                 </h1>
               </div>
             </div>
@@ -188,10 +203,10 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
             {/* 4 Apple-Style Clean Metric Summary Cards matching OC Header layout */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-8 pt-6 border-t border-slate-100">
               <div>
-                <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                <div className="text-xs font-bold text-slate-950 uppercase tracking-wider">
                   Median Home Price
                 </div>
-                <div className="text-2xl sm:text-3xl font-black text-slate-950 pt-1 tracking-tight">
+                <div className="text-2xl sm:text-3xl font-bold text-slate-900 pt-1 tracking-tight">
                   {formatCurrency(selectedCity.medianPrice)}
                 </div>
                 <div className="text-[11px] text-emerald-600 font-bold pt-0.5">
@@ -200,10 +215,10 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
               </div>
 
               <div>
-                <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                <div className="text-xs font-bold text-slate-950 uppercase tracking-wider">
                   Price Per Sq. Ft.
                 </div>
-                <div className="text-2xl sm:text-3xl font-black text-[#FA2D48] pt-1 tracking-tight">
+                <div className="text-2xl sm:text-3xl font-bold text-[#FA2D48] pt-1 tracking-tight">
                   ${selectedCity.avgSqftPrice} <span className="text-xs text-slate-500 font-normal">/ sqft</span>
                 </div>
                 <div className="text-[11px] text-emerald-600 font-bold pt-0.5">
@@ -212,10 +227,10 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
               </div>
 
               <div>
-                <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                <div className="text-xs font-bold text-slate-950 uppercase tracking-wider">
                   YTD Sales Volume
                 </div>
-                <div className="text-2xl sm:text-3xl font-black text-slate-950 pt-1 tracking-tight">
+                <div className="text-2xl sm:text-3xl font-bold text-slate-900 pt-1 tracking-tight">
                   {selectedCity.ytdSalesVolume}
                 </div>
                 <div className="text-[11px] text-emerald-600 font-bold pt-0.5">
@@ -224,10 +239,10 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
               </div>
 
               <div>
-                <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                <div className="text-xs font-bold text-slate-950 uppercase tracking-wider">
                   Pending / Active Escrow
                 </div>
-                <div className="text-2xl sm:text-3xl font-black text-slate-950 pt-1 tracking-tight">
+                <div className="text-2xl sm:text-3xl font-bold text-slate-900 pt-1 tracking-tight">
                   {selectedCity.pendingHomes} <span className="text-xs text-slate-500 font-normal">homes</span>
                 </div>
                 <div className="text-[11px] text-emerald-600 font-bold pt-0.5">
@@ -253,10 +268,10 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
             {/* 4 Apple-Style Clean Metric Summary Cards (Pure Black Numbers, No Mini Badges) */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-8 pt-6 border-t border-slate-100">
               <div>
-                <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                <div className="text-xs font-bold text-slate-950 uppercase tracking-wider">
                   FRED 30-Yr Fixed Rate
                 </div>
-                <div className="text-2xl sm:text-3xl font-black text-slate-950 pt-1 tracking-tight">
+                <div className="text-2xl sm:text-3xl font-bold text-slate-900 pt-1 tracking-tight">
                   {fredStats?.mortgage30Year || '6.78%'}
                 </div>
                 <div className="text-[11px] text-slate-400 pt-0.5 font-medium">
@@ -265,10 +280,10 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
               </div>
 
               <div>
-                <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                <div className="text-xs font-bold text-slate-950 uppercase tracking-wider">
                   Median OC Home Price
                 </div>
-                <div className="text-2xl sm:text-3xl font-black text-slate-950 pt-1 tracking-tight">
+                <div className="text-2xl sm:text-3xl font-bold text-slate-900 pt-1 tracking-tight">
                   {overallStats.avgMedian}
                 </div>
                 <div className="text-[11px] text-slate-400 pt-0.5 font-medium">
@@ -277,10 +292,10 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
               </div>
 
               <div>
-                <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                <div className="text-xs font-bold text-slate-950 uppercase tracking-wider">
                   County Avg $/SqFt
                 </div>
-                <div className="text-2xl sm:text-3xl font-black text-[#FA2D48] pt-1 tracking-tight">
+                <div className="text-2xl sm:text-3xl font-bold text-[#FA2D48] pt-1 tracking-tight">
                   {overallStats.avgSqft} <span className="text-xs text-slate-500 font-normal">/ sqft</span>
                 </div>
                 <div className="text-[11px] text-slate-400 pt-0.5 font-medium">
@@ -289,132 +304,16 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
               </div>
 
               <div>
-                <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                <div className="text-xs font-bold text-slate-950 uppercase tracking-wider">
                   Active Escrow / Pending
                 </div>
-                <div className="text-2xl sm:text-3xl font-black text-slate-950 pt-1 tracking-tight">
+                <div className="text-2xl sm:text-3xl font-bold text-slate-900 pt-1 tracking-tight">
                   {overallStats.totalPending} <span className="text-xs text-slate-500 font-normal">homes</span>
                 </div>
                 <div className="text-[11px] text-slate-400 pt-0.5 font-medium">
                   Under Contract
                 </div>
               </div>
-            </div>
-          </div>
-
-          {/* Filter & Search Bar */}
-          <div className="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-3">
-            <div className="relative w-full sm:w-96">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
-              <input
-                type="text"
-                placeholder="Search city or region (e.g. Coastal, Irvine)..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-[#F2F2F7] border border-slate-200/80 rounded-xl pl-10 pr-4 py-2 text-xs font-semibold text-slate-900 focus:outline-none focus:border-[#FA2D48] focus:bg-white transition-all"
-              />
-            </div>
-
-            <div className="text-xs font-bold text-slate-500 tracking-wide">
-              Showing <span className="text-slate-950 font-black">{filteredAndSortedData.length}</span> Cities • Click any row or top tab for detailed city report
-            </div>
-          </div>
-
-          {/* Main Orange County Cities Table View */}
-          <div className="bg-white border border-slate-200/90 rounded-3xl shadow-xs overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs text-slate-800">
-                <thead className="bg-[#F9F9FB] text-slate-950 text-[11px] font-bold uppercase tracking-wider border-b border-slate-200">
-                  <tr>
-                    <th onClick={() => handleSort('name')} className="py-4 px-6 cursor-pointer hover:bg-slate-100/80 transition-colors">
-                      <div className="flex items-center space-x-1">
-                        <span>City</span>
-                        <ArrowUpDown className="w-3 h-3 text-slate-400" />
-                      </div>
-                    </th>
-                    <th onClick={() => handleSort('avgSqftPrice')} className="py-4 px-4 cursor-pointer hover:bg-slate-100/80 text-right transition-colors">
-                      <div className="flex items-center justify-end space-x-1">
-                        <span>$/SqFt</span>
-                        <ArrowUpDown className="w-3 h-3 text-slate-400" />
-                      </div>
-                    </th>
-                    <th onClick={() => handleSort('medianPrice')} className="py-4 px-4 cursor-pointer hover:bg-slate-100/80 text-right transition-colors">
-                      <div className="flex items-center justify-end space-x-1">
-                        <span>Median Price</span>
-                        <ArrowUpDown className="w-3 h-3 text-slate-400" />
-                      </div>
-                    </th>
-                    <th onClick={() => handleSort('ytdSalesRaw')} className="py-4 px-4 cursor-pointer hover:bg-slate-100/80 text-right transition-colors">
-                      <div className="flex items-center justify-end space-x-1">
-                        <span>YTD Sales Vol</span>
-                        <ArrowUpDown className="w-3 h-3 text-slate-400" />
-                      </div>
-                    </th>
-                    <th onClick={() => handleSort('homesSoldYtd')} className="py-4 px-4 cursor-pointer hover:bg-slate-100/80 text-right transition-colors">
-                      <div className="flex items-center justify-end space-x-1">
-                        <span>Sold YTD</span>
-                        <ArrowUpDown className="w-3 h-3 text-slate-400" />
-                      </div>
-                    </th>
-                    <th onClick={() => handleSort('pendingHomes')} className="py-4 px-4 cursor-pointer hover:bg-slate-100/80 text-right transition-colors">
-                      <div className="flex items-center justify-end space-x-1">
-                        <span>Pending Escrows</span>
-                        <ArrowUpDown className="w-3 h-3 text-slate-400" />
-                      </div>
-                    </th>
-                    <th onClick={() => handleSort('yoyGrowth')} className="py-4 px-6 cursor-pointer hover:bg-slate-100/80 text-right transition-colors">
-                      <div className="flex items-center justify-end space-x-1">
-                        <span>YoY %</span>
-                        <ArrowUpDown className="w-3 h-3 text-slate-400" />
-                      </div>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {filteredAndSortedData.map((city) => (
-                    <tr
-                      key={city.id}
-                      onClick={() => setSelectedCity(city)}
-                      className="hover:bg-slate-50/90 transition-colors cursor-pointer group"
-                    >
-                      <td className="py-4 px-6">
-                        <div className="font-black text-slate-950 text-sm tracking-tight group-hover:text-[#FA2D48] transition-colors">
-                          {city.name}
-                        </div>
-                        <div className="text-[10px] text-slate-400 font-semibold tracking-wider uppercase pt-0.5">
-                          {city.region} • DOM: {city.daysOnMarket}d
-                        </div>
-                      </td>
-                      <td className="py-4 px-4 text-right font-black text-[#FA2D48] text-sm tracking-tight">
-                        ${city.avgSqftPrice}
-                      </td>
-                      <td className="py-4 px-4 text-right font-black text-slate-950 text-sm tracking-tight">
-                        {formatCurrency(city.medianPrice)}
-                      </td>
-                      <td className="py-4 px-4 text-right font-bold text-slate-800">
-                        {city.ytdSalesVolume}
-                      </td>
-                      <td className="py-4 px-4 text-right font-bold text-slate-800">
-                        {city.homesSoldYtd.toLocaleString()}
-                      </td>
-                      <td className="py-4 px-4 text-right font-black text-slate-950">
-                        {city.pendingHomes}
-                      </td>
-                      <td className="py-4 px-6 text-right font-black text-slate-950">
-                        +{city.yoyGrowth}%
-                      </td>
-                    </tr>
-                  ))}
-
-                  {filteredAndSortedData.length === 0 && (
-                    <tr>
-                      <td colSpan={7} className="py-12 text-center text-slate-400 font-medium text-xs">
-                        No cities matching "{searchQuery}"
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
             </div>
           </div>
         </>
