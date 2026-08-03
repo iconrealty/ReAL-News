@@ -284,6 +284,44 @@ export const CITIES: CityInfo[] = [
 ];
 
 export const INITIAL_ARTICLES: NewsArticle[] = [
+  // 0. ORANGE COUNTY HOUSING REPORT (The Lull Phase)
+  {
+    id: 'report-oc-lull-phase',
+    title: 'The Lull Phase: Orange County Housing Market Cools as Inventory Reaches 5,020 Active Homes',
+    subtitle: 'Housing has cooled considerably since earlier this year, and more sellers are languishing on the market without success. Expected Market Time stands at 102 days.',
+    category: 'real-estate',
+    cityName: 'Orange County',
+    publisher: 'Reports On Housing (Steven Thomas)',
+    publisherLogo: '📊',
+    publishedAt: 'Today at 09:00 AM',
+    readTime: '6 min read',
+    heroImage: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
+    sourceUrl: 'https://www.reportsonhousing.com',
+    sourceCitation: 'Reports On Housing Orange County Housing Report • July 2026 Edition',
+    isBreaking: true,
+    isFeatured: true,
+    keyTakeaways: [
+      'Active listing inventory rose by 7% over the past two weeks to 5,020 homes, the highest level in over a year.',
+      'Demand (30-day pending sales) dropped 6% to 1,472, the lowest mid-July reading recorded since 2004.',
+      'Expected market time countywide increased to 102 days (a slight Buyers Market pace).'
+    ],
+    content: `The Orange County housing market has officially entered "The Lull Phase" as listing inventory surges while buyer demand cools across all 34 municipalities.
+
+According to the latest official market data published by Steven Thomas of Reports On Housing, active listing inventory increased by 323 homes (+7%) over the past two weeks to reach 5,020 active listings. This marks the highest inventory level recorded in Orange County since July of last year.
+
+Concurrently, 30-day demand—measured by new pending sales over the prior month—fell by 86 sales (-6%) to 1,472 pending escrows. This represents the lowest mid-July demand reading since tracking began in 2004.
+
+With inventory rising and demand declining, the countywide Expected Market Time expanded to 102 days. A market time over 90 days indicates a slight Buyers Market pace, giving prospective buyers increased negotiating power and inventory selection.
+
+Despite the inventory growth, closed resale prices in June remained resilient with a countywide median sales price of $1,300,000 across 1,994 closed transactions and an average 99.9% sales-to-list price ratio.`,
+    realEstateData: {
+      priceRange: '$1,300,000 Median',
+      avgSqftPrice: '$590 sqft',
+      neighborhood: 'Countywide Market Tiers',
+      trend: 'stable',
+      keyStat: '5,020 Active Listings • 102 Days Market Time'
+    }
+  },
   // 1. ORANGE COUNTY (Countywide Metro & Regional Government News)
   {
     id: 'gov-oc-board-1',

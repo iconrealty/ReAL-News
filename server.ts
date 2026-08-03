@@ -159,7 +159,12 @@ async function fetchLiveFredData() {
       'Accept': 'text/csv,text/plain,*/*'
     };
 
-    const response30 = await fetch("https://fred.stlouisfed.org/graph/fredgraph.csv?id=MORTGAGE30US", { headers: fetchHeaders });
+    const response30 = await fetch("https://fred.stlouisfed.org/graph/fredgraph.csv?id=MORTGAGE30US", {
+      headers: fetchHeaders,
+      signal: AbortSignal.timeout(3000)
+    });
+
+    if (!response30.ok) throw new Error(`HTTP ${response30.status}`);
     const text30 = await response30.text();
     const lines30 = text30.split(/\r?\n/).filter(line => line.trim().length > 0);
     
@@ -178,7 +183,12 @@ async function fetchLiveFredData() {
       }
     }
 
-    const response15 = await fetch("https://fred.stlouisfed.org/graph/fredgraph.csv?id=MORTGAGE15US", { headers: fetchHeaders });
+    const response15 = await fetch("https://fred.stlouisfed.org/graph/fredgraph.csv?id=MORTGAGE15US", {
+      headers: fetchHeaders,
+      signal: AbortSignal.timeout(3000)
+    });
+
+    if (!response15.ok) throw new Error(`HTTP ${response15.status}`);
     const text15 = await response15.text();
     const lines15 = text15.split(/\r?\n/).filter(line => line.trim().length > 0);
     
@@ -202,8 +212,8 @@ async function fetchLiveFredData() {
       asOfDate: date30Year,
       isRealLiveFredData: true
     };
-  } catch (err) {
-    console.warn("[FRED Data] Failed to fetch live FRED CSV:", err);
+  } catch (err: any) {
+    // Graceful fallback without noisy error stack
     return {
       source: "U.S. Federal Reserve (FRED) & Freddie Mac",
       mortgage30Year: "6.66%",

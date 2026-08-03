@@ -153,13 +153,13 @@ export const ArticleReaderModal: React.FC<ArticleReaderModalProps> = ({
               {cleanText(article.title)}
             </h1>
 
-            <p className="text-base sm:text-xl text-slate-700 leading-relaxed border-l-4 border-[#FA2D48] pl-4 py-1 font-semibold italic bg-slate-50/50 rounded-r-xl">
+            <p className="text-base sm:text-xl text-slate-950 leading-relaxed border-l-4 border-[#FA2D48] pl-4 py-1 font-bold italic bg-slate-50/50 rounded-r-xl">
               {cleanText(article.subtitle)}
             </p>
           </div>
 
           {/* Article Full Paragraph Text with Dynamic Font Size */}
-          <div className={`prose max-w-none space-y-4 text-slate-800 ${bodyFontSizeClass[fontSize]}`}>
+          <div className={`prose max-w-none space-y-4 text-slate-950 font-medium ${bodyFontSizeClass[fontSize]}`}>
             {article.content.split('\n\n').map((paragraph, idx) => (
               <p key={idx}>{paragraph}</p>
             ))}

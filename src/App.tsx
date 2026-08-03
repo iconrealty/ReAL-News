@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { CityInfo, NewsCategory, NewsArticle } from './types';
 import { CITIES, INITIAL_ARTICLES } from './data/mockNews';
+import { OC_HOUSING_REPORT_METADATA } from './data/ocHousingReportData';
 import { AppleNewsHeader } from './components/AppleNewsHeader';
 import { MobileBottomNav } from './components/MobileBottomNav';
 import { CitySelectorModal } from './components/CitySelectorModal';
@@ -315,14 +316,17 @@ export function App() {
               }}
               className="bg-white text-slate-950 rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-xs cursor-pointer hover:border-slate-300 hover:shadow-md transition-all duration-300 group relative overflow-hidden flex flex-col sm:flex-row items-center justify-between gap-6"
             >
-              <div className="relative z-10 space-y-1.5 text-center sm:text-left">
+              <div className="relative z-10 space-y-2 text-center sm:text-left max-w-3xl">
                 <div className="inline-flex items-center space-x-2 text-[11px] font-mono uppercase tracking-widest text-[#FA2D48] font-bold">
                   <span className="w-2 h-2 rounded-full bg-[#FA2D48] animate-pulse" />
-                  <span>Orange County Real Estate Data</span>
+                  <span>Official OC Housing Report • {OC_HOUSING_REPORT_METADATA.reportDate}</span>
                 </div>
                 <h3 className="text-2xl sm:text-3xl font-black font-sans tracking-tight text-slate-950 group-hover:text-[#FA2D48] transition-colors">
-                  View Price / SqFt & Sales Data for All 34 OC Cities
+                  {OC_HOUSING_REPORT_METADATA.title}: Orange County Housing Market Trends & Data
                 </h3>
+                <p className="text-sm font-medium text-slate-950 leading-relaxed">
+                  {OC_HOUSING_REPORT_METADATA.subtitle} Active inventory reached 5,020 homes while expected market time stands at 102 days.
+                </p>
               </div>
 
               <div className="relative z-10 shrink-0">
