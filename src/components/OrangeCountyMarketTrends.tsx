@@ -448,12 +448,12 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
                     <div className="py-2.5 px-3 flex items-center justify-between text-xs border-b border-slate-100 sm:border-b-0">
-                      <span className="font-medium text-slate-600">June Price Range (Low to High):</span>
-                      <span className="font-sans font-bold text-slate-900">{soldData.lowPrice} — {soldData.highPrice}</span>
+                      <span className="font-bold text-black">June Price Range (Low to High):</span>
+                      <span className="font-sans font-bold text-black">{soldData.lowPrice} - {soldData.highPrice}</span>
                     </div>
                     <div className="py-2.5 px-3 flex items-center justify-between text-xs">
-                      <span className="font-medium text-slate-600">Closed Days on Market (DOM):</span>
-                      <span className="font-sans font-bold text-slate-900">{soldData.medianDOM} Days</span>
+                      <span className="font-bold text-black">Closed Days on Market (DOM):</span>
+                      <span className="font-sans font-bold text-black">{soldData.medianDOM} Days</span>
                     </div>
                   </div>
                 </div>
