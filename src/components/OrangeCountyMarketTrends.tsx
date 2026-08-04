@@ -202,9 +202,9 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2">
             <div className="inline-flex items-center space-x-2 px-3 py-1 bg-slate-100 border border-slate-200 rounded-full text-xs font-sans font-bold text-[#FA2D48]">
-              <span>Official OC Housing Report • {OC_HOUSING_REPORT_METADATA.reportDate}</span>
+              <span>Official OC Housing Report - {OC_HOUSING_REPORT_METADATA.reportDate}</span>
             </div>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black font-serif tracking-tight text-slate-950 leading-tight">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black font-sans tracking-tight text-slate-950 leading-tight">
               {OC_HOUSING_REPORT_METADATA.title}
             </h1>
             <p className="text-slate-800 text-base sm:text-lg max-w-2xl font-sans font-normal leading-relaxed">
