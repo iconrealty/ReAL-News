@@ -422,25 +422,25 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                     <div className="p-2">
                       <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">Median Sales Price</div>
                       <div className="text-2xl sm:text-3xl font-bold text-slate-900 pt-1">{soldData.medianSalesPrice}</div>
-                      <div className="text-[11px] text-emerald-800 pt-1 font-bold">List Price: {soldData.medianListPrice}</div>
+                      <div className="text-[11px] text-emerald-600 pt-1 font-bold">List Price: {soldData.medianListPrice}</div>
                     </div>
 
                     <div className="p-2">
                       <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">Sales-to-List Ratio</div>
-                      <div className="text-2xl sm:text-3xl font-bold text-emerald-700 pt-1">{soldData.salesToListRatio}</div>
-                      <div className="text-[11px] text-emerald-800 pt-1 font-bold">Countywide Avg: {OC_HOUSING_REPORT_METADATA.salesToListRatio}</div>
+                      <div className="text-2xl sm:text-3xl font-bold text-emerald-600 pt-1">{soldData.salesToListRatio}</div>
+                      <div className="text-[11px] text-emerald-600 pt-1 font-bold">Countywide Avg: {OC_HOUSING_REPORT_METADATA.salesToListRatio}</div>
                     </div>
 
                     <div className="p-2">
                       <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">Median Price / Sq. Ft.</div>
                       <div className="text-2xl sm:text-3xl font-bold text-[#FA2D48] pt-1">{soldData.medianPricePerSqFt}</div>
-                      <div className="text-[11px] text-emerald-800 pt-1 font-bold">Median Size: {soldData.medianSqFt.toLocaleString()} sq ft</div>
+                      <div className="text-[11px] text-emerald-600 pt-1 font-bold">Median Size: {soldData.medianSqFt.toLocaleString()} sq ft</div>
                     </div>
 
                     <div className="p-2">
                       <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">June (Sold)</div>
                       <div className="text-2xl sm:text-3xl font-bold text-slate-900 pt-1">{soldData.unitsSoldJune2026} Units</div>
-                      <div className="text-[11px] text-emerald-800 pt-1 font-bold">
+                      <div className="text-[11px] text-emerald-600 pt-1 font-bold">
                         {yoyUnitsChange >= 0 ? `+${yoyUnitsChange}` : yoyUnitsChange} vs June '25 ({soldData.unitsSoldJune2025})
                       </div>
                     </div>
@@ -489,19 +489,19 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                     <div className="bg-slate-50/80 p-4 rounded-2xl border border-slate-200/70">
                       <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">Active Inventory</div>
                       <div className="text-2xl sm:text-3xl font-bold text-slate-900 pt-1">{marketData.currentActives} Homes</div>
-                      <div className="text-[11px] text-emerald-800 pt-1 font-bold">Active listings on market</div>
+                      <div className="text-[11px] text-emerald-600 pt-1 font-bold">Active listings on market</div>
                     </div>
 
                     <div className="bg-slate-50/80 p-4 rounded-2xl border border-slate-200/70">
                       <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">30-Day Demand</div>
                       <div className="text-2xl sm:text-3xl font-bold text-slate-900 pt-1">{marketData.demand30Days} Pending</div>
-                      <div className="text-[11px] text-emerald-800 pt-1 font-bold">Recent pending escrows</div>
+                      <div className="text-[11px] text-emerald-600 pt-1 font-bold">Recent pending escrows</div>
                     </div>
 
                     <div className="bg-slate-50/80 p-4 rounded-2xl border border-slate-200/70">
                       <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">Median Active List Price</div>
                       <div className="text-2xl sm:text-3xl font-bold text-slate-900 pt-1">{marketData.medianActiveListPrice}</div>
-                      <div className="text-[11px] text-emerald-800 pt-1 font-bold">Current active listings</div>
+                      <div className="text-[11px] text-emerald-600 pt-1 font-bold">Current active listings</div>
                     </div>
                   </div>
 
