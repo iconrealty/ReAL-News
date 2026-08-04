@@ -207,7 +207,7 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black font-serif tracking-tight text-slate-950 leading-tight">
               {OC_HOUSING_REPORT_METADATA.title}
             </h1>
-            <p className="text-slate-950 text-sm max-w-2xl font-sans font-medium leading-relaxed">
+            <p className="text-slate-800 text-base sm:text-lg max-w-2xl font-sans font-normal leading-relaxed">
               {OC_HOUSING_REPORT_METADATA.subtitle}
             </p>
             <div className="text-xs text-slate-900 font-bold pt-1 font-sans">
@@ -234,7 +234,7 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
       <div className="bg-white border border-slate-200/90 rounded-2xl p-2 shadow-xs">
         <div className="flex items-center space-x-1 overflow-x-auto scrollbar-none">
           {[
-            { id: 'summary', label: 'Executive Summary' },
+            { id: 'summary', label: 'Orange County' },
             { id: 'market-time', label: 'City Market Time (DOM)' },
             { id: 'sold-report', label: 'June Closed Sales Data' },
             { id: 'price-range', label: 'Price Bracket Breakdown' },
@@ -559,19 +559,19 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                 <div className="bg-white border border-slate-200/90 rounded-3xl p-6 shadow-xs">
                   <div className="text-xs font-sans uppercase tracking-widest text-black font-extrabold">FRED 30-Year Mortgage Rate</div>
                   <div className="text-3xl font-black text-slate-900 pt-1">{fredStats?.mortgage30Year || '6.66%'}</div>
-                  <p className="text-xs text-slate-950 font-medium mt-2">
+                  <p className="text-sm text-slate-700 font-normal mt-2 leading-snug">
                     Freddie Mac Primary Market Survey {fredStats?.asOfDate ? `(As of ${fredStats.asOfDate})` : ''}. Live Federal Reserve FRED benchmark.
                   </p>
                 </div>
                 <div className="bg-white border border-slate-200/90 rounded-3xl p-6 shadow-xs">
                   <div className="text-xs font-sans uppercase tracking-widest text-black font-extrabold">Countywide Median List Price</div>
                   <div className="text-3xl font-black text-slate-900 pt-1">{OC_HOUSING_REPORT_METADATA.countywideMedianPrice}</div>
-                  <p className="text-xs text-slate-950 font-medium mt-2">Across 5,020 active listings in all 34 OC municipalities.</p>
+                  <p className="text-sm text-slate-700 font-normal mt-2 leading-snug">Across 5,020 active listings in all 34 OC municipalities.</p>
                 </div>
                 <div className="bg-white border border-slate-200/90 rounded-3xl p-6 shadow-xs">
                   <div className="text-xs font-sans uppercase tracking-widest text-black font-extrabold">June Closed Resales</div>
                   <div className="text-3xl font-black text-[#FA2D48] pt-1">1,994 Sales</div>
-                  <p className="text-xs text-slate-950 font-medium mt-2">+9% compared to June 2025 (1,828 sales). Average 99.9% sales-to-list ratio.</p>
+                  <p className="text-sm text-slate-700 font-normal mt-2 leading-snug">+9% compared to June 2025 (1,828 sales). Average 99.9% sales-to-list ratio.</p>
                 </div>
               </div>
 
@@ -584,7 +584,7 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                       <span className="text-xs font-bold bg-slate-100 px-2 py-0.5 rounded-lg text-slate-900">{bullet.trend}</span>
                     </div>
                     <div className="text-2xl font-black text-slate-900">{bullet.stat}</div>
-                    <p className="text-xs text-slate-950 font-medium leading-relaxed">{bullet.description}</p>
+                    <p className="text-sm text-slate-700 font-normal leading-relaxed">{bullet.description}</p>
                   </div>
                 ))}
               </div>
@@ -593,7 +593,7 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
 
           {/* TAB 2: CITY MARKET TIME REPORT */}
           {activeTab === 'market-time' && (
-            <div className="bg-white border border-slate-200/90 rounded-3xl p-6 shadow-xs space-y-5">
+            <div className="bg-white border border-slate-200/90 rounded-3xl p-6 shadow-xs space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-100">
                 <div>
                   <h3 className="text-xl font-bold text-slate-900">Orange County City Market Time Report</h3>
@@ -730,7 +730,7 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
 
           {/* TAB 4: PRICE RANGE BREAKDOWN */}
           {activeTab === 'price-range' && (
-            <div className="bg-white border border-slate-200/90 rounded-3xl p-6 shadow-xs space-y-5">
+            <div className="bg-white border border-slate-200/90 rounded-3xl p-6 shadow-xs space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-100">
                 <div>
                   <h3 className="text-xl font-bold text-slate-900">Price Range & Property Type Analysis</h3>
@@ -738,7 +738,7 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                 </div>
 
                 {/* Sub Switcher */}
-                <div className="flex bg-slate-100 p-1 rounded-xl">
+                <div className="flex items-center space-x-1 bg-slate-100 p-1 rounded-xl">
                   {[
                     { id: 'all', label: 'All Homes' },
                     { id: 'attached', label: 'Attached (Condos)' },
@@ -794,7 +794,7 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
 
           {/* TAB 5: SITTING ON MARKET ANALYSIS */}
           {activeTab === 'sitting-market' && (
-            <div className="bg-white border border-slate-200/90 rounded-3xl p-6 shadow-xs space-y-5">
+            <div className="bg-white border border-slate-200/90 rounded-3xl p-6 shadow-xs space-y-4">
               <div>
                 <h3 className="text-xl font-bold text-slate-900">Sitting on the Market Breakdown</h3>
                 <p className="text-xs text-slate-950 font-medium">64% of all active homes have been listed for at least 1 month, and 41% surpassed 2 months.</p>
