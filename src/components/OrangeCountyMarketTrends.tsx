@@ -581,7 +581,7 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                   <div key={idx} className="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-xs space-y-3">
                     <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                       <span className="text-xs font-sans font-bold text-[#FA2D48] uppercase tracking-wider">{bullet.title}</span>
-                      <span className="text-xs font-bold bg-emerald-50 px-2 py-0.5 rounded-lg text-emerald-700 border border-emerald-200/80">{bullet.trend}</span>
+                      <span className="text-xs font-extrabold text-emerald-600">{bullet.trend}</span>
                     </div>
                     <div className="text-2xl font-black text-slate-900">{bullet.stat}</div>
                     <p className="text-sm text-slate-700 font-normal leading-relaxed">{bullet.description}</p>
