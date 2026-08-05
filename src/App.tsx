@@ -9,6 +9,7 @@ import { FeaturedHeroStory } from './components/FeaturedHeroStory';
 import { NewsGridSection } from './components/NewsGridSection';
 import { OrangeCountyMarketTrends } from './components/OrangeCountyMarketTrends';
 import { MortgageCalculator } from './components/MortgageCalculator';
+import { CityMarketTrendsSection } from './components/CityMarketTrendsSection';
 import { ArticleReaderModal } from './components/ArticleReaderModal';
 import { SavedArticlesDrawer } from './components/SavedArticlesDrawer';
 import { Sparkles, Building2, Utensils, Flame, Compass, ChevronRight } from 'lucide-react';
@@ -308,34 +309,14 @@ export function App() {
               </section>
             )}
 
-            {/* Tesla / Apple Style Callout Banner for Orange County City Price & SqFt Index */}
-            <div 
-              onClick={() => {
+            {/* City Specific Market Trend Information Section */}
+            <CityMarketTrendsSection
+              currentCity={currentCity}
+              onExploreFullReport={() => {
                 setActiveCategory('market-trends');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
-              className="bg-white text-slate-950 rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-xs cursor-pointer hover:border-slate-300 hover:shadow-md transition-all duration-300 group relative overflow-hidden flex flex-col sm:flex-row items-center justify-between gap-6"
-            >
-              <div className="relative z-10 space-y-2 text-center sm:text-left max-w-3xl">
-                <div className="inline-flex items-center space-x-2 text-[11px] font-mono uppercase tracking-widest text-[#FA2D48] font-bold">
-                  <span className="w-2 h-2 rounded-full bg-[#FA2D48] animate-pulse" />
-                  <span>Official OC Housing Report • {OC_HOUSING_REPORT_METADATA.reportDate}</span>
-                </div>
-                <h3 className="text-2xl sm:text-3xl font-black font-sans tracking-tight text-slate-950 group-hover:text-[#FA2D48] transition-colors">
-                  {OC_HOUSING_REPORT_METADATA.title}: Orange County Housing Market Trends & Data
-                </h3>
-                <p className="text-sm font-medium text-slate-950 leading-relaxed">
-                  {OC_HOUSING_REPORT_METADATA.subtitle} Active inventory reached 5,020 homes while expected market time stands at 102 days.
-                </p>
-              </div>
-
-              <div className="relative z-10 shrink-0">
-                <span className="px-5 py-3 rounded-2xl bg-[#FA2D48] group-hover:bg-[#E0263E] text-white font-black text-xs inline-flex items-center space-x-2 shadow-xs active:scale-95 transition-all">
-                  <span>Open Market Trends Page</span>
-                  <ChevronRight className="w-4 h-4" />
-                </span>
-              </div>
-            </div>
+            />
 
             {/* Section 1: Real Estate & Housing Market */}
             <NewsGridSection
