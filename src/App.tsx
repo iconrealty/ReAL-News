@@ -9,7 +9,6 @@ import { FeaturedHeroStory } from './components/FeaturedHeroStory';
 import { NewsGridSection } from './components/NewsGridSection';
 import { OrangeCountyMarketTrends } from './components/OrangeCountyMarketTrends';
 import { MortgageCalculator } from './components/MortgageCalculator';
-import { CityMarketTrendsSection } from './components/CityMarketTrendsSection';
 import { ArticleReaderModal } from './components/ArticleReaderModal';
 import { SavedArticlesDrawer } from './components/SavedArticlesDrawer';
 import { Sparkles, Building2, Utensils, Flame, Compass, ChevronRight } from 'lucide-react';
@@ -309,13 +308,11 @@ export function App() {
               </section>
             )}
 
-            {/* City Specific Market Trend Information Section */}
-            <CityMarketTrendsSection
-              currentCity={currentCity}
-              onExploreFullReport={() => {
-                setActiveCategory('market-trends');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
+            {/* Market Trends Information for selected city */}
+            <OrangeCountyMarketTrends
+              currentCityName={currentCity.name}
+              onSelectCity={(city) => setCurrentCity(city)}
+              fredStats={fredStats}
             />
 
             {/* Section 1: Real Estate & Housing Market */}

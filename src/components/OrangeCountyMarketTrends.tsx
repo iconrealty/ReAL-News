@@ -88,11 +88,12 @@ export const OC_MARKET_DATA: OCCityMarketData[] = OC_MARKET_TIME_REPORT.map((ite
 interface OrangeCountyMarketTrendsProps {
   onSelectCity?: (city: CityInfo) => void;
   fredStats?: { mortgage30Year: string; mortgage15Year: string; asOfDate: string } | null;
+  currentCityName?: string;
 }
 
 type ReportTab = 'summary' | 'market-time' | 'price-range' | 'sold-report' | 'sitting-market';
 
-export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> = ({ onSelectCity, fredStats: propFredStats }) => {
+export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> = ({ onSelectCity, fredStats: propFredStats, currentCityName }) => {
   const [activeTab, setActiveTab] = useState<ReportTab>('summary');
   const [selectedCity, setSelectedCity] = useState<OCCityMarketData | null>(null);
   const [selectedRegion, setSelectedRegion] = useState<string>('All');
@@ -103,6 +104,26 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
   const [fredStats, setFredStats] = useState<{ mortgage30Year: string; mortgage15Year: string; asOfDate: string }>(
     propFredStats || { mortgage30Year: '6.66%', mortgage15Year: '6.04%', asOfDate: '2026-07-30' }
   );
+
+  React.useEffect(() => {
+    if (currentCityName) {
+      const cName = currentCityName.trim().toLowerCase();
+      if (cName === 'orange county' || cName === 'all orange county' || cName.includes('orange county')) {
+        setSelectedCity(null);
+        setSelectedRegion('All');
+      } else {
+        const match = OC_MARKET_DATA.find(
+          c => c.name.toLowerCase() === cName || c.id === cName || cName.includes(c.name.toLowerCase()) || c.name.toLowerCase().includes(cName)
+        );
+        if (match) {
+          setSelectedCity(match);
+          setSelectedRegion(match.region);
+        } else {
+          setSelectedCity(null);
+        }
+      }
+    }
+  }, [currentCityName]);
 
   React.useEffect(() => {
     if (propFredStats) {
