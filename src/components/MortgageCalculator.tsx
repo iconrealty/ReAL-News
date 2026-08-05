@@ -14,6 +14,9 @@ interface MortgageCalculatorProps {
 
 const PRICE_PRESETS = [
   { value: 500000, label: '$500k' },
+  { value: 550000, label: '$550k' },
+  { value: 600000, label: '$600k' },
+  { value: 650000, label: '$650k' },
   { value: 750000, label: '$750k' },
   { value: 1000000, label: '$1M' },
   { value: 1150000, label: '$1.150M' },
