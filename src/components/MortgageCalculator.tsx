@@ -1076,7 +1076,7 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                 <span className="text-white/90 text-lg font-bold">/ mo</span>
               </div>
               <p className="text-xs text-white/90 font-medium">
-                Based on ${homePrice.toLocaleString()} home price &amp; {interestRate}% interest rate
+                Based on <span className="font-black text-white">${homePrice.toLocaleString()}</span> home price &amp; {interestRate}% interest rate
               </p>
             </div>
 
