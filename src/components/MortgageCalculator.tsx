@@ -114,7 +114,7 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
   const [yearlyTaxesDollar, setYearlyTaxesDollar] = useState<number | ''>(11000);
   const [yearlyInsurance, setYearlyInsurance] = useState<number | ''>(1800); // $150/mo
   const [monthlyHoa, setMonthlyHoa] = useState<number | ''>(350); // $350/mo
-  const [includePmi, setIncludePmi] = useState<boolean>(true);
+  const [includePmi, setIncludePmi] = useState<boolean>(false);
 
   const [copiedSuccess, setCopiedSuccess] = useState(false);
 
@@ -563,6 +563,7 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                 setYearlyTaxesDollar(11000);
                 setYearlyInsurance(1800);
                 setMonthlyHoa(350);
+                setIncludePmi(false);
               }}
               className="text-xs font-bold text-slate-400 hover:text-[#FA2D48] flex items-center gap-1 transition-colors cursor-pointer"
             >
