@@ -682,7 +682,7 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                     label="Include Property Taxes"
                     id="taxes-toggle"
                   />
-                  <label htmlFor="taxes-toggle" className="text-sm font-black text-slate-900 cursor-pointer block">
+                  <label htmlFor="taxes-toggle" className="text-xs font-extrabold uppercase tracking-wider text-slate-700 cursor-pointer block">
                     Property Taxes
                   </label>
                 </div>
@@ -752,7 +752,7 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                     label="Include Home Insurance"
                     id="insurance-toggle"
                   />
-                  <label htmlFor="insurance-toggle" className="text-sm font-black text-slate-900 cursor-pointer block">
+                  <label htmlFor="insurance-toggle" className="text-xs font-extrabold uppercase tracking-wider text-slate-700 cursor-pointer block">
                     Homeowners Insurance
                   </label>
                 </div>
@@ -791,7 +791,7 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                     label="Include HOA Dues"
                     id="hoa-toggle"
                   />
-                  <label htmlFor="hoa-toggle" className="text-sm font-black text-slate-900 cursor-pointer block">
+                  <label htmlFor="hoa-toggle" className="text-xs font-extrabold uppercase tracking-wider text-slate-700 cursor-pointer block">
                     HOA Dues
                   </label>
                 </div>
@@ -831,7 +831,7 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                       label="Include PMI"
                       id="pmi-toggle"
                     />
-                    <label htmlFor="pmi-toggle" className="text-sm font-black text-slate-900 cursor-pointer block">
+                    <label htmlFor="pmi-toggle" className="text-xs font-extrabold uppercase tracking-wider text-slate-700 cursor-pointer block">
                       PMI (Private Mortgage Insurance)
                     </label>
                   </div>
