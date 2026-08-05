@@ -254,12 +254,18 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
       return Math.round(remainingBudget / totalMultiplier);
     } else {
       const dDollar = downPaymentDollar === '' ? 0 : downPaymentDollar;
-      const pmiActive = includePmi;
-      const pmiRateMonthly = pmiActive ? 0.0005 : 0;
-      const totalMultiplier = k_PI + taxRateMonthly + pmiRateMonthly;
-      if (totalMultiplier <= 0) return 0;
-      const estP = (remainingBudget + dDollar * (k_PI + pmiRateMonthly)) / totalMultiplier;
-      return Math.round(Math.max(0, estP));
+      const baseMultiplier = k_PI + taxRateMonthly;
+      if (baseMultiplier <= 0) return 0;
+      const estP_no_pmi = (remainingBudget + dDollar * k_PI) / baseMultiplier;
+      const estDownPct = estP_no_pmi > 0 ? (dDollar / estP_no_pmi) : 1;
+
+      if (includePmi && estDownPct < 0.20) {
+        const pmiMultiplier = k_PI + taxRateMonthly + 0.0005;
+        const estP_with_pmi = (remainingBudget + dDollar * (k_PI + 0.0005)) / pmiMultiplier;
+        return Math.round(Math.max(0, estP_with_pmi));
+      } else {
+        return Math.round(Math.max(0, estP_no_pmi));
+      }
     }
   }, [
     maxMonthlyBudget,
@@ -1004,31 +1010,36 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                 </div>
               </div>
 
-              {/* Row 4: PMI (when down payment < 20%) */}
-              {downPaymentActualPct < 20 && (
-                <div className={`p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-colors ${includePmi ? 'bg-white' : ''}`}>
-                  <div className="flex items-center space-x-3 shrink-0">
-                    <AppleToggle
-                      enabled={includePmi}
-                      onChange={setIncludePmi}
-                      label="Include PMI"
-                      id="pmi-toggle"
-                    />
+              {/* Row 4: PMI */}
+              <div className={`p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-colors ${includePmi ? 'bg-white' : ''}`}>
+                <div className="flex items-center space-x-3 shrink-0">
+                  <AppleToggle
+                    enabled={includePmi}
+                    onChange={setIncludePmi}
+                    label="Include PMI"
+                    id="pmi-toggle"
+                  />
+                  <div>
                     <label htmlFor="pmi-toggle" className="text-xs font-extrabold uppercase tracking-wider text-slate-700 cursor-pointer block">
                       PMI (Private Mortgage Insurance)
                     </label>
-                  </div>
-
-                  <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto">
-                    <div className="text-right w-20 shrink-0 ml-auto">
-                      <span className={`text-xs font-bold ${includePmi ? 'text-slate-900' : 'text-slate-400'}`}>
-                        {includePmi ? `$${Math.round(monthlyPmi).toLocaleString()}` : '$0'}
+                    {downPaymentActualPct >= 20 && (
+                      <span className="text-[10px] text-slate-400 font-semibold block">
+                        No PMI required (Down payment ≥ 20%)
                       </span>
-                      <span className="text-[10px] text-slate-400 block font-normal">/mo</span>
-                    </div>
+                    )}
                   </div>
                 </div>
-              )}
+
+                <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto">
+                  <div className="text-right w-24 shrink-0 ml-auto">
+                    <span className={`text-xs font-bold ${includePmi && downPaymentActualPct < 20 ? 'text-slate-900' : 'text-slate-400'}`}>
+                      {includePmi && downPaymentActualPct < 20 ? `$${Math.round(monthlyPmi).toLocaleString()}` : '$0'}
+                    </span>
+                    <span className="text-[10px] text-slate-400 block font-normal">/mo</span>
+                  </div>
+                </div>
+              </div>
 
             </div>
           </div>
