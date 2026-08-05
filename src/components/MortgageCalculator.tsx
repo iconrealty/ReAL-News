@@ -12,7 +12,14 @@ interface MortgageCalculatorProps {
   } | null;
 }
 
-const PRICE_PRESETS = [750000, 1150000, 1500000, 2000000, 3000000];
+const PRICE_PRESETS = [
+  { value: 500000, label: '$500k' },
+  { value: 750000, label: '$750k' },
+  { value: 1000000, label: '$1M' },
+  { value: 1150000, label: '$1.150M' },
+  { value: 1500000, label: '$1.5M' },
+  { value: 2000000, label: '$2M' },
+];
 const DOWN_PERCENT_PRESETS = [3.5, 5, 10, 15, 20, 25, 30];
 
 interface AppleToggleProps {
@@ -69,10 +76,10 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
   ], [fred30Num, fred15Num]);
 
   // Core Loan Inputs
-  const [homePrice, setHomePrice] = useState<number | ''>(1150000); // Default Orange County home price
+  const [homePrice, setHomePrice] = useState<number | ''>(1000000); // Default home price $1M
   const [downPaymentMode, setDownPaymentMode] = useState<'percent' | 'dollar'>('percent');
   const [downPaymentPercent, setDownPaymentPercent] = useState<number | ''>(20);
-  const [downPaymentDollar, setDownPaymentDollar] = useState<number | ''>(230000);
+  const [downPaymentDollar, setDownPaymentDollar] = useState<number | ''>(200000);
   const [interestRate, setInterestRate] = useState<number | ''>(fred30Num);
   const [loanTermYears, setLoanTermYears] = useState<number>(30);
 
@@ -91,7 +98,7 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
   // Optional Extra Costs Inputs
   const [yearlyTaxesMode, setYearlyTaxesMode] = useState<'percent' | 'dollar'>('percent');
   const [yearlyTaxesPercent, setYearlyTaxesPercent] = useState<number | ''>(1.1); // ~1.1% OC property tax
-  const [yearlyTaxesDollar, setYearlyTaxesDollar] = useState<number | ''>(12650);
+  const [yearlyTaxesDollar, setYearlyTaxesDollar] = useState<number | ''>(11000);
   const [yearlyInsurance, setYearlyInsurance] = useState<number | ''>(1800); // $150/mo
   const [monthlyHoa, setMonthlyHoa] = useState<number | ''>(350); // $350/mo
   const [includePmi, setIncludePmi] = useState<boolean>(true);
@@ -489,17 +496,17 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
             {/* Quick Presets */}
             <div className="flex items-center gap-1.5 flex-wrap pt-1">
               <span className="text-[11px] font-bold text-slate-400 mr-1">Quick Price:</span>
-              {PRICE_PRESETS.map((p) => (
+              {PRICE_PRESETS.map((preset) => (
                 <button
-                  key={p}
-                  onClick={() => handleHomePriceChange(p)}
+                  key={preset.value}
+                  onClick={() => handleHomePriceChange(preset.value)}
                   className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                    homePrice === p
+                    homePrice === preset.value
                       ? 'bg-slate-900 text-white'
                       : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
                   }`}
                 >
-                  ${(p / 1000).toFixed(0)}k
+                  {preset.label}
                 </button>
               ))}
             </div>
