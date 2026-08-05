@@ -23,6 +23,14 @@ const PRICE_PRESETS = [
   { value: 1500000, label: '$1.5M' },
   { value: 2000000, label: '$2M' },
 ];
+const BUDGET_PRESETS = [
+  { value: 3500, label: '$3.5k/mo' },
+  { value: 4500, label: '$4.5k/mo' },
+  { value: 5000, label: '$5k/mo' },
+  { value: 6000, label: '$6k/mo' },
+  { value: 7500, label: '$7.5k/mo' },
+  { value: 10000, label: '$10k/mo' },
+];
 const DOWN_PERCENT_PRESETS = [3.5, 5, 10, 15, 20, 25, 30];
 
 interface AppleToggleProps {
@@ -79,6 +87,8 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
   ], [fred30Num, fred15Num]);
 
   // Core Loan Inputs
+  const [calcMode, setCalcMode] = useState<'standard' | 'reverse'>('standard');
+  const [maxMonthlyBudget, setMaxMonthlyBudget] = useState<number | ''>(5000); // Default max budget $5,000/mo
   const [homePrice, setHomePrice] = useState<number | ''>(1000000); // Default home price $1M
   const [downPaymentMode, setDownPaymentMode] = useState<'percent' | 'dollar'>('percent');
   const [downPaymentPercent, setDownPaymentPercent] = useState<number | ''>(20);
@@ -212,6 +222,89 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
   const numericInterestRate = useMemo(() => (interestRate === '' ? 0 : interestRate), [interestRate]);
   const numericYearlyInsurance = useMemo(() => (yearlyInsurance === '' ? 0 : yearlyInsurance), [yearlyInsurance]);
   const numericMonthlyHoa = useMemo(() => (monthlyHoa === '' ? 0 : monthlyHoa), [monthlyHoa]);
+
+  // Reverse Calculation: Estimate Max Home Price based on Target Monthly Budget
+  const calculatedMaxHomePrice = useMemo(() => {
+    const targetBudget = maxMonthlyBudget === '' ? 0 : maxMonthlyBudget;
+    if (targetBudget <= 0) return 0;
+
+    const insMonthly = includeInsurance ? numericYearlyInsurance / 12 : 0;
+    const hoaMonthly = includeHoa ? numericMonthlyHoa : 0;
+    const taxMonthlyFixed = (includeTaxes && yearlyTaxesMode === 'dollar')
+      ? (yearlyTaxesDollar === '' ? 0 : yearlyTaxesDollar) / 12
+      : 0;
+
+    const remainingBudget = targetBudget - insMonthly - hoaMonthly - taxMonthlyFixed;
+    if (remainingBudget <= 0) return 0;
+
+    const r = numericInterestRate / 100 / 12;
+    const n = loanTermYears * 12;
+    const k_PI = r > 0 ? (r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1) : 1 / n;
+
+    const taxRateMonthly = (includeTaxes && yearlyTaxesMode === 'percent')
+      ? (yearlyTaxesPercent === '' ? 0 : yearlyTaxesPercent) / 100 / 12
+      : 0;
+
+    if (downPaymentMode === 'percent') {
+      const dPct = (downPaymentPercent === '' ? 0 : downPaymentPercent) / 100;
+      const loanFraction = 1 - dPct;
+      const pmiRateMonthly = (includePmi && dPct < 0.20) ? loanFraction * 0.0005 : 0;
+      const totalMultiplier = loanFraction * k_PI + taxRateMonthly + pmiRateMonthly;
+      if (totalMultiplier <= 0) return 0;
+      return Math.round(remainingBudget / totalMultiplier);
+    } else {
+      const dDollar = downPaymentDollar === '' ? 0 : downPaymentDollar;
+      const pmiActive = includePmi;
+      const pmiRateMonthly = pmiActive ? 0.0005 : 0;
+      const totalMultiplier = k_PI + taxRateMonthly + pmiRateMonthly;
+      if (totalMultiplier <= 0) return 0;
+      const estP = (remainingBudget + dDollar * (k_PI + pmiRateMonthly)) / totalMultiplier;
+      return Math.round(Math.max(0, estP));
+    }
+  }, [
+    maxMonthlyBudget,
+    numericInterestRate,
+    loanTermYears,
+    downPaymentMode,
+    downPaymentPercent,
+    downPaymentDollar,
+    includeInsurance,
+    numericYearlyInsurance,
+    includeHoa,
+    numericMonthlyHoa,
+    includeTaxes,
+    yearlyTaxesMode,
+    yearlyTaxesPercent,
+    yearlyTaxesDollar,
+    includePmi,
+  ]);
+
+  // Synchronize homePrice and downPayment when in reverse mode
+  React.useEffect(() => {
+    if (calcMode === 'reverse' && calculatedMaxHomePrice > 0) {
+      setHomePrice(calculatedMaxHomePrice);
+      if (downPaymentMode === 'percent') {
+        const pct = downPaymentPercent === '' ? 0 : downPaymentPercent;
+        setDownPaymentDollar(Math.round((calculatedMaxHomePrice * pct) / 100));
+      } else {
+        const dlr = downPaymentDollar === '' ? 0 : downPaymentDollar;
+        const pct = calculatedMaxHomePrice > 0 ? (dlr / calculatedMaxHomePrice) * 100 : 0;
+        setDownPaymentPercent(parseFloat(pct.toFixed(2)));
+      }
+      if (yearlyTaxesMode === 'percent') {
+        const taxPct = yearlyTaxesPercent === '' ? 0 : yearlyTaxesPercent;
+        setYearlyTaxesDollar(Math.round((calculatedMaxHomePrice * taxPct) / 100));
+      }
+    }
+  }, [
+    calcMode,
+    calculatedMaxHomePrice,
+    downPaymentMode,
+    downPaymentPercent,
+    downPaymentDollar,
+    yearlyTaxesMode,
+    yearlyTaxesPercent,
+  ]);
 
   // Calculations
   const calculatedDownPayment = useMemo(() => {
@@ -449,17 +542,19 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
             </h3>
             <button
               onClick={() => {
-                setHomePrice(1150000);
+                setCalcMode('standard');
+                setHomePrice(1000000);
+                setMaxMonthlyBudget(5000);
                 setDownPaymentMode('percent');
                 setDownPaymentPercent(20);
-                setDownPaymentDollar(230000);
+                setDownPaymentDollar(200000);
                 setInterestRate(fred30Num);
                 setLoanTermYears(30);
                 setIncludeTaxes(false);
                 setIncludeInsurance(false);
                 setIncludeHoa(false);
                 setYearlyTaxesPercent(1.1);
-                setYearlyTaxesDollar(12650);
+                setYearlyTaxesDollar(11000);
                 setYearlyInsurance(1800);
                 setMonthlyHoa(350);
               }}
@@ -469,11 +564,97 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
             </button>
           </div>
 
+          {/* Calculator Mode Toggle Switch */}
+          <div className="space-y-2 pb-2">
+            <span className="text-xs font-extrabold uppercase tracking-wider text-slate-700 block">
+              Calculator Mode
+            </span>
+            <div className="grid grid-cols-2 gap-1.5 bg-slate-100 p-1.5 rounded-2xl border border-slate-200">
+              <button
+                type="button"
+                onClick={() => setCalcMode('standard')}
+                className={`py-2 px-3 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                  calcMode === 'standard'
+                    ? 'bg-slate-900 text-white shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                <span>Standard (Set Home Price)</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setCalcMode('reverse');
+                  if (totalMonthlyPayment > 0) {
+                    setMaxMonthlyBudget(Math.round(totalMonthlyPayment));
+                  }
+                }}
+                className={`py-2 px-3 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                  calcMode === 'reverse'
+                    ? 'bg-[#FA2D48] text-white shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                <span>Max Monthly Budget</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Mode 1: Max Monthly Budget Mode Input */}
+          {calcMode === 'reverse' && (
+            <div className="space-y-3 p-4 bg-rose-50/70 rounded-2xl animate-fadeIn">
+              <div className="flex items-center justify-between">
+                <label htmlFor="max-monthly-budget-input" className="text-xs font-extrabold uppercase tracking-wider text-slate-700">
+                  Target Max Monthly Payment
+                </label>
+                <span className="text-[10px] font-extrabold uppercase tracking-wider text-rose-600 bg-rose-100 px-2 py-0.5 rounded-md">
+                  Reverse Mode Active
+                </span>
+              </div>
+
+              <div className="relative flex items-center">
+                <span className="absolute left-4 text-slate-400 font-bold text-base">$</span>
+                <input
+                  id="max-monthly-budget-input"
+                  type="number"
+                  value={maxMonthlyBudget}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setMaxMonthlyBudget(val === '' ? '' : Number(val));
+                  }}
+                  className="w-full pl-9 pr-14 py-3 rounded-2xl bg-white focus:ring-2 focus:ring-[#FA2D48]/20 font-bold text-slate-900 text-lg outline-none transition-all"
+                  placeholder="5,000"
+                  step="100"
+                />
+                <span className="absolute right-4 text-slate-400 font-bold text-xs font-mono text-slate-400">/mo</span>
+              </div>
+
+              {/* Quick Budget Presets */}
+              <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
+                <span className="text-[11px] font-bold text-slate-400 mr-1">Quick Budget:</span>
+                {BUDGET_PRESETS.map((preset) => (
+                  <button
+                    key={preset.value}
+                    type="button"
+                    onClick={() => setMaxMonthlyBudget(preset.value)}
+                    className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                      maxMonthlyBudget === preset.value
+                        ? 'bg-[#FA2D48] text-white'
+                        : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200'
+                    }`}
+                  >
+                    {preset.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* 1. Home Price */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <label htmlFor="home-price-input" className="text-xs font-extrabold uppercase tracking-wider text-slate-700">
-                Home Price
+                {calcMode === 'reverse' ? 'Estimated Home Price (Calculated)' : 'Home Price'}
               </label>
               <span className="text-xs font-bold text-slate-500">
                 ${homePrice.toLocaleString()}
@@ -491,28 +672,30 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                   handleHomePriceChange(val === '' ? '' : Number(val));
                 }}
                 className="w-full pl-9 pr-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 focus:border-[#FA2D48] focus:bg-white focus:ring-2 focus:ring-[#FA2D48]/20 font-bold text-slate-900 text-lg outline-none transition-all"
-                placeholder="1,150,000"
+                placeholder="1,000,000"
                 step="10000"
               />
             </div>
 
             {/* Quick Presets */}
-            <div className="flex items-center gap-1.5 flex-wrap pt-1">
-              <span className="text-[11px] font-bold text-slate-400 mr-1">Quick Price:</span>
-              {PRICE_PRESETS.map((preset) => (
-                <button
-                  key={preset.value}
-                  onClick={() => handleHomePriceChange(preset.value)}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                    homePrice === preset.value
-                      ? 'bg-slate-900 text-white'
-                      : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
-                  }`}
-                >
-                  {preset.label}
-                </button>
-              ))}
-            </div>
+            {calcMode === 'standard' && (
+              <div className="flex items-center gap-1.5 flex-wrap pt-1">
+                <span className="text-[11px] font-bold text-slate-400 mr-1">Quick Price:</span>
+                {PRICE_PRESETS.map((preset) => (
+                  <button
+                    key={preset.value}
+                    onClick={() => handleHomePriceChange(preset.value)}
+                    className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                      homePrice === preset.value
+                        ? 'bg-slate-900 text-white'
+                        : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                    }`}
+                  >
+                    {preset.label}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* 2. Down Payment with $ or % Icon Toggle */}
