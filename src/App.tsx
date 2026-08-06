@@ -173,7 +173,7 @@ export function App() {
     }
 
     // Category & Search query filtering
-    return matched.filter(art => {
+    let finalFiltered = matched.filter(art => {
       // Category match
       const matchesCat = activeCategory === 'all' || art.category === activeCategory;
 
@@ -188,6 +188,18 @@ export function App() {
 
       return matchesCat && matchesQuery;
     });
+
+    // Fallback: If category filter resulted in 0 articles for a specific city,
+    // fallback to showing all articles for that city or regional category articles
+    if (finalFiltered.length === 0 && activeCategory !== 'all') {
+      if (matched.length > 0) {
+        finalFiltered = matched;
+      } else {
+        finalFiltered = articles.filter(art => art.category === activeCategory);
+      }
+    }
+
+    return finalFiltered;
   }, [articles, currentCity, activeCategory, searchQuery]);
 
   // Featured Hero Article

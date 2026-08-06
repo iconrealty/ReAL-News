@@ -1114,6 +1114,63 @@ The expansion introduces additional sports courts, expanded playground zones, an
       keyStat: 'Luxury Equestrian & Estate Homes'
     }
   },
+  {
+    id: 'gov-laguna-hills-2',
+    title: 'City of Laguna Hills Approves Mall Village Redevelopment & Civic Tech Park',
+    subtitle: 'City Council greenlights mixed-use residential village with open-air plaza and innovation hub.',
+    category: 'city-developments',
+    cityName: 'Laguna Hills',
+    publisher: 'City of Laguna Hills Official Site',
+    publisherLogo: '🏛️',
+    publishedAt: 'Today',
+    readTime: '4 min read',
+    heroImage: 'https://images.unsplash.com/photo-1541888946425-d0fbb186a5b3?auto=format&fit=crop&w=1200&q=80',
+    sourceUrl: 'https://www.lagunahillsca.gov',
+    sourceCitation: 'City of Laguna Hills Planning Commission Ordinance 2026-12',
+    isBreaking: true,
+    isFeatured: true,
+    keyTakeaways: [
+      'Laguna Hills Mall site transformation into walkable village with 600 residential homes.',
+      'Includes 15-acre public central park, alfresco dining, and community tech hub.',
+      'Projected to generate over 1,200 local construction and retail jobs.'
+    ],
+    content: `The City of Laguna Hills has officially approved the Master Revitalization Plan for the former Laguna Hills Mall site. The project creates a vibrant, walkable mixed-use village featuring high-end residential apartments, boutique retail, alfresco dining, and a state-of-the-art tech incubator hub.`,
+    realEstateData: {
+      neighborhood: 'Laguna Hills Center & Calle de la Magdalena',
+      priceRange: '$750,000 - $2,200,000',
+      avgSqftPrice: '$725/sqft',
+      trend: 'up',
+      keyStat: 'Major Village Master Plan Approval'
+    }
+  },
+  {
+    id: 'dining-laguna-hills-1',
+    title: 'Boutique Tuscan Trattoria and Artisanal Café Open in Laguna Hills Plaza',
+    subtitle: 'Acclaimed chefs bring authentic wood-fired pizzas, handmade pasta, and espresso bar to Moulton Pkwy.',
+    category: 'restaurants-bars',
+    cityName: 'Laguna Hills',
+    publisher: 'OC Food & Wine Journal',
+    publisherLogo: '🍷',
+    publishedAt: '2 days ago',
+    readTime: '3 min read',
+    heroImage: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1200&q=80',
+    sourceUrl: 'https://www.lagunahillsca.gov',
+    sourceCitation: 'OC Dining & Hospitality Gazette',
+    isBreaking: false,
+    isFeatured: false,
+    keyTakeaways: [
+      'Osteria Bella Vista features importing Italian wood-fired ovens and organic flour.',
+      'Features an expansive outdoor heated patio facing the Saddleback Mountains.',
+      'Breakfast espresso lounge opens daily at 6:30 AM.'
+    ],
+    content: `Food enthusiasts in South Orange County have a new dining destination as Osteria Bella Vista opens its doors on Moulton Parkway in Laguna Hills. Offering hand-rolled pasta, wood-fired Neapolitan pizzas, and a curating list of Italian wines.`,
+    venueDetails: {
+      name: 'Osteria Bella Vista',
+      type: 'restaurant',
+      address: '24300 Moulton Pkwy, Laguna Hills, CA 92653',
+      highlight: 'Handmade Pasta & Wood-Fired Tuscan Dining'
+    }
+  },
 
   // 24. LAGUNA NIGUEL
   {
