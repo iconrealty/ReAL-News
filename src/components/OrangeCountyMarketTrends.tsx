@@ -89,11 +89,21 @@ interface OrangeCountyMarketTrendsProps {
   onSelectCity?: (city: CityInfo) => void;
   fredStats?: { mortgage30Year: string; mortgage15Year: string; asOfDate: string } | null;
   currentCityName?: string;
+  showFilterBar?: boolean;
+  showTopHeader?: boolean;
+  showMainTabs?: boolean;
 }
 
 type ReportTab = 'summary' | 'market-time' | 'price-range' | 'sold-report' | 'sitting-market';
 
-export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> = ({ onSelectCity, fredStats: propFredStats, currentCityName }) => {
+export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> = ({ 
+  onSelectCity, 
+  fredStats: propFredStats, 
+  currentCityName,
+  showFilterBar = false,
+  showTopHeader = true,
+  showMainTabs = true
+}) => {
   const [activeTab, setActiveTab] = useState<ReportTab>('summary');
   const [selectedCity, setSelectedCity] = useState<OCCityMarketData | null>(null);
   const [selectedRegion, setSelectedRegion] = useState<string>('All');
@@ -219,187 +229,193 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
     <div className="space-y-6 sm:space-y-8 animate-fade-in font-sans">
       
       {/* Official Report Header Banner */}
-      <div className="bg-white text-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-xs relative overflow-hidden">
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="space-y-2">
-            <div className="inline-flex items-center space-x-2 px-3 py-1 bg-slate-100 border border-slate-200 rounded-full text-xs font-sans font-bold text-[#FA2D48]">
-              <span>Official OC Housing Report - {OC_HOUSING_REPORT_METADATA.reportDate}</span>
+      {showTopHeader && (
+        <div className="bg-white text-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-xs relative overflow-hidden">
+          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div className="space-y-2">
+              <div className="inline-flex items-center space-x-2 px-3 py-1 bg-slate-100 border border-slate-200 rounded-full text-xs font-sans font-bold text-[#FA2D48]">
+                <span>Official OC Housing Report - {OC_HOUSING_REPORT_METADATA.reportDate}</span>
+              </div>
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black font-sans tracking-tight text-slate-950 leading-tight">
+                {OC_HOUSING_REPORT_METADATA.title}
+              </h1>
+              <p className="text-slate-800 text-base sm:text-lg max-w-2xl font-sans font-normal leading-relaxed">
+                {OC_HOUSING_REPORT_METADATA.subtitle}
+              </p>
+              <div className="text-xs text-slate-900 font-bold pt-1 font-sans">
+                Reported by {OC_HOUSING_REPORT_METADATA.author} ({OC_HOUSING_REPORT_METADATA.publisher})
+              </div>
             </div>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black font-sans tracking-tight text-slate-950 leading-tight">
-              {OC_HOUSING_REPORT_METADATA.title}
-            </h1>
-            <p className="text-slate-800 text-base sm:text-lg max-w-2xl font-sans font-normal leading-relaxed">
-              {OC_HOUSING_REPORT_METADATA.subtitle}
-            </p>
-            <div className="text-xs text-slate-900 font-bold pt-1 font-sans">
-              Reported by {OC_HOUSING_REPORT_METADATA.author} ({OC_HOUSING_REPORT_METADATA.publisher})
-            </div>
-          </div>
 
-          <div className="grid grid-cols-2 gap-3 shrink-0 bg-slate-50 p-4 rounded-2xl border border-slate-200/80 text-center">
-            <div>
-              <div className="text-[10px] font-extrabold uppercase tracking-wider text-black">Total Actives</div>
-              <div className="text-2xl font-bold text-slate-900">{OC_HOUSING_REPORT_METADATA.countywideActives.toLocaleString()}</div>
-              <div className="text-[10px] text-emerald-600 font-medium">+7% Inventory</div>
-            </div>
-            <div>
-              <div className="text-[10px] font-extrabold uppercase tracking-wider text-black">Market Time</div>
-              <div className="text-2xl font-bold text-[#FA2D48]">{OC_HOUSING_REPORT_METADATA.countywideMarketTime} Days</div>
-              <div className="text-[10px] text-slate-500 font-medium">1,472 Pending</div>
+            <div className="grid grid-cols-2 gap-3 shrink-0 bg-slate-50 p-4 rounded-2xl border border-slate-200/80 text-center">
+              <div>
+                <div className="text-[10px] font-extrabold uppercase tracking-wider text-black">Total Actives</div>
+                <div className="text-2xl font-bold text-slate-900">{OC_HOUSING_REPORT_METADATA.countywideActives.toLocaleString()}</div>
+                <div className="text-[10px] text-emerald-600 font-medium">+7% Inventory</div>
+              </div>
+              <div>
+                <div className="text-[10px] font-extrabold uppercase tracking-wider text-black">Market Time</div>
+                <div className="text-2xl font-bold text-[#FA2D48]">{OC_HOUSING_REPORT_METADATA.countywideMarketTime} Days</div>
+                <div className="text-[10px] text-slate-500 font-medium">1,472 Pending</div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Main Data Tabs Bar */}
-      <div className="bg-white border border-slate-200/90 rounded-2xl p-2 shadow-xs">
-        <div className="flex items-center space-x-1 overflow-x-auto scrollbar-none">
-          {[
-            { id: 'summary', label: 'Orange County' },
-            { id: 'market-time', label: 'City Market Time (DOM)' },
-            { id: 'sold-report', label: 'June Closed Sales Data' },
-            { id: 'price-range', label: 'Price Bracket Breakdown' },
-            { id: 'sitting-market', label: 'Sitting on Market (30d+)' },
-          ].map((tab) => {
-            const isActive = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => {
-                  setActiveTab(tab.id as ReportTab);
-                  setSelectedCity(null);
-                }}
-                className={`px-4 py-3 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all cursor-pointer border-0 ${
-                  isActive
-                    ? 'bg-[#FA2D48] text-white shadow-xs outline-none ring-0'
-                    : 'text-slate-900 hover:bg-slate-100 hover:text-black font-bold'
-                }`}
-              >
-                {tab.label}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* City Dropdown & Region Filters Bar */}
-      <div className="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-xs space-y-4">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-          
-          {/* Direct City Dropdown Selector */}
-          <div className="flex items-center space-x-2.5">
-            <div className="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center text-slate-700 shrink-0">
-              <MapPin className="w-4 h-4 text-[#FA2D48]" />
-            </div>
-            <div className="relative flex-1 sm:w-72">
-              <select
-                value={selectedCity?.id || ''}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  if (!val) {
-                    setSelectedCity(null);
-                  } else {
-                    const city = OC_MARKET_DATA.find(c => c.id === val);
-                    if (city) {
-                      setSelectedCity(city);
-                      setSelectedRegion(city.region);
-                    }
-                  }
-                }}
-                className="w-full bg-[#F2F2F7] hover:bg-slate-200/70 border border-slate-200/80 rounded-xl pl-3.5 pr-8 py-2 text-xs font-bold text-slate-950 focus:outline-none focus:ring-2 focus:ring-slate-950 transition-all cursor-pointer appearance-none"
-              >
-                <option value="">All Orange County (Countywide View)</option>
-                <optgroup label="Coastal OC">
-                  {OC_MARKET_DATA.filter(c => c.region === 'Coastal').map(c => (
-                    <option key={c.id} value={c.id}>{c.name}</option>
-                  ))}
-                </optgroup>
-                <optgroup label="Central OC">
-                  {OC_MARKET_DATA.filter(c => c.region === 'Central OC').map(c => (
-                    <option key={c.id} value={c.id}>{c.name}</option>
-                  ))}
-                </optgroup>
-                <optgroup label="South OC">
-                  {OC_MARKET_DATA.filter(c => c.region === 'South OC').map(c => (
-                    <option key={c.id} value={c.id}>{c.name}</option>
-                  ))}
-                </optgroup>
-                <optgroup label="North OC">
-                  {OC_MARKET_DATA.filter(c => c.region === 'North OC').map(c => (
-                    <option key={c.id} value={c.id}>{c.name}</option>
-                  ))}
-                </optgroup>
-              </select>
-              <ChevronDown className="w-4 h-4 text-slate-500 absolute right-2.5 top-2.5 pointer-events-none" />
-            </div>
-
-            {selectedCity && (
-              <button
-                onClick={() => {
-                  setSelectedCity(null);
-                  setSelectedRegion('All');
-                }}
-                className="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-all cursor-pointer whitespace-nowrap"
-              >
-                Reset Selection
-              </button>
-            )}
-          </div>
-
-          {/* Region Tabs */}
-          <div className="flex items-center space-x-1.5 overflow-x-auto scrollbar-none py-0.5">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mr-1 hidden sm:inline">
-              Regions:
-            </span>
-            {['All', 'Coastal', 'South OC', 'Central OC', 'North OC'].map((region) => {
-              const isActive = selectedRegion === region;
+      {showMainTabs && (
+        <div className="bg-white border border-slate-200/90 rounded-2xl p-2 shadow-xs">
+          <div className="flex items-center space-x-1 overflow-x-auto scrollbar-none">
+            {[
+              { id: 'summary', label: 'Orange County' },
+              { id: 'market-time', label: 'City Market Time (DOM)' },
+              { id: 'sold-report', label: 'June Closed Sales Data' },
+              { id: 'price-range', label: 'Price Bracket Breakdown' },
+              { id: 'sitting-market', label: 'Sitting on Market (30d+)' },
+            ].map((tab) => {
+              const isActive = activeTab === tab.id;
               return (
                 <button
-                  key={region}
+                  key={tab.id}
                   onClick={() => {
-                    setSelectedRegion(region);
-                    if (region !== 'All' && selectedCity && selectedCity.region !== region) {
+                    setActiveTab(tab.id as ReportTab);
+                    setSelectedCity(null);
+                  }}
+                  className={`px-4 py-3 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all cursor-pointer border-0 ${
+                    isActive
+                      ? 'bg-[#FA2D48] text-white shadow-xs outline-none ring-0'
+                      : 'text-slate-900 hover:bg-slate-100 hover:text-black font-bold'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* City Dropdown & Region Filters Bar (Optional) */}
+      {showFilterBar && (
+        <div className="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-xs space-y-4">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+            
+            {/* Direct City Dropdown Selector */}
+            <div className="flex items-center space-x-2.5">
+              <div className="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center text-slate-700 shrink-0">
+                <MapPin className="w-4 h-4 text-[#FA2D48]" />
+              </div>
+              <div className="relative flex-1 sm:w-72">
+                <select
+                  value={selectedCity?.id || ''}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (!val) {
                       setSelectedCity(null);
+                    } else {
+                      const city = OC_MARKET_DATA.find(c => c.id === val);
+                      if (city) {
+                        setSelectedCity(city);
+                        setSelectedRegion(city.region);
+                      }
                     }
                   }}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
-                    isActive
-                      ? 'bg-slate-950 text-white shadow-xs'
-                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200 border border-slate-200/50'
-                  }`}
+                  className="w-full bg-[#F2F2F7] hover:bg-slate-200/70 border border-slate-200/80 rounded-xl pl-3.5 pr-8 py-2 text-xs font-bold text-slate-950 focus:outline-none focus:ring-2 focus:ring-slate-950 transition-all cursor-pointer appearance-none"
                 >
-                  {region === 'All' ? 'All Regions' : region}
-                </button>
-              );
-            })}
-          </div>
-        </div>
+                  <option value="">All Orange County (Countywide View)</option>
+                  <optgroup label="Coastal OC">
+                    {OC_MARKET_DATA.filter(c => c.region === 'Coastal').map(c => (
+                      <option key={c.id} value={c.id}>{c.name}</option>
+                    ))}
+                  </optgroup>
+                  <optgroup label="Central OC">
+                    {OC_MARKET_DATA.filter(c => c.region === 'Central OC').map(c => (
+                      <option key={c.id} value={c.id}>{c.name}</option>
+                    ))}
+                  </optgroup>
+                  <optgroup label="South OC">
+                    {OC_MARKET_DATA.filter(c => c.region === 'South OC').map(c => (
+                      <option key={c.id} value={c.id}>{c.name}</option>
+                    ))}
+                  </optgroup>
+                  <optgroup label="North OC">
+                    {OC_MARKET_DATA.filter(c => c.region === 'North OC').map(c => (
+                      <option key={c.id} value={c.id}>{c.name}</option>
+                    ))}
+                  </optgroup>
+                </select>
+                <ChevronDown className="w-4 h-4 text-slate-500 absolute right-2.5 top-2.5 pointer-events-none" />
+              </div>
 
-        {/* Region Pills */}
-        {selectedRegion !== 'All' && (
-          <div className="flex flex-wrap items-center gap-1.5 pt-3 border-t border-slate-100">
-            <span className="text-xs font-bold text-slate-400 mr-1">
-              {selectedRegion} Cities:
-            </span>
-            {regionCities.map((city) => {
-              const isSelected = selectedCity?.id === city.id;
-              return (
+              {selectedCity && (
                 <button
-                  key={city.id}
-                  onClick={() => setSelectedCity(city)}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold tracking-tight transition-all cursor-pointer ${
-                    isSelected
-                      ? 'bg-slate-950 text-white shadow-xs'
-                      : 'bg-slate-50 text-slate-700 border border-slate-200/60 hover:bg-slate-100'
-                  }`}
+                  onClick={() => {
+                    setSelectedCity(null);
+                    setSelectedRegion('All');
+                  }}
+                  className="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-all cursor-pointer whitespace-nowrap"
                 >
-                  {city.name}
+                  Reset Selection
                 </button>
-              );
-            })}
+              )}
+            </div>
+
+            {/* Region Tabs */}
+            <div className="flex items-center space-x-1.5 overflow-x-auto scrollbar-none py-0.5">
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mr-1 hidden sm:inline">
+                Regions:
+              </span>
+              {['All', 'Coastal', 'South OC', 'Central OC', 'North OC'].map((region) => {
+                const isActive = selectedRegion === region;
+                return (
+                  <button
+                    key={region}
+                    onClick={() => {
+                      setSelectedRegion(region);
+                      if (region !== 'All' && selectedCity && selectedCity.region !== region) {
+                        setSelectedCity(null);
+                      }
+                    }}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
+                      isActive
+                        ? 'bg-slate-950 text-white shadow-xs'
+                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200 border border-slate-200/50'
+                    }`}
+                  >
+                    {region === 'All' ? 'All Regions' : region}
+                  </button>
+                );
+              })}
+            </div>
           </div>
-        )}
-      </div>
+
+          {/* Region Pills */}
+          {selectedRegion !== 'All' && (
+            <div className="flex flex-wrap items-center gap-1.5 pt-3 border-t border-slate-100">
+              <span className="text-xs font-bold text-slate-400 mr-1">
+                {selectedRegion} Cities:
+              </span>
+              {regionCities.map((city) => {
+                const isSelected = selectedCity?.id === city.id;
+                return (
+                  <button
+                    key={city.id}
+                    onClick={() => setSelectedCity(city)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold tracking-tight transition-all cursor-pointer ${
+                      isSelected
+                        ? 'bg-slate-950 text-white shadow-xs'
+                        : 'bg-slate-50 text-slate-700 border border-slate-200/60 hover:bg-slate-100'
+                    }`}
+                  >
+                    {city.name}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Selected City Detail View */}
       {selectedCity ? (() => {

@@ -264,6 +264,7 @@ export function App() {
         ) : activeCategory === 'market-trends' ? (
           <OrangeCountyMarketTrends
             fredStats={fredStats}
+            showFilterBar={true}
             onSelectCity={(city) => {
               setCurrentCity(city);
               showToast(`Selected ${city.name}`);
@@ -313,6 +314,9 @@ export function App() {
               currentCityName={currentCity.name}
               onSelectCity={(city) => setCurrentCity(city)}
               fredStats={fredStats}
+              showTopHeader={false}
+              showMainTabs={false}
+              showFilterBar={false}
             />
 
             {/* Section 1: Real Estate & Housing Market */}
