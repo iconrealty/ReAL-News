@@ -153,26 +153,23 @@ export function App() {
     if (isOrangeCountyAll) {
       matched = [...articles];
     } else {
-      // Direct city matches
-      const directMatches = articles.filter(art => {
-        const artCity = art.cityName.toLowerCase();
-        const artTitle = art.title.toLowerCase();
-        const artSub = art.subtitle.toLowerCase();
-        const artNbhd = art.realEstateData?.neighborhood?.toLowerCase() || '';
+      // Direct city matches ONLY when a specific city is selected
+      matched = articles.filter(art => {
+        const artCity = (art.cityName || '').toLowerCase().trim();
+        const artTitle = (art.title || '').toLowerCase();
+        const artSub = (art.subtitle || '').toLowerCase();
+        const artNbhd = (art.realEstateData?.neighborhood || '').toLowerCase();
+        const artAddr = (art.venueDetails?.address || '').toLowerCase();
 
         return (
           artCity.includes(cName) ||
           cName.includes(artCity) ||
           artTitle.includes(cName) ||
           artSub.includes(cName) ||
-          artNbhd.includes(cName)
+          artNbhd.includes(cName) ||
+          artAddr.includes(cName)
         );
       });
-
-      // Put city direct matches FIRST, followed by regional articles if needed
-      const existingIds = new Set(directMatches.map(a => a.id));
-      const remainingArticles = articles.filter(a => !existingIds.has(a.id));
-      matched = [...directMatches, ...remainingArticles];
     }
 
     // Category & Search query filtering
@@ -195,7 +192,8 @@ export function App() {
 
   // Featured Hero Article
   const heroArticle = useMemo(() => {
-    return filteredArticles.find(a => a.isFeatured || a.isBreaking) || filteredArticles[0] || INITIAL_ARTICLES[0];
+    if (filteredArticles.length === 0) return null;
+    return filteredArticles.find(a => a.isFeatured || a.isBreaking) || filteredArticles[0];
   }, [filteredArticles]);
 
   // Remaining articles excluding hero
@@ -216,6 +214,15 @@ export function App() {
   const developmentArticles = useMemo(() => {
     return remainingArticles.filter(a => a.category === 'city-developments' || a.category === 'market-trends' || a.category === 'lifestyle');
   }, [remainingArticles]);
+
+  const otherArticles = useMemo(() => {
+    const categorizedIds = new Set([
+      ...realEstateArticles.map(a => a.id),
+      ...diningArticles.map(a => a.id),
+      ...developmentArticles.map(a => a.id),
+    ]);
+    return remainingArticles.filter(a => !categorizedIds.has(a.id));
+  }, [remainingArticles, realEstateArticles, diningArticles, developmentArticles]);
 
   // Saved articles list
   const savedArticlesList = useMemo(() => {
@@ -320,24 +327,28 @@ export function App() {
             />
 
             {/* Section 1: Real Estate & Housing Market */}
-            <NewsGridSection
-              title={`Real Estate & Housing in ${currentCity.name}`}
-              icon={<Building2 className="w-5 h-5 text-amber-600" />}
-              articles={realEstateArticles.length > 0 ? realEstateArticles : remainingArticles.slice(0, 3)}
-              onSelectArticle={setSelectedArticle}
-              bookmarkedIds={bookmarkedIds}
-              onToggleBookmark={toggleBookmark}
-            />
+            {realEstateArticles.length > 0 && (
+              <NewsGridSection
+                title={`Real Estate & Housing in ${currentCity.name}`}
+                icon={<Building2 className="w-5 h-5 text-amber-600" />}
+                articles={realEstateArticles}
+                onSelectArticle={setSelectedArticle}
+                bookmarkedIds={bookmarkedIds}
+                onToggleBookmark={toggleBookmark}
+              />
+            )}
 
             {/* Section 2: Hot New Restaurant & Bar Openings */}
-            <NewsGridSection
-              title={`New Restaurant & Bar Debuts in ${currentCity.name}`}
-              icon={<Utensils className="w-5 h-5 text-emerald-600" />}
-              articles={diningArticles.length > 0 ? diningArticles : remainingArticles.slice(3, 6)}
-              onSelectArticle={setSelectedArticle}
-              bookmarkedIds={bookmarkedIds}
-              onToggleBookmark={toggleBookmark}
-            />
+            {diningArticles.length > 0 && (
+              <NewsGridSection
+                title={`New Restaurant & Bar Debuts in ${currentCity.name}`}
+                icon={<Utensils className="w-5 h-5 text-emerald-600" />}
+                articles={diningArticles}
+                onSelectArticle={setSelectedArticle}
+                bookmarkedIds={bookmarkedIds}
+                onToggleBookmark={toggleBookmark}
+              />
+            )}
 
             {/* Section 3: City Developments & Zoning Updates */}
             {developmentArticles.length > 0 && (
@@ -349,6 +360,33 @@ export function App() {
                 bookmarkedIds={bookmarkedIds}
                 onToggleBookmark={toggleBookmark}
               />
+            )}
+
+            {/* Section 4: Other Local Coverage */}
+            {otherArticles.length > 0 && (
+              <NewsGridSection
+                title={`More Local Updates in ${currentCity.name}`}
+                icon={<Sparkles className="w-5 h-5 text-[#FA2D48]" />}
+                articles={otherArticles}
+                onSelectArticle={setSelectedArticle}
+                bookmarkedIds={bookmarkedIds}
+                onToggleBookmark={toggleBookmark}
+              />
+            )}
+
+            {/* Loading / Empty state if no news found for selected city */}
+            {filteredArticles.length === 0 && (
+              <div className="bg-white border border-slate-200/90 rounded-3xl p-8 sm:p-12 text-center space-y-4 shadow-xs my-6">
+                <div className="w-12 h-12 rounded-2xl bg-rose-50 text-[#FA2D48] flex items-center justify-center mx-auto">
+                  <Sparkles className="w-6 h-6 animate-spin" />
+                </div>
+                <h3 className="text-xl font-bold text-slate-900">
+                  Fetching Local News for {currentCity.name}...
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-500 max-w-md mx-auto">
+                  Retrieving verified local municipal feeds, development permits, and real estate market reports for {currentCity.name}.
+                </p>
+              </div>
             )}
           </>
         )}
