@@ -580,10 +580,27 @@ app.post("/api/fetch-city-news", async (req, res) => {
   try {
     const cityName = (req.body?.cityName || "Orange County").trim();
     const category = (req.body?.category || "all").trim();
+    const mode = req.body?.mode || "rss-first"; // Default to free RSS feed (Option 3)
+
+    // Option 3: Fetch real live public RSS news (100% Free, 0 AI Token Cost)
+    if (mode === "rss-first" || mode === "rss") {
+      const rssArticles = await fetchLivePublicRssNews(cityName, category);
+      if (rssArticles && rssArticles.length > 0) {
+        console.log(`[Public RSS Feed] Serving ${rssArticles.length} live public news articles for ${cityName} (0 AI Tokens).`);
+        return res.json({
+          success: true,
+          cityName,
+          articles: rssArticles,
+          isLivePublicRss: true,
+          cost: "Free (0 AI Tokens)"
+        });
+      }
+    }
 
     const apiKey = process.env.GEMINI_API_KEY;
 
-    if (apiKey) {
+    // Only use Gemini AI search if explicitly requested via mode === 'ai' or if RSS yielded 0 articles and key is present
+    if (mode === 'ai' && apiKey) {
       try {
         const ai = getGeminiClient();
         const promptText = `
@@ -662,15 +679,11 @@ Return ONLY valid JSON array.
           });
         }
       } catch (err: any) {
-        if (err?.status === 429 || err?.status === 'RESOURCE_EXHAUSTED' || err?.message?.includes('429') || err?.message?.includes('RESOURCE_EXHAUSTED')) {
-          console.log(`[Gemini API] Rate limit reached (429 Quota). Fetching live public RSS news for ${cityName}...`);
-        } else {
-          console.log(`[Gemini API] Fetching live public RSS news for ${cityName}...`);
-        }
+        console.log(`[Gemini API] Fetching live public RSS news fallback for ${cityName}...`);
       }
     }
 
-    // First attempt: fetch real live public RSS news from Google News feed
+    // Secondary attempt: fetch real live public RSS news from Google News feed
     const rssArticles = await fetchLivePublicRssNews(cityName, category);
     if (rssArticles && rssArticles.length > 0) {
       console.log(`[Public RSS Feed] Serving ${rssArticles.length} live public news articles for ${cityName}.`);
@@ -678,7 +691,8 @@ Return ONLY valid JSON array.
         success: true,
         cityName,
         articles: rssArticles,
-        isLivePublicRss: true
+        isLivePublicRss: true,
+        cost: "Free (0 AI Tokens)"
       });
     }
 
