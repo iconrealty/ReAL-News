@@ -1,35 +1,5 @@
 import React, { useState } from 'react';
 import { AdBanner, AdCategory, AdPlacement } from '../types';
-import { 
-  X, 
-  Sparkles, 
-  Plus, 
-  Edit3, 
-  Trash2, 
-  TrendingUp, 
-  Eye, 
-  MousePointerClick, 
-  DollarSign, 
-  CheckCircle2, 
-  PauseCircle, 
-  PlayCircle, 
-  Lock, 
-  KeyRound, 
-  RefreshCw,
-  Search,
-  Building,
-  Landmark,
-  HardHat,
-  Home,
-  ShieldCheck,
-  FileText,
-  Award,
-  Phone,
-  ExternalLink,
-  Layers,
-  Power,
-  ShieldAlert
-} from 'lucide-react';
 
 interface ManagerAdminModalProps {
   isOpen: boolean;
@@ -116,14 +86,13 @@ export function ManagerAdminModal({
     title: '',
     subtitle: '',
     ctaText: 'Learn More',
-    ctaUrl: 'https://example.com',
-    imageUrl: PRESET_IMAGES[0].url,
-    sponsorBadge: 'Official Escrow Partner',
+    ctaUrl: '',
     phone: '',
+    imageUrl: '',
+    sponsorBadge: '',
     status: 'active',
     priority: 'featured'
   });
-
   const [saving, setSaving] = useState(false);
 
   if (!isOpen) return null;
@@ -141,7 +110,6 @@ export function ManagerAdminModal({
 
   const handleCreateNew = () => {
     setCurrentAd({
-      id: undefined,
       advertiserName: '',
       category: 'escrow',
       placement: 'header-banner',
@@ -149,10 +117,10 @@ export function ManagerAdminModal({
       title: '',
       subtitle: '',
       ctaText: 'Learn More',
-      ctaUrl: 'https://example.com',
-      imageUrl: PRESET_IMAGES[0].url,
-      sponsorBadge: 'Official Escrow Partner',
+      ctaUrl: '',
       phone: '',
+      imageUrl: PRESET_IMAGES[0].url,
+      sponsorBadge: 'Official Partner',
       status: 'active',
       priority: 'featured'
     });
@@ -167,27 +135,37 @@ export function ManagerAdminModal({
   const handleSaveAd = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!currentAd.advertiserName || !currentAd.title) {
-      alert('Advertiser Name and Title are required');
+      alert('Please fill out required fields (Advertiser Name & Headline).');
       return;
     }
 
     setSaving(true);
     try {
+      const payload = {
+        ...currentAd,
+        id: currentAd.id || `ad-${Date.now()}`,
+        impressions: currentAd.impressions || 0,
+        clicks: currentAd.clicks || 0,
+        createdAtMs: currentAd.createdAtMs || Date.now(),
+        updatedAt: new Date().toISOString()
+      };
+
       const res = await fetch('/api/admin/ads', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(currentAd)
+        body: JSON.stringify(payload)
       });
       const data = await res.json();
+
       if (data.success) {
-        onShowToast(`Saved campaign for "${currentAd.advertiserName}"`);
+        onShowToast(currentAd.id ? 'Campaign updated successfully!' : 'New partner campaign created!');
         setIsEditing(false);
         onRefreshAds();
       } else {
         alert(data.error || 'Failed to save campaign');
       }
-    } catch (err: any) {
-      alert(err.message || 'Error saving ad banner');
+    } catch (e) {
+      alert('Network error saving campaign');
     } finally {
       setSaving(false);
     }
@@ -203,17 +181,16 @@ export function ManagerAdminModal({
       });
       const data = await res.json();
       if (data.success) {
-        onShowToast(`${nextStatus === 'active' ? 'Activated' : 'Paused'} campaign "${ad.advertiserName}"`);
+        onShowToast(`Campaign status changed to ${nextStatus.toUpperCase()}`);
         onRefreshAds();
       }
     } catch (e) {
-      console.warn('Status toggle failed:', e);
+      alert('Status toggle failed');
     }
   };
 
   const handleDeleteAd = async (id: string, name: string) => {
     if (!confirm(`Are you sure you want to delete campaign "${name}"?`)) return;
-
     try {
       const res = await fetch(`/api/admin/ads/${id}`, { method: 'DELETE' });
       const data = await res.json();
@@ -254,38 +231,34 @@ export function ManagerAdminModal({
         
         {/* Header Bar */}
         <div className="bg-slate-900 text-white px-6 py-4 flex items-center justify-between border-b border-slate-800 shrink-0">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-2xl bg-[#FA2D48] flex items-center justify-center text-white shadow-md">
-              <Sparkles className="w-5 h-5" />
+          <div>
+            <div className="flex items-center space-x-2">
+              <h3 className="font-extrabold text-lg tracking-tight">
+                Settings
+              </h3>
+              <span className="text-[10px] bg-emerald-500/20 text-emerald-400 font-black px-2 py-0.5 rounded-full border border-emerald-500/30">
+                ACTIVE
+              </span>
             </div>
-            <div>
-              <div className="flex items-center space-x-2">
-                <h3 className="font-extrabold text-lg tracking-tight">
-                  Manager Monetization & Ad Portal
-                </h3>
-                <span className="text-[10px] bg-emerald-500/20 text-emerald-400 font-black px-2 py-0.5 rounded-full border border-emerald-500/30">
-                  LIVE ENGINE
-                </span>
-              </div>
-              <p className="text-xs text-slate-400">
-                Manage Escrow, Lender, Contractor & Broker partner banners across all app pages
-              </p>
-            </div>
+            <p className="text-xs text-slate-400">
+              System configuration and preferences
+            </p>
           </div>
 
           <div className="flex items-center space-x-2">
             <button
               onClick={onRefreshAds}
-              className="p-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
-              title="Refresh Ads Data"
+              className="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 transition-colors cursor-pointer"
+              title="Refresh Data"
             >
-              <RefreshCw className="w-4 h-4" />
+              Refresh
             </button>
             <button
               onClick={onClose}
-              className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+              className="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 transition-colors cursor-pointer"
+              title="Close"
             >
-              <X className="w-5 h-5" />
+              Close
             </button>
           </div>
         </div>
@@ -293,13 +266,10 @@ export function ManagerAdminModal({
         {/* AUTHENTICATION LOCK OVERLAY IF NOT AUTHENTICATED */}
         {!isAuthenticated ? (
           <div className="p-8 sm:p-12 text-center my-auto max-w-md mx-auto space-y-6">
-            <div className="w-16 h-16 rounded-3xl bg-rose-50 text-[#FA2D48] flex items-center justify-center mx-auto border border-rose-100 shadow-sm">
-              <KeyRound className="w-8 h-8" />
-            </div>
             <div>
-              <h4 className="text-2xl font-black text-slate-900">Manager Passcode Required</h4>
+              <h4 className="text-2xl font-black text-slate-900">Passcode Required</h4>
               <p className="text-xs text-slate-500 mt-1">
-                Enter your administrative passcode to configure partner marketing campaigns.
+                Enter passcode to access application settings.
               </p>
             </div>
 
@@ -323,10 +293,9 @@ export function ManagerAdminModal({
 
               <button
                 type="submit"
-                className="w-full py-3.5 rounded-2xl bg-[#FA2D48] hover:bg-[#E0263E] text-white font-extrabold text-sm shadow-md transition-all cursor-pointer flex items-center justify-center space-x-2"
+                className="w-full py-3.5 rounded-2xl bg-[#FA2D48] hover:bg-[#E0263E] text-white font-extrabold text-sm shadow-md transition-all cursor-pointer flex items-center justify-center"
               >
-                <Lock className="w-4 h-4" />
-                <span>Unlock Manager Portal</span>
+                Unlock Settings
               </button>
             </form>
           </div>
@@ -374,24 +343,22 @@ export function ManagerAdminModal({
                         onToggleMonetization(!isMonetizationEnabled);
                       }
                     }}
-                    className={`px-5 py-3 rounded-2xl font-black text-xs flex items-center space-x-2 shadow-md transition-all cursor-pointer ${
+                    className={`px-5 py-3 rounded-2xl font-black text-xs transition-all cursor-pointer ${
                       isMonetizationEnabled
                         ? 'bg-rose-600 hover:bg-rose-700 text-white border border-rose-500'
                         : 'bg-emerald-500 hover:bg-emerald-600 text-white border border-emerald-400'
                     }`}
                   >
-                    <Power className="w-4 h-4" />
-                    <span>{isMonetizationEnabled ? 'Turn OFF Monetization Manager' : 'Turn ON Monetization Manager'}</span>
+                    {isMonetizationEnabled ? 'Turn OFF Monetization Manager' : 'Turn ON Monetization Manager'}
                   </button>
 
                   <button
                     type="button"
                     onClick={handleToggleAllCampaignsStatus}
-                    className="px-4 py-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-bold text-xs flex items-center space-x-1.5 transition-all cursor-pointer"
+                    className="px-4 py-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-bold text-xs transition-all cursor-pointer"
                     title="Quickly pause or activate all ad campaigns in the list"
                   >
-                    <Layers className="w-4 h-4 text-amber-400" />
-                    <span>{activeCount > 0 ? 'Pause All Banners' : 'Activate All Banners'}</span>
+                    {activeCount > 0 ? 'Pause All Banners' : 'Activate All Banners'}
                   </button>
                 </div>
               </div>
@@ -400,9 +367,8 @@ export function ManagerAdminModal({
             {/* Top Analytics Cards */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               <div className="bg-slate-50 border border-slate-200/90 rounded-2xl p-4 flex flex-col justify-between">
-                <span className="text-xs font-bold text-slate-500 flex items-center space-x-1">
-                  <PlayCircle className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>Active Banners</span>
+                <span className="text-xs font-bold text-slate-500">
+                  Active Banners
                 </span>
                 <p className="text-2xl font-black text-slate-900 mt-2">
                   {activeCount} <span className="text-xs font-semibold text-slate-400">/ {ads.length} total</span>
@@ -410,9 +376,8 @@ export function ManagerAdminModal({
               </div>
 
               <div className="bg-slate-50 border border-slate-200/90 rounded-2xl p-4 flex flex-col justify-between">
-                <span className="text-xs font-bold text-slate-500 flex items-center space-x-1">
-                  <Eye className="w-3.5 h-3.5 text-blue-600" />
-                  <span>Total Impressions</span>
+                <span className="text-xs font-bold text-slate-500">
+                  Total Impressions
                 </span>
                 <p className="text-2xl font-black text-slate-900 mt-2">
                   {totalImpressions.toLocaleString()}
@@ -420,9 +385,8 @@ export function ManagerAdminModal({
               </div>
 
               <div className="bg-slate-50 border border-slate-200/90 rounded-2xl p-4 flex flex-col justify-between">
-                <span className="text-xs font-bold text-slate-500 flex items-center space-x-1">
-                  <MousePointerClick className="w-3.5 h-3.5 text-purple-600" />
-                  <span>Clicks & Leads</span>
+                <span className="text-xs font-bold text-slate-500">
+                  Clicks & Leads
                 </span>
                 <p className="text-2xl font-black text-slate-900 mt-2">
                   {totalClicks.toLocaleString()} <span className="text-xs font-bold text-emerald-600">({overallCtr}% CTR)</span>
@@ -430,9 +394,8 @@ export function ManagerAdminModal({
               </div>
 
               <div className="bg-slate-900 text-white border border-slate-800 rounded-2xl p-4 flex flex-col justify-between shadow-xs">
-                <span className="text-xs font-extrabold text-amber-400 flex items-center space-x-1">
-                  <DollarSign className="w-3.5 h-3.5" />
-                  <span>Est. Monthly Revenue</span>
+                <span className="text-xs font-extrabold text-amber-400">
+                  Est. Monthly Revenue
                 </span>
                 <p className="text-2xl font-black text-white mt-2">
                   ${estimatedRevenue.toLocaleString(undefined, { maximumFractionDigits: 0 })}
@@ -444,9 +407,8 @@ export function ManagerAdminModal({
             {isEditing ? (
               <div className="bg-slate-50 border border-slate-200 rounded-3xl p-5 sm:p-6 space-y-6 animate-fade-in">
                 <div className="flex items-center justify-between border-b border-slate-200 pb-4">
-                  <h4 className="text-lg font-black text-slate-900 flex items-center space-x-2">
-                    <Edit3 className="w-5 h-5 text-[#FA2D48]" />
-                    <span>{currentAd.id ? 'Edit Partner Campaign' : 'Create New Partner Campaign'}</span>
+                  <h4 className="text-lg font-black text-slate-900">
+                    {currentAd.id ? 'Edit Partner Campaign' : 'Create New Partner Campaign'}
                   </h4>
                   <button
                     onClick={() => setIsEditing(false)}
@@ -695,10 +657,9 @@ export function ManagerAdminModal({
                       <button
                         type="submit"
                         disabled={saving}
-                        className="px-6 py-2.5 rounded-xl bg-[#FA2D48] hover:bg-[#E0263E] text-white font-extrabold text-xs shadow-md transition-all cursor-pointer flex items-center space-x-2"
+                        className="px-6 py-2.5 rounded-xl bg-[#FA2D48] hover:bg-[#E0263E] text-white font-extrabold text-xs shadow-md transition-all cursor-pointer"
                       >
-                        {saving ? <RefreshCw className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
-                        <span>Save & Publish Banner</span>
+                        {saving ? 'Saving...' : 'Save & Publish Banner'}
                       </button>
                     </div>
                   </div>
@@ -713,13 +674,12 @@ export function ManagerAdminModal({
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
                   <div className="flex items-center space-x-2 w-full sm:w-auto flex-1 max-w-md">
                     <div className="relative w-full">
-                      <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
                       <input
                         type="text"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         placeholder="Search partners, headlines..."
-                        className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-900 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-[#FA2D48]"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-900 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-[#FA2D48]"
                       />
                     </div>
                   </div>
@@ -771,19 +731,17 @@ export function ManagerAdminModal({
 
                     <button
                       onClick={handleResetSampleSponsors}
-                      className="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs flex items-center space-x-1.5 transition-all cursor-pointer shrink-0 border border-slate-200"
+                      className="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs transition-all cursor-pointer shrink-0 border border-slate-200"
                       title="Load Sample Sponsors for all locations & themes"
                     >
-                      <Layers className="w-3.5 h-3.5 text-blue-600" />
-                      <span>Load Sample Catalog</span>
+                      Load Sample Catalog
                     </button>
 
                     <button
                       onClick={handleCreateNew}
-                      className="px-4 py-2 rounded-xl bg-[#FA2D48] hover:bg-[#E0263E] text-white font-extrabold text-xs flex items-center space-x-1.5 shadow-md transition-all cursor-pointer shrink-0"
+                      className="px-4 py-2 rounded-xl bg-[#FA2D48] hover:bg-[#E0263E] text-white font-extrabold text-xs shadow-md transition-all cursor-pointer shrink-0"
                     >
-                      <Plus className="w-4 h-4" />
-                      <span>New Partner Ad</span>
+                      New Partner Ad
                     </button>
                   </div>
                 </div>
@@ -867,17 +825,17 @@ export function ManagerAdminModal({
                                 <div className="flex items-center justify-center space-x-1">
                                   <button
                                     onClick={() => handleEdit(ad)}
-                                    className="p-1.5 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-200 transition-colors cursor-pointer"
+                                    className="px-2 py-1 rounded-lg text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-200 transition-colors cursor-pointer"
                                     title="Edit Campaign"
                                   >
-                                    <Edit3 className="w-3.5 h-3.5" />
+                                    Edit
                                   </button>
                                   <button
                                     onClick={() => handleDeleteAd(ad.id, ad.advertiserName)}
-                                    className="p-1.5 rounded-lg text-rose-500 hover:text-rose-700 hover:bg-rose-50 transition-colors cursor-pointer"
+                                    className="px-2 py-1 rounded-lg text-xs font-bold text-rose-500 hover:text-rose-700 hover:bg-rose-50 transition-colors cursor-pointer"
                                     title="Delete Campaign"
                                   >
-                                    <Trash2 className="w-3.5 h-3.5" />
+                                    Delete
                                   </button>
                                 </div>
                               </td>
