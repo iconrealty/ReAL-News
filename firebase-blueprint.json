@@ -24,6 +24,32 @@
         "content": { "type": "string" }
       },
       "required": ["id", "title", "category", "cityName", "createdAtMs"]
+    },
+    "ads": {
+      "title": "Ad Banners",
+      "description": "Sponsor campaigns and ad banners displayed across news feed and tools",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "advertiserName": { "type": "string" },
+        "category": { "type": "string" },
+        "placement": { "type": "string" },
+        "targetCity": { "type": "string" },
+        "title": { "type": "string" },
+        "subtitle": { "type": "string" },
+        "ctaText": { "type": "string" },
+        "ctaUrl": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "sponsorBadge": { "type": "string" },
+        "phone": { "type": "string" },
+        "status": { "type": "string" },
+        "priority": { "type": "string" },
+        "impressions": { "type": "number" },
+        "clicks": { "type": "number" },
+        "createdAtMs": { "type": "number" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "advertiserName", "title", "placement", "status"]
     }
   }
 }

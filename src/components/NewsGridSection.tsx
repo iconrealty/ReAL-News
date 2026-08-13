@@ -8,6 +8,7 @@ interface NewsGridSectionProps {
   onSelectArticle: (article: NewsArticle) => void;
   bookmarkedIds?: Set<string>;
   onToggleBookmark?: (article: NewsArticle) => void;
+  adBanner?: React.ReactNode;
 }
 
 export const NewsGridSection: React.FC<NewsGridSectionProps> = ({
@@ -15,6 +16,7 @@ export const NewsGridSection: React.FC<NewsGridSectionProps> = ({
   icon,
   articles,
   onSelectArticle,
+  adBanner,
 }) => {
   if (articles.length === 0) return null;
 
@@ -31,6 +33,7 @@ export const NewsGridSection: React.FC<NewsGridSectionProps> = ({
 
       {/* Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        {adBanner && <div className="col-span-1">{adBanner}</div>}
         {articles.map((article) => {
           return (
             <div

@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
-import { MapPin, ChevronDown, TrendingUp, Clock, Tag, Building, Search, ArrowUpDown, ShieldCheck, AlertCircle } from 'lucide-react';
-import { CityInfo } from '../types';
+import { MapPin, ChevronDown, TrendingUp, Clock, Tag, Building, Search, ArrowUpDown, ShieldCheck, AlertCircle, Home, Layers, Check } from 'lucide-react';
+import { CityInfo, AdBanner } from '../types';
+import { AdBannerRenderer } from './AdBannerRenderer';
 import {
   OC_HOUSING_REPORT_METADATA,
   OC_HOUSING_SUMMARY_BULLETS,
@@ -74,11 +75,11 @@ export const OC_MARKET_DATA: OCCityMarketData[] = OC_MARKET_TIME_REPORT.map((ite
     region: item.region,
     medianPrice: priceNum || 1250000,
     avgSqftPrice: sqftPrice,
-    ytdSalesVolume: soldItem ? `$${(soldItem.unitsSoldJune2026 * (priceNum / 1000000)).toFixed(1)}M` : '$450M',
+    ytdSalesVolume: soldItem ? `$${(soldItem.unitsSold2026 * (priceNum / 1000000)).toFixed(1)}M` : '$450M',
     ytdSalesRaw: 450,
-    homesSoldYtd: soldItem ? soldItem.unitsSoldJune2026 * 6 : 300,
+    homesSoldYtd: soldItem ? soldItem.unitsSold2026 * 6 : 300,
     pendingHomes: item.demand30Days,
-    unitsClosedPastMonth: soldItem ? soldItem.unitsSoldJune2026 : 45,
+    unitsClosedPastMonth: soldItem ? soldItem.unitsSold2026 : 45,
     daysOnMarket: item.marketTimeDays,
     yoyGrowth: 5.2,
     description: `Official statistics for ${item.city}, ${item.region}.`
@@ -92,6 +93,7 @@ interface OrangeCountyMarketTrendsProps {
   showFilterBar?: boolean;
   showTopHeader?: boolean;
   showMainTabs?: boolean;
+  ads?: AdBanner[];
 }
 
 type ReportTab = 'summary' | 'market-time' | 'price-range' | 'sold-report' | 'sitting-market';
@@ -102,12 +104,14 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
   currentCityName,
   showFilterBar = false,
   showTopHeader = true,
-  showMainTabs = true
+  showMainTabs = true,
+  ads = []
 }) => {
   const [activeTab, setActiveTab] = useState<ReportTab>('summary');
   const [selectedCity, setSelectedCity] = useState<OCCityMarketData | null>(null);
   const [selectedRegion, setSelectedRegion] = useState<string>('All');
-  const [pricePropertyType, setPricePropertyType] = useState<'all' | 'attached' | 'detached'>('all');
+  const [pricePropertyType, setPricePropertyType] = useState<'all' | 'attached' | 'detached' | 'sitting'>('all');
+  const [selectedPriceTier, setSelectedPriceTier] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortField, setSortField] = useState<string>('city');
   const [sortAsc, setSortAsc] = useState<boolean>(true);
@@ -268,10 +272,10 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
         <div className="bg-white border border-slate-200/90 rounded-2xl p-2 shadow-xs">
           <div className="flex items-center space-x-1 overflow-x-auto scrollbar-none">
             {[
-              { id: 'summary', label: 'Orange County' },
+              { id: 'summary', label: 'Orange County Overview' },
               { id: 'market-time', label: 'City Market Time (DOM)' },
-              { id: 'sold-report', label: 'June Closed Sales Data' },
-              { id: 'price-range', label: 'Price Bracket Breakdown' },
+              { id: 'sold-report', label: 'August Closed Sales Data' },
+              { id: 'price-range', label: 'Price Range & Property Type Analysis' },
               { id: 'sitting-market', label: 'Sitting on Market (30d+)' },
             ].map((tab) => {
               const isActive = activeTab === tab.id;
@@ -422,9 +426,9 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
         const soldData = OC_SOLD_REPORT.find(s => s.city.toLowerCase() === selectedCity.name.toLowerCase());
         const marketData = OC_MARKET_TIME_REPORT.find(m => m.city.toLowerCase() === selectedCity.name.toLowerCase());
 
-        const yoyUnitsChange = soldData ? soldData.unitsSoldJune2026 - soldData.unitsSoldJune2025 : 0;
-        const yoyUnitsPercent = soldData && soldData.unitsSoldJune2025 > 0 
-          ? ((yoyUnitsChange / soldData.unitsSoldJune2025) * 100).toFixed(1) 
+        const yoyUnitsChange = soldData ? soldData.unitsSold2026 - soldData.unitsSold2025 : 0;
+        const yoyUnitsPercent = soldData && soldData.unitsSold2025 > 0 
+          ? ((yoyUnitsChange / soldData.unitsSold2025) * 100).toFixed(1) 
           : '0.0';
 
         return (
@@ -446,12 +450,12 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                 </button>
               </div>
 
-              {/* JUNE CLOSED SALES DATA (From Last Page of Report) */}
+              {/* AUGUST CLOSED SALES DATA */}
               {soldData && (
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 font-sans">
-                      June 2026
+                      August 2026 Report Data
                     </h3>
                   </div>
 
@@ -475,17 +479,17 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                     </div>
 
                     <div className="p-2">
-                      <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">June (Sold)</div>
-                      <div className="text-2xl sm:text-3xl font-bold text-slate-900 pt-1">{soldData.unitsSoldJune2026} Units</div>
+                      <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">Closed Resales</div>
+                      <div className="text-2xl sm:text-3xl font-bold text-slate-900 pt-1">{soldData.unitsSold2026} Units</div>
                       <div className="text-[11px] text-emerald-600 pt-1 font-bold">
-                        {yoyUnitsChange >= 0 ? `+${yoyUnitsChange}` : yoyUnitsChange} vs June '25 ({soldData.unitsSoldJune2025})
+                        {yoyUnitsChange >= 0 ? `+${yoyUnitsChange}` : yoyUnitsChange} vs Prior Year ({soldData.unitsSold2025})
                       </div>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
                     <div className="py-2.5 px-3 flex items-center justify-between text-xs border-b border-slate-100 sm:border-b-0">
-                      <span className="font-bold text-black">June Price Range (Low to High):</span>
+                      <span className="font-bold text-black">Price Range (Low to High):</span>
                       <span className="font-sans font-bold text-black">{soldData.lowPrice} - {soldData.highPrice}</span>
                     </div>
                     <div className="py-2.5 px-3 flex items-center justify-between text-xs">
@@ -606,12 +610,12 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                 <div className="bg-white border border-slate-200/90 rounded-3xl p-6 shadow-xs">
                   <div className="text-xs font-sans uppercase tracking-widest text-black font-extrabold">Countywide Median List Price</div>
                   <div className="text-3xl font-black text-slate-900 pt-1">{OC_HOUSING_REPORT_METADATA.countywideMedianPrice}</div>
-                  <p className="text-sm text-slate-700 font-normal mt-2 leading-snug">Across 5,020 active listings in all 34 OC municipalities.</p>
+                  <p className="text-sm text-slate-700 font-normal mt-2 leading-snug">Across {OC_HOUSING_REPORT_METADATA.countywideActives.toLocaleString()} active listings in all 34 OC municipalities.</p>
                 </div>
                 <div className="bg-white border border-slate-200/90 rounded-3xl p-6 shadow-xs">
-                  <div className="text-xs font-sans uppercase tracking-widest text-black font-extrabold">June Closed Resales</div>
+                  <div className="text-xs font-sans uppercase tracking-widest text-black font-extrabold">August Report Closed Resales</div>
                   <div className="text-3xl font-black text-[#FA2D48] pt-1">1,994 Sales</div>
-                  <p className="text-sm text-slate-700 font-normal mt-2 leading-snug">+9% compared to June 2025 (1,828 sales). Average 99.9% sales-to-list ratio.</p>
+                  <p className="text-sm text-slate-700 font-normal mt-2 leading-snug">+9% compared to prior year (1,828 sales). Average 99.9% sales-to-list ratio.</p>
                 </div>
               </div>
 
@@ -714,12 +718,12 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
             </div>
           )}
 
-          {/* TAB 3: JUNE CLOSED SALES REPORT */}
+          {/* TAB 3: AUGUST CLOSED SALES REPORT */}
           {activeTab === 'sold-report' && (
             <div className="bg-white border border-slate-200/90 rounded-3xl p-6 shadow-xs space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-100">
                 <div>
-                  <h3 className="text-xl font-bold text-slate-900">June 2026 Closed Resales Report</h3>
+                  <h3 className="text-xl font-bold text-slate-900">August 2026 Report Closed Resales</h3>
                   <p className="text-xs text-slate-950 font-medium">Official CRMLS closed sales records for Orange County municipalities.</p>
                 </div>
 
@@ -740,26 +744,26 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                   <thead>
                     <tr className="bg-slate-100/80 border-b border-slate-200 text-slate-700 font-bold uppercase tracking-wider">
                       <th className="p-3 cursor-pointer" onClick={() => toggleSort('city')}>City</th>
-                      <th className="p-3 cursor-pointer" onClick={() => toggleSort('unitsSoldJune2026')}>Units Sold</th>
+                      <th className="p-3 cursor-pointer" onClick={() => toggleSort('unitsSold2026')}>Units Sold</th>
                       <th className="p-3 cursor-pointer" onClick={() => toggleSort('medianSalesPrice')}>Median Sales Price</th>
                       <th className="p-3 cursor-pointer" onClick={() => toggleSort('salesToListRatio')}>Sales/List %</th>
                       <th className="p-3 cursor-pointer" onClick={() => toggleSort('medianPricePerSqFt')}>$/Sq. Ft.</th>
                       <th className="p-3 cursor-pointer" onClick={() => toggleSort('medianDOM')}>Median DOM</th>
                       <th className="p-3">Low / High Price Range</th>
-                      <th className="p-3">June 2025 Units</th>
+                      <th className="p-3">Prior Year Units</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
                     {filteredSoldReport.map((row, idx) => (
                       <tr key={idx} className="hover:bg-slate-50/80 transition-colors">
                         <td className="p-3 font-bold text-slate-900">{row.city}</td>
-                        <td className="p-3 font-bold text-slate-950">{row.unitsSoldJune2026}</td>
+                        <td className="p-3 font-bold text-slate-950">{row.unitsSold2026}</td>
                         <td className="p-3 font-black text-[#FA2D48]">{row.medianSalesPrice}</td>
                         <td className="p-3 font-bold text-emerald-600">{row.salesToListRatio}</td>
                         <td className="p-3 font-bold text-slate-800">{row.medianPricePerSqFt}</td>
                         <td className="p-3 font-bold text-slate-700">{row.medianDOM} Days</td>
                         <td className="p-3 text-slate-950 text-[11px] font-sans font-medium">{row.lowPrice} - {row.highPrice}</td>
-                        <td className="p-3 text-slate-900 font-bold">{row.unitsSoldJune2025}</td>
+                        <td className="p-3 text-slate-900 font-bold">{row.unitsSold2025}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -768,17 +772,19 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
             </div>
           )}
 
-          {/* TAB 4: PRICE RANGE BREAKDOWN */}
+          {/* TAB 4: PRICE RANGE & PROPERTY TYPE BREAKDOWN */}
           {activeTab === 'price-range' && (
-            <div className="bg-white border border-slate-200/90 rounded-3xl p-6 shadow-xs space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-100">
+            <div className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-8 shadow-xs space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
                 <div>
-                  <h3 className="text-xl font-bold text-slate-900">Price Range & Property Type Analysis</h3>
-                  <p className="text-xs text-slate-950 font-medium">Market speed and listing inventory grouped by price tiers.</p>
+                  <h3 className="text-xl sm:text-2xl font-black text-slate-950">Price Bracket & Property Type Analysis</h3>
+                  <p className="text-xs sm:text-sm text-slate-600 font-medium mt-0.5">
+                    Select a price bracket tab below to inspect detailed market velocity metrics, or view the complete comparison table.
+                  </p>
                 </div>
 
-                {/* Sub Switcher */}
-                <div className="flex items-center space-x-1 bg-slate-100 p-1 rounded-xl">
+                {/* Property Type Sub-Switcher */}
+                <div className="flex items-center space-x-1 bg-[#F2F2F7] p-1 rounded-xl border border-slate-200/80 shrink-0">
                   {[
                     { id: 'all', label: 'All Homes' },
                     { id: 'attached', label: 'Attached (Condos)' },
@@ -799,51 +805,165 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                 </div>
               </div>
 
-              <div className="overflow-x-auto scrollbar-none">
-                <table className="w-full text-left text-xs border-collapse">
-                  <thead>
-                    <tr className="bg-slate-100/80 border-b border-slate-200 text-slate-700 font-bold uppercase tracking-wider">
-                      <th className="p-3">Price Tier</th>
-                      <th className="p-3">Current Actives</th>
-                      <th className="p-3">30-Day Demand</th>
-                      <th className="p-3 text-[#FA2D48]">Market Time (DOM)</th>
-                      <th className="p-3">2w Ago</th>
-                      <th className="p-3">4w Ago</th>
-                      <th className="p-3">1y Ago</th>
-                      <th className="p-3">Median Price</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100">
-                    {priceRangeData.map((row, idx) => (
-                      <tr key={idx} className="hover:bg-slate-50/80 transition-colors">
-                        <td className="p-3 font-black text-slate-900">{row.priceRange}</td>
-                        <td className="p-3 font-semibold text-slate-900">{row.currentActives}</td>
-                        <td className="p-3 font-semibold text-slate-900">{row.demand30Days}</td>
-                        <td className="p-3 font-black text-[#FA2D48] bg-rose-50/50 rounded-lg">{row.marketTimeDays} Days</td>
-                        <td className="p-3 text-slate-900 font-medium">{row.marketTime2WeeksAgo}d</td>
-                        <td className="p-3 text-slate-900 font-medium">{row.marketTime4WeeksAgo}d</td>
-                        <td className="p-3 text-slate-900 font-medium">{row.marketTime1YearAgo}d</td>
-                        <td className="p-3 font-bold text-slate-900">{row.medianActivePrice}</td>
+              {/* Price Tier Tabs */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between text-xs font-bold text-slate-700">
+                  <span className="flex items-center space-x-1.5 text-[#FA2D48]">
+                    <Tag className="w-3.5 h-3.5" />
+                    <span>Select Price Bracket Tab to Inspect:</span>
+                  </span>
+                  {selectedPriceTier !== 'all' && (
+                    <button
+                      onClick={() => setSelectedPriceTier('all')}
+                      className="text-[11px] text-[#FA2D48] hover:underline font-bold"
+                    >
+                      Show All Brackets
+                    </button>
+                  )}
+                </div>
+
+                <div className="flex items-center space-x-1.5 overflow-x-auto scrollbar-none py-1">
+                  {[
+                    { id: 'all', label: 'All of O.C. Summary' },
+                    ...priceRangeData.filter(r => r.priceRange !== 'All of O.C.').map(r => ({
+                      id: r.priceRange,
+                      label: r.priceRange
+                    }))
+                  ].map((tier) => {
+                    const isSelected = selectedPriceTier === tier.id || (selectedPriceTier === 'all' && tier.id === 'all');
+                    return (
+                      <button
+                        key={tier.id}
+                        onClick={() => setSelectedPriceTier(tier.id)}
+                        className={`px-3.5 py-2 rounded-xl text-xs font-extrabold whitespace-nowrap transition-all cursor-pointer ${
+                          isSelected
+                            ? 'bg-[#FA2D48] text-white shadow-xs ring-1 ring-[#FA2D48]'
+                            : 'bg-slate-100 text-slate-700 hover:bg-slate-200/80 border border-slate-200/60'
+                        }`}
+                      >
+                        {tier.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Active Tab Spotlight Card */}
+              {(() => {
+                const dataset = priceRangeData;
+                const activeRow = selectedPriceTier !== 'all'
+                  ? dataset.find(r => r.priceRange.toLowerCase() === selectedPriceTier.toLowerCase() || r.priceRange.toLowerCase().includes(selectedPriceTier.toLowerCase())) || dataset[dataset.length - 1]
+                  : dataset[dataset.length - 1]; // "All of O.C."
+
+                const cond = getMarketCondition(activeRow.marketTimeDays);
+
+                return (
+                  <div className="bg-slate-900 text-white p-5 sm:p-6 rounded-2xl shadow-sm space-y-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
+                      <div className="flex items-center space-x-2">
+                        <span className="text-xs font-bold uppercase tracking-wider text-[#FA2D48] bg-rose-950/80 px-2.5 py-1 rounded-md border border-rose-900/50">
+                          Selected Tier
+                        </span>
+                        <h4 className="text-xl font-black text-white">{activeRow.priceRange}</h4>
+                      </div>
+                      <span className={`text-xs font-black px-3 py-1 rounded-full ${cond.bgClass} text-white self-start sm:self-auto`}>
+                        {cond.badgeText} ({activeRow.marketTimeDays} Days DOM)
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                      <div className="bg-slate-800/80 p-3.5 rounded-xl border border-slate-700/60">
+                        <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Active Inventory</div>
+                        <div className="text-xl sm:text-2xl font-black text-white pt-1">{activeRow.currentActives.toLocaleString()}</div>
+                        <div className="text-[11px] text-slate-400 pt-0.5">Listings on market</div>
+                      </div>
+
+                      <div className="bg-slate-800/80 p-3.5 rounded-xl border border-slate-700/60">
+                        <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">30-Day Escrows</div>
+                        <div className="text-xl sm:text-2xl font-black text-white pt-1">{activeRow.demand30Days.toLocaleString()}</div>
+                        <div className="text-[11px] text-slate-400 pt-0.5">Pending demand</div>
+                      </div>
+
+                      <div className="bg-slate-800/80 p-3.5 rounded-xl border border-slate-700/60">
+                        <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Historical DOM (1y Ago)</div>
+                        <div className="text-xl sm:text-2xl font-black text-rose-400 pt-1">{activeRow.marketTime1YearAgo} Days</div>
+                        <div className="text-[11px] text-slate-400 pt-0.5">vs {activeRow.marketTimeDays}d currently</div>
+                      </div>
+
+                      <div className="bg-slate-800/80 p-3.5 rounded-xl border border-slate-700/60">
+                        <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Median Tier Price</div>
+                        <div className="text-xl sm:text-2xl font-black text-emerald-400 pt-1">{activeRow.medianActivePrice}</div>
+                        <div className="text-[11px] text-slate-400 pt-0.5">Current median list price</div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* Full Comparison Table */}
+              <div className="space-y-2">
+                <div className="text-xs font-bold text-slate-900">Complete Price Bracket Side-by-Side Comparison:</div>
+                <div className="overflow-x-auto scrollbar-none rounded-2xl border border-slate-200/90">
+                  <table className="w-full text-left text-xs border-collapse">
+                    <thead>
+                      <tr className="bg-slate-100/90 border-b border-slate-200 text-slate-700 font-bold uppercase tracking-wider">
+                        <th className="p-3">Price Tier</th>
+                        <th className="p-3">Current Actives</th>
+                        <th className="p-3">30-Day Demand</th>
+                        <th className="p-3 text-[#FA2D48]">Market Time (DOM)</th>
+                        <th className="p-3">2w Ago</th>
+                        <th className="p-3">4w Ago</th>
+                        <th className="p-3">1y Ago</th>
+                        <th className="p-3">Median Price</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {priceRangeData.map((row, idx) => {
+                        const isSelected = selectedPriceTier === row.priceRange;
+                        return (
+                          <tr
+                            key={idx}
+                            onClick={() => setSelectedPriceTier(row.priceRange)}
+                            className={`cursor-pointer transition-colors ${
+                              isSelected
+                                ? 'bg-rose-50/80 font-bold ring-1 ring-[#FA2D48]'
+                                : row.priceRange === 'All of O.C.'
+                                  ? 'bg-slate-100/80 font-black'
+                                  : 'hover:bg-slate-50'
+                            }`}
+                          >
+                            <td className="p-3 font-extrabold text-slate-950">{row.priceRange}</td>
+                            <td className="p-3 font-bold text-slate-900">{row.currentActives.toLocaleString()}</td>
+                            <td className="p-3 font-bold text-slate-900">{row.demand30Days.toLocaleString()}</td>
+                            <td className="p-3 font-black text-[#FA2D48] bg-rose-50/50 rounded-lg">{row.marketTimeDays} Days</td>
+                            <td className="p-3 text-slate-800 font-medium">{row.marketTime2WeeksAgo}d</td>
+                            <td className="p-3 text-slate-800 font-medium">{row.marketTime4WeeksAgo}d</td>
+                            <td className="p-3 text-slate-800 font-medium">{row.marketTime1YearAgo}d</td>
+                            <td className="p-3 font-bold text-slate-900">{row.medianActivePrice}</td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           )}
 
           {/* TAB 5: SITTING ON MARKET ANALYSIS */}
           {activeTab === 'sitting-market' && (
-            <div className="bg-white border border-slate-200/90 rounded-3xl p-6 shadow-xs space-y-4">
+            <div className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-8 shadow-xs space-y-4">
               <div>
-                <h3 className="text-xl font-bold text-slate-900">Sitting on the Market Breakdown</h3>
-                <p className="text-xs text-slate-950 font-medium">64% of all active homes have been listed for at least 1 month, and 41% surpassed 2 months.</p>
+                <h3 className="text-xl sm:text-2xl font-black text-slate-950">Sitting on the Market Breakdown</h3>
+                <p className="text-xs sm:text-sm text-slate-600 font-medium mt-1">
+                  64% of all active homes have been listed for at least 1 month, and 41% surpassed 2 months without securing an escrow.
+                </p>
               </div>
 
-              <div className="overflow-x-auto scrollbar-none">
+              <div className="overflow-x-auto scrollbar-none rounded-2xl border border-slate-200/90">
                 <table className="w-full text-left text-xs border-collapse">
                   <thead>
-                    <tr className="bg-slate-100/80 border-b border-slate-200 text-slate-700 font-bold uppercase tracking-wider">
+                    <tr className="bg-slate-100/90 border-b border-slate-200 text-slate-700 font-bold uppercase tracking-wider">
                       <th className="p-3">Price Bracket</th>
                       <th className="p-3">Current Actives</th>
                       <th className="p-3">30+ Days Listed</th>
@@ -851,20 +971,20 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                       <th className="p-3">60+ Days Listed</th>
                       <th className="p-3 text-amber-600">% 60+ Days</th>
                       <th className="p-3">Expected Market Time</th>
-                      <th className="p-3">Off-Market (Jan–June)</th>
+                      <th className="p-3">Off-Market (YTD)</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
                     {OC_SITTING_ON_MARKET_REPORT.map((row, idx) => (
-                      <tr key={idx} className={`hover:bg-slate-50/80 transition-colors ${row.priceRange === 'All of O.C.' ? 'bg-slate-100/70 font-black' : ''}`}>
-                        <td className="p-3 font-bold text-slate-900">{row.priceRange}</td>
-                        <td className="p-3 text-slate-950 font-medium">{row.currentActives}</td>
-                        <td className="p-3 text-slate-950 font-medium">{row.actives30PlusDays}</td>
-                        <td className="p-3 font-bold text-rose-600">{row.percent30PlusDays}</td>
-                        <td className="p-3 text-slate-950 font-medium">{row.actives60PlusDays}</td>
-                        <td className="p-3 font-bold text-amber-600">{row.percent60PlusDays}</td>
-                        <td className="p-3 font-bold text-slate-900">{row.marketTimeDays} Days</td>
-                        <td className="p-3 text-slate-950 font-medium">{row.offMarketJanJun} homes</td>
+                      <tr key={idx} className={`hover:bg-slate-50 transition-colors ${row.priceRange === 'All of O.C.' ? 'bg-slate-100/80 font-black' : ''}`}>
+                        <td className="p-3 font-bold text-slate-950">{row.priceRange}</td>
+                        <td className="p-3 text-slate-900 font-medium">{row.currentActives}</td>
+                        <td className="p-3 text-slate-900 font-medium">{row.actives30PlusDays}</td>
+                        <td className="p-3 font-extrabold text-rose-600">{row.percent30PlusDays}</td>
+                        <td className="p-3 text-slate-900 font-medium">{row.actives60PlusDays}</td>
+                        <td className="p-3 font-extrabold text-amber-600">{row.percent60PlusDays}</td>
+                        <td className="p-3 font-extrabold text-slate-950">{row.marketTimeDays} Days</td>
+                        <td className="p-3 text-slate-800 font-medium">{row.offMarketYTD} homes</td>
                       </tr>
                     ))}
                   </tbody>
@@ -873,6 +993,17 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
             </div>
           )}
         </>
+      )}
+
+      {/* Featured Realtor & Brokerage Partner Banner */}
+      {ads && ads.length > 0 && (
+        <div className="mt-8">
+          <AdBannerRenderer
+            ads={ads}
+            placement="market-trends-banner"
+            cityName={currentCityName}
+          />
+        </div>
       )}
     </div>
   );

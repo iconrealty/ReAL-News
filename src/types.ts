@@ -56,6 +56,48 @@ export interface NewsArticle {
   isLiveAi?: boolean;
 }
 
+export type AdCategory = 
+  | 'escrow' 
+  | 'lender' 
+  | 'contractor' 
+  | 'realtor' 
+  | 'broker' 
+  | 'title' 
+  | 'insurance' 
+  | 'staging'
+  | 'inspection'
+  | 'mover'
+  | 'legal';
+
+export type AdPlacement = 
+  | 'header-banner' 
+  | 'feed-native' 
+  | 'article-spotlight' 
+  | 'calculator-sidebar' 
+  | 'market-trends-banner' 
+  | 'sticky-bottom-bar';
+
+export interface AdBanner {
+  id: string;
+  advertiserName: string;
+  category: AdCategory;
+  placement: AdPlacement;
+  targetCity?: string;
+  title: string;
+  subtitle?: string;
+  ctaText: string;
+  ctaUrl: string;
+  imageUrl?: string;
+  sponsorBadge?: string;
+  phone?: string;
+  status: 'active' | 'paused';
+  priority: 'featured' | 'high' | 'standard';
+  impressions: number;
+  clicks: number;
+  createdAtMs: number;
+  updatedAt: string;
+}
+
 export interface FilterState {
   city: CityInfo;
   category: NewsCategory;

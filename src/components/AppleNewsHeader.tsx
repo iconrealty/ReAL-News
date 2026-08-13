@@ -1,6 +1,6 @@
 import React from 'react';
 import { CityInfo, NewsCategory } from '../types';
-import { Bookmark, Search } from 'lucide-react';
+import { Bookmark, Search, Sparkles } from 'lucide-react';
 
 interface AppleNewsHeaderProps {
   currentCity: CityInfo;
@@ -14,6 +14,8 @@ interface AppleNewsHeaderProps {
   onSearchChange: (q: string) => void;
   onResetToMain?: () => void;
   fredRate?: string;
+  onOpenManager?: () => void;
+  isMonetizationEnabled?: boolean;
 }
 
 export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
@@ -27,6 +29,8 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
   onSearchChange,
   onResetToMain,
   fredRate = '6.66%',
+  onOpenManager,
+  isMonetizationEnabled = true,
 }) => {
   const monthDay = new Date().toLocaleDateString('en-US', {
     month: 'long',
@@ -145,6 +149,23 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
                 </span>
               )}
             </button>
+
+            {/* Ad Manager / Sponsor Portal Button */}
+            {onOpenManager && (
+              <button
+                onClick={onOpenManager}
+                className="px-3.5 py-2 rounded-full bg-white hover:bg-slate-100 active:bg-slate-200 text-slate-800 font-extrabold text-xs flex items-center space-x-1.5 transition-all border border-slate-200 shadow-2xs cursor-pointer shrink-0"
+                title="Sponsor Portal"
+              >
+                <Sparkles className={`w-3.5 h-3.5 ${isMonetizationEnabled !== false ? 'text-[#FA2D48]' : 'text-slate-400'}`} />
+                <span className="hidden md:inline">Sponsor Portal</span>
+                {isMonetizationEnabled === false && (
+                  <span className="text-[10px] font-black uppercase text-rose-600 bg-rose-50 px-1.5 py-0.2 rounded border border-rose-200">
+                    OFF
+                  </span>
+                )}
+              </button>
+            )}
           </div>
         </div>
 

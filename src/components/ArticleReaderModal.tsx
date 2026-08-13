@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { NewsArticle } from '../types';
+import { NewsArticle, AdBanner } from '../types';
 import { X, Bookmark, MoreHorizontal, Search, ExternalLink } from 'lucide-react';
+import { AdBannerRenderer } from './AdBannerRenderer';
 
 interface ArticleReaderModalProps {
   article: NewsArticle | null;
@@ -8,6 +9,7 @@ interface ArticleReaderModalProps {
   isBookmarked: boolean;
   onToggleBookmark: (article: NewsArticle) => void;
   onShowToast: (msg: string) => void;
+  ads?: AdBanner[];
 }
 
 type FontSize = 'sm' | 'md' | 'lg' | 'xl';
@@ -18,6 +20,7 @@ export const ArticleReaderModal: React.FC<ArticleReaderModalProps> = ({
   isBookmarked,
   onToggleBookmark,
   onShowToast,
+  ads = [],
 }) => {
   const [fontSize, setFontSize] = useState<FontSize>('xl');
   const [showMenu, setShowMenu] = useState(false);
@@ -186,6 +189,15 @@ export const ArticleReaderModal: React.FC<ArticleReaderModalProps> = ({
               <p key={idx}>{paragraph}</p>
             ))}
           </div>
+
+          {/* Article Sponsor Spotlight Banner */}
+          {ads && ads.length > 0 && (
+            <AdBannerRenderer
+              ads={ads}
+              placement="article-spotlight"
+              cityName={article.cityName}
+            />
+          )}
 
           {/* Google Search Link Button for More Info */}
           <div className="pt-5 border-t border-slate-200 mt-6 sm:mt-8 flex justify-center sm:justify-end">

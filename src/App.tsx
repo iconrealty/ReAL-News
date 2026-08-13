@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { CityInfo, NewsCategory, NewsArticle } from './types';
+import { CityInfo, NewsCategory, NewsArticle, AdBanner } from './types';
 import { CITIES, INITIAL_ARTICLES } from './data/mockNews';
+import { INITIAL_ADS } from './data/mockAds';
 import { OC_HOUSING_REPORT_METADATA } from './data/ocHousingReportData';
 import { AppleNewsHeader } from './components/AppleNewsHeader';
 import { MobileBottomNav } from './components/MobileBottomNav';
@@ -11,11 +12,46 @@ import { OrangeCountyMarketTrends } from './components/OrangeCountyMarketTrends'
 import { MortgageCalculator } from './components/MortgageCalculator';
 import { ArticleReaderModal } from './components/ArticleReaderModal';
 import { SavedArticlesDrawer } from './components/SavedArticlesDrawer';
+import { AdBannerRenderer } from './components/AdBannerRenderer';
+import { ManagerAdminModal } from './components/ManagerAdminModal';
 import { Sparkles, Building2, Utensils, Flame, Compass, ChevronRight } from 'lucide-react';
+
+// Helper function to deduplicate articles strictly by ID, normalized Title, and source URL
+function deduplicateArticles(list: NewsArticle[]): NewsArticle[] {
+  const seenIds = new Set<string>();
+  const seenTitles = new Set<string>();
+  const result: NewsArticle[] = [];
+
+  for (const art of list) {
+    if (!art || !art.title) continue;
+
+    // Check ID
+    if (seenIds.has(art.id)) continue;
+
+    // Check normalized title (remove publisher suffix, punctuation, lowercase)
+    let cleanTitle = art.title.toLowerCase().trim();
+    if (cleanTitle.includes(" - ")) {
+      cleanTitle = cleanTitle.split(" - ")[0].trim();
+    }
+    const normTitle = cleanTitle.replace(/[^a-z0-9]/g, '');
+
+    if (normTitle && normTitle.length > 5 && seenTitles.has(normTitle)) {
+      continue;
+    }
+
+    seenIds.add(art.id);
+    if (normTitle && normTitle.length > 5) {
+      seenTitles.add(normTitle);
+    }
+    result.push(art);
+  }
+
+  return result;
+}
 
 export function App() {
   const [currentCity, setCurrentCity] = useState<CityInfo>(CITIES[0]); // Austin default
-  const [articles, setArticles] = useState<NewsArticle[]>(INITIAL_ARTICLES);
+  const [articles, setArticles] = useState<NewsArticle[]>(() => deduplicateArticles(INITIAL_ARTICLES));
   const [activeCategory, setActiveCategory] = useState<NewsCategory>('all');
   const [searchQuery, setSearchQuery] = useState('');
   
@@ -33,12 +69,73 @@ export function App() {
   const [selectedArticle, setSelectedArticle] = useState<NewsArticle | null>(null);
   const [isCitySelectorOpen, setIsCitySelectorOpen] = useState(false);
   const [isSavedDrawerOpen, setIsSavedDrawerOpen] = useState(false);
+  const [isManagerModalOpen, setIsManagerModalOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [ads, setAds] = useState<AdBanner[]>(INITIAL_ADS);
+  const [isMonetizationEnabled, setIsMonetizationEnabled] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('monetization_enabled') !== 'false';
+    } catch {
+      return true;
+    }
+  });
+
   const [fredStats, setFredStats] = useState<{ mortgage30Year: string; mortgage15Year: string; asOfDate: string; isRealLiveFredData?: boolean }>({
     mortgage30Year: '6.66%',
     mortgage15Year: '6.04%',
     asOfDate: '2026-07-30'
   });
+
+  const fetchAds = () => {
+    fetch(`/api/ads?all=true&t=${Date.now()}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && Array.isArray(data.ads)) {
+          setAds(data.ads);
+        }
+      })
+      .catch(err => console.warn("Error fetching ads:", err));
+  };
+
+  useEffect(() => {
+    fetchAds();
+    
+    // Fetch live monetization engine status
+    fetch('/api/monetization-status')
+      .then(res => res.json())
+      .then(json => {
+        if (json.success && typeof json.enabled === 'boolean') {
+          setIsMonetizationEnabled(json.enabled);
+          try {
+            localStorage.setItem('monetization_enabled', json.enabled ? 'true' : 'false');
+          } catch (e) {}
+        }
+      })
+      .catch(err => console.warn('Failed to load monetization status:', err));
+  }, []);
+
+  const handleToggleMonetization = (enabled: boolean) => {
+    setIsMonetizationEnabled(enabled);
+    try {
+      localStorage.setItem('monetization_enabled', enabled ? 'true' : 'false');
+    } catch (e) {}
+
+    fetch('/api/admin/monetization-toggle', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ enabled })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        showToast(enabled ? 'Monetization Manager ENABLED - Banners are live!' : 'Monetization Manager TURNED OFF - All ad banners hidden!');
+      }
+    })
+    .catch(err => {
+      console.warn('Monetization toggle sync failed:', err);
+      showToast(enabled ? 'Monetization Manager ENABLED' : 'Monetization Manager TURNED OFF');
+    });
+  };
 
   // Fetch live FRED market stats on mount so header, mortgage calculator & trends share exact same rates
   useEffect(() => {
@@ -83,12 +180,7 @@ export function App() {
       .then(data => {
         if (data.success && Array.isArray(data.articles) && data.articles.length > 0) {
           setArticles(prev => {
-            const map = new Map<string, NewsArticle>();
-            // Keep initial articles always available for all 34 OC cities
-            INITIAL_ARTICLES.forEach(art => map.set(art.id, art));
-            // Merge custom/stored articles on top
-            data.articles.forEach((art: NewsArticle) => map.set(art.id, art));
-            return Array.from(map.values());
+            return deduplicateArticles([...data.articles, ...prev]);
           });
         }
       })
@@ -110,10 +202,7 @@ export function App() {
       .then(data => {
         if (data.success && Array.isArray(data.articles) && data.articles.length > 0) {
           setArticles(prev => {
-            const map = new Map<string, NewsArticle>();
-            prev.forEach(art => map.set(art.id, art));
-            data.articles.forEach((art: NewsArticle) => map.set(art.id, art));
-            return Array.from(map.values());
+            return deduplicateArticles([...data.articles, ...prev]);
           });
         }
       })
@@ -190,16 +279,12 @@ export function App() {
     });
 
     // Fallback: If category filter resulted in 0 articles for a specific city,
-    // fallback to showing all articles for that city or regional category articles
+    // fallback to showing regional articles matching that requested category
     if (finalFiltered.length === 0 && activeCategory !== 'all') {
-      if (matched.length > 0) {
-        finalFiltered = matched;
-      } else {
-        finalFiltered = articles.filter(art => art.category === activeCategory);
-      }
+      finalFiltered = articles.filter(art => art.category === activeCategory);
     }
 
-    return finalFiltered;
+    return deduplicateArticles(finalFiltered);
   }, [articles, currentCity, activeCategory, searchQuery]);
 
   // Featured Hero Article
@@ -214,27 +299,54 @@ export function App() {
     return filteredArticles.filter(a => a.id !== heroArticle.id);
   }, [filteredArticles, heroArticle]);
 
-  // Sub-categorized articles for rich layout sections
-  const realEstateArticles = useMemo(() => {
-    return remainingArticles.filter(a => a.category === 'real-estate' || a.realEstateData);
-  }, [remainingArticles]);
+  // Non-overlapping section assignment: every article appears AT MOST ONCE on page
+  const { realEstateArticles, diningArticles, developmentArticles, otherArticles } = useMemo(() => {
+    const usedIds = new Set<string>();
 
-  const diningArticles = useMemo(() => {
-    return remainingArticles.filter(a => a.category === 'restaurants-bars' || a.venueDetails);
-  }, [remainingArticles]);
+    const reList: NewsArticle[] = [];
+    const diningList: NewsArticle[] = [];
+    const devList: NewsArticle[] = [];
+    const othList: NewsArticle[] = [];
 
-  const developmentArticles = useMemo(() => {
-    return remainingArticles.filter(a => a.category === 'city-developments' || a.category === 'market-trends' || a.category === 'lifestyle');
-  }, [remainingArticles]);
+    // 1. Real Estate & Housing
+    remainingArticles.forEach(a => {
+      if (!usedIds.has(a.id) && (a.category === 'real-estate' || a.category === 'market-trends' || !!a.realEstateData)) {
+        reList.push(a);
+        usedIds.add(a.id);
+      }
+    });
 
-  const otherArticles = useMemo(() => {
-    const categorizedIds = new Set([
-      ...realEstateArticles.map(a => a.id),
-      ...diningArticles.map(a => a.id),
-      ...developmentArticles.map(a => a.id),
-    ]);
-    return remainingArticles.filter(a => !categorizedIds.has(a.id));
-  }, [remainingArticles, realEstateArticles, diningArticles, developmentArticles]);
+    // 2. Restaurants & Dining
+    remainingArticles.forEach(a => {
+      if (!usedIds.has(a.id) && (a.category === 'restaurants-bars' || !!a.venueDetails)) {
+        diningList.push(a);
+        usedIds.add(a.id);
+      }
+    });
+
+    // 3. City Developments & Zoning
+    remainingArticles.forEach(a => {
+      if (!usedIds.has(a.id) && (a.category === 'city-developments' || a.category === 'lifestyle')) {
+        devList.push(a);
+        usedIds.add(a.id);
+      }
+    });
+
+    // 4. Other Local Coverage
+    remainingArticles.forEach(a => {
+      if (!usedIds.has(a.id)) {
+        othList.push(a);
+        usedIds.add(a.id);
+      }
+    });
+
+    return {
+      realEstateArticles: reList,
+      diningArticles: diningList,
+      developmentArticles: devList,
+      otherArticles: othList
+    };
+  }, [remainingArticles]);
 
   // Saved articles list
   const savedArticlesList = useMemo(() => {
@@ -265,16 +377,27 @@ export function App() {
         onSearchChange={setSearchQuery}
         onResetToMain={handleResetToMain}
         fredRate={fredStats?.mortgage30Year}
+        onOpenManager={() => setIsManagerModalOpen(true)}
+        isMonetizationEnabled={isMonetizationEnabled}
       />
 
       {/* Main Layout Content */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-3.5 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-6 sm:space-y-10 pb-28 sm:pb-12">
         
+        {/* Top Header Banner Ad */}
+        <AdBannerRenderer
+          placement="header-banner"
+          ads={ads}
+          cityName={currentCity.name}
+          onOpenManager={() => setIsManagerModalOpen(true)}
+        />
+
         {/* Category Views */}
         {activeCategory === 'mortgage-calculator' ? (
           <MortgageCalculator
             currentCity={currentCity}
             fredStats={fredStats}
+            ads={ads}
             onSelectCity={(city) => {
               setCurrentCity(city);
               showToast(`Selected ${city.name}`);
@@ -284,6 +407,7 @@ export function App() {
           <OrangeCountyMarketTrends
             fredStats={fredStats}
             showFilterBar={true}
+            ads={ads}
             onSelectCity={(city) => {
               setCurrentCity(city);
               showToast(`Selected ${city.name}`);
@@ -347,6 +471,7 @@ export function App() {
                 onSelectArticle={setSelectedArticle}
                 bookmarkedIds={bookmarkedIds}
                 onToggleBookmark={toggleBookmark}
+                adBanner={<AdBannerRenderer placement="feed-native" ads={ads} cityName={currentCity.name} />}
               />
             )}
 
@@ -412,6 +537,7 @@ export function App() {
         isBookmarked={selectedArticle ? bookmarkedIds.has(selectedArticle.id) : false}
         onToggleBookmark={toggleBookmark}
         onShowToast={showToast}
+        ads={ads}
       />
 
       {/* City Switcher Modal */}
@@ -438,6 +564,24 @@ export function App() {
         }}
       />
 
+      {/* Manager Admin & Monetization Portal Modal */}
+      <ManagerAdminModal
+        isOpen={isManagerModalOpen}
+        onClose={() => setIsManagerModalOpen(false)}
+        ads={ads}
+        onRefreshAds={fetchAds}
+        onShowToast={showToast}
+        isMonetizationEnabled={isMonetizationEnabled}
+        onToggleMonetization={handleToggleMonetization}
+      />
+
+      {/* Sticky Bottom Bar Ad Banner */}
+      <AdBannerRenderer
+        placement="sticky-bottom-bar"
+        ads={ads}
+        cityName={currentCity.name}
+      />
+
       {/* Mobile Bottom Navigation Bar */}
       <MobileBottomNav
         currentCity={currentCity}
@@ -450,7 +594,7 @@ export function App() {
       />
 
       {/* Apple News Light Footer */}
-      <footer className="bg-white border-t border-slate-200 py-8 text-xs text-slate-500 mt-12">
+      <footer className="bg-white border-t border-slate-200 py-8 text-xs text-slate-500 mt-12 mb-10 sm:mb-0">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center space-x-2">
             <button 
@@ -468,6 +612,7 @@ export function App() {
             <button onClick={handleResetToMain} className="hover:text-slate-900 cursor-pointer">Main / Top Stories</button>
             <button onClick={() => setIsCitySelectorOpen(true)} className="hover:text-slate-900 cursor-pointer">Cities</button>
             <button onClick={() => setIsSavedDrawerOpen(true)} className="hover:text-slate-900 cursor-pointer">Bookmarks ({bookmarkedIds.size})</button>
+            <button onClick={() => setIsManagerModalOpen(true)} className="text-[#FA2D48] font-bold hover:underline cursor-pointer">Sponsor Portal</button>
           </div>
         </div>
       </footer>

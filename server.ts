@@ -4,6 +4,14 @@ import { createServer as createViteServer } from "vite";
 import { GoogleGenAI, Type } from "@google/genai";
 import Parser from "rss-parser";
 import { getArticlesFromDb, saveArticleToDb, pruneOldArticles } from "./src/lib/firebaseDb.js";
+import { 
+  getAdsFromDb, 
+  saveAdToDb, 
+  deleteAdFromDb, 
+  recordAdImpression, 
+  recordAdClick,
+  resetSampleSponsorsInDb 
+} from "./src/lib/adManagerDb.js";
 
 const rssParser = new Parser({
   headers: {
@@ -70,6 +78,19 @@ function getTopicSpecificImage(title: string, category: string, index: number): 
   return homeImages[index % homeImages.length];
 }
 
+function makeStableArticleId(prefix: string, cityName: string, title: string): string {
+  const cleanCity = (cityName || 'oc')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+  const cleanTitle = (title || 'news')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 50);
+  return `${prefix}-${cleanCity}-${cleanTitle}`;
+}
+
 async function fetchLivePublicRssNews(cityName: string, category: string) {
   try {
     let queryCategory = 'real estate housing market development';
@@ -101,7 +122,26 @@ async function fetchLivePublicRssNews(cityName: string, category: string) {
     }
     
     if (feed && feed.items && feed.items.length > 0) {
-      const mappedArticles = feed.items.slice(0, 5).map((item: any, index: number) => {
+      // Deduplicate feed items by title to avoid Google News duplicates
+      const seenTitles = new Set<string>();
+      const uniqueItems: any[] = [];
+      
+      for (const item of feed.items) {
+        let rawTitle = (item.title || '').trim();
+        if (rawTitle.includes(" - ")) {
+          const parts = rawTitle.split(" - ");
+          parts.pop(); // remove publisher suffix for title checking
+          rawTitle = parts.join(" - ").trim();
+        }
+        const norm = rawTitle.toLowerCase().replace(/[^a-z0-9]/g, '');
+        if (norm && !seenTitles.has(norm)) {
+          seenTitles.add(norm);
+          uniqueItems.push(item);
+        }
+        if (uniqueItems.length >= 6) break;
+      }
+
+      const mappedArticles = uniqueItems.map((item: any, index: number) => {
         let rawTitle = item.title || `${cityName} Real Estate Update`;
         let publisher = "Local News";
         
@@ -119,9 +159,10 @@ async function fetchLivePublicRssNews(cityName: string, category: string) {
         const cleanSnippet = rawSnippet.replace(/<[^>]*>/g, '').trim();
 
         const detectedCat = category === 'all' ? (index % 2 === 0 ? 'real-estate' : 'market-trends') : category;
+        const stableId = makeStableArticleId('news-rss', cityName, rawTitle);
 
         return {
-          id: `news-rss-${Date.now()}-${index}`,
+          id: stableId,
           title: rawTitle,
           subtitle: cleanSnippet.length > 180 ? cleanSnippet.substring(0, 180) + "..." : cleanSnippet,
           category: detectedCat,
@@ -675,7 +716,11 @@ Return ONLY valid JSON array.
           return res.json({
             success: true,
             cityName,
-            articles: articles.map(art => ({ ...art, isLiveAi: true }))
+            articles: articles.map(art => ({
+              ...art,
+              id: makeStableArticleId('news-ai', cityName, art.title || 'ai-news'),
+              isLiveAi: true
+            }))
           });
         }
       } catch (err: any) {
@@ -1181,6 +1226,139 @@ Return ONLY valid JSON matching this schema.
       success: false,
       error: err?.message || "Failed to parse property PDF document with AI."
     });
+  }
+});
+
+// --- AD MANAGER & MONETIZATION API ENDPOINTS ---
+let isMonetizationEngineActive = true;
+
+// Get monetization engine status
+app.get("/api/monetization-status", (req, res) => {
+  res.json({ success: true, enabled: isMonetizationEngineActive });
+});
+
+// Toggle monetization engine status (Admin route)
+app.post("/api/admin/monetization-toggle", express.json(), (req, res) => {
+  try {
+    const { enabled } = req.body;
+    if (typeof enabled === 'boolean') {
+      isMonetizationEngineActive = enabled;
+      console.log(`[Monetization Engine] Server status set to: ${isMonetizationEngineActive ? 'ENABLED' : 'DISABLED'}`);
+      res.json({ success: true, enabled: isMonetizationEngineActive });
+    } else {
+      res.status(400).json({ success: false, error: "Invalid boolean parameter 'enabled'" });
+    }
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err?.message || "Failed to toggle monetization" });
+  }
+});
+
+// Get all ad banners (filtered or complete for manager)
+app.get("/api/ads", async (req, res) => {
+  try {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    const isManager = req.query.all === 'true';
+
+    // If monetization is turned OFF and not requesting manager portal view, return empty ads list
+    if (!isManager && !isMonetizationEngineActive) {
+      return res.json({ success: true, ads: [], monetizationDisabled: true });
+    }
+
+    const allAds = await getAdsFromDb();
+    const placementFilter = req.query.placement as string | undefined;
+    const cityFilter = req.query.city as string | undefined;
+
+    let filtered = allAds;
+    if (!isManager) {
+      // Public visitors only see active ads
+      filtered = filtered.filter(a => a.status === 'active');
+    }
+
+    if (placementFilter) {
+      filtered = filtered.filter(a => a.placement === placementFilter);
+    }
+
+    if (cityFilter && cityFilter !== 'All' && cityFilter !== 'Orange County') {
+      filtered = filtered.filter(a => !a.targetCity || a.targetCity === 'All' || a.targetCity.toLowerCase() === cityFilter.toLowerCase());
+    }
+
+    res.json({
+      success: true,
+      ads: filtered,
+      monetizationDisabled: !isMonetizationEngineActive
+    });
+  } catch (err: any) {
+    console.error("Error fetching ad banners:", err);
+    res.status(500).json({ success: false, error: err?.message || "Failed to load ad banners" });
+  }
+});
+
+// Record ad impression
+app.post("/api/ads/impression", express.json(), async (req, res) => {
+  try {
+    const { id } = req.body;
+    if (id) {
+      await recordAdImpression(id);
+    }
+    res.json({ success: true });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err?.message || "Impression record failed" });
+  }
+});
+
+// Record ad click
+app.post("/api/ads/click", express.json(), async (req, res) => {
+  try {
+    const { id } = req.body;
+    if (id) {
+      await recordAdClick(id);
+    }
+    res.json({ success: true });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err?.message || "Click record failed" });
+  }
+});
+
+// Create or update ad banner (Admin Manager route)
+app.post("/api/admin/ads", express.json(), async (req, res) => {
+  try {
+    const adData = req.body;
+    if (!adData || !adData.title || !adData.advertiserName) {
+      return res.status(400).json({ success: false, error: "Title and Advertiser Name are required." });
+    }
+
+    const savedAd = await saveAdToDb(adData);
+    res.json({ success: true, ad: savedAd });
+  } catch (err: any) {
+    console.error("Error saving ad banner:", err);
+    res.status(500).json({ success: false, error: err?.message || "Failed to save ad banner" });
+  }
+});
+
+// Delete ad banner (Admin Manager route)
+app.delete("/api/admin/ads/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({ success: false, error: "Ad ID is required" });
+    }
+
+    await deleteAdFromDb(id);
+    res.json({ success: true, deletedId: id });
+  } catch (err: any) {
+    console.error(`Error deleting ad banner ${req.params.id}:`, err);
+    res.status(500).json({ success: false, error: err?.message || "Failed to delete ad banner" });
+  }
+});
+
+// Reset sample sponsors catalog
+app.post("/api/admin/ads/reset", async (req, res) => {
+  try {
+    const resetAds = await resetSampleSponsorsInDb();
+    res.json({ success: true, ads: resetAds });
+  } catch (err: any) {
+    console.error("Error resetting sample ad banners:", err);
+    res.status(500).json({ success: false, error: err?.message || "Failed to reset sample ad banners" });
   }
 });
 

@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
-import { CityInfo } from '../types';
+import { CityInfo, AdBanner } from '../types';
+import { AdBannerRenderer } from './AdBannerRenderer';
 
 interface MortgageCalculatorProps {
   currentCity?: CityInfo;
@@ -10,6 +11,7 @@ interface MortgageCalculatorProps {
     asOfDate?: string;
     source?: string;
   } | null;
+  ads?: AdBanner[];
 }
 
 const PRICE_PRESETS = [
@@ -64,6 +66,7 @@ const AppleToggle: React.FC<AppleToggleProps> = ({ enabled, onChange, label, id 
 export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
   currentCity,
   fredStats,
+  ads = [],
 }) => {
   // Parse numeric rates from FRED stats if available (e.g. "6.66%" -> 6.66)
   const fred30Num = useMemo(() => {
@@ -1121,6 +1124,17 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                 )}
               </div>
             </div>
+
+            {/* Featured Lender & Escrow Partner Banner */}
+            {ads && ads.length > 0 && (
+              <div className="mt-6">
+                <AdBannerRenderer
+                  ads={ads}
+                  placement="calculator-sidebar"
+                  cityName={currentCity?.name}
+                />
+              </div>
+            )}
 
           </div>
 
