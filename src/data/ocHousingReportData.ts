@@ -151,38 +151,39 @@ export const OC_MARKET_TIME_REPORT: OCMarketTimeEntry[] = [
 ];
 
 export const OC_PRICE_RANGE_REPORT_ALL: OCPriceRangeEntry[] = [
-  { priceRange: "$0-$500k", currentActives: 384, demand30Days: 108, marketTimeDays: 107, marketTime2WeeksAgo: 112, marketTime4WeeksAgo: 94, marketTime1YearAgo: 64, marketTime2YearsAgo: 58, medianActivePrice: "$400k" },
-  { priceRange: "$500k-$750k", currentActives: 635, demand30Days: 227, marketTimeDays: 84, marketTime2WeeksAgo: 88, marketTime4WeeksAgo: 84, marketTime1YearAgo: 83, marketTime2YearsAgo: 42, medianActivePrice: "$635k" },
-  { priceRange: "$750k-$1m", currentActives: 739, demand30Days: 283, marketTimeDays: 78, marketTime2WeeksAgo: 80, marketTime4WeeksAgo: 72, marketTime1YearAgo: 62, marketTime2YearsAgo: 49, medianActivePrice: "$890k" },
-  { priceRange: "$1m-$1.25m", currentActives: 560, demand30Days: 238, marketTimeDays: 71, marketTime2WeeksAgo: 78, marketTime4WeeksAgo: 65, marketTime1YearAgo: 64, marketTime2YearsAgo: 47, medianActivePrice: "$1.1m" },
-  { priceRange: "$1.25m-$1.5m", currentActives: 570, demand30Days: 211, marketTimeDays: 81, marketTime2WeeksAgo: 81, marketTime4WeeksAgo: 75, marketTime1YearAgo: 82, marketTime2YearsAgo: 52, medianActivePrice: "$1.4m" },
-  { priceRange: "$1.5m-$2m", currentActives: 727, demand30Days: 188, marketTimeDays: 116, marketTime2WeeksAgo: 110, marketTime4WeeksAgo: 92, marketTime1YearAgo: 97, marketTime2YearsAgo: 62, medianActivePrice: "$1.7m" },
-  { priceRange: "$2m-$2.5m", currentActives: 376, demand30Days: 64, marketTimeDays: 176, marketTime2WeeksAgo: 129, marketTime4WeeksAgo: 103, marketTime1YearAgo: 125, marketTime2YearsAgo: 0, medianActivePrice: "$2.3m" },
-  { priceRange: "$2.5m-$4m", currentActives: 503, demand30Days: 109, marketTimeDays: 138, marketTime2WeeksAgo: 151, marketTime4WeeksAgo: 124, marketTime1YearAgo: 144, marketTime2YearsAgo: 0, medianActivePrice: "$3.1m" },
-  { priceRange: "$4m-$6m", currentActives: 240, demand30Days: 38, marketTimeDays: 189, marketTime2WeeksAgo: 191, marketTime4WeeksAgo: 209, marketTime1YearAgo: 166, marketTime2YearsAgo: 267, medianActivePrice: "$5.0m" },
-  { priceRange: "$6m+", currentActives: 312, demand30Days: 34, marketTimeDays: 275, marketTime2WeeksAgo: 341, marketTime4WeeksAgo: 295, marketTime1YearAgo: 311, marketTime2YearsAgo: 183, medianActivePrice: "$10.0m" },
+  { priceRange: "All of O.C.", currentActives: 5046, demand30Days: 1494, marketTimeDays: 101, marketTime2WeeksAgo: 102, marketTime4WeeksAgo: 90, marketTime1YearAgo: 95, marketTime2YearsAgo: 67, medianActivePrice: "$1.3m" },
+  { priceRange: "$0-$500k", currentActives: 416, demand30Days: 99, marketTimeDays: 126, marketTime2WeeksAgo: 112, marketTime4WeeksAgo: 94, marketTime1YearAgo: 63, marketTime2YearsAgo: 57, medianActivePrice: "$410k" },
+  { priceRange: "$500k-$750k", currentActives: 631, demand30Days: 227, marketTimeDays: 83, marketTime2WeeksAgo: 88, marketTime4WeeksAgo: 84, marketTime1YearAgo: 85, marketTime2YearsAgo: 39, medianActivePrice: "$635k" },
+  { priceRange: "$750k-$1m", currentActives: 757, demand30Days: 277, marketTimeDays: 82, marketTime2WeeksAgo: 80, marketTime4WeeksAgo: 72, marketTime1YearAgo: 64, marketTime2YearsAgo: 42, medianActivePrice: "$895k" },
+  { priceRange: "$1m-$1.25m", currentActives: 606, demand30Days: 220, marketTimeDays: 83, marketTime2WeeksAgo: 78, marketTime4WeeksAgo: 65, marketTime1YearAgo: 77, marketTime2YearsAgo: 49, medianActivePrice: "$1.1m" },
+  { priceRange: "$1.25m-$1.5m", currentActives: 551, demand30Days: 209, marketTimeDays: 79, marketTime2WeeksAgo: 81, marketTime4WeeksAgo: 75, marketTime1YearAgo: 85, marketTime2YearsAgo: 57, medianActivePrice: "$1.4m" },
+  { priceRange: "$1.5m-$2m", currentActives: 687, demand30Days: 209, marketTimeDays: 99, marketTime2WeeksAgo: 110, marketTime4WeeksAgo: 92, marketTime1YearAgo: 95, marketTime2YearsAgo: 76, medianActivePrice: "$1.7m" },
+  { priceRange: "$2m-$2.5m", currentActives: 343, demand30Days: 78, marketTimeDays: 132, marketTime2WeeksAgo: 129, marketTime4WeeksAgo: 103, marketTime1YearAgo: 128, marketTime2YearsAgo: 0, medianActivePrice: "$2.3m" },
+  { priceRange: "$2.5m-$4m", currentActives: 507, demand30Days: 103, marketTimeDays: 148, marketTime2WeeksAgo: 151, marketTime4WeeksAgo: 124, marketTime1YearAgo: 168, marketTime2YearsAgo: 0, medianActivePrice: "$3.1m" },
+  { priceRange: "$4m-$6m", currentActives: 244, demand30Days: 39, marketTimeDays: 188, marketTime2WeeksAgo: 191, marketTime4WeeksAgo: 209, marketTime1YearAgo: 240, marketTime2YearsAgo: 170, medianActivePrice: "$5.0m" },
+  { priceRange: "$6m+", currentActives: 304, demand30Days: 33, marketTimeDays: 276, marketTime2WeeksAgo: 341, marketTime4WeeksAgo: 295, marketTime1YearAgo: 318, marketTime2YearsAgo: 656, medianActivePrice: "$10.4m" },
 ];
 
 export const OC_PRICE_RANGE_REPORT_ATTACHED: OCPriceRangeEntry[] = [
-  { priceRange: "All Attached", currentActives: 2246, demand30Days: 593, marketTimeDays: 114, marketTime2WeeksAgo: 112, marketTime4WeeksAgo: 103, marketTime1YearAgo: 92, marketTime2YearsAgo: 58, medianActivePrice: "$800k" },
-  { priceRange: "$0-$500k", currentActives: 373, demand30Days: 105, marketTimeDays: 107, marketTime2WeeksAgo: 112, marketTime4WeeksAgo: 95, marketTime1YearAgo: 64, marketTime2YearsAgo: 59, medianActivePrice: "$400k" },
-  { priceRange: "$500k-$750k", currentActives: 611, demand30Days: 209, marketTimeDays: 88, marketTime2WeeksAgo: 92, marketTime4WeeksAgo: 86, marketTime1YearAgo: 89, marketTime2YearsAgo: 42, medianActivePrice: "$635k" },
-  { priceRange: "$750k-$1m", currentActives: 513, demand30Days: 158, marketTimeDays: 97, marketTime2WeeksAgo: 99, marketTime4WeeksAgo: 96, marketTime1YearAgo: 78, marketTime2YearsAgo: 54, medianActivePrice: "$875k" },
-  { priceRange: "$1m-$2m", currentActives: 591, demand30Days: 103, marketTimeDays: 172, marketTime2WeeksAgo: 144, marketTime4WeeksAgo: 129, marketTime1YearAgo: 132, marketTime2YearsAgo: 69, medianActivePrice: "$1.3m" },
-  { priceRange: "$2m+", currentActives: 158, demand30Days: 18, marketTimeDays: 263, marketTime2WeeksAgo: 253, marketTime4WeeksAgo: 224, marketTime1YearAgo: 167, marketTime2YearsAgo: 195, medianActivePrice: "$2.9m" },
+  { priceRange: "All Attached", currentActives: 2231, demand30Days: 587, marketTimeDays: 114, marketTime2WeeksAgo: 112, marketTime4WeeksAgo: 103, marketTime1YearAgo: 90, marketTime2YearsAgo: 56, medianActivePrice: "$799k" },
+  { priceRange: "$0-$500k", currentActives: 406, demand30Days: 97, marketTimeDays: 126, marketTime2WeeksAgo: 112, marketTime4WeeksAgo: 95, marketTime1YearAgo: 63, marketTime2YearsAgo: 56, medianActivePrice: "$410k" },
+  { priceRange: "$500k-$750k", currentActives: 604, demand30Days: 211, marketTimeDays: 86, marketTime2WeeksAgo: 92, marketTime4WeeksAgo: 86, marketTime1YearAgo: 89, marketTime2YearsAgo: 39, medianActivePrice: "$630k" },
+  { priceRange: "$750k-$1m", currentActives: 530, demand30Days: 144, marketTimeDays: 110, marketTime2WeeksAgo: 99, marketTime4WeeksAgo: 96, marketTime1YearAgo: 79, marketTime2YearsAgo: 45, medianActivePrice: "$875k" },
+  { priceRange: "$1m-$2m", currentActives: 550, demand30Days: 111, marketTimeDays: 149, marketTime2WeeksAgo: 144, marketTime4WeeksAgo: 129, marketTime1YearAgo: 118, marketTime2YearsAgo: 75, medianActivePrice: "$1.3m" },
+  { priceRange: "$2m+", currentActives: 141, demand30Days: 24, marketTimeDays: 176, marketTime2WeeksAgo: 253, marketTime4WeeksAgo: 224, marketTime1YearAgo: 159, marketTime2YearsAgo: 212, medianActivePrice: "$3.0m" },
 ];
 
 export const OC_PRICE_RANGE_REPORT_DETACHED: OCPriceRangeEntry[] = [
-  { priceRange: "All Detached", currentActives: 2800, demand30Days: 901, marketTimeDays: 93, marketTime2WeeksAgo: 96, marketTime4WeeksAgo: 82, marketTime1YearAgo: 97, marketTime2YearsAgo: 70, medianActivePrice: "$1.9m" },
-  { priceRange: "$0-$750k", currentActives: 35, demand30Days: 21, marketTimeDays: 50, marketTime2WeeksAgo: 50, marketTime4WeeksAgo: 58, marketTime1YearAgo: 95, marketTime2YearsAgo: 43, medianActivePrice: "$630k" },
-  { priceRange: "$750k-$1m", currentActives: 226, demand30Days: 125, marketTimeDays: 54, marketTime2WeeksAgo: 55, marketTime4WeeksAgo: 45, marketTime1YearAgo: 44, marketTime2YearsAgo: 41, medianActivePrice: "$915k" },
-  { priceRange: "$1m-$1.25m", currentActives: 304, demand30Days: 168, marketTimeDays: 54, marketTime2WeeksAgo: 60, marketTime4WeeksAgo: 48, marketTime1YearAgo: 52, marketTime2YearsAgo: 41, medianActivePrice: "$1.1m" },
-  { priceRange: "$1.25m-$1.5m", currentActives: 407, demand30Days: 177, marketTimeDays: 69, marketTime2WeeksAgo: 68, marketTime4WeeksAgo: 58, marketTime1YearAgo: 75, marketTime2YearsAgo: 49, medianActivePrice: "$1.4m" },
-  { priceRange: "$1.5m-$2m", currentActives: 582, demand30Days: 170, marketTimeDays: 103, marketTime2WeeksAgo: 101, marketTime4WeeksAgo: 89, marketTime1YearAgo: 90, marketTime2YearsAgo: 59, medianActivePrice: "$1.8m" },
-  { priceRange: "$2m-$2.5m", currentActives: 327, demand30Days: 58, marketTimeDays: 169, marketTime2WeeksAgo: 120, marketTime4WeeksAgo: 99, marketTime1YearAgo: 119, marketTime2YearsAgo: 0, medianActivePrice: "$2.3m" },
-  { priceRange: "$2.5m-$4m", currentActives: 441, demand30Days: 103, marketTimeDays: 128, marketTime2WeeksAgo: 143, marketTime4WeeksAgo: 119, marketTime1YearAgo: 165, marketTime2YearsAgo: 0, medianActivePrice: "$3.1m" },
-  { priceRange: "$4m-$6m", currentActives: 211, demand30Days: 34, marketTimeDays: 186, marketTime2WeeksAgo: 188, marketTime4WeeksAgo: 187, marketTime1YearAgo: 307, marketTime2YearsAgo: 155, medianActivePrice: "$5.0m" },
-  { priceRange: "$6m+", currentActives: 295, demand30Days: 33, marketTimeDays: 268, marketTime2WeeksAgo: 334, marketTime4WeeksAgo: 288, marketTime1YearAgo: 353, marketTime2YearsAgo: 550, medianActivePrice: "$10.3m" },
+  { priceRange: "All Detached", currentActives: 2815, demand30Days: 907, marketTimeDays: 93, marketTime2WeeksAgo: 96, marketTime4WeeksAgo: 82, marketTime1YearAgo: 98, marketTime2YearsAgo: 75, medianActivePrice: "$1.9m" },
+  { priceRange: "$0-$750k", currentActives: 37, demand30Days: 18, marketTimeDays: 62, marketTime2WeeksAgo: 50, marketTime4WeeksAgo: 58, marketTime1YearAgo: 59, marketTime2YearsAgo: 44, medianActivePrice: "$625k" },
+  { priceRange: "$750k-$1m", currentActives: 227, demand30Days: 133, marketTimeDays: 51, marketTime2WeeksAgo: 55, marketTime4WeeksAgo: 45, marketTime1YearAgo: 49, marketTime2YearsAgo: 39, medianActivePrice: "$925k" },
+  { priceRange: "$1m-$1.25m", currentActives: 341, demand30Days: 167, marketTimeDays: 61, marketTime2WeeksAgo: 60, marketTime4WeeksAgo: 48, marketTime1YearAgo: 64, marketTime2YearsAgo: 43, medianActivePrice: "$1.1m" },
+  { priceRange: "$1.25m-$1.5m", currentActives: 386, demand30Days: 170, marketTimeDays: 68, marketTime2WeeksAgo: 68, marketTime4WeeksAgo: 58, marketTime1YearAgo: 74, marketTime2YearsAgo: 54, medianActivePrice: "$1.4m" },
+  { priceRange: "$1.5m-$2m", currentActives: 567, demand30Days: 190, marketTimeDays: 90, marketTime2WeeksAgo: 101, marketTime4WeeksAgo: 89, marketTime1YearAgo: 93, marketTime2YearsAgo: 71, medianActivePrice: "$1.8m" },
+  { priceRange: "$2m-$2.5m", currentActives: 301, demand30Days: 72, marketTimeDays: 125, marketTime2WeeksAgo: 120, marketTime4WeeksAgo: 99, marketTime1YearAgo: 129, marketTime2YearsAgo: 0, medianActivePrice: "$2.3m" },
+  { priceRange: "$2.5m-$4m", currentActives: 447, demand30Days: 94, marketTimeDays: 143, marketTime2WeeksAgo: 143, marketTime4WeeksAgo: 119, marketTime1YearAgo: 169, marketTime2YearsAgo: 0, medianActivePrice: "$3.1m" },
+  { priceRange: "$4m-$6m", currentActives: 219, demand30Days: 31, marketTimeDays: 212, marketTime2WeeksAgo: 188, marketTime4WeeksAgo: 187, marketTime1YearAgo: 254, marketTime2YearsAgo: 159, medianActivePrice: "$5.0m" },
+  { priceRange: "$6m+", currentActives: 290, demand30Days: 32, marketTimeDays: 272, marketTime2WeeksAgo: 334, marketTime4WeeksAgo: 288, marketTime1YearAgo: 312, marketTime2YearsAgo: 628, medianActivePrice: "$10.8m" },
 ];
 
 export const OC_SOLD_REPORT: OCSoldReportEntry[] = [

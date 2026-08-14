@@ -96,7 +96,7 @@ interface OrangeCountyMarketTrendsProps {
   ads?: AdBanner[];
 }
 
-type ReportTab = 'summary' | 'market-time' | 'price-range' | 'sold-report' | 'sitting-market';
+type ReportTab = 'summary' | 'price-range';
 
 export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> = ({ 
   onSelectCity, 
@@ -110,28 +110,39 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
   const [activeTab, setActiveTab] = useState<ReportTab>('summary');
   const [selectedCity, setSelectedCity] = useState<OCCityMarketData | null>(null);
   const [selectedRegion, setSelectedRegion] = useState<string>('All');
-  const [pricePropertyType, setPricePropertyType] = useState<'all' | 'attached' | 'detached' | 'sitting'>('all');
+  const [pricePropertyType, setPricePropertyType] = useState<'all' | 'attached' | 'detached'>('all');
   const [selectedPriceTier, setSelectedPriceTier] = useState<string>('all');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [sortField, setSortField] = useState<string>('city');
-  const [sortAsc, setSortAsc] = useState<boolean>(true);
   const [fredStats, setFredStats] = useState<{ mortgage30Year: string; mortgage15Year: string; asOfDate: string }>(
     propFredStats || { mortgage30Year: '6.66%', mortgage15Year: '6.04%', asOfDate: '2026-07-30' }
   );
+
+  const regionCities = useMemo(() => {
+    if (selectedRegion === 'All') return [];
+    return OC_MARKET_DATA.filter(c => c.region === selectedRegion);
+  }, [selectedRegion]);
+
+  const handleCityClick = (cityName: string) => {
+    const cName = cityName.trim().toLowerCase();
+    const match = OC_MARKET_DATA.find(
+      c => c.name.toLowerCase() === cName || c.id === cName || cName.includes(c.name.toLowerCase()) || c.name.toLowerCase().includes(cName)
+    );
+    if (match) {
+      setSelectedCity(match);
+      if (onSelectCity) onSelectCity(match);
+    }
+  };
 
   React.useEffect(() => {
     if (currentCityName) {
       const cName = currentCityName.trim().toLowerCase();
       if (cName === 'orange county' || cName === 'all orange county' || cName.includes('orange county')) {
         setSelectedCity(null);
-        setSelectedRegion('All');
       } else {
         const match = OC_MARKET_DATA.find(
           c => c.name.toLowerCase() === cName || c.id === cName || cName.includes(c.name.toLowerCase()) || c.name.toLowerCase().includes(cName)
         );
         if (match) {
           setSelectedCity(match);
-          setSelectedRegion(match.region);
         } else {
           setSelectedCity(null);
         }
@@ -154,76 +165,11 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
       .catch(err => console.warn("Failed to load live FRED stats", err));
   }, [propFredStats]);
 
-  const regionCities = useMemo(() => {
-    if (selectedRegion === 'All') return [];
-    return OC_MARKET_DATA.filter(c => c.region === selectedRegion);
-  }, [selectedRegion]);
-
-  // Filtered Market Time Report
-  const filteredMarketTimeReport = useMemo(() => {
-    let list = OC_MARKET_TIME_REPORT.filter(r => r.city !== 'ALL OF O.C.');
-    
-    if (selectedRegion !== 'All') {
-      list = list.filter(r => r.region === selectedRegion);
-    }
-    
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase();
-      list = list.filter(r => r.city.toLowerCase().includes(q));
-    }
-
-    return list.sort((a, b) => {
-      let valA: any = a[sortField as keyof OCMarketTimeEntry];
-      let valB: any = b[sortField as keyof OCMarketTimeEntry];
-
-      if (typeof valA === 'string') valA = valA.toLowerCase();
-      if (typeof valB === 'string') valB = valB.toLowerCase();
-
-      if (valA < valB) return sortAsc ? -1 : 1;
-      if (valA > valB) return sortAsc ? 1 : -1;
-      return 0;
-    });
-  }, [selectedRegion, searchQuery, sortField, sortAsc]);
-
-  // Filtered Sold Report
-  const filteredSoldReport = useMemo(() => {
-    let list = OC_SOLD_REPORT.filter(r => r.city !== 'All of O.C.');
-
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase();
-      list = list.filter(r => r.city.toLowerCase().includes(q));
-    }
-
-    return list.sort((a, b) => {
-      let valA: any = a[sortField as keyof OCSoldReportEntry] || 0;
-      let valB: any = b[sortField as keyof OCSoldReportEntry] || 0;
-
-      if (typeof valA === 'string') valA = valA.replace(/[^0-9.]/g, '');
-      if (typeof valB === 'string') valB = valB.replace(/[^0-9.]/g, '');
-
-      const numA = parseFloat(valA) || 0;
-      const numB = parseFloat(valB) || 0;
-
-      if (numA < numB) return sortAsc ? -1 : 1;
-      if (numA > numB) return sortAsc ? 1 : -1;
-      return 0;
-    });
-  }, [searchQuery, sortField, sortAsc]);
-
   const priceRangeData = useMemo(() => {
     if (pricePropertyType === 'attached') return OC_PRICE_RANGE_REPORT_ATTACHED;
     if (pricePropertyType === 'detached') return OC_PRICE_RANGE_REPORT_DETACHED;
     return OC_PRICE_RANGE_REPORT_ALL;
   }, [pricePropertyType]);
-
-  const toggleSort = (field: string) => {
-    if (sortField === field) {
-      setSortAsc(!sortAsc);
-    } else {
-      setSortField(field);
-      setSortAsc(true);
-    }
-  };
 
   const formatCurrency = (val: number) => {
     return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(val);
@@ -273,10 +219,7 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
           <div className="flex items-center space-x-1 overflow-x-auto scrollbar-none">
             {[
               { id: 'summary', label: 'Orange County Overview' },
-              { id: 'market-time', label: 'City Market Time (DOM)' },
-              { id: 'sold-report', label: 'August Closed Sales Data' },
-              { id: 'price-range', label: 'Price Range & Property Type Analysis' },
-              { id: 'sitting-market', label: 'Sitting on Market (30d+)' },
+              { id: 'price-range', label: 'Price Range Analysis' },
             ].map((tab) => {
               const isActive = activeTab === tab.id;
               return (
@@ -635,156 +578,21 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
             </div>
           )}
 
-          {/* TAB 2: CITY MARKET TIME REPORT */}
-          {activeTab === 'market-time' && (
-            <div className="bg-white border border-slate-200/90 rounded-3xl p-6 shadow-xs space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-100">
-                <div>
-                  <h3 className="text-xl font-bold text-slate-900">Orange County City Market Time Report</h3>
-                  <p className="text-xs text-slate-950 font-medium">Official Steven Thomas Market Time Report (July 20, 2026). Expected Market Time in days to sell all listings.</p>
-                </div>
-                
-                {/* Search Bar */}
-                <div className="relative w-full sm:w-64">
-                  <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
-                  <input
-                    type="text"
-                    placeholder="Search city..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full bg-[#F2F2F7] border border-slate-200 rounded-xl pl-9 pr-3 py-1.5 text-xs font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-950"
-                  />
-                </div>
-              </div>
-
-              {/* Table */}
-              <div className="overflow-x-auto scrollbar-none">
-                <table className="w-full text-left text-xs border-collapse">
-                  <thead>
-                    <tr className="bg-slate-100/80 border-b border-slate-200 text-slate-700 font-bold uppercase tracking-wider">
-                      <th className="p-3 cursor-pointer" onClick={() => toggleSort('city')}>
-                        <div className="flex items-center space-x-1">
-                          <span>City / Community</span>
-                          <ArrowUpDown className="w-3 h-3" />
-                        </div>
-                      </th>
-                      <th className="p-3">Region</th>
-                      <th className="p-3 cursor-pointer" onClick={() => toggleSort('currentActives')}>
-                        <div className="flex items-center space-x-1">
-                          <span>Actives</span>
-                          <ArrowUpDown className="w-3 h-3" />
-                        </div>
-                      </th>
-                      <th className="p-3 cursor-pointer" onClick={() => toggleSort('demand30Days')}>
-                        <div className="flex items-center space-x-1">
-                          <span>30-Day Pending</span>
-                          <ArrowUpDown className="w-3 h-3" />
-                        </div>
-                      </th>
-                      <th className="p-3 cursor-pointer" onClick={() => toggleSort('marketTimeDays')}>
-                        <div className="flex items-center space-x-1 text-[#FA2D48]">
-                          <span>Market Time (DOM)</span>
-                          <ArrowUpDown className="w-3 h-3" />
-                        </div>
-                      </th>
-                      <th className="p-3">2w Ago</th>
-                      <th className="p-3">4w Ago</th>
-                      <th className="p-3">1y Ago</th>
-                      <th className="p-3 cursor-pointer" onClick={() => toggleSort('medianActiveListPrice')}>
-                        <div className="flex items-center space-x-1">
-                          <span>Median Price</span>
-                          <ArrowUpDown className="w-3 h-3" />
-                        </div>
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100">
-                    {filteredMarketTimeReport.map((row, idx) => (
-                      <tr key={idx} className="hover:bg-slate-50/80 transition-colors">
-                        <td className="p-3 font-bold text-slate-900">{row.city}</td>
-                        <td className="p-3 text-slate-900 font-medium">{row.region}</td>
-                        <td className="p-3 font-bold text-slate-900">{row.currentActives}</td>
-                        <td className="p-3 font-bold text-slate-900">{row.demand30Days}</td>
-                        <td className="p-3 font-black text-[#FA2D48] bg-rose-50/50 rounded-lg">{row.marketTimeDays} Days</td>
-                        <td className="p-3 text-slate-900 font-medium">{row.marketTime2WeeksAgo}d</td>
-                        <td className="p-3 text-slate-900 font-medium">{row.marketTime4WeeksAgo}d</td>
-                        <td className="p-3 text-slate-900 font-medium">{row.marketTime1YearAgo}d</td>
-                        <td className="p-3 font-bold text-slate-900">{row.medianActiveListPrice}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-
-          {/* TAB 3: AUGUST CLOSED SALES REPORT */}
-          {activeTab === 'sold-report' && (
-            <div className="bg-white border border-slate-200/90 rounded-3xl p-6 shadow-xs space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-100">
-                <div>
-                  <h3 className="text-xl font-bold text-slate-900">August 2026 Report Closed Resales</h3>
-                  <p className="text-xs text-slate-950 font-medium">Official CRMLS closed sales records for Orange County municipalities.</p>
-                </div>
-
-                <div className="relative w-full sm:w-64">
-                  <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
-                  <input
-                    type="text"
-                    placeholder="Search city..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full bg-[#F2F2F7] border border-slate-200 rounded-xl pl-9 pr-3 py-1.5 text-xs font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-950"
-                  />
-                </div>
-              </div>
-
-              <div className="overflow-x-auto scrollbar-none">
-                <table className="w-full text-left text-xs border-collapse">
-                  <thead>
-                    <tr className="bg-slate-100/80 border-b border-slate-200 text-slate-700 font-bold uppercase tracking-wider">
-                      <th className="p-3 cursor-pointer" onClick={() => toggleSort('city')}>City</th>
-                      <th className="p-3 cursor-pointer" onClick={() => toggleSort('unitsSold2026')}>Units Sold</th>
-                      <th className="p-3 cursor-pointer" onClick={() => toggleSort('medianSalesPrice')}>Median Sales Price</th>
-                      <th className="p-3 cursor-pointer" onClick={() => toggleSort('salesToListRatio')}>Sales/List %</th>
-                      <th className="p-3 cursor-pointer" onClick={() => toggleSort('medianPricePerSqFt')}>$/Sq. Ft.</th>
-                      <th className="p-3 cursor-pointer" onClick={() => toggleSort('medianDOM')}>Median DOM</th>
-                      <th className="p-3">Low / High Price Range</th>
-                      <th className="p-3">Prior Year Units</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100">
-                    {filteredSoldReport.map((row, idx) => (
-                      <tr key={idx} className="hover:bg-slate-50/80 transition-colors">
-                        <td className="p-3 font-bold text-slate-900">{row.city}</td>
-                        <td className="p-3 font-bold text-slate-950">{row.unitsSold2026}</td>
-                        <td className="p-3 font-black text-[#FA2D48]">{row.medianSalesPrice}</td>
-                        <td className="p-3 font-bold text-emerald-600">{row.salesToListRatio}</td>
-                        <td className="p-3 font-bold text-slate-800">{row.medianPricePerSqFt}</td>
-                        <td className="p-3 font-bold text-slate-700">{row.medianDOM} Days</td>
-                        <td className="p-3 text-slate-950 text-[11px] font-sans font-medium">{row.lowPrice} - {row.highPrice}</td>
-                        <td className="p-3 text-slate-900 font-bold">{row.unitsSold2025}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
+          {/* PRICE RANGE & PROPERTY TYPE BREAKDOWN */}
 
           {/* TAB 4: PRICE RANGE & PROPERTY TYPE BREAKDOWN */}
           {activeTab === 'price-range' && (
             <div className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-8 shadow-xs space-y-6">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
                 <div>
-                  <h3 className="text-xl sm:text-2xl font-black text-slate-950">Price Bracket & Property Type Analysis</h3>
+                  <h3 className="text-xl sm:text-2xl font-black text-slate-950">Orange County Price Bracket Analysis</h3>
                   <p className="text-xs sm:text-sm text-slate-600 font-medium mt-0.5">
-                    Select a price bracket tab below to inspect detailed market velocity metrics, or view the complete comparison table.
+                    August 3, 2026 Housing Report breakdown. Select a category below (All Homes, Attached, or Detached) and inspect velocity metrics by price tier.
                   </p>
                 </div>
 
                 {/* Property Type Sub-Switcher */}
-                <div className="flex items-center space-x-1 bg-[#F2F2F7] p-1 rounded-xl border border-slate-200/80 shrink-0">
+                <div className="flex items-center space-x-1 bg-[#F2F2F7] p-1 rounded-xl border border-slate-200/80 shrink-0 self-start sm:self-auto">
                   {[
                     { id: 'all', label: 'All Homes' },
                     { id: 'attached', label: 'Attached (Condos)' },
@@ -792,10 +600,13 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                   ].map((sub) => (
                     <button
                       key={sub.id}
-                      onClick={() => setPricePropertyType(sub.id as any)}
+                      onClick={() => {
+                        setPricePropertyType(sub.id as any);
+                        setSelectedPriceTier('all');
+                      }}
                       className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all cursor-pointer ${
                         pricePropertyType === sub.id
-                          ? 'bg-slate-950 text-white shadow-xs'
+                          ? 'bg-[#FA2D48] text-white shadow-xs'
                           : 'text-slate-600 hover:text-slate-900'
                       }`}
                     >
@@ -807,186 +618,175 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
 
               {/* Price Tier Tabs */}
               <div className="space-y-3">
-                <div className="flex items-center justify-between text-xs font-bold text-slate-700">
-                  <span className="flex items-center space-x-1.5 text-[#FA2D48]">
-                    <Tag className="w-3.5 h-3.5" />
-                    <span>Select Price Bracket Tab to Inspect:</span>
-                  </span>
-                  {selectedPriceTier !== 'all' && (
-                    <button
-                      onClick={() => setSelectedPriceTier('all')}
-                      className="text-[11px] text-[#FA2D48] hover:underline font-bold"
-                    >
-                      Show All Brackets
-                    </button>
-                  )}
-                </div>
-
-                <div className="flex items-center space-x-1.5 overflow-x-auto scrollbar-none py-1">
-                  {[
-                    { id: 'all', label: 'All of O.C. Summary' },
-                    ...priceRangeData.filter(r => r.priceRange !== 'All of O.C.').map(r => ({
-                      id: r.priceRange,
-                      label: r.priceRange
-                    }))
-                  ].map((tier) => {
-                    const isSelected = selectedPriceTier === tier.id || (selectedPriceTier === 'all' && tier.id === 'all');
+                <div className="text-xs font-bold text-slate-500 uppercase tracking-wider">Select Price Tier to Highlight Table Data:</div>
+                <div className="flex items-center space-x-2 overflow-x-auto scrollbar-none py-1">
+                  {priceRangeData.map((row) => {
+                    const isSelected = selectedPriceTier === row.priceRange || (selectedPriceTier === 'all' && (row.priceRange === priceRangeData[0]?.priceRange || row.priceRange === 'All of O.C.' || row.priceRange === 'All Attached' || row.priceRange === 'All Detached'));
                     return (
                       <button
-                        key={tier.id}
-                        onClick={() => setSelectedPriceTier(tier.id)}
-                        className={`px-3.5 py-2 rounded-xl text-xs font-extrabold whitespace-nowrap transition-all cursor-pointer ${
+                        key={row.priceRange}
+                        onClick={() => setSelectedPriceTier(row.priceRange)}
+                        className={`px-3.5 py-2 rounded-xl text-xs font-extrabold whitespace-nowrap transition-all cursor-pointer flex items-center shrink-0 ${
                           isSelected
-                            ? 'bg-[#FA2D48] text-white shadow-xs ring-1 ring-[#FA2D48]'
-                            : 'bg-slate-100 text-slate-700 hover:bg-slate-200/80 border border-slate-200/60'
+                            ? 'bg-[#FA2D48] text-white shadow-xs ring-2 ring-[#FA2D48]'
+                            : 'bg-slate-100 text-slate-700 hover:bg-slate-200/80 border border-slate-200/70'
                         }`}
                       >
-                        {tier.label}
+                        <span>{row.priceRange}</span>
                       </button>
                     );
                   })}
                 </div>
               </div>
 
-              {/* Active Tab Spotlight Card */}
+              {/* Active Tier Spotlight Card with Combined Market Time Timeline */}
               {(() => {
                 const dataset = priceRangeData;
                 const activeRow = selectedPriceTier !== 'all'
-                  ? dataset.find(r => r.priceRange.toLowerCase() === selectedPriceTier.toLowerCase() || r.priceRange.toLowerCase().includes(selectedPriceTier.toLowerCase())) || dataset[dataset.length - 1]
-                  : dataset[dataset.length - 1]; // "All of O.C."
+                  ? dataset.find(r => r.priceRange.toLowerCase() === selectedPriceTier.toLowerCase() || r.priceRange.toLowerCase().includes(selectedPriceTier.toLowerCase())) || dataset[0]
+                  : dataset[0];
 
                 const cond = getMarketCondition(activeRow.marketTimeDays);
 
+                // Helper to calculate delta vs current market time
+                const getDeltaBadge = (pastDays: number) => {
+                  if (!pastDays || pastDays === 0) return null;
+                  const diff = activeRow.marketTimeDays - pastDays;
+                  if (diff === 0) return <span className="text-[10px] text-slate-400 font-medium">(0)</span>;
+                  if (diff > 0) return <span className="text-[10px] text-[#FA2D48] font-black">+{diff}d</span>;
+                  return <span className="text-[10px] text-emerald-600 font-black">{diff}d</span>;
+                };
+
                 return (
-                  <div className="bg-slate-900 text-white p-5 sm:p-6 rounded-2xl shadow-sm space-y-4">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
-                      <div className="flex items-center space-x-2">
-                        <span className="text-xs font-bold uppercase tracking-wider text-[#FA2D48] bg-rose-950/80 px-2.5 py-1 rounded-md border border-rose-900/50">
-                          Selected Tier
-                        </span>
-                        <h4 className="text-xl font-black text-white">{activeRow.priceRange}</h4>
+                  <div className="bg-slate-50/90 border border-slate-200 rounded-2xl p-5 sm:p-6 shadow-2xs space-y-5">
+                    {/* Tier Header */}
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200/80 pb-3">
+                      <div>
+                        <h4 className="text-xl sm:text-2xl font-black text-slate-950">{activeRow.priceRange}</h4>
                       </div>
-                      <span className={`text-xs font-black px-3 py-1 rounded-full ${cond.bgClass} text-white self-start sm:self-auto`}>
-                        {cond.badgeText} ({activeRow.marketTimeDays} Days DOM)
-                      </span>
+                      <div className={`px-4 py-2 rounded-xl ${cond.bgClass} text-white self-start sm:self-auto shadow-2xs text-left sm:text-right shrink-0`}>
+                        <div className="text-xs font-black tracking-wide uppercase">{cond.badgeText}</div>
+                        <div className="text-xs font-bold text-white/90 mt-1 flex items-baseline justify-start sm:justify-end space-x-1">
+                          <span className="text-lg sm:text-xl font-black leading-none">{activeRow.marketTimeDays}</span>
+                          <span className="font-extrabold text-xs uppercase tracking-wider">DOM</span>
+                        </div>
+                      </div>
                     </div>
 
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-                      <div className="bg-slate-800/80 p-3.5 rounded-xl border border-slate-700/60">
-                        <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Active Inventory</div>
-                        <div className="text-xl sm:text-2xl font-black text-white pt-1">{activeRow.currentActives.toLocaleString()}</div>
-                        <div className="text-[11px] text-slate-400 pt-0.5">Listings on market</div>
+                    {/* Core Volume Metrics */}
+                    <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
+                      <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-2xs">
+                        <div className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Active Inventory</div>
+                        <div className="text-2xl font-black text-slate-950 pt-1">{activeRow.currentActives.toLocaleString()} <span className="text-xs font-semibold text-slate-500">homes</span></div>
+                      </div>
+                      <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-2xs">
+                        <div className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">30-Day Escrows</div>
+                        <div className="text-2xl font-black text-slate-950 pt-1">{activeRow.demand30Days.toLocaleString()} <span className="text-xs font-semibold text-slate-500">pending</span></div>
+                      </div>
+                      <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-2xs col-span-2 lg:col-span-1">
+                        <div className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Median List Price</div>
+                        <div className="text-2xl font-black text-emerald-600 pt-1">{activeRow.medianActivePrice}</div>
+                      </div>
+                    </div>
+
+                    {/* Compact Historical Market Time Progression Pills */}
+                    <div className="bg-slate-100/60 rounded-xl p-3 border border-slate-200/60 space-y-2">
+                      <div className="flex items-center justify-between border-b border-slate-200/50 pb-1.5">
+                        <div className="flex items-center space-x-1.5">
+                          <Clock className="w-3.5 h-3.5 text-slate-500" />
+                          <span className="text-[11px] font-extrabold text-slate-700 uppercase tracking-wider">Market Time Progression</span>
+                        </div>
+                        <span className="text-[10px] font-semibold text-slate-400">Historical Benchmarks</span>
                       </div>
 
-                      <div className="bg-slate-800/80 p-3.5 rounded-xl border border-slate-700/60">
-                        <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">30-Day Escrows</div>
-                        <div className="text-xl sm:text-2xl font-black text-white pt-1">{activeRow.demand30Days.toLocaleString()}</div>
-                        <div className="text-[11px] text-slate-400 pt-0.5">Pending demand</div>
-                      </div>
+                      <div className="flex flex-wrap items-center gap-2">
+                        {/* Current */}
+                        <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-rose-50 border border-rose-200/90 text-xs shadow-2xs">
+                          <span className="text-[10px] font-black uppercase text-[#FA2D48]">Current:</span>
+                          <span className="text-xs font-black text-[#FA2D48]">{activeRow.marketTimeDays}d DOM</span>
+                        </div>
 
-                      <div className="bg-slate-800/80 p-3.5 rounded-xl border border-slate-700/60">
-                        <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Historical DOM (1y Ago)</div>
-                        <div className="text-xl sm:text-2xl font-black text-rose-400 pt-1">{activeRow.marketTime1YearAgo} Days</div>
-                        <div className="text-[11px] text-slate-400 pt-0.5">vs {activeRow.marketTimeDays}d currently</div>
-                      </div>
+                        {/* 2 Weeks Ago */}
+                        <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-white border border-slate-200/80 shadow-2xs text-xs">
+                          <span className="text-[10px] font-bold uppercase text-slate-500">2w Ago:</span>
+                          <span className="text-xs font-extrabold text-slate-800">{activeRow.marketTime2WeeksAgo}d</span>
+                          {getDeltaBadge(activeRow.marketTime2WeeksAgo)}
+                        </div>
 
-                      <div className="bg-slate-800/80 p-3.5 rounded-xl border border-slate-700/60">
-                        <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Median Tier Price</div>
-                        <div className="text-xl sm:text-2xl font-black text-emerald-400 pt-1">{activeRow.medianActivePrice}</div>
-                        <div className="text-[11px] text-slate-400 pt-0.5">Current median list price</div>
+                        {/* 4 Weeks Ago */}
+                        <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-white border border-slate-200/80 shadow-2xs text-xs">
+                          <span className="text-[10px] font-bold uppercase text-slate-500">4w Ago:</span>
+                          <span className="text-xs font-extrabold text-slate-800">{activeRow.marketTime4WeeksAgo}d</span>
+                          {getDeltaBadge(activeRow.marketTime4WeeksAgo)}
+                        </div>
+
+                        {/* 1 Year Ago */}
+                        <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-white border border-slate-200/80 shadow-2xs text-xs">
+                          <span className="text-[10px] font-bold uppercase text-slate-500">1y Ago:</span>
+                          <span className="text-xs font-extrabold text-slate-800">{activeRow.marketTime1YearAgo}d</span>
+                          {getDeltaBadge(activeRow.marketTime1YearAgo)}
+                        </div>
+
+                        {/* 2 Years Ago */}
+                        <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-white border border-slate-200/80 shadow-2xs text-xs">
+                          <span className="text-[10px] font-bold uppercase text-slate-500">2y Ago:</span>
+                          <span className="text-xs font-extrabold text-slate-800">
+                            {activeRow.marketTime2YearsAgo > 0 ? `${activeRow.marketTime2YearsAgo}d` : 'N/A'}
+                          </span>
+                          {activeRow.marketTime2YearsAgo > 0 && getDeltaBadge(activeRow.marketTime2YearsAgo)}
+                        </div>
                       </div>
                     </div>
                   </div>
                 );
               })()}
 
-              {/* Full Comparison Table */}
-              <div className="space-y-2">
-                <div className="text-xs font-bold text-slate-900">Complete Price Bracket Side-by-Side Comparison:</div>
-                <div className="overflow-x-auto scrollbar-none rounded-2xl border border-slate-200/90">
-                  <table className="w-full text-left text-xs border-collapse">
-                    <thead>
-                      <tr className="bg-slate-100/90 border-b border-slate-200 text-slate-700 font-bold uppercase tracking-wider">
-                        <th className="p-3">Price Tier</th>
-                        <th className="p-3">Current Actives</th>
-                        <th className="p-3">30-Day Demand</th>
-                        <th className="p-3 text-[#FA2D48]">Market Time (DOM)</th>
-                        <th className="p-3">2w Ago</th>
-                        <th className="p-3">4w Ago</th>
-                        <th className="p-3">1y Ago</th>
-                        <th className="p-3">Median Price</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100">
-                      {priceRangeData.map((row, idx) => {
-                        const isSelected = selectedPriceTier === row.priceRange;
-                        return (
-                          <tr
-                            key={idx}
-                            onClick={() => setSelectedPriceTier(row.priceRange)}
-                            className={`cursor-pointer transition-colors ${
-                              isSelected
-                                ? 'bg-rose-50/80 font-bold ring-1 ring-[#FA2D48]'
-                                : row.priceRange === 'All of O.C.'
-                                  ? 'bg-slate-100/80 font-black'
-                                  : 'hover:bg-slate-50'
-                            }`}
-                          >
-                            <td className="p-3 font-extrabold text-slate-950">{row.priceRange}</td>
-                            <td className="p-3 font-bold text-slate-900">{row.currentActives.toLocaleString()}</td>
-                            <td className="p-3 font-bold text-slate-900">{row.demand30Days.toLocaleString()}</td>
-                            <td className="p-3 font-black text-[#FA2D48] bg-rose-50/50 rounded-lg">{row.marketTimeDays} Days</td>
-                            <td className="p-3 text-slate-800 font-medium">{row.marketTime2WeeksAgo}d</td>
-                            <td className="p-3 text-slate-800 font-medium">{row.marketTime4WeeksAgo}d</td>
-                            <td className="p-3 text-slate-800 font-medium">{row.marketTime1YearAgo}d</td>
-                            <td className="p-3 font-bold text-slate-900">{row.medianActivePrice}</td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* TAB 5: SITTING ON MARKET ANALYSIS */}
-          {activeTab === 'sitting-market' && (
-            <div className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-8 shadow-xs space-y-4">
-              <div>
-                <h3 className="text-xl sm:text-2xl font-black text-slate-950">Sitting on the Market Breakdown</h3>
-                <p className="text-xs sm:text-sm text-slate-600 font-medium mt-1">
-                  64% of all active homes have been listed for at least 1 month, and 41% surpassed 2 months without securing an escrow.
-                </p>
-              </div>
-
+              {/* Complete Price Bracket Table */}
               <div className="overflow-x-auto scrollbar-none rounded-2xl border border-slate-200/90">
                 <table className="w-full text-left text-xs border-collapse">
                   <thead>
                     <tr className="bg-slate-100/90 border-b border-slate-200 text-slate-700 font-bold uppercase tracking-wider">
-                      <th className="p-3">Price Bracket</th>
+                      <th className="p-3">Price Tier</th>
                       <th className="p-3">Current Actives</th>
-                      <th className="p-3">30+ Days Listed</th>
-                      <th className="p-3 text-rose-600">% 30+ Days</th>
-                      <th className="p-3">60+ Days Listed</th>
-                      <th className="p-3 text-amber-600">% 60+ Days</th>
-                      <th className="p-3">Expected Market Time</th>
-                      <th className="p-3">Off-Market (YTD)</th>
+                      <th className="p-3">30-Day Demand</th>
+                      <th className="p-3 text-[#FA2D48] bg-rose-50/80">Market Time (DOM)</th>
+                      <th className="p-3">2w Ago</th>
+                      <th className="p-3">4w Ago</th>
+                      <th className="p-3">1y Ago</th>
+                      <th className="p-3">2y Ago</th>
+                      <th className="p-3">Median Price</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
-                    {OC_SITTING_ON_MARKET_REPORT.map((row, idx) => (
-                      <tr key={idx} className={`hover:bg-slate-50 transition-colors ${row.priceRange === 'All of O.C.' ? 'bg-slate-100/80 font-black' : ''}`}>
-                        <td className="p-3 font-bold text-slate-950">{row.priceRange}</td>
-                        <td className="p-3 text-slate-900 font-medium">{row.currentActives}</td>
-                        <td className="p-3 text-slate-900 font-medium">{row.actives30PlusDays}</td>
-                        <td className="p-3 font-extrabold text-rose-600">{row.percent30PlusDays}</td>
-                        <td className="p-3 text-slate-900 font-medium">{row.actives60PlusDays}</td>
-                        <td className="p-3 font-extrabold text-amber-600">{row.percent60PlusDays}</td>
-                        <td className="p-3 font-extrabold text-slate-950">{row.marketTimeDays} Days</td>
-                        <td className="p-3 text-slate-800 font-medium">{row.offMarketYTD} homes</td>
-                      </tr>
-                    ))}
+                    {priceRangeData.map((row, idx) => {
+                      const isSelected = selectedPriceTier === row.priceRange || (selectedPriceTier === 'all' && idx === 0);
+                      return (
+                        <tr
+                          key={idx}
+                          onClick={() => setSelectedPriceTier(row.priceRange)}
+                          className={`cursor-pointer transition-colors ${
+                            isSelected
+                              ? 'bg-rose-50/80 font-bold ring-2 ring-[#FA2D48]/30'
+                              : row.priceRange === 'All of O.C.' || row.priceRange === 'All Attached' || row.priceRange === 'All Detached'
+                                ? 'bg-slate-100/80 font-black'
+                                : 'hover:bg-slate-50'
+                          }`}
+                        >
+                          <td className="p-3 font-extrabold text-slate-950 flex items-center justify-between">
+                            <span>{row.priceRange}</span>
+                            {isSelected && <span className="ml-1.5 w-2 h-2 rounded-full bg-[#FA2D48]"></span>}
+                          </td>
+                          <td className="p-3 font-bold text-slate-900">{row.currentActives.toLocaleString()}</td>
+                          <td className="p-3 font-bold text-slate-900">{row.demand30Days.toLocaleString()}</td>
+                          <td className="p-3 font-black text-[#FA2D48] bg-rose-50/60 font-mono text-sm">{row.marketTimeDays} Days</td>
+                          <td className="p-3 text-slate-800 font-medium">{row.marketTime2WeeksAgo}d</td>
+                          <td className="p-3 text-slate-800 font-medium">{row.marketTime4WeeksAgo}d</td>
+                          <td className="p-3 text-slate-800 font-medium">{row.marketTime1YearAgo}d</td>
+                          <td className="p-3 text-slate-800 font-medium">{row.marketTime2YearsAgo > 0 ? `${row.marketTime2YearsAgo}d` : '—'}</td>
+                          <td className="p-3 font-bold text-slate-950">{row.medianActivePrice}</td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
