@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { MapPin, ChevronDown, TrendingUp, Clock, Tag, Building, Search, ArrowUpDown, ShieldCheck, AlertCircle, Home, Layers, Check } from 'lucide-react';
+import { MapPin, ChevronDown, TrendingUp, Clock, Tag, Building, Search, ArrowUpDown, ShieldCheck, AlertCircle, Home, Layers, Check, RefreshCw } from 'lucide-react';
 import { CityInfo, AdBanner } from '../types';
 import { AdBannerRenderer } from './AdBannerRenderer';
 import {
@@ -88,12 +88,14 @@ export const OC_MARKET_DATA: OCCityMarketData[] = OC_MARKET_TIME_REPORT.map((ite
 
 interface OrangeCountyMarketTrendsProps {
   onSelectCity?: (city: CityInfo) => void;
-  fredStats?: { mortgage30Year: string; mortgage15Year: string; asOfDate: string } | null;
+  fredStats?: { mortgage30Year: string; mortgage15Year: string; asOfDate: string; sourceType?: string; isRealLiveFredData?: boolean } | null;
   currentCityName?: string;
   showFilterBar?: boolean;
   showTopHeader?: boolean;
   showMainTabs?: boolean;
   ads?: AdBanner[];
+  onRefreshRates?: () => void;
+  isRefreshingRates?: boolean;
 }
 
 type ReportTab = 'summary' | 'price-range';
@@ -105,15 +107,18 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
   showFilterBar = false,
   showTopHeader = true,
   showMainTabs = true,
-  ads = []
+  ads = [],
+  onRefreshRates,
+  isRefreshingRates = false,
 }) => {
   const [activeTab, setActiveTab] = useState<ReportTab>('summary');
   const [selectedCity, setSelectedCity] = useState<OCCityMarketData | null>(null);
   const [selectedRegion, setSelectedRegion] = useState<string>('All');
   const [pricePropertyType, setPricePropertyType] = useState<'all' | 'attached' | 'detached'>('all');
   const [selectedPriceTier, setSelectedPriceTier] = useState<string>('all');
-  const [fredStats, setFredStats] = useState<{ mortgage30Year: string; mortgage15Year: string; asOfDate: string }>(
-    propFredStats || { mortgage30Year: '6.66%', mortgage15Year: '6.04%', asOfDate: '2026-07-30' }
+  const [localRefreshing, setLocalRefreshing] = useState(false);
+  const [fredStats, setFredStats] = useState<{ mortgage30Year: string; mortgage15Year: string; asOfDate: string; sourceType?: string }>(
+    propFredStats || { mortgage30Year: '6.67%', mortgage15Year: '5.96%', asOfDate: '2026-08-13' }
   );
 
   const regionCities = useMemo(() => {
@@ -131,6 +136,31 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
       if (onSelectCity) onSelectCity(match);
     }
   };
+
+  const handleManualRateRefresh = async () => {
+    if (onRefreshRates) {
+      onRefreshRates();
+      return;
+    }
+    setLocalRefreshing(true);
+    try {
+      const res = await fetch('/api/live-market-stats?force=true');
+      const json = await res.json();
+      if (json.success && json.data) {
+        setFredStats(json.data);
+      }
+    } catch (err) {
+      console.warn("Failed to manually refresh FRED stats", err);
+    } finally {
+      setTimeout(() => setLocalRefreshing(false), 600);
+    }
+  };
+
+  React.useEffect(() => {
+    if (propFredStats) {
+      setFredStats(propFredStats);
+    }
+  }, [propFredStats]);
 
   React.useEffect(() => {
     if (currentCityName) {
@@ -151,18 +181,16 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
   }, [currentCityName]);
 
   React.useEffect(() => {
-    if (propFredStats) {
-      setFredStats(propFredStats);
-      return;
+    if (!propFredStats) {
+      fetch('/api/live-market-stats')
+        .then(res => res.json())
+        .then(json => {
+          if (json.success && json.data) {
+            setFredStats(json.data);
+          }
+        })
+        .catch(err => console.warn("Failed to load live FRED stats", err));
     }
-    fetch('/api/live-market-stats')
-      .then(res => res.json())
-      .then(json => {
-        if (json.success && json.data) {
-          setFredStats(json.data);
-        }
-      })
-      .catch(err => console.warn("Failed to load live FRED stats", err));
   }, [propFredStats]);
 
   const priceRangeData = useMemo(() => {
@@ -543,12 +571,43 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
             <div className="space-y-6">
               {/* Key Indicators */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-white border border-slate-200/90 rounded-3xl p-6 shadow-xs">
-                  <div className="text-xs font-sans uppercase tracking-widest text-black font-extrabold">FRED 30-Year Mortgage Rate</div>
-                  <div className="text-3xl font-black text-slate-900 pt-1">{fredStats?.mortgage30Year || '6.66%'}</div>
-                  <p className="text-sm text-slate-700 font-normal mt-2 leading-snug">
-                    Freddie Mac Primary Market Survey {fredStats?.asOfDate ? `(As of ${fredStats.asOfDate})` : ''}. Live Federal Reserve FRED benchmark.
-                  </p>
+                <div className="bg-white border border-slate-200/90 rounded-3xl p-6 shadow-xs relative flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="text-xs font-sans uppercase tracking-widest text-black font-extrabold">FRED 30-Yr Mortgage Rate</div>
+                      <button
+                        onClick={handleManualRateRefresh}
+                        disabled={localRefreshing || isRefreshingRates}
+                        className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-bold transition-all cursor-pointer disabled:opacity-50"
+                        title="Force update latest Thursday Freddie Mac PMMS & FRED rates"
+                      >
+                        <RefreshCw className={`w-3 h-3 text-[#FA2D48] ${(localRefreshing || isRefreshingRates) ? 'animate-spin' : ''}`} />
+                        <span>{(localRefreshing || isRefreshingRates) ? 'Syncing...' : 'Sync'}</span>
+                      </button>
+                    </div>
+
+                    <div className="flex items-baseline space-x-3 pt-1">
+                      <span className="text-3xl sm:text-4xl font-black text-slate-900">{fredStats?.mortgage30Year || '6.67%'}</span>
+                      <span className="text-xs font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md">
+                        15-Yr: {fredStats?.mortgage15Year || '5.96%'}
+                      </span>
+                    </div>
+                    <div className="text-[11px] font-bold text-slate-400 pt-0.5">
+                      As of {fredStats?.asOfDate || 'Aug 13, 2026'}
+                    </div>
+                  </div>
+
+                  <div className="pt-3 border-t border-slate-100 mt-2">
+                    <p className="text-xs text-slate-600 font-medium leading-snug">
+                      Freddie Mac Primary Mortgage Market Survey (PMMS).
+                    </p>
+                    <div className="flex items-center justify-between text-[11px] text-slate-900 font-bold pt-1">
+                      <span>Updated every Thursday</span>
+                      <span className="text-[#FA2D48] font-black">
+                        {fredStats?.asOfDate ? `As of ${fredStats.asOfDate}` : 'Latest Release'}
+                      </span>
+                    </div>
+                  </div>
                 </div>
                 <div className="bg-white border border-slate-200/90 rounded-3xl p-6 shadow-xs">
                   <div className="text-xs font-sans uppercase tracking-widest text-black font-extrabold">Countywide Median List Price</div>

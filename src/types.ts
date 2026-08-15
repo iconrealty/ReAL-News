@@ -98,6 +98,16 @@ export interface AdBanner {
   updatedAt: string;
 }
 
+export interface FredStats {
+  source: string;
+  mortgage30Year: string;
+  mortgage15Year: string;
+  asOfDate: string;
+  lastChecked?: string;
+  sourceType?: string;
+  isRealLiveFredData?: boolean;
+}
+
 export interface FilterState {
   city: CityInfo;
   category: NewsCategory;

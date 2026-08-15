@@ -14,6 +14,7 @@ interface AppleNewsHeaderProps {
   onSearchChange: (q: string) => void;
   onResetToMain?: () => void;
   fredRate?: string;
+  asOfDate?: string;
   onOpenManager?: () => void;
   isMonetizationEnabled?: boolean;
 }
@@ -28,7 +29,8 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
   searchQuery,
   onSearchChange,
   onResetToMain,
-  fredRate = '6.66%',
+  fredRate = '6.67%',
+  asOfDate,
   onOpenManager,
   isMonetizationEnabled = true,
 }) => {
@@ -90,6 +92,9 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
                 <span className="text-xl font-black text-slate-950 font-sans tracking-tight leading-none group-hover:text-[#FA2D48] transition-colors pt-0.5 block">
                   {fredRate}
                 </span>
+                <span className="text-[9px] font-bold text-slate-400 block tracking-tight pt-0.5">
+                  As of {asOfDate || 'Aug 13, 2026'}
+                </span>
               </button>
 
               <button
@@ -120,6 +125,9 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
               </span>
               <span className="text-2xl lg:text-3xl font-black text-slate-950 font-sans tracking-tight leading-none group-hover:text-[#FA2D48] transition-colors pt-0.5 block">
                 {fredRate}
+              </span>
+              <span className="text-[10px] font-bold text-slate-400 block tracking-tight pt-0.5">
+                As of {asOfDate || 'Aug 13, 2026'}
               </span>
             </button>
 

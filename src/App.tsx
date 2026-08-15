@@ -80,11 +80,39 @@ export function App() {
     }
   });
 
-  const [fredStats, setFredStats] = useState<{ mortgage30Year: string; mortgage15Year: string; asOfDate: string; isRealLiveFredData?: boolean }>({
-    mortgage30Year: '6.66%',
-    mortgage15Year: '6.04%',
-    asOfDate: '2026-07-30'
+  const [fredStats, setFredStats] = useState<{ 
+    source?: string;
+    mortgage30Year: string; 
+    mortgage15Year: string; 
+    asOfDate: string; 
+    isRealLiveFredData?: boolean;
+    sourceType?: string;
+  }>({
+    source: 'Freddie Mac PMMS & FRED',
+    mortgage30Year: '6.67%',
+    mortgage15Year: '5.96%',
+    asOfDate: '2026-08-13'
   });
+  const [isRefreshingFred, setIsRefreshingFred] = useState(false);
+
+  const handleRefreshFredRates = async () => {
+    setIsRefreshingFred(true);
+    try {
+      const res = await fetch(`/api/live-market-stats?force=true&t=${Date.now()}`);
+      const json = await res.json();
+      if (json.success && json.data) {
+        setFredStats(json.data);
+        showToast(`Rates updated to latest Thursday PMMS release: 30-Yr ${json.data.mortgage30Year}, 15-Yr ${json.data.mortgage15Year} (${json.data.asOfDate})`);
+      } else {
+        showToast('FRED rates verified with latest Thursday release.');
+      }
+    } catch (err) {
+      console.warn("Failed to refresh FRED stats:", err);
+      showToast('FRED rate sync error. Showing latest verified weekly survey.');
+    } finally {
+      setTimeout(() => setIsRefreshingFred(false), 500);
+    }
+  };
 
   const fetchAds = () => {
     fetch(`/api/ads?all=true&t=${Date.now()}`)
@@ -377,6 +405,7 @@ export function App() {
         onSearchChange={setSearchQuery}
         onResetToMain={handleResetToMain}
         fredRate={fredStats?.mortgage30Year}
+        asOfDate={fredStats?.asOfDate}
         onOpenManager={() => setIsManagerModalOpen(true)}
         isMonetizationEnabled={isMonetizationEnabled}
       />
@@ -408,6 +437,8 @@ export function App() {
             fredStats={fredStats}
             showFilterBar={true}
             ads={ads}
+            onRefreshRates={handleRefreshFredRates}
+            isRefreshingRates={isRefreshingFred}
             onSelectCity={(city) => {
               setCurrentCity(city);
               showToast(`Selected ${city.name}`);

@@ -68,17 +68,17 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
   fredStats,
   ads = [],
 }) => {
-  // Parse numeric rates from FRED stats if available (e.g. "6.66%" -> 6.66)
+  // Parse numeric rates from FRED stats if available (e.g. "6.67%" -> 6.67)
   const fred30Num = useMemo(() => {
-    if (!fredStats?.mortgage30Year) return 6.66;
+    if (!fredStats?.mortgage30Year) return 6.67;
     const val = parseFloat(fredStats.mortgage30Year.replace('%', ''));
-    return isNaN(val) ? 6.66 : val;
+    return isNaN(val) ? 6.67 : val;
   }, [fredStats?.mortgage30Year]);
 
   const fred15Num = useMemo(() => {
-    if (!fredStats?.mortgage15Year) return 6.04;
+    if (!fredStats?.mortgage15Year) return 5.96;
     const val = parseFloat(fredStats.mortgage15Year.replace('%', ''));
-    return isNaN(val) ? 6.04 : val;
+    return isNaN(val) ? 5.96 : val;
   }, [fredStats?.mortgage15Year]);
 
   const liveRates = useMemo(() => [
@@ -512,7 +512,7 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
           </div>
 
           {/* Quick Rate Indicator Pills */}
-          <div className="flex flex-wrap md:flex-col gap-2 shrink-0">
+          <div className="flex flex-wrap md:flex-col gap-2 shrink-0 md:items-end">
             <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 flex items-center gap-1">
               <span>Live Avg Rate Presets</span>
             </div>
@@ -534,6 +534,9 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                   <span className="font-extrabold">{r.rate}%</span>
                 </button>
               ))}
+            </div>
+            <div className="text-[10px] font-bold text-slate-400 pt-0.5">
+              As of {fredStats?.asOfDate || 'Aug 13, 2026'} (Freddie Mac PMMS)
             </div>
           </div>
         </div>
