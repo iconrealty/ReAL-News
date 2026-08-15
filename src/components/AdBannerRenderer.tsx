@@ -17,16 +17,12 @@ export function AdBannerRenderer({
   cityName, 
   onOpenManager, 
   className = '',
-  monetizationEnabled 
+  monetizationEnabled = true
 }: AdBannerRendererProps) {
   const trackedIds = useRef<Set<string>>(new Set());
 
-  // Check if monetization is explicitly disabled via prop or localStorage
-  const isEnabled = monetizationEnabled !== undefined 
-    ? monetizationEnabled 
-    : (typeof localStorage !== 'undefined' ? localStorage.getItem('monetization_enabled') !== 'false' : true);
-
-  if (!isEnabled) {
+  // If monetization is explicitly disabled, do not render
+  if (monetizationEnabled === false) {
     return null;
   }
 

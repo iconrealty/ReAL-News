@@ -506,6 +506,7 @@ export function App() {
               placement="header-banner"
               ads={ads}
               cityName={currentCity.name}
+              monetizationEnabled={isMonetizationEnabled}
               onOpenManager={() => setIsManagerModalOpen(true)}
             />
 
@@ -518,7 +519,14 @@ export function App() {
                 onSelectArticle={setSelectedArticle}
                 bookmarkedIds={bookmarkedIds}
                 onToggleBookmark={toggleBookmark}
-                adBanner={<AdBannerRenderer placement="feed-native" ads={ads} cityName={currentCity.name} />}
+                adBanner={
+                  <AdBannerRenderer 
+                    placement="feed-native" 
+                    ads={ads} 
+                    cityName={currentCity.name} 
+                    monetizationEnabled={isMonetizationEnabled}
+                  />
+                }
               />
             )}
 
