@@ -50,6 +50,16 @@
         "updatedAt": { "type": "string" }
       },
       "required": ["id", "advertiserName", "title", "placement", "status"]
+    },
+    "settings": {
+      "title": "Application Global Settings",
+      "description": "Global application configuration including monetization status",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "monetizationEnabled": { "type": "boolean" },
+        "updatedAt": { "type": "string" }
+      }
     }
   }
 }

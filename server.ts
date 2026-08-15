@@ -10,7 +10,9 @@ import {
   deleteAdFromDb, 
   recordAdImpression, 
   recordAdClick,
-  resetSampleSponsorsInDb 
+  resetSampleSponsorsInDb,
+  getMonetizationStatusFromDb,
+  setMonetizationStatusInDb
 } from "./src/lib/adManagerDb.js";
 
 const rssParser = new Parser({
@@ -1329,21 +1331,26 @@ Return ONLY valid JSON matching this schema.
 });
 
 // --- AD MANAGER & MONETIZATION API ENDPOINTS ---
-let isMonetizationEngineActive = true;
 
 // Get monetization engine status
-app.get("/api/monetization-status", (req, res) => {
-  res.json({ success: true, enabled: isMonetizationEngineActive });
+app.get("/api/monetization-status", async (req, res) => {
+  try {
+    const isEnabled = await getMonetizationStatusFromDb();
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.json({ success: true, enabled: isEnabled });
+  } catch (err: any) {
+    res.json({ success: true, enabled: true });
+  }
 });
 
 // Toggle monetization engine status (Admin route)
-app.post("/api/admin/monetization-toggle", express.json(), (req, res) => {
+app.post("/api/admin/monetization-toggle", express.json(), async (req, res) => {
   try {
     const { enabled } = req.body;
     if (typeof enabled === 'boolean') {
-      isMonetizationEngineActive = enabled;
-      console.log(`[Monetization Engine] Server status set to: ${isMonetizationEngineActive ? 'ENABLED' : 'DISABLED'}`);
-      res.json({ success: true, enabled: isMonetizationEngineActive });
+      const persistedStatus = await setMonetizationStatusInDb(enabled);
+      console.log(`[Monetization Engine] Server & Firestore status set to: ${persistedStatus ? 'ENABLED' : 'DISABLED'}`);
+      res.json({ success: true, enabled: persistedStatus });
     } else {
       res.status(400).json({ success: false, error: "Invalid boolean parameter 'enabled'" });
     }
@@ -1357,6 +1364,7 @@ app.get("/api/ads", async (req, res) => {
   try {
     res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
     const isManager = req.query.all === 'true';
+    const isMonetizationEngineActive = await getMonetizationStatusFromDb();
 
     // If monetization is turned OFF and not requesting manager portal view, return empty ads list
     if (!isManager && !isMonetizationEngineActive) {

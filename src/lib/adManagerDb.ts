@@ -1,6 +1,7 @@
 import { 
   collection, 
   getDocs, 
+  getDoc,
   setDoc, 
   doc, 
   deleteDoc, 
@@ -14,6 +15,56 @@ import { AdBanner } from "../types.js";
 // In-memory cache store initialized with default ads to guarantee instant synchronization
 let memoryAdsStore: AdBanner[] = [...INITIAL_ADS];
 let isInitialSeedingDone = false;
+let memoryMonetizationEnabled: boolean = true;
+
+/**
+ * Retrieves the global monetization engine status from Firestore.
+ */
+export async function getMonetizationStatusFromDb(): Promise<boolean> {
+  try {
+    const db = getDb();
+    const docRef = doc(db, "settings", "monetization");
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      if (typeof data.monetizationEnabled === "boolean") {
+        memoryMonetizationEnabled = data.monetizationEnabled;
+        return memoryMonetizationEnabled;
+      }
+    } else {
+      // Initialize default
+      await setDoc(docRef, {
+        id: "monetization",
+        monetizationEnabled: true,
+        updatedAt: new Date().toISOString()
+      });
+    }
+  } catch (error) {
+    console.warn("[Firebase Settings] Using memory monetization status fallback:", error);
+  }
+  return memoryMonetizationEnabled;
+}
+
+/**
+ * Updates the global monetization engine status in Firestore.
+ */
+export async function setMonetizationStatusInDb(enabled: boolean): Promise<boolean> {
+  memoryMonetizationEnabled = enabled;
+  try {
+    const db = getDb();
+    const docRef = doc(db, "settings", "monetization");
+    await setDoc(docRef, {
+      id: "monetization",
+      monetizationEnabled: enabled,
+      updatedAt: new Date().toISOString()
+    }, { merge: true });
+    console.log(`[Firebase Settings] Monetization status persisted to Firestore: ${enabled ? 'ENABLED' : 'DISABLED'}`);
+  } catch (error) {
+    console.warn("[Firebase Settings] Error updating monetization in Firestore:", error);
+  }
+  return memoryMonetizationEnabled;
+}
 
 /**
  * Retrieves all ad banners from Firestore database in the cloud.

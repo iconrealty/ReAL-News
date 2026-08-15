@@ -7,6 +7,9 @@ service cloud.firestore {
     match /ads/{adId} {
       allow read, write: if true;
     }
+    match /settings/{settingId} {
+      allow read, write: if true;
+    }
   }
 }
 

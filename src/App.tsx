@@ -72,13 +72,7 @@ export function App() {
   const [isManagerModalOpen, setIsManagerModalOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [ads, setAds] = useState<AdBanner[]>(INITIAL_ADS);
-  const [isMonetizationEnabled, setIsMonetizationEnabled] = useState<boolean>(() => {
-    try {
-      return localStorage.getItem('monetization_enabled') !== 'false';
-    } catch {
-      return true;
-    }
-  });
+  const [isMonetizationEnabled, setIsMonetizationEnabled] = useState<boolean>(true);
 
   const [fredStats, setFredStats] = useState<{ 
     source?: string;
@@ -125,28 +119,49 @@ export function App() {
       .catch(err => console.warn("Error fetching ads:", err));
   };
 
-  useEffect(() => {
-    fetchAds();
-    
-    // Fetch live monetization engine status
-    fetch('/api/monetization-status')
+  const fetchMonetizationStatus = () => {
+    fetch(`/api/monetization-status?t=${Date.now()}`)
       .then(res => res.json())
       .then(json => {
         if (json.success && typeof json.enabled === 'boolean') {
           setIsMonetizationEnabled(json.enabled);
-          try {
-            localStorage.setItem('monetization_enabled', json.enabled ? 'true' : 'false');
-          } catch (e) {}
         }
       })
       .catch(err => console.warn('Failed to load monetization status:', err));
+  };
+
+  // Real-time synchronization across all devices, laptops, and mobile screens
+  useEffect(() => {
+    // 1. Initial immediate sync
+    fetchAds();
+    fetchMonetizationStatus();
+
+    // 2. Active background heartbeat (syncs changes made on any device automatically)
+    const syncInterval = setInterval(() => {
+      fetchAds();
+      fetchMonetizationStatus();
+    }, 6000);
+
+    // 3. Instant sync on focus / tab visibility change
+    const handleSyncOnFocus = () => {
+      if (document.visibilityState === 'visible') {
+        fetchAds();
+        fetchMonetizationStatus();
+      }
+    };
+
+    window.addEventListener('focus', handleSyncOnFocus);
+    document.addEventListener('visibilitychange', handleSyncOnFocus);
+
+    return () => {
+      clearInterval(syncInterval);
+      window.removeEventListener('focus', handleSyncOnFocus);
+      document.removeEventListener('visibilitychange', handleSyncOnFocus);
+    };
   }, []);
 
   const handleToggleMonetization = (enabled: boolean) => {
     setIsMonetizationEnabled(enabled);
-    try {
-      localStorage.setItem('monetization_enabled', enabled ? 'true' : 'false');
-    } catch (e) {}
 
     fetch('/api/admin/monetization-toggle', {
       method: 'POST',
@@ -156,7 +171,8 @@ export function App() {
     .then(res => res.json())
     .then(data => {
       if (data.success) {
-        showToast(enabled ? 'Monetization Manager ENABLED - Banners are live!' : 'Monetization Manager TURNED OFF - All ad banners hidden!');
+        showToast(enabled ? 'Monetization Manager ENABLED - Banners are live on all devices!' : 'Monetization Manager TURNED OFF - All ad banners hidden on all devices!');
+        fetchAds();
       }
     })
     .catch(err => {
