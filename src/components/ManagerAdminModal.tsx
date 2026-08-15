@@ -119,6 +119,8 @@ export function ManagerAdminModal({
   const [isDeleting, setIsDeleting] = useState(false);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
+  const [isTogglingMonetization, setIsTogglingMonetization] = useState(false);
+  const [isTogglingAll, setIsTogglingAll] = useState(false);
 
   const confirmExecuteReset = async () => {
     setIsResetting(true);
@@ -138,9 +140,11 @@ export function ManagerAdminModal({
   };
 
   const handleToggleAllCampaignsStatus = async () => {
+    if (isTogglingAll) return;
     const activeAdsCount = ads.filter(a => a.status === 'active').length;
     const nextStatus = activeAdsCount > 0 ? 'paused' : 'active';
 
+    setIsTogglingAll(true);
     try {
       const updatePromises = ads.map(ad => 
         fetch('/api/admin/ads', {
@@ -154,6 +158,8 @@ export function ManagerAdminModal({
       onRefreshAds();
     } catch (e) {
       onShowToast('Failed to update all campaigns status.');
+    } finally {
+      setIsTogglingAll(false);
     }
   };
   
@@ -258,7 +264,7 @@ export function ManagerAdminModal({
       setCurrentAd(prev => ({ ...prev, bgImageUrl: dataUrl }));
       onShowToast('Background photo loaded successfully!');
     } catch (err: any) {
-      alert(err?.message || 'Failed to process background photo.');
+      onShowToast(err?.message || 'Failed to process background photo.');
     } finally {
       setUploadingBg(false);
       if (bgFileInputRef.current) bgFileInputRef.current.value = '';
@@ -268,7 +274,7 @@ export function ManagerAdminModal({
   const handleSaveAd = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!currentAd.advertiserName || !currentAd.title) {
-      alert('Please fill out required fields (Advertiser Name & Headline).');
+      onShowToast('Please fill out required fields (Advertiser Name & Headline).');
       return;
     }
 
@@ -295,10 +301,10 @@ export function ManagerAdminModal({
         setIsEditing(false);
         onRefreshAds();
       } else {
-        alert(data.error || 'Failed to save campaign');
+        onShowToast(data.error || 'Failed to save campaign');
       }
     } catch (e) {
-      alert('Network error saving campaign');
+      onShowToast('Network error saving campaign');
     } finally {
       setSaving(false);
     }
@@ -316,9 +322,11 @@ export function ManagerAdminModal({
       if (data.success) {
         onShowToast(`Campaign status changed to ${nextStatus.toUpperCase()}`);
         onRefreshAds();
+      } else {
+        onShowToast('Status toggle failed');
       }
     } catch (e) {
-      alert('Status toggle failed');
+      onShowToast('Status toggle failed');
     }
   };
 
@@ -461,27 +469,44 @@ export function ManagerAdminModal({
                 <div className="flex flex-wrap items-center gap-2.5 shrink-0">
                   <button
                     type="button"
-                    onClick={() => {
-                      if (onToggleMonetization) {
-                        onToggleMonetization(!isMonetizationEnabled);
+                    disabled={isTogglingMonetization}
+                    onClick={async () => {
+                      if (onToggleMonetization && !isTogglingMonetization) {
+                        setIsTogglingMonetization(true);
+                        try {
+                          await onToggleMonetization(!isMonetizationEnabled);
+                        } finally {
+                          setTimeout(() => setIsTogglingMonetization(false), 400);
+                        }
                       }
                     }}
-                    className={`px-5 py-2.5 rounded-2xl font-black text-xs transition-all cursor-pointer shadow-xs ${
+                    className={`px-5 py-2.5 rounded-2xl font-black text-xs transition-all cursor-pointer shadow-xs flex items-center space-x-1.5 ${
+                      isTogglingMonetization ? 'opacity-70 cursor-wait' : ''
+                    } ${
                       isMonetizationEnabled
                         ? 'bg-rose-600 hover:bg-rose-700 text-white'
                         : 'bg-emerald-600 hover:bg-emerald-700 text-white'
                     }`}
                   >
-                    {isMonetizationEnabled ? 'Turn OFF Monetization' : 'Turn ON Monetization'}
+                    <span>
+                      {isTogglingMonetization
+                        ? 'Updating Cloud State...'
+                        : isMonetizationEnabled
+                          ? 'Turn OFF Monetization'
+                          : 'Turn ON Monetization'}
+                    </span>
                   </button>
 
                   <button
                     type="button"
+                    disabled={isTogglingAll}
                     onClick={handleToggleAllCampaignsStatus}
-                    className="px-4 py-2.5 rounded-2xl bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 font-bold text-xs transition-all cursor-pointer shadow-xs"
+                    className={`px-4 py-2.5 rounded-2xl bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 font-bold text-xs transition-all cursor-pointer shadow-xs ${
+                      isTogglingAll ? 'opacity-70 cursor-wait' : ''
+                    }`}
                     title="Quickly pause or activate all ad campaigns in the list"
                   >
-                    {activeCount > 0 ? 'Pause All Banners' : 'Activate All Banners'}
+                    {isTogglingAll ? 'Updating All Campaigns...' : activeCount > 0 ? 'Pause All Banners' : 'Activate All Banners'}
                   </button>
                 </div>
               </div>

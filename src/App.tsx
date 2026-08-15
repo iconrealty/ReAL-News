@@ -160,25 +160,24 @@ export function App() {
     };
   }, []);
 
-  const handleToggleMonetization = (enabled: boolean) => {
+  const handleToggleMonetization = async (enabled: boolean) => {
     setIsMonetizationEnabled(enabled);
 
-    fetch('/api/admin/monetization-toggle', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ enabled })
-    })
-    .then(res => res.json())
-    .then(data => {
+    try {
+      const res = await fetch('/api/admin/monetization-toggle', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ enabled })
+      });
+      const data = await res.json();
       if (data.success) {
         showToast(enabled ? 'Monetization Manager ENABLED - Banners are live on all devices!' : 'Monetization Manager TURNED OFF - All ad banners hidden on all devices!');
         fetchAds();
       }
-    })
-    .catch(err => {
+    } catch (err) {
       console.warn('Monetization toggle sync failed:', err);
       showToast(enabled ? 'Monetization Manager ENABLED' : 'Monetization Manager TURNED OFF');
-    });
+    }
   };
 
   // Fetch live FRED market stats on mount so header, mortgage calculator & trends share exact same rates

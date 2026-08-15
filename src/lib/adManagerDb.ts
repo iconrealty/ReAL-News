@@ -83,22 +83,19 @@ export async function getAdsFromDb(): Promise<AdBanner[]> {
 
     if (ads.length > 0) {
       memoryAdsStore = ads;
-    } else if (memoryAdsStore.length === 0 && !isInitialSeedingDone) {
-      // Seed default initial ads only on the very first empty initialization
-      isInitialSeedingDone = true;
-      console.log("[Firebase Ads] Seeding initial ad banners into Firestore database...");
-      const seedPromises = INITIAL_ADS.map((ad) => {
-        const docRef = doc(db, "ads", ad.id);
-        return setDoc(docRef, {
-          ...ad,
-          createdAtMs: ad.createdAtMs || Date.now(),
-          updatedAt: new Date().toISOString()
-        });
-      });
-      await Promise.all(seedPromises);
-      memoryAdsStore = [...INITIAL_ADS];
     } else {
-      memoryAdsStore = ads;
+      if (memoryAdsStore.length === 0) {
+        memoryAdsStore = [...INITIAL_ADS];
+        // Seed to Firestore in background
+        INITIAL_ADS.forEach((ad) => {
+          const docRef = doc(db, "ads", ad.id);
+          setDoc(docRef, {
+            ...ad,
+            createdAtMs: ad.createdAtMs || Date.now(),
+            updatedAt: new Date().toISOString()
+          }).catch(() => {});
+        });
+      }
     }
 
     return memoryAdsStore.sort((a, b) => {
@@ -108,6 +105,9 @@ export async function getAdsFromDb(): Promise<AdBanner[]> {
     });
   } catch (error) {
     console.error("[Firebase Ads] Error fetching ads from Firestore, using memoryStore fallback:", error);
+    if (memoryAdsStore.length === 0) {
+      memoryAdsStore = [...INITIAL_ADS];
+    }
     return memoryAdsStore.sort((a, b) => {
       const timeA = new Date(a.updatedAt || a.createdAtMs || 0).getTime();
       const timeB = new Date(b.updatedAt || b.createdAtMs || 0).getTime();
