@@ -1344,7 +1344,7 @@ app.get("/api/monetization-status", async (req, res) => {
 });
 
 // Toggle monetization engine status (Admin route)
-app.post("/api/admin/monetization-toggle", express.json(), async (req, res) => {
+app.post("/api/admin/monetization-toggle", async (req, res) => {
   try {
     const { enabled } = req.body;
     if (typeof enabled === 'boolean') {
@@ -1401,7 +1401,7 @@ app.get("/api/ads", async (req, res) => {
 });
 
 // Record ad impression
-app.post("/api/ads/impression", express.json(), async (req, res) => {
+app.post("/api/ads/impression", async (req, res) => {
   try {
     const { id } = req.body;
     if (id) {
@@ -1414,7 +1414,7 @@ app.post("/api/ads/impression", express.json(), async (req, res) => {
 });
 
 // Record ad click
-app.post("/api/ads/click", express.json(), async (req, res) => {
+app.post("/api/ads/click", async (req, res) => {
   try {
     const { id } = req.body;
     if (id) {
@@ -1427,7 +1427,7 @@ app.post("/api/ads/click", express.json(), async (req, res) => {
 });
 
 // Create or update ad banner (Admin Manager route)
-app.post("/api/admin/ads", express.json(), async (req, res) => {
+app.post("/api/admin/ads", async (req, res) => {
   try {
     const adData = req.body;
     if (!adData || !adData.title || !adData.advertiserName) {

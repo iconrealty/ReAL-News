@@ -71,7 +71,7 @@ export function App() {
   const [isSavedDrawerOpen, setIsSavedDrawerOpen] = useState(false);
   const [isManagerModalOpen, setIsManagerModalOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
-  const [ads, setAds] = useState<AdBanner[]>([]);
+  const [ads, setAds] = useState<AdBanner[]>(INITIAL_ADS);
   const [isMonetizationEnabled, setIsMonetizationEnabled] = useState<boolean>(true);
 
   const [fredStats, setFredStats] = useState<{ 

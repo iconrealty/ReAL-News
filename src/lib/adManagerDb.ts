@@ -185,8 +185,7 @@ export async function saveAdToDb(adData: Partial<AdBanner> & { id?: string }): P
     await setDoc(docRef, completeAd);
     console.log(`[Firebase Ads] Successfully persisted ad "${id}" to Firestore cloud database.`);
   } catch (error) {
-    console.error("[Firebase Ads] Error saving ad to Firestore cloud database:", error);
-    throw error;
+    console.error("[Firebase Ads] Error saving ad to Firestore cloud database, kept in memory store:", error);
   }
 
   return completeAd;

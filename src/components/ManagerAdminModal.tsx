@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { AdBanner, AdCategory, AdPlacement } from '../types';
-import { Upload, Image, Sparkles, Trash2, CheckCircle2, Phone, ExternalLink } from 'lucide-react';
+import { Upload, ImageIcon, Sparkles, Trash2, CheckCircle2, Phone, ExternalLink } from 'lucide-react';
 
 interface ManagerAdminModalProps {
   isOpen: boolean;
@@ -53,7 +53,7 @@ function processUploadedImage(file: File, maxWidth = 1200, maxHeight = 800, qual
 
     const reader = new FileReader();
     reader.onload = (e) => {
-      const img = new Image();
+      const img = new window.Image();
       img.onload = () => {
         const canvas = document.createElement('canvas');
         let width = img.width;
@@ -232,7 +232,7 @@ export function ManagerAdminModal({
       setCurrentAd(prev => ({ ...prev, logoUrl: dataUrl }));
       onShowToast('Partner logo loaded successfully!');
     } catch (err: any) {
-      alert(err?.message || 'Failed to process logo image.');
+      onShowToast(err?.message || 'Failed to process logo image.');
     } finally {
       setUploadingLogo(false);
       if (logoFileInputRef.current) logoFileInputRef.current.value = '';
@@ -248,7 +248,7 @@ export function ManagerAdminModal({
       setCurrentAd(prev => ({ ...prev, imageUrl: dataUrl }));
       onShowToast('Banner photo loaded successfully!');
     } catch (err: any) {
-      alert(err?.message || 'Failed to process photo.');
+      onShowToast(err?.message || 'Failed to process photo.');
     } finally {
       setUploadingImage(false);
       if (imageFileInputRef.current) imageFileInputRef.current.value = '';
@@ -756,7 +756,7 @@ export function ManagerAdminModal({
                   {/* MEDIA UPLOAD SECTION: LOGO, FEATURED PHOTO, BACKGROUND PHOTO */}
                   <div className="bg-white p-5 rounded-2xl border border-slate-200 space-y-5 shadow-2xs">
                     <div className="flex items-center space-x-2 border-b border-slate-100 pb-3">
-                      <Image className="w-4 h-4 text-[#FA2D48]" />
+                      <ImageIcon className="w-4 h-4 text-[#FA2D48]" />
                       <h5 className="font-extrabold text-sm text-slate-900">
                         Visual Assets & Uploads (Logo, Banner Photo & Background)
                       </h5>
