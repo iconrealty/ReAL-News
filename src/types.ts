@@ -74,8 +74,7 @@ export type AdPlacement =
   | 'feed-native' 
   | 'article-spotlight' 
   | 'calculator-sidebar' 
-  | 'market-trends-banner' 
-  | 'sticky-bottom-bar';
+  | 'market-trends-banner';
 
 export interface AdBanner {
   id: string;
@@ -88,6 +87,8 @@ export interface AdBanner {
   ctaText: string;
   ctaUrl: string;
   imageUrl?: string;
+  logoUrl?: string;
+  bgImageUrl?: string;
   sponsorBadge?: string;
   phone?: string;
   status: 'active' | 'paused';

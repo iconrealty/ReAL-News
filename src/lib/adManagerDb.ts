@@ -13,10 +13,11 @@ import { AdBanner } from "../types.js";
 
 // In-memory cache store initialized with default ads to guarantee instant synchronization
 let memoryAdsStore: AdBanner[] = [...INITIAL_ADS];
+let isInitialSeedingDone = false;
 
 /**
- * Retrieves all ad banners from Firestore (or in-memory cache).
- * Automatically seeds default ads if the collection is empty.
+ * Retrieves all ad banners from Firestore database in the cloud.
+ * Automatically seeds default ads ONLY on the very first initialization when database is completely empty.
  */
 export async function getAdsFromDb(): Promise<AdBanner[]> {
   try {
@@ -24,8 +25,9 @@ export async function getAdsFromDb(): Promise<AdBanner[]> {
     const adsRef = collection(db, "ads");
     const snapshot = await getDocs(adsRef);
 
-    if (snapshot.empty) {
-      console.log("[Firebase Ads] Seeding initial ad banners into Firestore...");
+    if (snapshot.empty && !isInitialSeedingDone) {
+      isInitialSeedingDone = true;
+      console.log("[Firebase Ads] Seeding initial ad banners into Firestore database...");
       const seedPromises = INITIAL_ADS.map((ad) => {
         const docRef = doc(db, "ads", ad.id);
         return setDoc(docRef, {
@@ -49,22 +51,11 @@ export async function getAdsFromDb(): Promise<AdBanner[]> {
       });
     }
 
+    isInitialSeedingDone = true;
     const ads: AdBanner[] = [];
     snapshot.forEach((docSnap) => {
       ads.push(docSnap.data() as AdBanner);
     });
-
-    // Check if any default INITIAL_ADS template sponsors are missing from Firestore and auto-merge them
-    const existingIds = new Set(ads.map(a => a.id));
-    const missingInitial = INITIAL_ADS.filter(initAd => !existingIds.has(initAd.id));
-    if (missingInitial.length > 0) {
-      console.log(`[Firebase Ads] Auto-populating ${missingInitial.length} missing sample sponsors...`);
-      for (const initAd of missingInitial) {
-        ads.push(initAd);
-        const docRef = doc(db, "ads", initAd.id);
-        setDoc(docRef, initAd, { merge: true }).catch(err => console.warn("Failed to merge missing sample ad:", err));
-      }
-    }
 
     memoryAdsStore = ads;
     return memoryAdsStore.sort((a, b) => {
@@ -123,7 +114,9 @@ export async function saveAdToDb(adData: Partial<AdBanner> & { id?: string }): P
     subtitle: adData.subtitle || '',
     ctaText: adData.ctaText || 'Learn More',
     ctaUrl: adData.ctaUrl || '#',
-    imageUrl: adData.imageUrl || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=600&q=80',
+    imageUrl: adData.imageUrl || '',
+    logoUrl: adData.logoUrl || '',
+    bgImageUrl: adData.bgImageUrl || '',
     sponsorBadge: adData.sponsorBadge || 'Featured Partner',
     phone: adData.phone || '',
     status: adData.status || 'active',
@@ -142,32 +135,35 @@ export async function saveAdToDb(adData: Partial<AdBanner> & { id?: string }): P
     memoryAdsStore.unshift(completeAd);
   }
 
-  // 2. Persist cleanly to Firestore without merge bugs
+  // 2. Persist cleanly to Firestore cloud database
   try {
     const db = getDb();
     const docRef = doc(db, "ads", id);
     await setDoc(docRef, completeAd);
+    console.log(`[Firebase Ads] Successfully persisted ad "${id}" to Firestore cloud database.`);
   } catch (error) {
-    console.error("[Firebase Ads] Error saving ad to Firestore:", error);
+    console.error("[Firebase Ads] Error saving ad to Firestore cloud database:", error);
+    throw error;
   }
 
   return completeAd;
 }
 
 /**
- * Deletes an ad banner document from Firestore and memory store.
+ * Deletes an ad banner document from Firestore cloud database and memory store.
  */
 export async function deleteAdFromDb(id: string): Promise<boolean> {
   // 1. Instantly purge from memory store
   memoryAdsStore = memoryAdsStore.filter(a => a.id !== id);
 
-  // 2. Delete from Firestore
+  // 2. Delete from Firestore cloud database
   try {
     const db = getDb();
     const docRef = doc(db, "ads", id);
     await deleteDoc(docRef);
+    console.log(`[Firebase Ads] Successfully deleted ad "${id}" from Firestore cloud database.`);
   } catch (error) {
-    console.error(`[Firebase Ads] Error deleting ad ${id} from Firestore:`, error);
+    console.warn(`[Firebase Ads] Deleted "${id}" from memory, Firestore deletion note:`, error);
   }
 
   return true;

@@ -1128,24 +1128,22 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
               </div>
             </div>
 
-            {/* Featured Lender & Escrow Partner Banner */}
-            {ads && ads.length > 0 && (
-              <div className="mt-6">
-                <AdBannerRenderer
-                  ads={ads}
-                  placement="calculator-sidebar"
-                  cityName={currentCity?.name}
-                />
-              </div>
-            )}
-
           </div>
-
-
 
         </div>
 
       </div>
+
+      {/* Featured Lender & Escrow Partner Banner (Under the Calculator) */}
+      {ads && ads.length > 0 && (
+        <div className="pt-2">
+          <AdBannerRenderer
+            ads={ads}
+            placement="calculator-sidebar"
+            cityName={currentCity?.name}
+          />
+        </div>
+      )}
 
     </div>
   );

@@ -276,32 +276,43 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
 
       {/* Main Data Tabs Bar */}
       {showMainTabs && (
-        <div className="bg-white border border-slate-200/90 rounded-2xl p-2 shadow-xs">
-          <div className="flex items-center space-x-1 overflow-x-auto scrollbar-none">
-            {[
-              { id: 'summary', label: 'Orange County Overview' },
-              { id: 'price-range', label: 'Price Range Analysis' },
-            ].map((tab) => {
-              const isActive = activeTab === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => {
-                    setActiveTab(tab.id as ReportTab);
-                    setSelectedCity(null);
-                  }}
-                  className={`px-4 py-3 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all cursor-pointer border-0 ${
-                    isActive
-                      ? 'bg-[#FA2D48] text-white shadow-xs outline-none ring-0'
-                      : 'text-slate-900 hover:bg-slate-100 hover:text-black font-bold'
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              );
-            })}
+        <>
+          <div className="bg-white border border-slate-200/90 rounded-2xl p-2 shadow-xs">
+            <div className="flex items-center space-x-1 overflow-x-auto scrollbar-none">
+              {[
+                { id: 'summary', label: 'Orange County Overview' },
+                { id: 'price-range', label: 'Price Range Analysis' },
+              ].map((tab) => {
+                const isActive = activeTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => {
+                      setActiveTab(tab.id as ReportTab);
+                      setSelectedCity(null);
+                    }}
+                    className={`px-4 py-3 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all cursor-pointer border-0 ${
+                      isActive
+                        ? 'bg-[#FA2D48] text-white shadow-xs outline-none ring-0'
+                        : 'text-slate-900 hover:bg-slate-100 hover:text-black font-bold'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                );
+              })}
+            </div>
           </div>
-        </div>
+
+          {/* Banner Ad Displayed After Market Tabs */}
+          {ads && ads.length > 0 && (
+            <AdBannerRenderer
+              placement="header-banner"
+              ads={ads}
+              cityName={selectedCity?.name || currentCityName || 'All'}
+            />
+          )}
+        </>
       )}
 
       {/* City Dropdown & Region Filters Bar (Optional) */}

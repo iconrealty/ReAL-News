@@ -413,14 +413,6 @@ export function App() {
       {/* Main Layout Content */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-3.5 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-6 sm:space-y-10 pb-28 sm:pb-12">
         
-        {/* Top Header Banner Ad */}
-        <AdBannerRenderer
-          placement="header-banner"
-          ads={ads}
-          cityName={currentCity.name}
-          onOpenManager={() => setIsManagerModalOpen(true)}
-        />
-
         {/* Category Views */}
         {activeCategory === 'mortgage-calculator' ? (
           <MortgageCalculator
@@ -491,6 +483,14 @@ export function App() {
               showTopHeader={false}
               showMainTabs={false}
               showFilterBar={false}
+            />
+
+            {/* Main Partner Banner Ad - Displayed Right After Market Trends / Data Section */}
+            <AdBannerRenderer
+              placement="header-banner"
+              ads={ads}
+              cityName={currentCity.name}
+              onOpenManager={() => setIsManagerModalOpen(true)}
             />
 
             {/* Section 1: Real Estate & Housing Market */}
@@ -604,13 +604,6 @@ export function App() {
         onShowToast={showToast}
         isMonetizationEnabled={isMonetizationEnabled}
         onToggleMonetization={handleToggleMonetization}
-      />
-
-      {/* Sticky Bottom Bar Ad Banner */}
-      <AdBannerRenderer
-        placement="sticky-bottom-bar"
-        ads={ads}
-        cityName={currentCity.name}
       />
 
       {/* Mobile Bottom Navigation Bar */}

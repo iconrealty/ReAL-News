@@ -105,7 +105,7 @@ export const INITIAL_ADS: AdBanner[] = [
     id: 'ad-insurance-1',
     advertiserName: 'California Premier Home Insurance',
     category: 'insurance',
-    placement: 'sticky-bottom-bar',
+    placement: 'feed-native',
     targetCity: 'All',
     title: 'Save Up to 25% on Homeowners & Brush Risk Insurance',
     subtitle: 'Instant quotes for California homeowners, high-value estates & rental properties.',

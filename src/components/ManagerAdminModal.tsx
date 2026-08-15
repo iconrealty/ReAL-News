@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { AdBanner, AdCategory, AdPlacement } from '../types';
+import { Upload, Image, Sparkles, Trash2, CheckCircle2, Phone, ExternalLink } from 'lucide-react';
 
 interface ManagerAdminModalProps {
   isOpen: boolean;
@@ -12,13 +13,77 @@ interface ManagerAdminModalProps {
 }
 
 const PRESET_IMAGES = [
-  { label: 'Escrow & Title', url: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=600&q=80' },
-  { label: 'Mortgage Lender', url: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=600&q=80' },
-  { label: 'Contractor & ADU', url: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=600&q=80' },
-  { label: 'Realtor & Luxury', url: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=600&q=80' },
-  { label: 'Insurance & Legal', url: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=600&q=80' },
-  { label: 'Office & Finance', url: 'https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=600&q=80' }
+  { label: 'Escrow & Title', url: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=800&q=80' },
+  { label: 'Mortgage Lender', url: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=800&q=80' },
+  { label: 'Contractor & ADU', url: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=800&q=80' },
+  { label: 'Realtor & Luxury', url: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80' },
+  { label: 'Insurance & Legal', url: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80' },
+  { label: 'Office & Finance', url: 'https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=800&q=80' }
 ];
+
+const PRESET_LOGOS = [
+  { label: 'Badge Shield', url: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=200&q=80' },
+  { label: 'Finance Crest', url: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=200&q=80' },
+  { label: 'Builder Mark', url: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=200&q=80' },
+  { label: 'Luxury Brand', url: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=200&q=80' }
+];
+
+const PRESET_BACKGROUNDS = [
+  { label: 'None (Clean White)', url: '' },
+  { label: 'Luxury Villa', url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80' },
+  { label: 'Ocean Coast', url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80' },
+  { label: 'Modern Office', url: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1200&q=80' },
+  { label: 'Warm Interior', url: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1200&q=80' }
+];
+
+// Helper to compress and convert uploaded image files to high-performance base64 data URLs
+function processUploadedImage(file: File, maxWidth = 1200, maxHeight = 800, quality = 0.85): Promise<string> {
+  return new Promise((resolve, reject) => {
+    if (!file.type.startsWith('image/')) {
+      return reject(new Error('Please select a valid image file (.png, .jpg, .webp, .svg)'));
+    }
+
+    if (file.type === 'image/svg+xml') {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxWidth || height > maxHeight) {
+          const ratio = Math.min(maxWidth / width, maxHeight / height);
+          width = Math.round(width * ratio);
+          height = Math.round(height * ratio);
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          return resolve(e.target?.result as string);
+        }
+
+        ctx.drawImage(img, 0, 0, width, height);
+        const outputMime = file.type === 'image/png' ? 'image/png' : 'image/jpeg';
+        const dataUrl = canvas.toDataURL(outputMime, quality);
+        resolve(dataUrl);
+      };
+      img.onerror = () => resolve(e.target?.result as string);
+      img.src = e.target?.result as string;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
 
 export function ManagerAdminModal({ 
   isOpen, 
@@ -42,24 +107,39 @@ export function ManagerAdminModal({
   const [placementFilter, setPlacementFilter] = useState<string>('all');
   const [cityFilter, setCityFilter] = useState<string>('all');
 
-  const handleResetSampleSponsors = async () => {
-    if (!confirm('Would you like to load all sample sponsors across locations and themes into the portal?')) return;
+  const logoFileInputRef = useRef<HTMLInputElement>(null);
+  const imageFileInputRef = useRef<HTMLInputElement>(null);
+  const bgFileInputRef = useRef<HTMLInputElement>(null);
+  const [uploadingLogo, setUploadingLogo] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [uploadingBg, setUploadingBg] = useState(false);
+
+  // Custom UI Confirmation States (replaces blocked window.confirm)
+  const [adToDelete, setAdToDelete] = useState<{ id: string; name: string } | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [isResetting, setIsResetting] = useState(false);
+
+  const confirmExecuteReset = async () => {
+    setIsResetting(true);
     try {
       const res = await fetch('/api/admin/ads/reset', { method: 'POST' });
       const data = await res.json();
       if (data.success) {
         onShowToast('Loaded sample sponsor catalog across all locations and themes!');
+        setShowResetConfirm(false);
         onRefreshAds();
       }
     } catch (e) {
-      alert('Failed to load sample sponsors.');
+      onShowToast('Failed to load sample sponsors.');
+    } finally {
+      setIsResetting(false);
     }
   };
 
   const handleToggleAllCampaignsStatus = async () => {
     const activeAdsCount = ads.filter(a => a.status === 'active').length;
     const nextStatus = activeAdsCount > 0 ? 'paused' : 'active';
-    if (!confirm(`Are you sure you want to set ALL ${ads.length} campaigns to "${nextStatus.toUpperCase()}"?`)) return;
 
     try {
       const updatePromises = ads.map(ad => 
@@ -70,10 +150,10 @@ export function ManagerAdminModal({
         })
       );
       await Promise.all(updatePromises);
-      onShowToast(`Set all campaigns to ${nextStatus.toUpperCase()}`);
+      onShowToast(`Set all ${ads.length} campaigns to ${nextStatus.toUpperCase()}`);
       onRefreshAds();
     } catch (e) {
-      alert('Failed to update all campaigns status.');
+      onShowToast('Failed to update all campaigns status.');
     }
   };
   
@@ -89,6 +169,8 @@ export function ManagerAdminModal({
     ctaUrl: '',
     phone: '',
     imageUrl: '',
+    logoUrl: '',
+    bgImageUrl: '',
     sponsorBadge: '',
     status: 'active',
     priority: 'featured'
@@ -120,6 +202,8 @@ export function ManagerAdminModal({
       ctaUrl: '',
       phone: '',
       imageUrl: PRESET_IMAGES[0].url,
+      logoUrl: '',
+      bgImageUrl: '',
       sponsorBadge: 'Official Partner',
       status: 'active',
       priority: 'featured'
@@ -130,6 +214,55 @@ export function ManagerAdminModal({
   const handleEdit = (ad: AdBanner) => {
     setCurrentAd({ ...ad });
     setIsEditing(true);
+  };
+
+  // Upload handlers
+  const handleLogoFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingLogo(true);
+    try {
+      const dataUrl = await processUploadedImage(file, 400, 400, 0.9);
+      setCurrentAd(prev => ({ ...prev, logoUrl: dataUrl }));
+      onShowToast('Partner logo loaded successfully!');
+    } catch (err: any) {
+      alert(err?.message || 'Failed to process logo image.');
+    } finally {
+      setUploadingLogo(false);
+      if (logoFileInputRef.current) logoFileInputRef.current.value = '';
+    }
+  };
+
+  const handleImageFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingImage(true);
+    try {
+      const dataUrl = await processUploadedImage(file, 1200, 800, 0.85);
+      setCurrentAd(prev => ({ ...prev, imageUrl: dataUrl }));
+      onShowToast('Banner photo loaded successfully!');
+    } catch (err: any) {
+      alert(err?.message || 'Failed to process photo.');
+    } finally {
+      setUploadingImage(false);
+      if (imageFileInputRef.current) imageFileInputRef.current.value = '';
+    }
+  };
+
+  const handleBgFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingBg(true);
+    try {
+      const dataUrl = await processUploadedImage(file, 1400, 800, 0.82);
+      setCurrentAd(prev => ({ ...prev, bgImageUrl: dataUrl }));
+      onShowToast('Background photo loaded successfully!');
+    } catch (err: any) {
+      alert(err?.message || 'Failed to process background photo.');
+    } finally {
+      setUploadingBg(false);
+      if (bgFileInputRef.current) bgFileInputRef.current.value = '';
+    }
   };
 
   const handleSaveAd = async (e: React.FormEvent) => {
@@ -189,18 +322,28 @@ export function ManagerAdminModal({
     }
   };
 
-  const handleDeleteAd = async (id: string, name: string) => {
-    if (!confirm(`Are you sure you want to delete campaign "${name}"?`)) return;
+  const confirmExecuteDelete = async () => {
+    if (!adToDelete) return;
+    setIsDeleting(true);
     try {
-      const res = await fetch(`/api/admin/ads/${id}`, { method: 'DELETE' });
+      const res = await fetch(`/api/admin/ads/${adToDelete.id}`, { method: 'DELETE' });
       const data = await res.json();
       if (data.success) {
-        onShowToast(`Deleted campaign "${name}"`);
+        onShowToast(`Deleted campaign "${adToDelete.name}"`);
+        setAdToDelete(null);
         onRefreshAds();
+      } else {
+        onShowToast(data.error || 'Failed to delete campaign');
       }
     } catch (e) {
-      alert('Delete failed');
+      onShowToast('Network error while deleting campaign');
+    } finally {
+      setIsDeleting(false);
     }
+  };
+
+  const handleDeleteAd = (id: string, name: string) => {
+    setAdToDelete({ id, name });
   };
 
   // Filtered ads list
@@ -230,32 +373,24 @@ export function ManagerAdminModal({
       <div className="relative w-full max-w-5xl bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden my-auto flex flex-col max-h-[92vh]">
         
         {/* Header Bar */}
-        <div className="bg-slate-900 text-white px-6 py-4 flex items-center justify-between border-b border-slate-800 shrink-0">
+        <div className="bg-white text-slate-900 px-6 py-4 flex items-center justify-between border-b border-slate-200 shrink-0">
           <div>
-            <div className="flex items-center space-x-2">
-              <h3 className="font-extrabold text-lg tracking-tight">
-                Settings
-              </h3>
-              <span className="text-[10px] bg-emerald-500/20 text-emerald-400 font-black px-2 py-0.5 rounded-full border border-emerald-500/30">
-                ACTIVE
-              </span>
-            </div>
-            <p className="text-xs text-slate-400">
-              System configuration and preferences
-            </p>
+            <h3 className="font-extrabold text-lg tracking-tight text-slate-900">
+              Settings
+            </h3>
           </div>
 
           <div className="flex items-center space-x-2">
             <button
               onClick={onRefreshAds}
-              className="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 transition-colors cursor-pointer"
+              className="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 transition-colors cursor-pointer border border-slate-200"
               title="Refresh Data"
             >
               Refresh
             </button>
             <button
               onClick={onClose}
-              className="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 transition-colors cursor-pointer"
+              className="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 transition-colors cursor-pointer border border-slate-200"
               title="Close"
             >
               Close
@@ -268,9 +403,6 @@ export function ManagerAdminModal({
           <div className="p-8 sm:p-12 text-center my-auto max-w-md mx-auto space-y-6">
             <div>
               <h4 className="text-2xl font-black text-slate-900">Passcode Required</h4>
-              <p className="text-xs text-slate-500 mt-1">
-                Enter passcode to access application settings.
-              </p>
             </div>
 
             <form onSubmit={handleLogin} className="space-y-4">
@@ -306,33 +438,24 @@ export function ManagerAdminModal({
             {/* Master Monetization Toggle Banner */}
             <div className={`p-5 rounded-3xl border transition-all ${
               isMonetizationEnabled 
-                ? 'bg-gradient-to-r from-emerald-950 via-slate-900 to-slate-950 border-emerald-500/40 text-white shadow-md' 
-                : 'bg-gradient-to-r from-rose-950 via-slate-900 to-slate-950 border-rose-500/40 text-white shadow-md'
+                ? 'bg-emerald-50/70 border-emerald-200 text-slate-900 shadow-2xs' 
+                : 'bg-rose-50/70 border-rose-200 text-slate-900 shadow-2xs'
             }`}>
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="space-y-1">
                   <div className="flex items-center space-x-2">
-                    <div className={`w-3 h-3 rounded-full animate-pulse ${isMonetizationEnabled ? 'bg-emerald-400' : 'bg-rose-500'}`} />
-                    <span className="text-xs font-black uppercase tracking-widest text-slate-300">
-                      Global Monetization Engine Status
+                    <div className={`w-3 h-3 rounded-full animate-pulse ${isMonetizationEnabled ? 'bg-emerald-500' : 'bg-rose-500'}`} />
+                    <span className="text-sm font-black uppercase tracking-wider text-slate-900">
+                      Global Monetization Engine
                     </span>
                     <span className={`text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase border ${
                       isMonetizationEnabled 
-                        ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' 
-                        : 'bg-rose-500/20 text-rose-300 border-rose-500/40'
+                        ? 'bg-emerald-100 text-emerald-700 border-emerald-300' 
+                        : 'bg-rose-100 text-rose-700 border-rose-300'
                     }`}>
                       {isMonetizationEnabled ? 'ENABLED (ON)' : 'TURNED OFF (DISABLED)'}
                     </span>
                   </div>
-                  <h4 className="text-xl font-black tracking-tight text-white">
-                    {isMonetizationEnabled ? 'Monetization Manager is Live & Serving Ads' : 'Monetization Manager is Turned OFF'}
-                  </h4>
-                  <p className="text-xs text-slate-300 max-w-xl">
-                    {isMonetizationEnabled 
-                      ? 'Partner ad banners, header tickers, native feed cards, and sticky bars are actively rendering for visitors across all 34 cities.'
-                      : 'All sponsor ad banners, header promos, and sticky bottom bars are completely OFF and hidden from all site visitors.'
-                    }
-                  </p>
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2.5 shrink-0">
@@ -343,19 +466,19 @@ export function ManagerAdminModal({
                         onToggleMonetization(!isMonetizationEnabled);
                       }
                     }}
-                    className={`px-5 py-3 rounded-2xl font-black text-xs transition-all cursor-pointer ${
+                    className={`px-5 py-2.5 rounded-2xl font-black text-xs transition-all cursor-pointer shadow-xs ${
                       isMonetizationEnabled
-                        ? 'bg-rose-600 hover:bg-rose-700 text-white border border-rose-500'
-                        : 'bg-emerald-500 hover:bg-emerald-600 text-white border border-emerald-400'
+                        ? 'bg-rose-600 hover:bg-rose-700 text-white'
+                        : 'bg-emerald-600 hover:bg-emerald-700 text-white'
                     }`}
                   >
-                    {isMonetizationEnabled ? 'Turn OFF Monetization Manager' : 'Turn ON Monetization Manager'}
+                    {isMonetizationEnabled ? 'Turn OFF Monetization' : 'Turn ON Monetization'}
                   </button>
 
                   <button
                     type="button"
                     onClick={handleToggleAllCampaignsStatus}
-                    className="px-4 py-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-bold text-xs transition-all cursor-pointer"
+                    className="px-4 py-2.5 rounded-2xl bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 font-bold text-xs transition-all cursor-pointer shadow-xs"
                     title="Quickly pause or activate all ad campaigns in the list"
                   >
                     {activeCount > 0 ? 'Pause All Banners' : 'Activate All Banners'}
@@ -393,11 +516,11 @@ export function ManagerAdminModal({
                 </p>
               </div>
 
-              <div className="bg-slate-900 text-white border border-slate-800 rounded-2xl p-4 flex flex-col justify-between shadow-xs">
-                <span className="text-xs font-extrabold text-amber-400">
+              <div className="bg-slate-50 border border-slate-200/90 rounded-2xl p-4 flex flex-col justify-between">
+                <span className="text-xs font-bold text-slate-500">
                   Est. Monthly Revenue
                 </span>
-                <p className="text-2xl font-black text-white mt-2">
+                <p className="text-2xl font-black text-slate-900 mt-2">
                   ${estimatedRevenue.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                 </p>
               </div>
@@ -417,6 +540,29 @@ export function ManagerAdminModal({
                     Cancel & Back
                   </button>
                 </div>
+
+                {/* Hidden File Inputs for Local Uploads */}
+                <input
+                  type="file"
+                  ref={logoFileInputRef}
+                  onChange={handleLogoFileUpload}
+                  accept="image/png, image/jpeg, image/webp, image/svg+xml"
+                  className="hidden"
+                />
+                <input
+                  type="file"
+                  ref={imageFileInputRef}
+                  onChange={handleImageFileUpload}
+                  accept="image/png, image/jpeg, image/webp, image/svg+xml"
+                  className="hidden"
+                />
+                <input
+                  type="file"
+                  ref={bgFileInputRef}
+                  onChange={handleBgFileUpload}
+                  accept="image/png, image/jpeg, image/webp, image/svg+xml"
+                  className="hidden"
+                />
 
                 <form onSubmit={handleSaveAd} className="space-y-6">
                   
@@ -471,9 +617,8 @@ export function ManagerAdminModal({
                         <option value="header-banner">Header Top Banner (Main Page)</option>
                         <option value="feed-native">News Feed Native Card</option>
                         <option value="article-spotlight">Article Reader Spotlight</option>
-                        <option value="calculator-sidebar">Mortgage Calculator Sidebar</option>
+                        <option value="calculator-sidebar">Mortgage Calculator (Underneath)</option>
                         <option value="market-trends-banner">Market Trends Sponsor Card</option>
-                        <option value="sticky-bottom-bar">Sticky Bottom Bar</option>
                       </select>
                     </div>
                   </div>
@@ -583,38 +728,275 @@ export function ManagerAdminModal({
                     </div>
                   </div>
 
-                  {/* Image URL & Preset Selection */}
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">
-                      Banner Image / Logo URL
-                    </label>
-                    <div className="flex gap-2 mb-2">
-                      <input
-                        type="url"
-                        value={currentAd.imageUrl || ''}
-                        onChange={(e) => setCurrentAd({ ...currentAd, imageUrl: e.target.value })}
-                        placeholder="https://images.unsplash.com/..."
-                        className="flex-1 px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs font-semibold focus:ring-2 focus:ring-[#FA2D48]"
-                      />
+                  {/* MEDIA UPLOAD SECTION: LOGO, FEATURED PHOTO, BACKGROUND PHOTO */}
+                  <div className="bg-white p-5 rounded-2xl border border-slate-200 space-y-5 shadow-2xs">
+                    <div className="flex items-center space-x-2 border-b border-slate-100 pb-3">
+                      <Image className="w-4 h-4 text-[#FA2D48]" />
+                      <h5 className="font-extrabold text-sm text-slate-900">
+                        Visual Assets & Uploads (Logo, Banner Photo & Background)
+                      </h5>
                     </div>
 
-                    {/* Presets */}
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="text-[11px] font-bold text-slate-500">Quick Presets:</span>
-                      {PRESET_IMAGES.map((img, i) => (
+                    {/* 1. PARTNER LOGO UPLOAD & URL */}
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <label className="block text-xs font-bold text-slate-800">
+                          1. Partner Logo / Brand Avatar
+                        </label>
+                        <span className="text-[11px] text-slate-500 font-medium">Square .PNG / .SVG / .JPG</span>
+                      </div>
+
+                      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                         <button
-                          key={i}
                           type="button"
-                          onClick={() => setCurrentAd({ ...currentAd, imageUrl: img.url })}
-                          className={`text-[11px] font-bold px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
-                            currentAd.imageUrl === img.url
-                              ? 'bg-[#FA2D48] text-white'
-                              : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-100'
-                          }`}
+                          onClick={() => logoFileInputRef.current?.click()}
+                          disabled={uploadingLogo}
+                          className="px-4 py-2.5 rounded-xl bg-[#FA2D48] hover:bg-[#E0263E] text-white font-extrabold text-xs flex items-center justify-center space-x-2 transition-all cursor-pointer shadow-xs shrink-0"
                         >
-                          {img.label}
+                          <Upload className="w-3.5 h-3.5" />
+                          <span>{uploadingLogo ? 'Uploading...' : 'Upload Logo File'}</span>
                         </button>
-                      ))}
+
+                        <div className="flex-1 flex gap-2">
+                          <input
+                            type="text"
+                            value={currentAd.logoUrl || ''}
+                            onChange={(e) => setCurrentAd({ ...currentAd, logoUrl: e.target.value })}
+                            placeholder="Or paste Logo URL..."
+                            className="flex-1 px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs font-medium focus:ring-2 focus:ring-[#FA2D48]"
+                          />
+                          {currentAd.logoUrl && (
+                            <button
+                              type="button"
+                              onClick={() => setCurrentAd({ ...currentAd, logoUrl: '' })}
+                              className="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-rose-600 transition-colors cursor-pointer"
+                              title="Clear Logo"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          )}
+                        </div>
+
+                        {currentAd.logoUrl && (
+                          <div className="w-10 h-10 rounded-xl bg-white border border-slate-200 p-1 flex items-center justify-center shrink-0 shadow-2xs">
+                            <img src={currentAd.logoUrl} alt="Logo Preview" className="max-w-full max-h-full object-contain" />
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                        <span className="text-[10px] font-bold text-slate-400">Logo Presets:</span>
+                        {PRESET_LOGOS.map((logo, idx) => (
+                          <button
+                            key={idx}
+                            type="button"
+                            onClick={() => setCurrentAd({ ...currentAd, logoUrl: logo.url })}
+                            className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 cursor-pointer"
+                          >
+                            {logo.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* 2. MAIN / FEATURED PHOTO UPLOAD & URL */}
+                    <div className="space-y-2 pt-2 border-t border-slate-100">
+                      <div className="flex items-center justify-between">
+                        <label className="block text-xs font-bold text-slate-800">
+                          2. Main / Featured Banner Photo
+                        </label>
+                        <span className="text-[11px] text-slate-500 font-medium">Used on Feed cards, Sidebars & Article Reader</span>
+                      </div>
+
+                      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                        <button
+                          type="button"
+                          onClick={() => imageFileInputRef.current?.click()}
+                          disabled={uploadingImage}
+                          className="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-black text-white font-extrabold text-xs flex items-center justify-center space-x-2 transition-all cursor-pointer shadow-xs shrink-0"
+                        >
+                          <Upload className="w-3.5 h-3.5" />
+                          <span>{uploadingImage ? 'Uploading...' : 'Upload Photo File'}</span>
+                        </button>
+
+                        <div className="flex-1 flex gap-2">
+                          <input
+                            type="text"
+                            value={currentAd.imageUrl || ''}
+                            onChange={(e) => setCurrentAd({ ...currentAd, imageUrl: e.target.value })}
+                            placeholder="Or paste Photo URL (Unsplash, CDN)..."
+                            className="flex-1 px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs font-medium focus:ring-2 focus:ring-[#FA2D48]"
+                          />
+                          {currentAd.imageUrl && (
+                            <button
+                              type="button"
+                              onClick={() => setCurrentAd({ ...currentAd, imageUrl: '' })}
+                              className="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-rose-600 transition-colors cursor-pointer"
+                              title="Clear Photo"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          )}
+                        </div>
+
+                        {currentAd.imageUrl && (
+                          <div className="w-10 h-10 rounded-xl overflow-hidden bg-slate-100 border border-slate-200 shrink-0 shadow-2xs">
+                            <img src={currentAd.imageUrl} alt="Photo Preview" className="w-full h-full object-cover" />
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                        <span className="text-[10px] font-bold text-slate-400">Photo Presets:</span>
+                        {PRESET_IMAGES.map((img, i) => (
+                          <button
+                            key={i}
+                            type="button"
+                            onClick={() => setCurrentAd({ ...currentAd, imageUrl: img.url })}
+                            className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 cursor-pointer"
+                          >
+                            {img.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* 3. BACKGROUND PHOTO UPLOAD & URL */}
+                    <div className="space-y-2 pt-2 border-t border-slate-100">
+                      <div className="flex items-center justify-between">
+                        <label className="block text-xs font-bold text-slate-800">
+                          3. Custom Banner Background Photo (Optional)
+                        </label>
+                        <span className="text-[11px] text-slate-500 font-medium">Adds full-bleed imagery behind text with auto-contrast</span>
+                      </div>
+
+                      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                        <button
+                          type="button"
+                          onClick={() => bgFileInputRef.current?.click()}
+                          disabled={uploadingBg}
+                          className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-900 text-white font-extrabold text-xs flex items-center justify-center space-x-2 transition-all cursor-pointer shadow-xs shrink-0"
+                        >
+                          <Upload className="w-3.5 h-3.5" />
+                          <span>{uploadingBg ? 'Uploading...' : 'Upload Background File'}</span>
+                        </button>
+
+                        <div className="flex-1 flex gap-2">
+                          <input
+                            type="text"
+                            value={currentAd.bgImageUrl || ''}
+                            onChange={(e) => setCurrentAd({ ...currentAd, bgImageUrl: e.target.value })}
+                            placeholder="Or paste Background Image URL..."
+                            className="flex-1 px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs font-medium focus:ring-2 focus:ring-[#FA2D48]"
+                          />
+                          {currentAd.bgImageUrl && (
+                            <button
+                              type="button"
+                              onClick={() => setCurrentAd({ ...currentAd, bgImageUrl: '' })}
+                              className="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-rose-600 transition-colors cursor-pointer"
+                              title="Clear Background"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          )}
+                        </div>
+
+                        {currentAd.bgImageUrl && (
+                          <div className="w-10 h-10 rounded-xl overflow-hidden bg-slate-100 border border-slate-200 shrink-0 shadow-2xs">
+                            <img src={currentAd.bgImageUrl} alt="Background Preview" className="w-full h-full object-cover" />
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                        <span className="text-[10px] font-bold text-slate-400">Background Presets:</span>
+                        {PRESET_BACKGROUNDS.map((bg, idx) => (
+                          <button
+                            key={idx}
+                            type="button"
+                            onClick={() => setCurrentAd({ ...currentAd, bgImageUrl: bg.url })}
+                            className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 cursor-pointer"
+                          >
+                            {bg.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                  </div>
+
+                  {/* LIVE BANNER VISUAL PREVIEW */}
+                  <div className="space-y-2">
+                    <div className="flex items-center space-x-2">
+                      <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                      <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                        Live Preview ({currentAd.placement || 'header-banner'})
+                      </span>
+                    </div>
+
+                    <div 
+                      className="p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden transition-all"
+                      style={currentAd.bgImageUrl ? { backgroundImage: `url(${currentAd.bgImageUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' } : { backgroundColor: '#ffffff' }}
+                    >
+                      {currentAd.bgImageUrl && (
+                        <div className="absolute inset-0 bg-white/92 backdrop-blur-[2px] pointer-events-none" />
+                      )}
+
+                      <div className="relative flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                        <div className="flex items-start sm:items-center space-x-3 min-w-0">
+                          {currentAd.logoUrl ? (
+                            <img
+                              src={currentAd.logoUrl}
+                              alt="Logo"
+                              className="w-10 h-10 rounded-xl object-contain bg-white p-1 border border-slate-200 shadow-2xs shrink-0"
+                            />
+                          ) : currentAd.imageUrl ? (
+                            <img
+                              src={currentAd.imageUrl}
+                              alt="Photo"
+                              className="w-10 h-10 rounded-xl object-cover border border-slate-200 shrink-0"
+                            />
+                          ) : null}
+
+                          <div className="min-w-0">
+                            <div className="flex items-center space-x-2 mb-0.5">
+                              <span className="text-[9px] uppercase font-black bg-[#FA2D48] text-white px-2 py-0.5 rounded">
+                                Ad
+                              </span>
+                              <span className="font-extrabold text-xs text-slate-900 truncate">
+                                {currentAd.advertiserName || 'Advertiser Name'}
+                              </span>
+                              <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                                ✓ {currentAd.sponsorBadge || 'Verified Partner'}
+                              </span>
+                            </div>
+                            <h4 className="font-black text-sm text-slate-950 truncate">
+                              {currentAd.title || 'Your Campaign Headline Will Appear Here'}
+                            </h4>
+                            {currentAd.subtitle && (
+                              <p className="text-[11px] text-slate-600 truncate mt-0.5">
+                                {currentAd.subtitle}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="flex items-center space-x-2 shrink-0 self-end sm:self-center">
+                          {currentAd.phone && (
+                            <span className="text-xs font-bold text-slate-700 bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200 flex items-center space-x-1">
+                              <Phone className="w-3 h-3 text-emerald-600" />
+                              <span>{currentAd.phone}</span>
+                            </span>
+                          )}
+                          <button
+                            type="button"
+                            className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-black text-white font-extrabold text-xs flex items-center space-x-1 shadow-xs transition-all"
+                          >
+                            <span>{currentAd.ctaText || 'Learn More'}</span>
+                            <ExternalLink className="w-3 h-3" />
+                          </button>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
@@ -657,9 +1039,10 @@ export function ManagerAdminModal({
                       <button
                         type="submit"
                         disabled={saving}
-                        className="px-6 py-2.5 rounded-xl bg-[#FA2D48] hover:bg-[#E0263E] text-white font-extrabold text-xs shadow-md transition-all cursor-pointer"
+                        className="px-6 py-2.5 rounded-xl bg-[#FA2D48] hover:bg-[#E0263E] text-white font-extrabold text-xs shadow-md transition-all cursor-pointer flex items-center space-x-1.5"
                       >
-                        {saving ? 'Saving...' : 'Save & Publish Banner'}
+                        <CheckCircle2 className="w-4 h-4" />
+                        <span>{saving ? 'Saving to Cloud...' : 'Save & Publish Banner'}</span>
                       </button>
                     </div>
                   </div>
@@ -726,11 +1109,10 @@ export function ManagerAdminModal({
                       <option value="article-spotlight">Article Reader</option>
                       <option value="calculator-sidebar">Calculator Sidebar</option>
                       <option value="market-trends-banner">Market Trends</option>
-                      <option value="sticky-bottom-bar">Sticky Bottom Bar</option>
                     </select>
 
                     <button
-                      onClick={handleResetSampleSponsors}
+                      onClick={() => setShowResetConfirm(true)}
                       className="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs transition-all cursor-pointer shrink-0 border border-slate-200"
                       title="Load Sample Sponsors for all locations & themes"
                     >
@@ -876,6 +1258,90 @@ export function ManagerAdminModal({
             </span>
           </div>
         </div>
+
+        {/* IN-MODAL DELETE CONFIRMATION DIALOG */}
+        {adToDelete && (
+          <div className="fixed inset-0 z-70 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fade-in">
+            <div className="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl border border-slate-200 text-center space-y-4">
+              <div className="w-12 h-12 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center mx-auto">
+                <Trash2 className="w-6 h-6" />
+              </div>
+              <div className="space-y-1">
+                <h4 className="text-base font-black text-slate-900">Delete Campaign?</h4>
+                <p className="text-xs text-slate-600">
+                  Are you sure you want to permanently delete <span className="font-bold text-slate-900">"{adToDelete.name}"</span>?
+                </p>
+                <p className="text-[11px] text-slate-400">
+                  This campaign will be removed immediately from all active banner rotations.
+                </p>
+              </div>
+              <div className="grid grid-cols-2 gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setAdToDelete(null)}
+                  disabled={isDeleting}
+                  className="py-2.5 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition-all cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={confirmExecuteDelete}
+                  disabled={isDeleting}
+                  className="py-2.5 px-4 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-black transition-all cursor-pointer flex items-center justify-center space-x-1.5 shadow-xs"
+                >
+                  {isDeleting ? (
+                    <span>Deleting...</span>
+                  ) : (
+                    <>
+                      <Trash2 className="w-3.5 h-3.5" />
+                      <span>Delete</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* IN-MODAL RESET SAMPLE SPONSORS CONFIRMATION */}
+        {showResetConfirm && (
+          <div className="fixed inset-0 z-70 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fade-in">
+            <div className="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl border border-slate-200 text-center space-y-4">
+              <div className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center mx-auto">
+                <Sparkles className="w-6 h-6" />
+              </div>
+              <div className="space-y-1">
+                <h4 className="text-base font-black text-slate-900">Load Sample Sponsors?</h4>
+                <p className="text-xs text-slate-600">
+                  Would you like to populate the catalog with standard sample sponsors across all Orange County locations and industry themes?
+                </p>
+              </div>
+              <div className="grid grid-cols-2 gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowResetConfirm(false)}
+                  disabled={isResetting}
+                  className="py-2.5 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition-all cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={confirmExecuteReset}
+                  disabled={isResetting}
+                  className="py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-black text-white text-xs font-black transition-all cursor-pointer flex items-center justify-center space-x-1.5 shadow-xs"
+                >
+                  {isResetting ? (
+                    <span>Loading...</span>
+                  ) : (
+                    <span>Load Catalog</span>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
       </div>
     </div>
