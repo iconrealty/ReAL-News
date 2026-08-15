@@ -12,8 +12,8 @@ import { getDb } from "./firebaseDb.js";
 import { INITIAL_ADS } from "../data/mockAds.js";
 import { AdBanner } from "../types.js";
 
-// In-memory cache store initialized with default ads to guarantee instant synchronization
-let memoryAdsStore: AdBanner[] = [...INITIAL_ADS];
+// In-memory cache store initialized cleanly to guarantee pure Firestore cloud synchronization
+let memoryAdsStore: AdBanner[] = [];
 let isInitialSeedingDone = false;
 let memoryMonetizationEnabled: boolean = true;
 
@@ -68,7 +68,7 @@ export async function setMonetizationStatusInDb(enabled: boolean): Promise<boole
 
 /**
  * Retrieves all ad banners from Firestore database in the cloud.
- * Automatically seeds default ads ONLY on the very first initialization when database is completely empty.
+ * The principal administrator's cloud database is the single authoritative source of truth.
  */
 export async function getAdsFromDb(): Promise<AdBanner[]> {
   try {
@@ -76,7 +76,15 @@ export async function getAdsFromDb(): Promise<AdBanner[]> {
     const adsRef = collection(db, "ads");
     const snapshot = await getDocs(adsRef);
 
-    if (snapshot.empty && !isInitialSeedingDone) {
+    const ads: AdBanner[] = [];
+    snapshot.forEach((docSnap) => {
+      ads.push(docSnap.data() as AdBanner);
+    });
+
+    if (ads.length > 0) {
+      memoryAdsStore = ads;
+    } else if (memoryAdsStore.length === 0 && !isInitialSeedingDone) {
+      // Seed default initial ads only on the very first empty initialization
       isInitialSeedingDone = true;
       console.log("[Firebase Ads] Seeding initial ad banners into Firestore database...");
       const seedPromises = INITIAL_ADS.map((ad) => {
@@ -88,27 +96,11 @@ export async function getAdsFromDb(): Promise<AdBanner[]> {
         });
       });
       await Promise.all(seedPromises);
-
-      const seededSnapshot = await getDocs(adsRef);
-      const seededAds: AdBanner[] = [];
-      seededSnapshot.forEach(docSnap => seededAds.push(docSnap.data() as AdBanner));
-      if (seededAds.length > 0) {
-        memoryAdsStore = seededAds;
-      }
-      return memoryAdsStore.sort((a, b) => {
-        const timeA = new Date(a.updatedAt || a.createdAtMs || 0).getTime();
-        const timeB = new Date(b.updatedAt || b.createdAtMs || 0).getTime();
-        return timeB - timeA;
-      });
+      memoryAdsStore = [...INITIAL_ADS];
+    } else {
+      memoryAdsStore = ads;
     }
 
-    isInitialSeedingDone = true;
-    const ads: AdBanner[] = [];
-    snapshot.forEach((docSnap) => {
-      ads.push(docSnap.data() as AdBanner);
-    });
-
-    memoryAdsStore = ads;
     return memoryAdsStore.sort((a, b) => {
       const timeA = new Date(a.updatedAt || a.createdAtMs || 0).getTime();
       const timeB = new Date(b.updatedAt || b.createdAtMs || 0).getTime();
