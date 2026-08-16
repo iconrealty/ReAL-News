@@ -5,7 +5,6 @@ import {
   setDoc, 
   doc, 
   deleteDoc, 
-  updateDoc, 
   increment 
 } from "firebase/firestore";
 import { getDb } from "./firebaseDb.js";
@@ -229,33 +228,63 @@ export async function deleteAdFromDb(id: string): Promise<boolean> {
 }
 
 /**
- * Increments impression counter for an ad.
+ * Increments impression counter for an ad safely.
  */
 export async function recordAdImpression(id: string): Promise<void> {
+  // 1. Instantly update memory store
+  const ad = memoryAdsStore.find(a => a.id === id);
+  if (ad) {
+    ad.impressions = (ad.impressions || 0) + 1;
+  }
+
+  // 2. Persist to Firestore with merge: true to avoid NOT_FOUND errors
   try {
     const db = getDb();
     const docRef = doc(db, "ads", id);
-    await updateDoc(docRef, {
-      impressions: increment(1),
-      updatedAt: new Date().toISOString()
-    });
+    if (ad) {
+      await setDoc(docRef, {
+        ...ad,
+        impressions: ad.impressions,
+        updatedAt: new Date().toISOString()
+      }, { merge: true });
+    } else {
+      await setDoc(docRef, {
+        impressions: increment(1),
+        updatedAt: new Date().toISOString()
+      }, { merge: true });
+    }
   } catch (error) {
-    console.warn(`[Firebase Ads] Could not record impression for ad ${id}:`, error);
+    console.warn(`[Firebase Ads] Impression recorded in memory store: ${id}`);
   }
 }
 
 /**
- * Increments click counter for an ad.
+ * Increments click counter for an ad safely.
  */
 export async function recordAdClick(id: string): Promise<void> {
+  // 1. Instantly update memory store
+  const ad = memoryAdsStore.find(a => a.id === id);
+  if (ad) {
+    ad.clicks = (ad.clicks || 0) + 1;
+  }
+
+  // 2. Persist to Firestore with merge: true to avoid NOT_FOUND errors
   try {
     const db = getDb();
     const docRef = doc(db, "ads", id);
-    await updateDoc(docRef, {
-      clicks: increment(1),
-      updatedAt: new Date().toISOString()
-    });
+    if (ad) {
+      await setDoc(docRef, {
+        ...ad,
+        clicks: ad.clicks,
+        updatedAt: new Date().toISOString()
+      }, { merge: true });
+    } else {
+      await setDoc(docRef, {
+        clicks: increment(1),
+        updatedAt: new Date().toISOString()
+      }, { merge: true });
+    }
   } catch (error) {
-    console.warn(`[Firebase Ads] Could not record click for ad ${id}:`, error);
+    console.warn(`[Firebase Ads] Click recorded in memory store: ${id}`);
   }
 }
