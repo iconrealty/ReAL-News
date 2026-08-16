@@ -426,8 +426,17 @@ export function App() {
       />
 
       {/* Main Layout Content */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-3.5 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-6 sm:space-y-10 pb-28 sm:pb-12">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-3.5 sm:px-6 lg:px-8 py-3 sm:py-6 space-y-6 sm:space-y-8 pb-28 sm:pb-12">
         
+        {/* Top Leaderboard Spread Banner - Prominently Displayed on ALL Devices (Mobile, Tablet, Desktop) */}
+        <AdBannerRenderer
+          placement="header-banner"
+          ads={ads}
+          cityName={currentCity.name}
+          monetizationEnabled={isMonetizationEnabled}
+          onOpenManager={() => setIsManagerModalOpen(true)}
+        />
+
         {/* Category Views */}
         {activeCategory === 'mortgage-calculator' ? (
           <MortgageCalculator
@@ -500,9 +509,9 @@ export function App() {
               showFilterBar={false}
             />
 
-            {/* Main Partner Banner Ad - Displayed Right After Market Trends / Data Section */}
+            {/* Mid-Page Sponsor Spotlight */}
             <AdBannerRenderer
-              placement="header-banner"
+              placement="market-trends-banner"
               ads={ads}
               cityName={currentCity.name}
               monetizationEnabled={isMonetizationEnabled}

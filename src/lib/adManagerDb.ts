@@ -76,13 +76,30 @@ export async function getAdsFromDb(): Promise<AdBanner[]> {
     const adsRef = collection(db, "ads");
     const snapshot = await getDocs(adsRef);
 
-    const ads: AdBanner[] = [];
+    const firestoreAds: AdBanner[] = [];
     snapshot.forEach((docSnap) => {
-      ads.push(docSnap.data() as AdBanner);
+      firestoreAds.push(docSnap.data() as AdBanner);
     });
 
-    if (ads.length > 0) {
-      memoryAdsStore = ads;
+    if (firestoreAds.length > 0) {
+      // Build a unified dictionary merging Firestore and in-memory updates
+      const adsMap = new Map<string, AdBanner>();
+      firestoreAds.forEach(a => adsMap.set(a.id, a));
+      
+      // Preserve newly added or updated in-memory ads if timestamp is newer
+      memoryAdsStore.forEach(a => {
+        const existing = adsMap.get(a.id);
+        if (!existing) {
+          adsMap.set(a.id, a);
+        } else {
+          const timeExisting = new Date(existing.updatedAt || existing.createdAtMs || 0).getTime();
+          const timeMemory = new Date(a.updatedAt || a.createdAtMs || 0).getTime();
+          if (timeMemory >= timeExisting) {
+            adsMap.set(a.id, a);
+          }
+        }
+      });
+      memoryAdsStore = Array.from(adsMap.values());
     } else {
       if (memoryAdsStore.length === 0) {
         memoryAdsStore = [...INITIAL_ADS];
@@ -98,7 +115,7 @@ export async function getAdsFromDb(): Promise<AdBanner[]> {
       }
     }
 
-    return memoryAdsStore.sort((a, b) => {
+    return [...memoryAdsStore].sort((a, b) => {
       const timeA = new Date(a.updatedAt || a.createdAtMs || 0).getTime();
       const timeB = new Date(b.updatedAt || b.createdAtMs || 0).getTime();
       return timeB - timeA;
@@ -108,7 +125,7 @@ export async function getAdsFromDb(): Promise<AdBanner[]> {
     if (memoryAdsStore.length === 0) {
       memoryAdsStore = [...INITIAL_ADS];
     }
-    return memoryAdsStore.sort((a, b) => {
+    return [...memoryAdsStore].sort((a, b) => {
       const timeA = new Date(a.updatedAt || a.createdAtMs || 0).getTime();
       const timeB = new Date(b.updatedAt || b.createdAtMs || 0).getTime();
       return timeB - timeA;

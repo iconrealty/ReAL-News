@@ -26,18 +26,36 @@ export function AdBannerRenderer({
     return null;
   }
 
-  // Filter active ads matching placement and city
-  const matchingAds = ads.filter(ad => {
-    if (ad.status !== 'active') return false;
-    if (ad.placement !== placement) return false;
-    if (cityName && cityName !== 'All' && cityName !== 'Orange County' && ad.targetCity && ad.targetCity !== 'All') {
-      return ad.targetCity.toLowerCase() === cityName.toLowerCase();
-    }
-    return true;
-  });
+  // Multi-tier candidate selection:
+  // 1. Try exact placement + exact city
+  let candidateAds = ads.filter(ad => 
+    ad.status === 'active' && 
+    ad.placement === placement && 
+    cityName && cityName !== 'All' && cityName !== 'Orange County' &&
+    ad.targetCity && ad.targetCity.toLowerCase() === cityName.toLowerCase()
+  );
+
+  // 2. Fallback to exact placement + regional ('All' or unset)
+  if (candidateAds.length === 0) {
+    candidateAds = ads.filter(ad => 
+      ad.status === 'active' && 
+      ad.placement === placement && 
+      (!ad.targetCity || ad.targetCity === 'All' || ad.targetCity === 'all')
+    );
+  }
+
+  // 3. Fallback to exact placement (any active)
+  if (candidateAds.length === 0) {
+    candidateAds = ads.filter(ad => ad.status === 'active' && ad.placement === placement);
+  }
+
+  // 4. Fallback to any active ad
+  if (candidateAds.length === 0) {
+    candidateAds = ads.filter(ad => ad.status === 'active');
+  }
 
   // Select most recently updated active ad first, so newly saved or edited campaigns immediately take effect
-  const selectedAd = [...matchingAds].sort((a, b) => {
+  const selectedAd = [...candidateAds].sort((a, b) => {
     const timeA = new Date(a.updatedAt || a.createdAtMs || 0).getTime();
     const timeB = new Date(b.updatedAt || b.createdAtMs || 0).getTime();
     const timeDiff = timeB - timeA;
