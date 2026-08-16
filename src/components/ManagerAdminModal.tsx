@@ -110,6 +110,7 @@ export function ManagerAdminModal({
   const logoFileInputRef = useRef<HTMLInputElement>(null);
   const imageFileInputRef = useRef<HTMLInputElement>(null);
   const bgFileInputRef = useRef<HTMLInputElement>(null);
+  const modalScrollRef = useRef<HTMLDivElement>(null);
   const [uploadingLogo, setUploadingLogo] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [uploadingBg, setUploadingBg] = useState(false);
@@ -320,6 +321,9 @@ export function ManagerAdminModal({
         onShowToast(currentAd.id ? 'Campaign updated and published to cloud!' : 'New partner banner created and published to cloud!');
         setIsEditing(false);
         onRefreshAds();
+        setTimeout(() => {
+          modalScrollRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
+        }, 50);
       } else {
         onShowToast(data.error || 'Failed to save campaign');
       }
@@ -462,7 +466,7 @@ export function ManagerAdminModal({
           </div>
         ) : (
           /* AUTHENTICATED MANAGER DASHBOARD CONTENT */
-          <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
+          <div ref={modalScrollRef} className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
             
             {/* Master Monetization Toggle Banner */}
             <div className={`p-5 rounded-3xl border transition-all ${
@@ -576,15 +580,32 @@ export function ManagerAdminModal({
             {isEditing ? (
               <div className="bg-slate-50 border border-slate-200 rounded-3xl p-5 sm:p-6 space-y-6 animate-fade-in">
                 <div className="flex items-center justify-between border-b border-slate-200 pb-4">
-                  <h4 className="text-lg font-black text-slate-900">
-                    {currentAd.id ? 'Edit Partner Campaign' : 'Create New Partner Campaign'}
-                  </h4>
-                  <button
-                    onClick={() => setIsEditing(false)}
-                    className="px-3 py-1.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-800 text-xs font-bold transition-colors cursor-pointer"
-                  >
-                    Cancel & Back
-                  </button>
+                  <div>
+                    <h4 className="text-lg font-black text-slate-900">
+                      {currentAd.id ? 'Edit Partner Campaign' : 'Create New Partner Campaign'}
+                    </h4>
+                    <p className="text-xs text-slate-500 font-medium mt-0.5">
+                      Configure sponsor details, banner imagery, target location, and placement.
+                    </p>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <button
+                      type="button"
+                      onClick={() => setIsEditing(false)}
+                      className="px-3.5 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-800 text-xs font-bold transition-colors cursor-pointer"
+                    >
+                      Cancel & Back
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleSaveAd()}
+                      disabled={saving}
+                      className="px-4 py-2 rounded-xl bg-[#FA2D48] hover:bg-[#E0263E] text-white font-extrabold text-xs shadow-md transition-all cursor-pointer flex items-center space-x-1.5 active:scale-95"
+                    >
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      <span>{saving ? 'Saving...' : 'Save & Publish'}</span>
+                    </button>
+                  </div>
                 </div>
 
                 {/* Hidden File Inputs for Local Uploads */}
