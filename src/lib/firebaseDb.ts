@@ -37,8 +37,6 @@ export function getDb() {
   // Attempt to load from candidate paths if available on disk
   const candidatePaths = [
     path.join(process.cwd(), "firebase-applet-config.json"),
-    path.join(__dirname, "firebase-applet-config.json"),
-    path.join(__dirname, "..", "firebase-applet-config.json"),
     path.join(process.cwd(), "dist", "firebase-applet-config.json")
   ];
 
