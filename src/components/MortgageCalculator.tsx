@@ -440,10 +440,11 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
 
   // Share / Copy Text Breakdown
   const handleShare = async () => {
+    const formattedDownPct = Number(downPaymentActualPct.toFixed(1));
     const lines = [
       `MORTGAGE PAYMENT ESTIMATE`,
       `• Home Price: $${homePrice.toLocaleString()}`,
-      `• Down Payment: $${Math.round(calculatedDownPayment).toLocaleString()} (${downPaymentActualPct}%)`,
+      `• Down Payment: $${Math.round(calculatedDownPayment).toLocaleString()} (${formattedDownPct}%)`,
       `• Loan Amount: $${Math.round(loanAmount).toLocaleString()}`,
       `• Interest Rate: ${interestRate}%`,
       `• Loan Term: ${loanTermYears} Years`,

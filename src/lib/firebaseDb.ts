@@ -17,18 +17,40 @@ import { INITIAL_ARTICLES } from "../data/mockNews.js";
 const RETENTION_DAYS = 14;
 const RETENTION_MS = RETENTION_DAYS * 24 * 60 * 60 * 1000;
 
+const DEFAULT_FIREBASE_CONFIG = {
+  projectId: "gen-lang-client-0365610015",
+  appId: "1:1011537026315:web:9a8e51b2b2e4bfa0c6960e",
+  apiKey: "AIzaSyCe8CkRp8W2EaYLsUxpdioSqsfL4_MXtuY",
+  authDomain: "gen-lang-client-0365610015.firebaseapp.com",
+  firestoreDatabaseId: "ai-studio-realestateagentp-26934774-3dcd-4f1e-8c1b-ec604f316df9",
+  storageBucket: "gen-lang-client-0365610015.firebasestorage.app",
+  messagingSenderId: "1011537026315",
+};
+
 let dbInstance: any = null;
 
 export function getDb() {
   if (dbInstance) return dbInstance;
   
-  const configPath = path.join(process.cwd(), "firebase-applet-config.json");
-  let config: any = {};
-  if (fs.existsSync(configPath)) {
-    try {
-      config = JSON.parse(fs.readFileSync(configPath, "utf-8"));
-    } catch (e) {
-      console.error("Failed to parse firebase-applet-config.json:", e);
+  let config: any = { ...DEFAULT_FIREBASE_CONFIG };
+
+  // Attempt to load from candidate paths if available on disk
+  const candidatePaths = [
+    path.join(process.cwd(), "firebase-applet-config.json"),
+    path.join(__dirname, "firebase-applet-config.json"),
+    path.join(__dirname, "..", "firebase-applet-config.json"),
+    path.join(process.cwd(), "dist", "firebase-applet-config.json")
+  ];
+
+  for (const p of candidatePaths) {
+    if (fs.existsSync(p)) {
+      try {
+        const fileContent = JSON.parse(fs.readFileSync(p, "utf-8"));
+        config = { ...config, ...fileContent };
+        break;
+      } catch (e) {
+        // Continue to fallback
+      }
     }
   }
 
