@@ -21,49 +21,54 @@ export function AdBannerRenderer({
 }: AdBannerRendererProps) {
   const trackedIds = useRef<Set<string>>(new Set());
 
-  // If monetization is disabled or no ads available, do not render anything
-  if (!monetizationEnabled || !ads || ads.length === 0) {
-    return null;
-  }
+  // Multi-tier candidate selection computed with useMemo to keep hook order strictly stable
+  const selectedAd = React.useMemo(() => {
+    if (!monetizationEnabled || !ads || ads.length === 0) {
+      return null;
+    }
 
-  // Multi-tier candidate selection:
-  // 1. Try exact placement + exact city
-  let candidateAds = ads.filter(ad => 
-    ad.status === 'active' && 
-    ad.placement === placement && 
-    cityName && cityName !== 'All' && cityName !== 'Orange County' &&
-    ad.targetCity && ad.targetCity.toLowerCase() === cityName.toLowerCase()
-  );
-
-  // 2. Fallback to exact placement + regional ('All' or unset)
-  if (candidateAds.length === 0) {
-    candidateAds = ads.filter(ad => 
+    // 1. Try exact placement + exact city
+    let candidateAds = ads.filter(ad => 
       ad.status === 'active' && 
       ad.placement === placement && 
-      (!ad.targetCity || ad.targetCity === 'All' || ad.targetCity === 'all')
+      cityName && cityName !== 'All' && cityName !== 'Orange County' &&
+      ad.targetCity && ad.targetCity.toLowerCase() === cityName.toLowerCase()
     );
-  }
 
-  // 3. Fallback to exact placement (any active)
-  if (candidateAds.length === 0) {
-    candidateAds = ads.filter(ad => ad.status === 'active' && ad.placement === placement);
-  }
+    // 2. Fallback to exact placement + regional ('All' or unset)
+    if (candidateAds.length === 0) {
+      candidateAds = ads.filter(ad => 
+        ad.status === 'active' && 
+        ad.placement === placement && 
+        (!ad.targetCity || ad.targetCity === 'All' || ad.targetCity === 'all')
+      );
+    }
 
-  // 4. Fallback to any active ad
-  if (candidateAds.length === 0) {
-    candidateAds = ads.filter(ad => ad.status === 'active');
-  }
+    // 3. Fallback to exact placement (any active)
+    if (candidateAds.length === 0) {
+      candidateAds = ads.filter(ad => ad.status === 'active' && ad.placement === placement);
+    }
 
-  // Select most recently updated active ad first, so newly saved or edited campaigns immediately take effect
-  const selectedAd = [...candidateAds].sort((a, b) => {
-    const timeA = new Date(a.updatedAt || a.createdAtMs || 0).getTime();
-    const timeB = new Date(b.updatedAt || b.createdAtMs || 0).getTime();
-    const timeDiff = timeB - timeA;
-    if (Math.abs(timeDiff) > 1000) return timeDiff;
+    // 4. Fallback to any active ad
+    if (candidateAds.length === 0) {
+      candidateAds = ads.filter(ad => ad.status === 'active');
+    }
 
-    const priorityWeight = { featured: 3, high: 2, standard: 1 };
-    return (priorityWeight[b.priority] || 1) - (priorityWeight[a.priority] || 1);
-  })[0];
+    if (candidateAds.length === 0) {
+      return null;
+    }
+
+    // Select most recently updated active ad first, so newly saved or edited campaigns immediately take effect
+    return [...candidateAds].sort((a, b) => {
+      const timeA = new Date(a.updatedAt || a.createdAtMs || 0).getTime();
+      const timeB = new Date(b.updatedAt || b.createdAtMs || 0).getTime();
+      const timeDiff = timeB - timeA;
+      if (Math.abs(timeDiff) > 1000) return timeDiff;
+
+      const priorityWeight = { featured: 3, high: 2, standard: 1 };
+      return (priorityWeight[b.priority] || 1) - (priorityWeight[a.priority] || 1);
+    })[0] || null;
+  }, [ads, placement, cityName, monetizationEnabled]);
 
   useEffect(() => {
     if (selectedAd && !trackedIds.current.has(selectedAd.id)) {
@@ -76,7 +81,9 @@ export function AdBannerRenderer({
     }
   }, [selectedAd]);
 
-  if (!selectedAd) return null;
+  if (!monetizationEnabled || !selectedAd) {
+    return null;
+  }
 
   const handleAdClick = (e: React.MouseEvent) => {
     fetch('/api/ads/click', {
