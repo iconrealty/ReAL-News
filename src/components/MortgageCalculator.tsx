@@ -78,11 +78,11 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
   }, [fredStats?.mortgage15Year]);
 
   const liveRates = useMemo(() => [
-    { label: '30-Yr Fixed (FRED)', rate: fred30Num, term: 30, tag: 'Official FRED' },
-    { label: '15-Yr Fixed (FRED)', rate: fred15Num, term: 15, tag: 'Official FRED' },
-    { label: 'FHA 30-Yr', rate: parseFloat((fred30Num - 0.43).toFixed(2)), term: 30, tag: 'Low Down' },
-    { label: 'VA 30-Yr', rate: parseFloat((fred30Num - 0.53).toFixed(2)), term: 30, tag: 'Veterans' },
-    { label: '5/1 ARM', rate: parseFloat((fred30Num - 0.33).toFixed(2)), term: 30, tag: 'Adjustable' },
+    { label: '30-Yr Fixed', rate: fred30Num, term: 30 },
+    { label: '15-Yr Fixed', rate: fred15Num, term: 15 },
+    { label: 'FHA 30-Yr', rate: parseFloat((fred30Num - 0.43).toFixed(2)), term: 30 },
+    { label: 'VA 30-Yr', rate: parseFloat((fred30Num - 0.53).toFixed(2)), term: 30 },
+    { label: '5/1 ARM', rate: parseFloat((fred30Num - 0.33).toFixed(2)), term: 30 },
   ], [fred30Num, fred15Num]);
 
   // Core Loan Inputs
@@ -498,43 +498,36 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
     <div className="space-y-6 sm:space-y-8 animate-fadeIn">
       
       {/* Header Banner */}
-      <div className="rounded-3xl bg-white border border-slate-200/90 p-6 sm:p-8 shadow-xs relative overflow-hidden">
+      <div className="rounded-3xl bg-white border border-slate-200/90 p-4 sm:p-5 shadow-xs relative overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-[#FA2D48]/10 to-transparent rounded-full blur-3xl pointer-events-none" />
         
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
-          <div className="space-y-1 max-w-2xl">
-            <h2 className="text-3xl sm:text-4xl font-black text-slate-950 tracking-tight font-sans">
-              Mortgage Calculator
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3.5 relative z-10">
+          <div>
+            <h2 className="text-sm sm:text-base font-bold text-slate-800 tracking-tight">
+              Select your interest
             </h2>
           </div>
 
-          {/* Quick Rate Indicator Pills */}
-          <div className="flex flex-wrap md:flex-col gap-2 shrink-0 md:items-end">
-            <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 flex items-center gap-1">
-              <span>Live Avg Rate Presets</span>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {liveRates.map((r) => (
-                <button
-                  key={r.label}
-                  onClick={() => {
-                    setInterestRate(r.rate);
-                    setLoanTermYears(r.term);
-                  }}
-                  className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 border ${
-                    interestRate === r.rate && loanTermYears === r.term
-                      ? 'bg-[#FA2D48] text-white border-[#FA2D48] shadow-xs scale-105'
-                      : 'bg-slate-100 hover:bg-slate-200 text-slate-800 border-slate-200'
-                  }`}
-                >
-                  <span>{r.label}</span>
-                  <span className="font-extrabold">{r.rate}%</span>
-                </button>
-              ))}
-            </div>
-            <div className="text-[10px] font-bold text-slate-400 pt-0.5">
-              As of {fredStats?.asOfDate || 'Aug 13, 2026'} (Freddie Mac PMMS)
-            </div>
+          {/* Rate Selector Pills */}
+          <div className="flex flex-wrap gap-2 shrink-0 items-center">
+            {liveRates.map((r) => (
+              <button
+                key={r.label}
+                type="button"
+                onClick={() => {
+                  setInterestRate(r.rate);
+                  setLoanTermYears(r.term);
+                }}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 border ${
+                  interestRate === r.rate && loanTermYears === r.term
+                    ? 'bg-[#FA2D48] text-white border-[#FA2D48] shadow-xs scale-105'
+                    : 'bg-slate-100 hover:bg-slate-200 text-slate-800 border-slate-200'
+                }`}
+              >
+                <span>{r.label}</span>
+                <span className="font-extrabold">{r.rate}%</span>
+              </button>
+            ))}
           </div>
         </div>
       </div>
