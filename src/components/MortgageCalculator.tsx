@@ -503,7 +503,7 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
         
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3.5 relative z-10">
           <div>
-            <h2 className="text-sm sm:text-base font-bold text-slate-800 tracking-tight">
+            <h2 className="text-lg font-black text-slate-900">
               Select your interest
             </h2>
           </div>
