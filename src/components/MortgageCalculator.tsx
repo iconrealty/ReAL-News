@@ -17,14 +17,8 @@ interface MortgageCalculatorProps {
 
 const PRICE_PRESETS = [
   { value: 500000, label: '$500k' },
-  { value: 550000, label: '$550k' },
-  { value: 600000, label: '$600k' },
-  { value: 650000, label: '$650k' },
   { value: 750000, label: '$750k' },
   { value: 1000000, label: '$1M' },
-  { value: 1150000, label: '$1.150M' },
-  { value: 1500000, label: '$1.5M' },
-  { value: 2000000, label: '$2M' },
 ];
 const BUDGET_PRESETS = [
   { value: 3500, label: '$3.5k/mo' },
@@ -117,7 +111,7 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
   const [yearlyTaxesMode, setYearlyTaxesMode] = useState<'percent' | 'dollar'>('percent');
   const [yearlyTaxesPercent, setYearlyTaxesPercent] = useState<number | ''>(1.1); // ~1.1% OC property tax
   const [yearlyTaxesDollar, setYearlyTaxesDollar] = useState<number | ''>(11000);
-  const [yearlyInsurance, setYearlyInsurance] = useState<number | ''>(1800); // $150/mo
+  const [yearlyInsurance, setYearlyInsurance] = useState<number | ''>(1400); // ~$116.67/mo
   const [monthlyHoa, setMonthlyHoa] = useState<number | ''>(350); // $350/mo
   const [includePmi, setIncludePmi] = useState<boolean>(false);
 
@@ -570,7 +564,7 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                 setIncludeHoa(false);
                 setYearlyTaxesPercent(1.1);
                 setYearlyTaxesDollar(11000);
-                setYearlyInsurance(1800);
+                setYearlyInsurance(1400);
                 setMonthlyHoa(350);
                 setIncludePmi(false);
               }}
@@ -722,14 +716,14 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
               </label>
               
               {/* Down Payment Mode Selector Buttons ($ / %) */}
-              <div className="flex items-center bg-slate-100 p-0.5 rounded-xl border border-slate-200">
+              <div className="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 gap-1">
                 <button
                   type="button"
                   onClick={() => toggleDownPaymentMode('percent')}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-extrabold transition-all cursor-pointer flex items-center gap-1 ${
+                  className={`px-4 py-1.5 rounded-lg text-sm font-black transition-all cursor-pointer flex items-center justify-center min-w-[38px] ${
                     downPaymentMode === 'percent'
-                      ? 'bg-[#FA2D48] text-white shadow-2xs'
-                      : 'text-slate-600 hover:text-slate-900'
+                      ? 'bg-[#FA2D48] text-white shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
                   }`}
                   title="Switch to Percentage"
                 >
@@ -738,10 +732,10 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                 <button
                   type="button"
                   onClick={() => toggleDownPaymentMode('dollar')}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-extrabold transition-all cursor-pointer flex items-center gap-1 ${
+                  className={`px-4 py-1.5 rounded-lg text-sm font-black transition-all cursor-pointer flex items-center justify-center min-w-[38px] ${
                     downPaymentMode === 'dollar'
-                      ? 'bg-[#FA2D48] text-white shadow-2xs'
-                      : 'text-slate-600 hover:text-slate-900'
+                      ? 'bg-[#FA2D48] text-white shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
                   }`}
                   title="Switch to Dollar Amount"
                 >
@@ -750,7 +744,7 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
               <div className="sm:col-span-8 relative flex items-center">
                 {downPaymentMode === 'dollar' ? (
                   <span className="absolute left-4 text-slate-400 font-bold text-base">$</span>
@@ -778,12 +772,12 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                 ) : null}
               </div>
 
-              {/* Equated Value display box */}
-              <div className="sm:col-span-4 bg-slate-100/90 rounded-2xl border border-slate-200 p-3 flex flex-col justify-center">
-                <span className="text-[10px] uppercase tracking-wider text-slate-500 font-extrabold">
+              {/* Equated Value text display (no background, clean text) */}
+              <div className="sm:col-span-4 px-1 py-1 flex flex-col justify-center">
+                <span className="text-[11px] uppercase tracking-wider text-slate-500 font-bold">
                   {downPaymentMode === 'percent' ? 'Equates To' : 'Percentage'}
                 </span>
-                <span className="text-sm font-black text-slate-900">
+                <span className="text-base font-black text-slate-900 tracking-tight">
                   {downPaymentMode === 'percent' 
                     ? `$${calculatedDownPayment.toLocaleString()}`
                     : `${downPaymentActualPct.toFixed(1)}%`
@@ -842,8 +836,8 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
               <label className="text-xs font-extrabold uppercase tracking-wider text-slate-700 block">
                 Loan Term
               </label>
-              <div className="grid grid-cols-4 gap-1 bg-slate-100 p-1 rounded-2xl border border-slate-200">
-                {[10, 15, 20, 30].map((term) => (
+              <div className="grid grid-cols-3 gap-1 bg-slate-100 p-1 rounded-2xl border border-slate-200">
+                {[15, 20, 30].map((term) => (
                   <button
                     key={term}
                     type="button"
