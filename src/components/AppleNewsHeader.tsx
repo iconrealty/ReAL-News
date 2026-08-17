@@ -32,7 +32,7 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
   fredRate = '6.67%',
   asOfDate,
   onOpenManager,
-  isMonetizationEnabled = true,
+  isMonetizationEnabled = false,
 }) => {
   const monthDay = new Date().toLocaleDateString('en-US', {
     month: 'long',

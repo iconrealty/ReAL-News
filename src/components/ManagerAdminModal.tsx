@@ -91,7 +91,7 @@ export function ManagerAdminModal({
   ads, 
   onRefreshAds, 
   onShowToast,
-  isMonetizationEnabled = true,
+  isMonetizationEnabled = false,
   onToggleMonetization
 }: ManagerAdminModalProps) {
   // Passcode Lock State

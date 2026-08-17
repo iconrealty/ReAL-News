@@ -10,6 +10,7 @@ interface ArticleReaderModalProps {
   onToggleBookmark: (article: NewsArticle) => void;
   onShowToast: (msg: string) => void;
   ads?: AdBanner[];
+  monetizationEnabled?: boolean;
 }
 
 type FontSize = 'sm' | 'md' | 'lg' | 'xl';
@@ -21,6 +22,7 @@ export const ArticleReaderModal: React.FC<ArticleReaderModalProps> = ({
   onToggleBookmark,
   onShowToast,
   ads = [],
+  monetizationEnabled = false,
 }) => {
   const [fontSize, setFontSize] = useState<FontSize>('xl');
   const [showMenu, setShowMenu] = useState(false);
@@ -191,11 +193,12 @@ export const ArticleReaderModal: React.FC<ArticleReaderModalProps> = ({
           </div>
 
           {/* Article Sponsor Spotlight Banner */}
-          {ads && ads.length > 0 && (
+          {monetizationEnabled && ads && ads.length > 0 && (
             <AdBannerRenderer
               ads={ads}
               placement="article-spotlight"
               cityName={article.cityName}
+              monetizationEnabled={monetizationEnabled}
             />
           )}
 

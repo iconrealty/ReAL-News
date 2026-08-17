@@ -72,7 +72,7 @@ export function App() {
   const [isManagerModalOpen, setIsManagerModalOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [ads, setAds] = useState<AdBanner[]>(INITIAL_ADS);
-  const [isMonetizationEnabled, setIsMonetizationEnabled] = useState<boolean>(true);
+  const [isMonetizationEnabled, setIsMonetizationEnabled] = useState<boolean>(false);
 
   const [fredStats, setFredStats] = useState<{ 
     source?: string;
@@ -443,6 +443,7 @@ export function App() {
             currentCity={currentCity}
             fredStats={fredStats}
             ads={ads}
+            monetizationEnabled={isMonetizationEnabled}
             onSelectCity={(city) => {
               setCurrentCity(city);
               showToast(`Selected ${city.name}`);
@@ -453,6 +454,7 @@ export function App() {
             fredStats={fredStats}
             showFilterBar={true}
             ads={ads}
+            monetizationEnabled={isMonetizationEnabled}
             onRefreshRates={handleRefreshFredRates}
             isRefreshingRates={isRefreshingFred}
             onSelectCity={(city) => {
@@ -507,6 +509,8 @@ export function App() {
               showTopHeader={false}
               showMainTabs={false}
               showFilterBar={false}
+              ads={ads}
+              monetizationEnabled={isMonetizationEnabled}
             />
 
             {/* Mid-Page Sponsor Spotlight */}
@@ -601,6 +605,7 @@ export function App() {
         onToggleBookmark={toggleBookmark}
         onShowToast={showToast}
         ads={ads}
+        monetizationEnabled={isMonetizationEnabled}
       />
 
       {/* City Switcher Modal */}

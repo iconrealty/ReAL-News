@@ -1339,7 +1339,7 @@ app.get("/api/monetization-status", async (req, res) => {
     res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
     res.json({ success: true, enabled: isEnabled });
   } catch (err: any) {
-    res.json({ success: true, enabled: true });
+    res.json({ success: true, enabled: false });
   }
 });
 

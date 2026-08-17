@@ -127,6 +127,7 @@ interface OrangeCountyMarketTrendsProps {
   showTopHeader?: boolean;
   showMainTabs?: boolean;
   ads?: AdBanner[];
+  monetizationEnabled?: boolean;
   onRefreshRates?: () => void;
   isRefreshingRates?: boolean;
 }
@@ -141,6 +142,7 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
   showTopHeader = true,
   showMainTabs = true,
   ads = [],
+  monetizationEnabled = false,
   onRefreshRates,
   isRefreshingRates = false,
 }) => {
@@ -305,11 +307,12 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
           </div>
 
           {/* Banner Ad Displayed After Market Tabs */}
-          {ads && ads.length > 0 && (
+          {monetizationEnabled && ads && ads.length > 0 && (
             <AdBannerRenderer
               placement="header-banner"
               ads={ads}
               cityName={selectedCity?.name || currentCityName || 'All'}
+              monetizationEnabled={monetizationEnabled}
             />
           )}
         </>
@@ -947,12 +950,13 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
       )}
 
       {/* Featured Realtor & Brokerage Partner Banner */}
-      {ads && ads.length > 0 && (
+      {monetizationEnabled && ads && ads.length > 0 && (
         <div className="mt-8">
           <AdBannerRenderer
             ads={ads}
             placement="market-trends-banner"
             cityName={currentCityName}
+            monetizationEnabled={monetizationEnabled}
           />
         </div>
       )}

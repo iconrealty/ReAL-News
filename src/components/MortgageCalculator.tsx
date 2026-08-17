@@ -12,6 +12,7 @@ interface MortgageCalculatorProps {
     source?: string;
   } | null;
   ads?: AdBanner[];
+  monetizationEnabled?: boolean;
 }
 
 const PRICE_PRESETS = [
@@ -67,6 +68,7 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
   currentCity,
   fredStats,
   ads = [],
+  monetizationEnabled = false,
 }) => {
   // Parse numeric rates from FRED stats if available (e.g. "6.67%" -> 6.67)
   const fred30Num = useMemo(() => {
@@ -1136,12 +1138,13 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
       </div>
 
       {/* Featured Lender & Escrow Partner Banner (Under the Calculator) */}
-      {ads && ads.length > 0 && (
+      {monetizationEnabled && ads && ads.length > 0 && (
         <div className="pt-2">
           <AdBannerRenderer
             ads={ads}
             placement="calculator-sidebar"
             cityName={currentCity?.name}
+            monetizationEnabled={monetizationEnabled}
           />
         </div>
       )}

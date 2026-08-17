@@ -17,12 +17,12 @@ export function AdBannerRenderer({
   cityName, 
   onOpenManager, 
   className = '',
-  monetizationEnabled = true
+  monetizationEnabled = false
 }: AdBannerRendererProps) {
   const trackedIds = useRef<Set<string>>(new Set());
 
-  // If monetization is explicitly disabled, do not render
-  if (monetizationEnabled === false) {
+  // If monetization is disabled or no ads available, do not render anything
+  if (!monetizationEnabled || !ads || ads.length === 0) {
     return null;
   }
 

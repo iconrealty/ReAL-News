@@ -13,8 +13,7 @@ import { AdBanner } from "../types.js";
 
 // In-memory cache store initialized cleanly to guarantee pure Firestore cloud synchronization
 let memoryAdsStore: AdBanner[] = [];
-let isInitialSeedingDone = false;
-let memoryMonetizationEnabled: boolean = true;
+let memoryMonetizationEnabled: boolean = false;
 
 /**
  * Retrieves the global monetization engine status from Firestore.
@@ -32,12 +31,13 @@ export async function getMonetizationStatusFromDb(): Promise<boolean> {
         return memoryMonetizationEnabled;
       }
     } else {
-      // Initialize default
+      // Initialize default as FALSE (Monetization OFF by default)
       await setDoc(docRef, {
         id: "monetization",
-        monetizationEnabled: true,
+        monetizationEnabled: false,
         updatedAt: new Date().toISOString()
       });
+      memoryMonetizationEnabled = false;
     }
   } catch (error) {
     console.warn("[Firebase Settings] Using memory monetization status fallback:", error);
@@ -81,24 +81,7 @@ export async function getAdsFromDb(): Promise<AdBanner[]> {
     });
 
     if (firestoreAds.length > 0) {
-      // Build a unified dictionary merging Firestore and in-memory updates
-      const adsMap = new Map<string, AdBanner>();
-      firestoreAds.forEach(a => adsMap.set(a.id, a));
-      
-      // Preserve newly added or updated in-memory ads if timestamp is newer
-      memoryAdsStore.forEach(a => {
-        const existing = adsMap.get(a.id);
-        if (!existing) {
-          adsMap.set(a.id, a);
-        } else {
-          const timeExisting = new Date(existing.updatedAt || existing.createdAtMs || 0).getTime();
-          const timeMemory = new Date(a.updatedAt || a.createdAtMs || 0).getTime();
-          if (timeMemory >= timeExisting) {
-            adsMap.set(a.id, a);
-          }
-        }
-      });
-      memoryAdsStore = Array.from(adsMap.values());
+      memoryAdsStore = firestoreAds;
     } else {
       if (memoryAdsStore.length === 0) {
         memoryAdsStore = [...INITIAL_ADS];
