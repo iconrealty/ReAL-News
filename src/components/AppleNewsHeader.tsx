@@ -1,6 +1,6 @@
 import React from 'react';
 import { CityInfo, NewsCategory } from '../types';
-import { Bookmark, Search, Settings } from 'lucide-react';
+import { Bookmark, Search } from 'lucide-react';
 
 interface AppleNewsHeaderProps {
   currentCity: CityInfo;
@@ -16,6 +16,7 @@ interface AppleNewsHeaderProps {
   fredRate?: string;
   asOfDate?: string;
   onOpenManager?: () => void;
+  onOpenNewsManager?: () => void;
   isMonetizationEnabled?: boolean;
 }
 
@@ -32,6 +33,7 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
   fredRate = '6.67%',
   asOfDate,
   onOpenManager,
+  onOpenNewsManager,
   isMonetizationEnabled = false,
 }) => {
   const monthDay = new Date().toLocaleDateString('en-US', {
@@ -44,6 +46,7 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
     { id: 'market-trends', label: 'Market Trends' },
     { id: 'mortgage-calculator', label: 'Mortgage Calculator' },
     { id: 'real-estate', label: 'Real Estate & Housing' },
+    { id: 'team-news', label: 'Team News & Events' },
     { id: 'restaurants-bars', label: 'New Restaurants & Bars' },
     { id: 'city-developments', label: 'City Developments' },
   ];
@@ -113,7 +116,7 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
           </div>
 
           {/* Search & Controls (Tablet / Desktop Row) */}
-          <div className="flex items-center space-x-4 w-full sm:w-auto">
+          <div className="flex items-center space-x-3 w-full sm:w-auto">
             {/* Desktop 30-Day Mortgage Rate Display - Large Text Outside Pill */}
             <button
               onClick={() => onSelectCategory('mortgage-calculator')}
@@ -157,17 +160,6 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
                 </span>
               )}
             </button>
-
-            {/* Settings Button */}
-            {onOpenManager && (
-              <button
-                onClick={onOpenManager}
-                className="p-2.5 rounded-full bg-white hover:bg-slate-100 active:bg-slate-200 text-slate-700 hover:text-slate-900 transition-all border border-slate-200 shadow-2xs cursor-pointer shrink-0"
-                title="Settings"
-              >
-                <Settings className="w-4 h-4 text-slate-700" />
-              </button>
-            )}
           </div>
         </div>
 

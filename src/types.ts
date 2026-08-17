@@ -5,7 +5,9 @@ export type NewsCategory =
   | 'city-developments' 
   | 'market-trends' 
   | 'mortgage-calculator'
-  | 'lifestyle';
+  | 'lifestyle'
+  | 'team-news'
+  | 'events';
 
 export interface CityInfo {
   id: string;

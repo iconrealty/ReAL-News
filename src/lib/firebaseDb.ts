@@ -179,3 +179,18 @@ export async function saveArticleToDb(article: any) {
     throw error;
   }
 }
+
+/**
+ * Deletes an article document by ID from Firestore.
+ */
+export async function deleteArticleFromDb(id: string) {
+  try {
+    const db = getDb();
+    const docRef = doc(db, "articles", id);
+    await deleteDoc(docRef);
+    return true;
+  } catch (error) {
+    console.error(`[Firebase] Error deleting article ${id} from Firestore:`, error);
+    throw error;
+  }
+}

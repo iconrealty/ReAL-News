@@ -3,7 +3,7 @@ import path from "path";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI, Type } from "@google/genai";
 import Parser from "rss-parser";
-import { getArticlesFromDb, saveArticleToDb, pruneOldArticles } from "./src/lib/firebaseDb.js";
+import { getArticlesFromDb, saveArticleToDb, deleteArticleFromDb, pruneOldArticles } from "./src/lib/firebaseDb.js";
 import { 
   getAdsFromDb, 
   saveAdToDb, 
@@ -428,6 +428,20 @@ app.post("/api/news/articles", async (req, res) => {
   } catch (err: any) {
     console.error("Error saving article to Firestore:", err);
     res.status(500).json({ success: false, error: err?.message || "Failed to save article to Firestore" });
+  }
+});
+
+app.delete("/api/news/articles/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({ success: false, error: "Article ID is required." });
+    }
+    await deleteArticleFromDb(id);
+    res.json({ success: true, deletedId: id });
+  } catch (err: any) {
+    console.error(`Error deleting article ${req.params.id} from Firestore:`, err);
+    res.status(500).json({ success: false, error: err?.message || "Failed to delete article from Firestore" });
   }
 });
 

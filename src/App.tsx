@@ -14,7 +14,8 @@ import { ArticleReaderModal } from './components/ArticleReaderModal';
 import { SavedArticlesDrawer } from './components/SavedArticlesDrawer';
 import { AdBannerRenderer } from './components/AdBannerRenderer';
 import { ManagerAdminModal } from './components/ManagerAdminModal';
-import { Sparkles, Building2, Utensils, Flame, Compass, ChevronRight } from 'lucide-react';
+import { NewsManagerModal } from './components/NewsManagerModal';
+import { Sparkles, Building2, Utensils, Flame, Compass, ChevronRight, Users } from 'lucide-react';
 
 // Helper function to deduplicate articles strictly by ID, normalized Title, and source URL
 function deduplicateArticles(list: NewsArticle[]): NewsArticle[] {
@@ -70,6 +71,7 @@ export function App() {
   const [isCitySelectorOpen, setIsCitySelectorOpen] = useState(false);
   const [isSavedDrawerOpen, setIsSavedDrawerOpen] = useState(false);
   const [isManagerModalOpen, setIsManagerModalOpen] = useState(false);
+  const [isNewsManagerOpen, setIsNewsManagerOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [ads, setAds] = useState<AdBanner[]>(INITIAL_ADS);
   const [isMonetizationEnabled, setIsMonetizationEnabled] = useState<boolean>(false);
@@ -216,9 +218,8 @@ export function App() {
     }
   }, [bookmarkedIds]);
 
-  // Load articles from Firebase Firestore on mount and merge with INITIAL_ARTICLES
-  useEffect(() => {
-    fetch('/api/news/articles')
+  const fetchArticles = () => {
+    fetch(`/api/news/articles?t=${Date.now()}`)
       .then(res => res.json())
       .then(data => {
         if (data.success && Array.isArray(data.articles) && data.articles.length > 0) {
@@ -230,6 +231,11 @@ export function App() {
       .catch(err => {
         console.warn("Could not load articles from Firebase API, using local fallback", err);
       });
+  };
+
+  // Load articles from Firebase Firestore on mount and merge with INITIAL_ARTICLES
+  useEffect(() => {
+    fetchArticles();
   }, []);
 
   // Fetch live city news when city or category changes
@@ -343,15 +349,24 @@ export function App() {
   }, [filteredArticles, heroArticle]);
 
   // Non-overlapping section assignment: every article appears AT MOST ONCE on page
-  const { realEstateArticles, diningArticles, developmentArticles, otherArticles } = useMemo(() => {
+  const { realEstateArticles, teamAndEventArticles, diningArticles, developmentArticles, otherArticles } = useMemo(() => {
     const usedIds = new Set<string>();
 
+    const teamList: NewsArticle[] = [];
     const reList: NewsArticle[] = [];
     const diningList: NewsArticle[] = [];
     const devList: NewsArticle[] = [];
     const othList: NewsArticle[] = [];
 
-    // 1. Real Estate & Housing
+    // 1. Team News & Local Events
+    remainingArticles.forEach(a => {
+      if (!usedIds.has(a.id) && (a.category === 'team-news' || a.category === 'events')) {
+        teamList.push(a);
+        usedIds.add(a.id);
+      }
+    });
+
+    // 2. Real Estate & Housing
     remainingArticles.forEach(a => {
       if (!usedIds.has(a.id) && (a.category === 'real-estate' || a.category === 'market-trends' || !!a.realEstateData)) {
         reList.push(a);
@@ -359,7 +374,7 @@ export function App() {
       }
     });
 
-    // 2. Restaurants & Dining
+    // 3. Restaurants & Dining
     remainingArticles.forEach(a => {
       if (!usedIds.has(a.id) && (a.category === 'restaurants-bars' || !!a.venueDetails)) {
         diningList.push(a);
@@ -367,7 +382,7 @@ export function App() {
       }
     });
 
-    // 3. City Developments & Zoning
+    // 4. City Developments & Zoning
     remainingArticles.forEach(a => {
       if (!usedIds.has(a.id) && (a.category === 'city-developments' || a.category === 'lifestyle')) {
         devList.push(a);
@@ -375,7 +390,7 @@ export function App() {
       }
     });
 
-    // 4. Other Local Coverage
+    // 5. Other Local Coverage
     remainingArticles.forEach(a => {
       if (!usedIds.has(a.id)) {
         othList.push(a);
@@ -385,6 +400,7 @@ export function App() {
 
     return {
       realEstateArticles: reList,
+      teamAndEventArticles: teamList,
       diningArticles: diningList,
       developmentArticles: devList,
       otherArticles: othList
@@ -422,6 +438,7 @@ export function App() {
         fredRate={fredStats?.mortgage30Year}
         asOfDate={fredStats?.asOfDate}
         onOpenManager={() => setIsManagerModalOpen(true)}
+        onOpenNewsManager={() => setIsNewsManagerOpen(true)}
         isMonetizationEnabled={isMonetizationEnabled}
       />
 
@@ -522,7 +539,19 @@ export function App() {
               onOpenManager={() => setIsManagerModalOpen(true)}
             />
 
-            {/* Section 1: Real Estate & Housing Market */}
+            {/* Section 1: Team News & Events */}
+            {teamAndEventArticles.length > 0 && (
+              <NewsGridSection
+                title={`Team News, Brokerage Updates & Local Events`}
+                icon={<Users className="w-5 h-5 text-indigo-600" />}
+                articles={teamAndEventArticles}
+                onSelectArticle={setSelectedArticle}
+                bookmarkedIds={bookmarkedIds}
+                onToggleBookmark={toggleBookmark}
+              />
+            )}
+
+            {/* Section 2: Real Estate & Housing Market */}
             {realEstateArticles.length > 0 && (
               <NewsGridSection
                 title={`Real Estate & Housing in ${currentCity.name}`}
@@ -542,7 +571,7 @@ export function App() {
               />
             )}
 
-            {/* Section 2: Hot New Restaurant & Bar Openings */}
+            {/* Section 3: Hot New Restaurant & Bar Openings */}
             {diningArticles.length > 0 && (
               <NewsGridSection
                 title={`New Restaurant & Bar Debuts in ${currentCity.name}`}
@@ -554,7 +583,7 @@ export function App() {
               />
             )}
 
-            {/* Section 3: City Developments & Zoning Updates */}
+            {/* Section 4: City Developments & Zoning Updates */}
             {developmentArticles.length > 0 && (
               <NewsGridSection
                 title={`Urban Developments, Zoning & Lifestyle`}
@@ -566,7 +595,7 @@ export function App() {
               />
             )}
 
-            {/* Section 4: Other Local Coverage */}
+            {/* Section 5: Other Local Coverage */}
             {otherArticles.length > 0 && (
               <NewsGridSection
                 title={`More Local Updates in ${currentCity.name}`}
@@ -632,6 +661,16 @@ export function App() {
         }}
       />
 
+      {/* News & Story Manager Modal */}
+      <NewsManagerModal
+        isOpen={isNewsManagerOpen}
+        onClose={() => setIsNewsManagerOpen(false)}
+        articles={articles}
+        onRefreshArticles={fetchArticles}
+        onShowToast={showToast}
+        currentCityName={currentCity.name}
+      />
+
       {/* Manager Admin & Monetization Portal Modal */}
       <ManagerAdminModal
         isOpen={isManagerModalOpen}
@@ -673,6 +712,7 @@ export function App() {
             <button onClick={handleResetToMain} className="hover:text-slate-900 cursor-pointer">Main / Top Stories</button>
             <button onClick={() => setIsCitySelectorOpen(true)} className="hover:text-slate-900 cursor-pointer">Cities</button>
             <button onClick={() => setIsSavedDrawerOpen(true)} className="hover:text-slate-900 cursor-pointer">Bookmarks ({bookmarkedIds.size})</button>
+            <button onClick={() => setIsNewsManagerOpen(true)} className="text-slate-900 font-bold hover:underline cursor-pointer">News Desk</button>
             <button onClick={() => setIsManagerModalOpen(true)} className="text-[#FA2D48] font-bold hover:underline cursor-pointer">Sponsor Portal</button>
           </div>
         </div>
