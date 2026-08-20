@@ -85,45 +85,32 @@ export const OCFastTopOverview: React.FC<OCFastTopOverviewProps> = ({
             </h2>
             
             <p className="text-slate-700 text-xs sm:text-sm max-w-2xl font-sans font-medium leading-relaxed">
-              Provided by Orange County REALTORS • Benchmark Key Performance Indicators
+              Provided by Orange County REALTORS
             </p>
           </div>
 
-          {/* Right side controls: Red Detached / Attached Switcher + Full OC Report Button */}
-          <div className="flex flex-wrap items-center gap-2.5 self-start md:self-auto">
-            <div className="flex items-center space-x-1 bg-slate-100 p-1.5 rounded-2xl border border-slate-200/80">
-              <button
-                onClick={() => setPropertyType('detached')}
-                className={`px-4 py-2 text-xs font-black rounded-xl transition-all cursor-pointer ${
-                  propertyType === 'detached'
-                    ? 'bg-[#FA2D48] text-white shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                Detached Homes
-              </button>
-              <button
-                onClick={() => setPropertyType('attached')}
-                className={`px-4 py-2 text-xs font-black rounded-xl transition-all cursor-pointer ${
-                  propertyType === 'attached'
-                    ? 'bg-[#FA2D48] text-white shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                Attached Condos
-              </button>
-            </div>
-
-            {/* Full OC Report button directly next to switcher */}
-            {showExploreButton && onViewFullReport && (
-              <button
-                onClick={onViewFullReport}
-                className="px-4 py-2.5 rounded-2xl bg-slate-900 hover:bg-[#FA2D48] text-white font-extrabold text-xs flex items-center space-x-1.5 shadow-xs transition-all cursor-pointer shrink-0 border border-slate-800"
-              >
-                <span>Full OC Report</span>
-                <ChevronRight className="w-3.5 h-3.5" />
-              </button>
-            )}
+          {/* Right side controls: Clean Red Detached / Attached Switcher */}
+          <div className="flex items-center space-x-1 bg-slate-100 p-1.5 rounded-2xl border border-slate-200/80 self-start md:self-auto">
+            <button
+              onClick={() => setPropertyType('detached')}
+              className={`px-4 py-2 text-xs font-black rounded-xl transition-all cursor-pointer ${
+                propertyType === 'detached'
+                  ? 'bg-[#FA2D48] text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Detached Homes
+            </button>
+            <button
+              onClick={() => setPropertyType('attached')}
+              className={`px-4 py-2 text-xs font-black rounded-xl transition-all cursor-pointer ${
+                propertyType === 'attached'
+                  ? 'bg-[#FA2D48] text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Attached Condos
+            </button>
           </div>
         </div>
       </div>
@@ -261,6 +248,19 @@ export const OCFastTopOverview: React.FC<OCFastTopOverviewProps> = ({
         </div>
 
       </div>
+
+      {/* Clean Full OC Report Button after the 4 tabs/cards (no title or extra text) */}
+      {showExploreButton && onViewFullReport && (
+        <div className="flex justify-end pt-1">
+          <button
+            onClick={onViewFullReport}
+            className="px-5 py-2.5 rounded-2xl bg-slate-900 hover:bg-[#FA2D48] text-white font-black text-xs flex items-center space-x-2 shadow-xs hover:shadow-md transition-all cursor-pointer"
+          >
+            <span>Full OC Report</span>
+            <ChevronRight className="w-4 h-4" />
+          </button>
+        </div>
+      )}
     </section>
   );
 };
