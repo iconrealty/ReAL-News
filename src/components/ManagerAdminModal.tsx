@@ -1310,14 +1310,7 @@ export function ManagerAdminModal({
         )}
 
         {/* Modal Footer */}
-        <div className="bg-slate-100 border-t border-slate-200 px-6 py-3 flex items-center justify-between text-xs text-slate-500 shrink-0">
-          <div className="flex items-center space-x-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="font-semibold text-slate-700">
-              Firebase Firestore Ad Engine Synchronized
-            </span>
-          </div>
-
+        <div className="bg-slate-100 border-t border-slate-200 px-6 py-3 flex items-center justify-end text-xs text-slate-500 shrink-0">
           <div className="flex items-center space-x-3">
             <span className="text-[11px] text-slate-400 font-semibold">
               Restricted Portal Access

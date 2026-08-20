@@ -390,21 +390,10 @@ export function NewsManagerModal({
       >
         {/* Modal Header */}
         <div className="px-5 sm:px-8 py-4 sm:py-5 border-b border-slate-200 bg-slate-50 flex items-center justify-between shrink-0">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-2xl bg-[#FA2D48]/10 flex items-center justify-center text-[#FA2D48]">
-              <Edit3 className="w-5 h-5" />
-            </div>
-            <div>
-              <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                <span>News & Story Desk</span>
-                <span className="text-[10px] uppercase font-black tracking-widest px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">
-                  Firestore Connected
-                </span>
-              </h2>
-              <p className="text-xs font-medium text-slate-500">
-                Publish team updates, upcoming events, real estate reports, and local stories live to the app.
-              </p>
-            </div>
+          <div>
+            <h2 className="text-xl font-black text-slate-900 tracking-tight">
+              News & Story Desk
+            </h2>
           </div>
 
           <button
@@ -419,12 +408,8 @@ export function NewsManagerModal({
         {/* AUTHENTICATION LOCK OVERLAY IF NOT AUTHENTICATED */}
         {!isAuthenticated ? (
           <div className="p-8 sm:p-12 text-center my-auto max-w-md mx-auto space-y-6">
-            <div className="w-14 h-14 rounded-3xl bg-[#FA2D48]/10 text-[#FA2D48] flex items-center justify-center mx-auto">
-              <Lock className="w-7 h-7" />
-            </div>
             <div>
               <h4 className="text-2xl font-black text-slate-900 tracking-tight">Passcode Required</h4>
-              <p className="text-xs text-slate-500 mt-1">Enter your manager passcode to access the News Desk</p>
             </div>
 
             <form onSubmit={handleLogin} className="space-y-4">

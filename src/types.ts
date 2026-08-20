@@ -1,10 +1,11 @@
 export type NewsCategory = 
   | 'all' 
+  | 'market-trends'
+  | 'oc-fast'
+  | 'mortgage-calculator'
   | 'real-estate' 
   | 'restaurants-bars' 
   | 'city-developments' 
-  | 'market-trends' 
-  | 'mortgage-calculator'
   | 'lifestyle'
   | 'team-news'
   | 'events';

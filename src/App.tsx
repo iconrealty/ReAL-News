@@ -9,6 +9,7 @@ import { CitySelectorModal } from './components/CitySelectorModal';
 import { FeaturedHeroStory } from './components/FeaturedHeroStory';
 import { NewsGridSection } from './components/NewsGridSection';
 import { OrangeCountyMarketTrends } from './components/OrangeCountyMarketTrends';
+import { OCFastMarketReport } from './components/OCFastMarketReport';
 import { MortgageCalculator } from './components/MortgageCalculator';
 import { ArticleReaderModal } from './components/ArticleReaderModal';
 import { SavedArticlesDrawer } from './components/SavedArticlesDrawer';
@@ -479,6 +480,16 @@ export function App() {
               showToast(`Selected ${city.name}`);
             }}
           />
+        ) : activeCategory === 'oc-fast' ? (
+          <OCFastMarketReport
+            ads={ads}
+            monetizationEnabled={isMonetizationEnabled}
+            onSelectCity={(city) => {
+              setCurrentCity(city);
+              showToast(`Selected ${city.name}`);
+            }}
+            onShowToast={showToast}
+          />
         ) : (
           <>
             {/* Apple Style City Masthead Hero Banner */}
@@ -517,18 +528,6 @@ export function App() {
                 />
               </section>
             )}
-
-            {/* Market Trends Information for selected city */}
-            <OrangeCountyMarketTrends
-              currentCityName={currentCity.name}
-              onSelectCity={(city) => setCurrentCity(city)}
-              fredStats={fredStats}
-              showTopHeader={false}
-              showMainTabs={false}
-              showFilterBar={false}
-              ads={ads}
-              monetizationEnabled={isMonetizationEnabled}
-            />
 
             {/* Mid-Page Sponsor Spotlight */}
             <AdBannerRenderer
@@ -705,11 +704,12 @@ export function App() {
               <span>ReaL</span>
               <span className="text-xl font-black leading-none pl-0.5">.</span>
             </button>
-            <span className="text-slate-300">|</span>
-            <span>Real Estate Developments & Metro Intelligence</span>
           </div>
-          <div className="flex items-center space-x-4 font-mono">
-            <button onClick={handleResetToMain} className="hover:text-slate-900 cursor-pointer">Main / Top Stories</button>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 font-mono">
+            <button onClick={handleResetToMain} className="hover:text-slate-900 cursor-pointer">Main Feed</button>
+            <button onClick={() => setActiveCategory('market-trends')} className="hover:text-slate-900 cursor-pointer font-bold">Market Trends</button>
+            <button onClick={() => setActiveCategory('oc-fast')} className="text-[#FA2D48] hover:underline cursor-pointer font-black">OC Fast Report</button>
+            <button onClick={() => setActiveCategory('mortgage-calculator')} className="hover:text-slate-900 cursor-pointer">Mortgage Calc</button>
             <button onClick={() => setIsCitySelectorOpen(true)} className="hover:text-slate-900 cursor-pointer">Cities</button>
             <button onClick={() => setIsSavedDrawerOpen(true)} className="hover:text-slate-900 cursor-pointer">Bookmarks ({bookmarkedIds.size})</button>
             <button onClick={() => setIsNewsManagerOpen(true)} className="text-slate-900 font-bold hover:underline cursor-pointer">News Desk</button>
