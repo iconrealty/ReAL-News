@@ -10,6 +10,7 @@ import { FeaturedHeroStory } from './components/FeaturedHeroStory';
 import { NewsGridSection } from './components/NewsGridSection';
 import { OrangeCountyMarketTrends } from './components/OrangeCountyMarketTrends';
 import { OCFastMarketReport } from './components/OCFastMarketReport';
+import { OCFastTopOverview } from './components/OCFastTopOverview';
 import { MortgageCalculator } from './components/MortgageCalculator';
 import { ArticleReaderModal } from './components/ArticleReaderModal';
 import { SavedArticlesDrawer } from './components/SavedArticlesDrawer';
@@ -510,6 +511,13 @@ export function App() {
                 </button>
               </div>
             </div>
+
+            {/* Main Page Top Market Overview: Days on Market, Months of Supply, % Orig List Price, Price/SqFt */}
+            <OCFastTopOverview 
+              title="Orange County Local Market Update"
+              onViewFullReport={() => setActiveCategory('oc-fast')}
+              showExploreButton={true}
+            />
 
             {/* Featured Hero / Top Stories */}
             {heroArticle && (

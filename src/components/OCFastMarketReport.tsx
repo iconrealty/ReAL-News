@@ -253,7 +253,7 @@ export const OCFastMarketReport: React.FC<OCFastMarketReportProps> = ({
               onClick={() => handlePropertyTypeChange('detached')}
               className={`px-4 py-2 text-xs font-black rounded-xl transition-all cursor-pointer ${
                 propertyType === 'detached'
-                  ? 'bg-slate-900 text-white shadow-xs'
+                  ? 'bg-[#FA2D48] text-white shadow-xs'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
@@ -263,7 +263,7 @@ export const OCFastMarketReport: React.FC<OCFastMarketReportProps> = ({
               onClick={() => handlePropertyTypeChange('attached')}
               className={`px-4 py-2 text-xs font-black rounded-xl transition-all cursor-pointer ${
                 propertyType === 'attached'
-                  ? 'bg-slate-900 text-white shadow-xs'
+                  ? 'bg-[#FA2D48] text-white shadow-xs'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
@@ -334,11 +334,11 @@ export const OCFastMarketReport: React.FC<OCFastMarketReportProps> = ({
             <span className="text-slate-500 font-medium">Market Condition:</span>
             {propertyType === 'detached' ? (
               <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-extrabold bg-rose-100 text-[#FA2D48] border border-rose-200">
-                Hot Seller's Market (&lt;4 mos)
+                Hot Seller's Market (&lt; 3.0 mos)
               </span>
             ) : (
               <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-extrabold bg-amber-100 text-amber-800 border border-amber-200">
-                Slight Seller's Market (4–6 mos)
+                Slight Seller's Market (3.4 mos)
               </span>
             )}
           </div>
