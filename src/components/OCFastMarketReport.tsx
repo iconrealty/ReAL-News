@@ -70,6 +70,10 @@ export const OCFastMarketReport: React.FC<OCFastMarketReportProps> = ({
     ? detachedData.find(m => m.key === 'pct_orig_price')!
     : attachedData.find(m => m.key === 'pct_orig_price')!;
 
+  const sqftMetric = propertyType === 'detached'
+    ? detachedData.find(m => m.key === 'price_sqft')!
+    : attachedData.find(m => m.key === 'price_sqft')!;
+
   const handleShareReport = () => {
     if (navigator.clipboard) {
       navigator.clipboard.writeText(window.location.href);
@@ -242,137 +246,91 @@ export const OCFastMarketReport: React.FC<OCFastMarketReportProps> = ({
               Provided by Orange County REALTORS
             </p>
           </div>
+
+          {/* Clean Property Type Switcher */}
+          <div className="flex items-center space-x-1 bg-slate-100 p-1.5 rounded-2xl border border-slate-200/80 self-start md:self-auto">
+            <button
+              onClick={() => handlePropertyTypeChange('detached')}
+              className={`px-4 py-2 text-xs font-black rounded-xl transition-all cursor-pointer ${
+                propertyType === 'detached'
+                  ? 'bg-slate-900 text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Detached Homes
+            </button>
+            <button
+              onClick={() => handlePropertyTypeChange('attached')}
+              className={`px-4 py-2 text-xs font-black rounded-xl transition-all cursor-pointer ${
+                propertyType === 'attached'
+                  ? 'bg-slate-900 text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Attached Condos
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* 3 Synchronized Mini-UI Metric Cards for Top Market Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {/* 4 Metric Cards for Top Market Overview */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         
-        {/* Mini-UI 1: Days on Market Until Sale */}
+        {/* Card 1: Days on Market */}
         <div className="bg-white rounded-3xl border border-slate-200/90 p-5 sm:p-6 shadow-xs hover:border-slate-300 transition-all flex flex-col justify-between space-y-4">
-          <div>
-            <div className="flex items-center justify-between gap-2 mb-3">
-              <div>
-                <h3 className="text-sm sm:text-base font-black text-slate-900 leading-tight">Days on Market</h3>
-              </div>
-
-              {/* Detached / Attached Switcher */}
-              <div className="flex items-center space-x-0.5 bg-[#F2F2F7] p-1 rounded-xl border border-slate-200/80">
-                <button
-                  onClick={() => handlePropertyTypeChange('detached')}
-                  className={`px-2.5 py-1 text-xs font-bold rounded-lg transition-all cursor-pointer ${
-                    propertyType === 'detached'
-                      ? 'bg-[#FA2D48] text-white shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  Detached
-                </button>
-                <button
-                  onClick={() => handlePropertyTypeChange('attached')}
-                  className={`px-2.5 py-1 text-xs font-bold rounded-lg transition-all cursor-pointer ${
-                    propertyType === 'attached'
-                      ? 'bg-[#FA2D48] text-white shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  Attached
-                </button>
-              </div>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-sans uppercase tracking-widest text-slate-500 font-extrabold">Days on Market</span>
+              {renderChangeBadge(domMetric.monthlyChange, domMetric.monthlyChangeNumeric, true)}
             </div>
 
-            {/* Dynamic Metric Content based on selected tab */}
-            <div className="bg-slate-50/80 rounded-2xl p-3.5 sm:p-4 border border-slate-200/70 space-y-1.5">
-              <div className="flex items-baseline justify-between">
-                <div className="text-2xl sm:text-3xl font-black text-slate-950">
-                  {domMetric.july2026}{' '}
-                  <span className="text-xs font-bold text-slate-500">days</span>
-                </div>
-                <div>
-                  {renderChangeBadge(domMetric.monthlyChange, domMetric.monthlyChangeNumeric, true)}
-                </div>
-              </div>
+            <div className="text-3xl sm:text-4xl font-black text-slate-950 font-sans">
+              {domMetric.july2026}{' '}
+              <span className="text-sm font-bold text-slate-500">days</span>
+            </div>
 
-              <div className="flex items-center space-x-1.5 text-xs text-slate-600">
-                <span className="text-slate-500 font-medium">July 2025:</span>
-                <span className="font-bold text-slate-900 font-mono">
-                  {domMetric.july2025} days
-                </span>
-                <span className="text-slate-400">•</span>
-                <span className="text-slate-500 text-[11px]">
-                  {propertyType === 'detached' ? 'Detached SFH' : 'Attached Condos'}
-                </span>
-              </div>
+            <div className="flex items-center space-x-1.5 text-xs text-slate-600">
+              <span className="text-slate-500 font-medium">July 2025:</span>
+              <span className="font-bold text-slate-900 font-mono">{domMetric.july2025} days</span>
+              <span className="text-slate-400">•</span>
+              <span className="text-slate-500 text-[11px] font-medium">
+                {propertyType === 'detached' ? 'Detached SFH' : 'Attached Condos'}
+              </span>
             </div>
           </div>
 
-          <div className="pt-2.5 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-600 font-medium">
-            <span>YTD Velocity (Thru 7-2026):</span>
+          <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-600 font-medium">
+            <span>YTD Velocity:</span>
             <span className="font-bold text-slate-900 font-mono">
               {domMetric.ytd2026} days ({domMetric.ytdChange} YoY)
             </span>
           </div>
         </div>
 
-        {/* Mini-UI 2: Months Supply of Inventory & Market Condition */}
+        {/* Card 2: Months Supply of Inventory */}
         <div className="bg-white rounded-3xl border border-slate-200/90 p-5 sm:p-6 shadow-xs hover:border-slate-300 transition-all flex flex-col justify-between space-y-4">
-          <div>
-            <div className="flex items-center justify-between gap-2 mb-3">
-              <div>
-                <h3 className="text-sm sm:text-base font-black text-slate-900 leading-tight">Months of Supply</h3>
-              </div>
-
-              {/* Detached / Attached Switcher */}
-              <div className="flex items-center space-x-0.5 bg-[#F2F2F7] p-1 rounded-xl border border-slate-200/80">
-                <button
-                  onClick={() => handlePropertyTypeChange('detached')}
-                  className={`px-2.5 py-1 text-xs font-bold rounded-lg transition-all cursor-pointer ${
-                    propertyType === 'detached'
-                      ? 'bg-[#FA2D48] text-white shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  Detached
-                </button>
-                <button
-                  onClick={() => handlePropertyTypeChange('attached')}
-                  className={`px-2.5 py-1 text-xs font-bold rounded-lg transition-all cursor-pointer ${
-                    propertyType === 'attached'
-                      ? 'bg-[#FA2D48] text-white shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  Attached
-                </button>
-              </div>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-sans uppercase tracking-widest text-slate-500 font-extrabold">Months of Supply</span>
+              {renderChangeBadge(supplyMetric.monthlyChange, supplyMetric.monthlyChangeNumeric, true)}
             </div>
 
-            {/* Dynamic Metric Content based on selected tab */}
-            <div className="bg-slate-50/80 rounded-2xl p-3.5 sm:p-4 border border-slate-200/70 space-y-1.5">
-              <div className="flex items-baseline justify-between">
-                <div className="text-2xl sm:text-3xl font-black text-slate-950">
-                  {supplyMetric.july2026}{' '}
-                  <span className="text-xs font-bold text-slate-500">mos</span>
-                </div>
-                <div>
-                  {renderChangeBadge(supplyMetric.monthlyChange, supplyMetric.monthlyChangeNumeric, true)}
-                </div>
-              </div>
+            <div className="text-3xl sm:text-4xl font-black text-slate-950 font-sans">
+              {supplyMetric.july2026}{' '}
+              <span className="text-sm font-bold text-slate-500">mos</span>
+            </div>
 
-              <div className="flex items-center space-x-1.5 text-xs text-slate-600">
-                <span className="text-slate-500 font-medium">July 2025:</span>
-                <span className="font-bold text-slate-900 font-mono">
-                  {supplyMetric.july2025} mos
-                </span>
-                <span className="text-slate-400">•</span>
-                <span className="text-slate-500 text-[11px]">
-                  {propertyType === 'detached' ? 'Detached SFH' : 'Attached Condos'}
-                </span>
-              </div>
+            <div className="flex items-center space-x-1.5 text-xs text-slate-600">
+              <span className="text-slate-500 font-medium">July 2025:</span>
+              <span className="font-bold text-slate-900 font-mono">{supplyMetric.july2025} mos</span>
+              <span className="text-slate-400">•</span>
+              <span className="text-slate-500 text-[11px] font-medium">
+                {propertyType === 'detached' ? 'Detached SFH' : 'Attached Condos'}
+              </span>
             </div>
           </div>
 
-          <div className="pt-2.5 border-t border-slate-100 flex items-center justify-between text-[11px]">
+          <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-[11px]">
             <span className="text-slate-500 font-medium">Market Condition:</span>
             {propertyType === 'detached' ? (
               <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-extrabold bg-rose-100 text-[#FA2D48] border border-rose-200">
@@ -386,67 +344,63 @@ export const OCFastMarketReport: React.FC<OCFastMarketReportProps> = ({
           </div>
         </div>
 
-        {/* Mini-UI 3: % of Original List Price Received */}
+        {/* Card 3: % of Original List Price Received */}
         <div className="bg-white rounded-3xl border border-slate-200/90 p-5 sm:p-6 shadow-xs hover:border-slate-300 transition-all flex flex-col justify-between space-y-4">
-          <div>
-            <div className="flex items-center justify-between gap-2 mb-3">
-              <div>
-                <h3 className="text-sm sm:text-base font-black text-slate-900 leading-tight">% Orig. List Price</h3>
-              </div>
-
-              {/* Detached / Attached Switcher */}
-              <div className="flex items-center space-x-0.5 bg-[#F2F2F7] p-1 rounded-xl border border-slate-200/80">
-                <button
-                  onClick={() => handlePropertyTypeChange('detached')}
-                  className={`px-2.5 py-1 text-xs font-bold rounded-lg transition-all cursor-pointer ${
-                    propertyType === 'detached'
-                      ? 'bg-[#FA2D48] text-white shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  Detached
-                </button>
-                <button
-                  onClick={() => handlePropertyTypeChange('attached')}
-                  className={`px-2.5 py-1 text-xs font-bold rounded-lg transition-all cursor-pointer ${
-                    propertyType === 'attached'
-                      ? 'bg-[#FA2D48] text-white shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  Attached
-                </button>
-              </div>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-sans uppercase tracking-widest text-slate-500 font-extrabold">% Orig. List Price</span>
+              {renderChangeBadge(origPriceMetric.monthlyChange, origPriceMetric.monthlyChangeNumeric)}
             </div>
 
-            {/* Dynamic Metric Content based on selected tab */}
-            <div className="bg-slate-50/80 rounded-2xl p-3.5 sm:p-4 border border-slate-200/70 space-y-1.5">
-              <div className="flex items-baseline justify-between">
-                <div className="text-2xl sm:text-3xl font-black text-slate-950">
-                  {origPriceMetric.july2026}
-                </div>
-                <div>
-                  {renderChangeBadge(origPriceMetric.monthlyChange, origPriceMetric.monthlyChangeNumeric)}
-                </div>
-              </div>
+            <div className="text-3xl sm:text-4xl font-black text-slate-950 font-sans">
+              {origPriceMetric.july2026}
+            </div>
 
-              <div className="flex items-center space-x-1.5 text-xs text-slate-600">
-                <span className="text-slate-500 font-medium">July 2025:</span>
-                <span className="font-bold text-slate-900 font-mono">
-                  {origPriceMetric.july2025}
-                </span>
-                <span className="text-slate-400">•</span>
-                <span className="text-slate-500 text-[11px]">
-                  {propertyType === 'detached' ? 'Detached SFH' : 'Attached Condos'}
-                </span>
-              </div>
+            <div className="flex items-center space-x-1.5 text-xs text-slate-600">
+              <span className="text-slate-500 font-medium">July 2025:</span>
+              <span className="font-bold text-slate-900 font-mono">{origPriceMetric.july2025}</span>
+              <span className="text-slate-400">•</span>
+              <span className="text-slate-500 text-[11px] font-medium">
+                {propertyType === 'detached' ? 'Detached SFH' : 'Attached Condos'}
+              </span>
             </div>
           </div>
 
-          <div className="pt-2.5 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-600 font-medium">
-            <span>YTD Realization (Thru 7-2026):</span>
+          <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-600 font-medium">
+            <span>YTD Realization:</span>
             <span className="font-bold text-slate-900 font-mono">
               {origPriceMetric.ytd2026} ({origPriceMetric.ytdChange} YoY)
+            </span>
+          </div>
+        </div>
+
+        {/* Card 4: Price Per Square Foot */}
+        <div className="bg-white rounded-3xl border border-slate-200/90 p-5 sm:p-6 shadow-xs hover:border-slate-300 transition-all flex flex-col justify-between space-y-4">
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-sans uppercase tracking-widest text-slate-500 font-extrabold">Price Per Sq. Ft.</span>
+              {sqftMetric && renderChangeBadge(sqftMetric.monthlyChange, sqftMetric.monthlyChangeNumeric)}
+            </div>
+
+            <div className="text-3xl sm:text-4xl font-black text-slate-950 font-sans">
+              {sqftMetric?.july2026 || '$734.97'}{' '}
+              <span className="text-sm font-bold text-slate-500">/sqft</span>
+            </div>
+
+            <div className="flex items-center space-x-1.5 text-xs text-slate-600">
+              <span className="text-slate-500 font-medium">July 2025:</span>
+              <span className="font-bold text-slate-900 font-mono">{sqftMetric?.july2025 || '$715.00'}/sqft</span>
+              <span className="text-slate-400">•</span>
+              <span className="text-slate-500 text-[11px] font-medium">
+                {propertyType === 'detached' ? 'Detached SFH' : 'Attached Condos'}
+              </span>
+            </div>
+          </div>
+
+          <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-600 font-medium">
+            <span>YTD Average:</span>
+            <span className="font-bold text-slate-900 font-mono">
+              {sqftMetric?.ytd2026 || '$733.86'} ({sqftMetric?.ytdChange || '+1.5%'} YoY)
             </span>
           </div>
         </div>

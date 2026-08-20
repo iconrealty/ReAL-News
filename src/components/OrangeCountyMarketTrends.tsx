@@ -132,7 +132,7 @@ interface OrangeCountyMarketTrendsProps {
   isRefreshingRates?: boolean;
 }
 
-type ReportTab = 'summary' | 'price-range';
+type ReportTab = 'summary' | 'price-range' | 'price-sqft';
 
 export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> = ({ 
   onSelectCity, 
@@ -151,6 +151,9 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
   const [selectedRegion, setSelectedRegion] = useState<string>('All');
   const [pricePropertyType, setPricePropertyType] = useState<'all' | 'attached' | 'detached'>('all');
   const [selectedPriceTier, setSelectedPriceTier] = useState<string>('all');
+  const [sqftSearchTerm, setSqftSearchTerm] = useState('');
+  const [sqftSortBy, setSqftSortBy] = useState<'pricePerSqFt' | 'medianSalesPrice' | 'unitsSold' | 'dom' | 'city'>('pricePerSqFt');
+  const [sqftSortDir, setSqftSortDir] = useState<'asc' | 'desc'>('desc');
   const [localRefreshing, setLocalRefreshing] = useState(false);
   const [fredStats, setFredStats] = useState<{ mortgage30Year: string; mortgage15Year: string; asOfDate: string; sourceType?: string }>(
     propFredStats || { mortgage30Year: '6.67%', mortgage15Year: '5.96%', asOfDate: '2026-08-13' }
@@ -234,6 +237,40 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
     return OC_PRICE_RANGE_REPORT_ALL;
   }, [pricePropertyType]);
 
+  const filteredAndSortedSoldReport = useMemo(() => {
+    const list = OC_SOLD_REPORT.filter(item => {
+      if (!sqftSearchTerm.trim()) return true;
+      return item.city.toLowerCase().includes(sqftSearchTerm.toLowerCase().trim());
+    });
+
+    return list.sort((a, b) => {
+      // Pin "All of O.C." at top if present
+      if (a.city === 'All of O.C.') return -1;
+      if (b.city === 'All of O.C.') return 1;
+
+      if (sqftSortBy === 'pricePerSqFt') {
+        const aVal = parseInt(a.medianPricePerSqFt.replace(/[^0-9]/g, ''), 10) || 0;
+        const bVal = parseInt(b.medianPricePerSqFt.replace(/[^0-9]/g, ''), 10) || 0;
+        return sqftSortDir === 'asc' ? aVal - bVal : bVal - aVal;
+      }
+      if (sqftSortBy === 'medianSalesPrice') {
+        const aVal = parseInt(a.medianSalesPrice.replace(/[^0-9]/g, ''), 10) || 0;
+        const bVal = parseInt(b.medianSalesPrice.replace(/[^0-9]/g, ''), 10) || 0;
+        return sqftSortDir === 'asc' ? aVal - bVal : bVal - aVal;
+      }
+      if (sqftSortBy === 'unitsSold') {
+        return sqftSortDir === 'asc' ? a.unitsSold2026 - b.unitsSold2026 : b.unitsSold2026 - a.unitsSold2026;
+      }
+      if (sqftSortBy === 'dom') {
+        return sqftSortDir === 'asc' ? a.medianDOM - b.medianDOM : b.medianDOM - a.medianDOM;
+      }
+      if (sqftSortBy === 'city') {
+        return sqftSortDir === 'asc' ? a.city.localeCompare(b.city) : b.city.localeCompare(a.city);
+      }
+      return 0;
+    });
+  }, [sqftSearchTerm, sqftSortBy, sqftSortDir]);
+
   const formatCurrency = (val: number) => {
     return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(val);
   };
@@ -284,6 +321,7 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
               {[
                 { id: 'summary', label: 'Orange County Overview' },
                 { id: 'price-range', label: 'Price Range Analysis' },
+                { id: 'price-sqft', label: 'Price Per Sq. Ft.' },
               ].map((tab) => {
                 const isActive = activeTab === tab.id;
                 return (
@@ -943,6 +981,241 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                     })}
                   </tbody>
                 </table>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 3: PRICE PER SQ. FT. BREAKDOWN */}
+          {activeTab === 'price-sqft' && (
+            <div className="space-y-6">
+              {/* Executive Indicators for Price Per Sq. Ft. */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="bg-white border border-slate-200/90 rounded-3xl p-5 sm:p-6 shadow-xs flex flex-col justify-between">
+                  <div className="text-xs font-sans uppercase tracking-widest text-black font-extrabold">Countywide Median $/Sq.Ft.</div>
+                  <div className="text-3xl sm:text-4xl font-black text-[#FA2D48] pt-1">$717 <span className="text-sm font-bold text-slate-500">/ sq.ft.</span></div>
+                  <p className="text-xs text-slate-600 font-medium mt-2">Across 1,994 closed resales countywide (August 2026 report).</p>
+                </div>
+
+                <div className="bg-white border border-slate-200/90 rounded-3xl p-5 sm:p-6 shadow-xs flex flex-col justify-between">
+                  <div className="text-xs font-sans uppercase tracking-widest text-black font-extrabold">Highest $/Sq.Ft. Markets</div>
+                  <div className="text-2xl font-black text-slate-900 pt-1">Newport Coast</div>
+                  <div className="flex flex-wrap items-center gap-1.5 pt-1 text-xs text-slate-600 font-medium">
+                    <span className="font-bold text-slate-900">$1,654</span> • CDM <span className="font-bold text-slate-900">$1,599</span> • Laguna <span className="font-bold text-slate-900">$1,518</span>
+                  </div>
+                </div>
+
+                <div className="bg-white border border-slate-200/90 rounded-3xl p-5 sm:p-6 shadow-xs flex flex-col justify-between">
+                  <div className="text-xs font-sans uppercase tracking-widest text-black font-extrabold">Most Accessible $/Sq.Ft.</div>
+                  <div className="text-2xl font-black text-slate-900 pt-1">Seal Beach</div>
+                  <div className="flex flex-wrap items-center gap-1.5 pt-1 text-xs text-slate-600 font-medium">
+                    <span className="font-bold text-slate-900">$377</span> • Laguna Woods <span className="font-bold text-slate-900">$434</span> • Coto <span className="font-bold text-slate-900">$517</span>
+                  </div>
+                </div>
+
+                <div className="bg-white border border-slate-200/90 rounded-3xl p-5 sm:p-6 shadow-xs flex flex-col justify-between">
+                  <div className="text-xs font-sans uppercase tracking-widest text-black font-extrabold">Median Living Size</div>
+                  <div className="text-3xl sm:text-4xl font-black text-slate-900 pt-1">1,753 <span className="text-sm font-bold text-slate-500">sq.ft.</span></div>
+                  <p className="text-xs text-slate-600 font-medium mt-2">Median Sales Price: $1,256,412 (99.9% sales-to-list ratio).</p>
+                </div>
+              </div>
+
+              {/* City Table Card */}
+              <div className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-8 shadow-xs space-y-6">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-100">
+                  <div>
+                    <h3 className="text-xl sm:text-2xl font-black text-slate-950">Orange County Price Per Sq. Ft. by City</h3>
+                    <p className="text-xs sm:text-sm text-slate-600 font-medium mt-0.5">
+                      Verified closed resale statistics for all Orange County municipalities from the August 2026 report.
+                    </p>
+                  </div>
+
+                  {/* Search Bar */}
+                  <div className="relative min-w-[240px] sm:w-72">
+                    <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                    <input
+                      type="text"
+                      placeholder="Search city or municipality..."
+                      value={sqftSearchTerm}
+                      onChange={(e) => setSqftSearchTerm(e.target.value)}
+                      className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#FA2D48]/30 focus:border-[#FA2D48]"
+                    />
+                    {sqftSearchTerm && (
+                      <button
+                        onClick={() => setSqftSearchTerm('')}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-slate-600 font-bold"
+                      >
+                        ✕
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Quick Sort Options */}
+                <div className="flex flex-wrap items-center justify-between gap-3 text-xs">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="font-bold text-slate-500 uppercase tracking-wider text-[11px]">Sort By:</span>
+                    {[
+                      { id: 'pricePerSqFt', label: 'Price / Sq. Ft.' },
+                      { id: 'medianSalesPrice', label: 'Median Sales Price' },
+                      { id: 'unitsSold', label: 'Closed Volume' },
+                      { id: 'dom', label: 'Days on Market' },
+                      { id: 'city', label: 'City Name' },
+                    ].map((sortOption) => {
+                      const isActive = sqftSortBy === sortOption.id;
+                      return (
+                        <button
+                          key={sortOption.id}
+                          onClick={() => {
+                            if (isActive) {
+                              setSqftSortDir(sqftSortDir === 'asc' ? 'desc' : 'asc');
+                            } else {
+                              setSqftSortBy(sortOption.id as any);
+                              setSqftSortDir(sortOption.id === 'city' ? 'asc' : 'desc');
+                            }
+                          }}
+                          className={`px-3 py-1.5 rounded-xl font-bold transition-all cursor-pointer flex items-center space-x-1 ${
+                            isActive
+                              ? 'bg-slate-900 text-white shadow-xs'
+                              : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                          }`}
+                        >
+                          <span>{sortOption.label}</span>
+                          {isActive && (
+                            <span className="text-[10px] ml-1">{sqftSortDir === 'asc' ? '▲' : '▼'}</span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  <div className="text-[11px] text-slate-500 font-medium">
+                    Showing <span className="font-bold text-slate-900">{filteredAndSortedSoldReport.length}</span> municipalities
+                  </div>
+                </div>
+
+                {/* Comprehensive City Table */}
+                <div className="overflow-x-auto rounded-2xl border border-slate-200/80">
+                  <table className="w-full text-left text-xs border-collapse">
+                    <thead>
+                      <tr className="bg-slate-900 text-white font-black uppercase tracking-wider text-[10px]">
+                        <th className="p-3.5">City / Municipality</th>
+                        <th className="p-3.5 text-right">Median $/Sq. Ft.</th>
+                        <th className="p-3.5 text-right">Median Sq. Ft.</th>
+                        <th className="p-3.5 text-right">Median Sales Price</th>
+                        <th className="p-3.5 text-right">Median List Price</th>
+                        <th className="p-3.5 text-center">Sales / List %</th>
+                        <th className="p-3.5 text-center">Median DOM</th>
+                        <th className="p-3.5 text-center">Aug 2026 Sales</th>
+                        <th className="p-3.5 text-center">Aug 2025 Sales</th>
+                        <th className="p-3.5 text-right">Price Range (Low – High)</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100 font-sans">
+                      {filteredAndSortedSoldReport.map((row, idx) => {
+                        const isAllOC = row.city === 'All of O.C.';
+                        const sqftNumeric = parseInt(row.medianPricePerSqFt.replace(/[^0-9]/g, ''), 10) || 0;
+                        const yoyGrowth = row.unitsSold2025 > 0
+                          ? Math.round(((row.unitsSold2026 - row.unitsSold2025) / row.unitsSold2025) * 100)
+                          : 0;
+
+                        return (
+                          <tr
+                            key={idx}
+                            onClick={() => {
+                              if (!isAllOC) handleCityClick(row.city);
+                            }}
+                            className={`transition-colors ${
+                              isAllOC
+                                ? 'bg-rose-50/90 font-black border-y-2 border-[#FA2D48]/40 text-slate-950'
+                                : 'hover:bg-slate-50/90 cursor-pointer'
+                            }`}
+                          >
+                            <td className="p-3 font-bold text-slate-900 flex items-center space-x-2">
+                              <span className={isAllOC ? 'text-[#FA2D48] text-sm font-black' : 'font-extrabold'}>
+                                {row.city}
+                              </span>
+                              {isAllOC && (
+                                <span className="px-2 py-0.5 rounded-full bg-[#FA2D48] text-white text-[9px] font-black uppercase tracking-wider">
+                                  Benchmark
+                                </span>
+                              )}
+                            </td>
+
+                            <td className="p-3 text-right font-mono">
+                              <span className={`inline-flex items-center px-2.5 py-1 rounded-xl text-xs font-black ${
+                                isAllOC
+                                  ? 'bg-[#FA2D48] text-white shadow-xs'
+                                  : sqftNumeric >= 1000
+                                    ? 'bg-rose-100 text-[#FA2D48] font-black'
+                                    : sqftNumeric >= 700
+                                      ? 'bg-emerald-100 text-emerald-800 font-black'
+                                      : 'bg-slate-100 text-slate-800 font-bold'
+                              }`}>
+                                {row.medianPricePerSqFt}
+                                <span className="text-[10px] font-normal ml-0.5 text-slate-500">/sqft</span>
+                              </span>
+                            </td>
+
+                            <td className="p-3 text-right font-mono font-bold text-slate-800">
+                              {row.medianSqFt ? `${row.medianSqFt.toLocaleString()} sqft` : '—'}
+                            </td>
+
+                            <td className="p-3 text-right font-mono font-bold text-slate-950">
+                              {row.medianSalesPrice}
+                            </td>
+
+                            <td className="p-3 text-right font-mono font-medium text-slate-600">
+                              {row.medianListPrice}
+                            </td>
+
+                            <td className="p-3 text-center font-mono font-bold">
+                              <span className={`px-2 py-0.5 rounded-md text-[11px] ${
+                                parseFloat(row.salesToListRatio) >= 100.0
+                                  ? 'bg-emerald-50 text-emerald-700 font-black'
+                                  : 'bg-slate-100 text-slate-700'
+                              }`}>
+                                {row.salesToListRatio}
+                              </span>
+                            </td>
+
+                            <td className="p-3 text-center font-mono font-bold text-slate-900">
+                              <span className={`px-2 py-0.5 rounded-md text-[11px] ${
+                                row.medianDOM <= 14 ? 'bg-rose-50 text-[#FA2D48] font-black' : 'text-slate-700'
+                              }`}>
+                                {row.medianDOM} days
+                              </span>
+                            </td>
+
+                            <td className="p-3 text-center font-mono font-black text-slate-950">
+                              {row.unitsSold2026}
+                            </td>
+
+                            <td className="p-3 text-center font-mono text-slate-500">
+                              <span>{row.unitsSold2025}</span>
+                              {row.unitsSold2025 > 0 && (
+                                <span className={`ml-1.5 text-[10px] font-bold ${
+                                  yoyGrowth >= 0 ? 'text-emerald-600' : 'text-[#FA2D48]'
+                                }`}>
+                                  ({yoyGrowth >= 0 ? `+${yoyGrowth}%` : `${yoyGrowth}%`})
+                                </span>
+                              )}
+                            </td>
+
+                            <td className="p-3 text-right font-mono text-[11px] text-slate-600 font-medium">
+                              <span>{row.lowPrice}</span>
+                              <span className="text-slate-400 mx-1">–</span>
+                              <span>{row.highPrice}</span>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+
+                <p className="text-[11px] text-slate-500 italic">
+                  * Price per square foot and sales metric data sourced from verified closed escrow resales across all Orange County submarkets for the August 2026 report period. Click any city to view localized market trends.
+                </p>
               </div>
             </div>
           )}
