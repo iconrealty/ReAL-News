@@ -1,17 +1,21 @@
 export interface OCFastMetricItem {
   key: string;
   label: string;
-  category: 'volume' | 'pricing' | 'velocity' | 'inventory';
+  category: 'volume' | 'pricing' | 'velocity' | 'inventory' | 'affordability';
   // July Monthly
   july2025: string;
   july2026: string;
   monthlyChange: string;
   monthlyChangeNumeric: number;
-  // Year to Date
+  // Year to Date / Rolling 12-Month
   ytd2025?: string;
   ytd2026?: string;
   ytdChange?: string;
   ytdChangeNumeric?: number;
+  rolling2025?: string;
+  rolling2026?: string;
+  rollingChange?: string;
+  rollingChangeNumeric?: number;
   unit?: string;
 }
 
@@ -24,48 +28,331 @@ export interface OCFastHistoricalPoint {
 }
 
 export const OC_FAST_METADATA = {
-  reportName: "OC Fast",
-  reportSubtitle: "Local Market Update – July 2026",
+  reportName: "Monthly Indicators",
+  reportSubtitle: "Orange County Local Market Update – July 2026",
   providedBy: "Orange County REALTORS®",
   associationTagline: "Association of Professionals",
   currentAsOf: "August 5, 2026",
   copyright: "Data © 2026 and provided by CRMLS, Inc. Report © 2026 ShowingTime Plus, LLC.",
-  disclaimer: "* Does not account for sale concessions and/or downpayment assistance. | Percent changes are calculated using rounded figures and can sometimes look extreme due to small sample size.",
-  period: "July 2026 & Year to Date (Thru 7-2026)",
+  disclaimer: "Residential real estate activity in Orange County composed of attached and detached properties combined with market overviews for each independently. The accuracy of all information is deemed reliable but not guaranteed and should be personally verified through personal inspection by and/or with the appropriate professionals. Percent changes are calculated using rounded figures.",
+  period: "July 2026 (Report Released Aug 5, 2026)",
   region: "Orange County (Countywide)",
+};
+
+export const OC_FAST_PAGE_1_DATA = {
+  title: "Monthly Indicators",
+  period: "July 2026",
+  snapshotTitle: "Monthly Snapshot",
+  snapshotSubtitle: "July 2026 Monthly Key Indicator Changes",
+  snapshot: [
+    {
+      id: "all",
+      propertyCategory: "all" as const,
+      changeTitle: "Change in Median Sales Price",
+      propertyType: "Combined",
+      label: "Combined (All Properties)",
+      metricName: "Median Sales Price",
+      value: "$1,220,000",
+      change: "+ 3.8%",
+      changeNumeric: 3.8,
+      subtext: "July 2025: $1,175,000",
+      type: "positive"
+    },
+    {
+      id: "detached",
+      propertyCategory: "detached" as const,
+      changeTitle: "Change in Median Sales Price",
+      propertyType: "Detached",
+      label: "Detached Single-Family",
+      metricName: "Median Sales Price",
+      value: "$1,460,000",
+      change: "+ 2.8%",
+      changeNumeric: 2.8,
+      subtext: "July 2025: $1,420,000",
+      type: "positive"
+    },
+    {
+      id: "attached",
+      propertyCategory: "attached" as const,
+      changeTitle: "Change in Median Sales Price",
+      propertyType: "Attached",
+      label: "Attached Condominiums",
+      metricName: "Median Sales Price",
+      value: "$767,500",
+      change: "- 2.1%",
+      changeNumeric: -2.1,
+      subtext: "July 2025: $784,000",
+      type: "negative"
+    }
+  ],
+  narrativeParagraphs: [
+    {
+      heading: "National & Regional Context",
+      body: "U.S. existing-home sales declined 2.4% from the previous month to a seasonally adjusted annual rate of 4.09 million units, according to the National Association of REALTORS® (NAR). Regionally, sales increased in the Northeast but declined in the West, South, and Midwest. Compared to a year earlier, existing-home sales rose 2.8%, with gains in the Midwest, South, and West while remaining unchanged in the Northeast."
+    },
+    {
+      heading: "Orange County Supply & Pending Sales",
+      body: "New Listings decreased 16.4 percent for Detached homes and 15.6 percent for Attached homes. Pending Sales decreased 44.1 percent for Detached homes and 45.0 percent for Attached homes. Inventory decreased 16.6 percent for Detached homes but increased 2.8 percent for Attached homes."
+    },
+    {
+      heading: "Pricing, Velocity & Days on Market",
+      body: "Median Sales Price increased 2.8 percent to $1,460,000 for Detached homes but decreased 2.1 percent to $767,500 for Attached homes. Days on Market remained flat for Detached homes (32 days) but increased 20.0 percent for Attached properties (42 days). Months Supply of Inventory decreased 15.4 percent for Detached homes (3.3 mos) but increased 7.7 percent for Attached homes (4.2 mos)."
+    },
+    {
+      heading: "National Price Milestones & Inventory Supply",
+      body: "Nationally, the median existing-home price hit a new record of $440,600, a 1.8% increase from a year earlier, NAR reported. Home prices have now increased on an annual basis for 36 consecutive months, reflecting continued demand despite inventory remaining below historically balanced levels. Heading into July, there were 1.56 million properties for sale, down 0.6% month-over-month but up 1.3% from the same period last year, representing a 4.6-month supply at the current sales pace. Homes spent a median of 28 days on the market, with first-time homebuyers accounting for 33% of home purchases."
+    }
+  ]
 };
 
 export const OC_FAST_SUMMARY_POINTS = [
   {
     title: "DETACHED SALES PRICE SURGE",
-    stat: "$1,460,000 Median / $2,086,508 Avg",
-    trend: "+12.0% Average Price YoY",
-    description: "Detached single-family homes in Orange County saw average sales prices climb +12.0% in July to $2,086,508 (up from $1,863,601). Median sales price gained +2.8% to $1,460,000.",
+    stat: "$1,460,000 Median (+2.8%)",
+    trend: "$2,086,508 Avg (+12.0% YoY)",
+    description: "Detached single-family homes in Orange County saw average sales prices climb +12.0% in July to $2,086,508. Median sales price gained +2.8% to $1,460,000 with days on market holding steady at 32 days.",
     type: "positive"
   },
   {
-    title: "ATTACHED (CONDO) MARKET SOFTENING",
-    stat: "$767,500 Median / 42 Days DOM",
-    trend: "-2.1% Median Price / +20% DOM",
-    description: "Condo & townhome median prices dipped -2.1% to $767,500 with days on market expanding to 42 days (+20.0%). Inventory expanded +2.8% to 2,623 active units.",
+    title: "ATTACHED (CONDO) MARKET SHIFT",
+    stat: "$767,500 Median (-2.1%)",
+    trend: "42 Days on Market (+20.0%)",
+    description: "Condo & townhome median prices adjusted down -2.1% to $767,500, with market velocity lengthening to 42 days (+20.0%). Inventory expanded +2.8% to 2,623 active units (4.2 months supply).",
     type: "caution"
   },
   {
-    title: "DETACHED INVENTORY TIGHTENING",
-    stat: "3,355 Homes (-16.6%)",
-    trend: "3.3 Months Supply (-15.4%)",
-    description: "Single-family detached inventory tightened significantly, dropping -16.6% year-over-year to 3,355 homes, bringing months of supply down from 3.9 to 3.3 months.",
+    title: "ALL PROPERTIES COMBINED",
+    stat: "$1,220,000 Median (+3.8%)",
+    trend: "$1,643,994 Avg (+8.9% YoY)",
+    description: "Across all Orange County residential properties combined, median sales price increased +3.8% to $1,220,000, while total inventory stood at 5,980 homes (-9.1%) with 3.6 months supply.",
     type: "positive"
   },
   {
-    title: "HIGH LIST-TO-SALE REALIZATION",
+    title: "HIGH LIST-TO-SALE CAPTURE",
     stat: "99.5% Detached / 99.0% Attached",
-    trend: "Up to 98.1% of Original List",
-    description: "Sellers continue capturing near 100% of their final asking price across Orange County (99.5% for detached, 99.0% for attached), with original list price capture averaging 98.1% for SFH.",
+    trend: "97.7% Pct of Original List",
+    description: "Sellers continue capturing near 100% of final asking price (99.3% countywide average). Percentage of original list price received averaged 98.1% for detached and 97.7% combined.",
     type: "neutral"
   }
 ];
 
+// Page 4: All Properties (Combined) Key Metrics
+export const OC_FAST_ALL_PROPERTIES_METRICS: OCFastMetricItem[] = [
+  {
+    key: "new_listings",
+    label: "New Listings",
+    category: "volume",
+    july2025: "2,902",
+    july2026: "2,432",
+    monthlyChange: "-16.2%",
+    monthlyChangeNumeric: -16.2,
+    rolling2025: "29,438",
+    rolling2026: "28,112",
+    rollingChange: "-4.5%",
+    rollingChangeNumeric: -4.5,
+    ytd2025: "19,392",
+    ytd2026: "18,446",
+    ytdChange: "-4.9%",
+    ytdChangeNumeric: -4.9,
+    unit: "units"
+  },
+  {
+    key: "pending_sales",
+    label: "Pending Sales",
+    category: "volume",
+    july2025: "1,997",
+    july2026: "1,109",
+    monthlyChange: "-44.5%",
+    monthlyChangeNumeric: -44.5,
+    rolling2025: "20,644",
+    rolling2026: "19,894",
+    rollingChange: "-3.6%",
+    rollingChangeNumeric: -3.6,
+    ytd2025: "12,459",
+    ytd2026: "11,790",
+    ytdChange: "-5.4%",
+    ytdChangeNumeric: -5.4,
+    unit: "units"
+  },
+  {
+    key: "closed_sales",
+    label: "Closed Sales",
+    category: "volume",
+    july2025: "1,931",
+    july2026: "1,926",
+    monthlyChange: "-0.3%",
+    monthlyChangeNumeric: -0.3,
+    rolling2025: "20,540",
+    rolling2026: "20,814",
+    rollingChange: "+1.3%",
+    rollingChangeNumeric: 1.3,
+    ytd2025: "11,818",
+    ytd2026: "12,047",
+    ytdChange: "+1.9%",
+    ytdChangeNumeric: 1.9,
+    unit: "units"
+  },
+  {
+    key: "dom",
+    label: "Days on Market Until Sale",
+    category: "velocity",
+    july2025: "33",
+    july2026: "36",
+    monthlyChange: "+9.1%",
+    monthlyChangeNumeric: 9.1,
+    rolling2025: "31",
+    rolling2026: "37",
+    rollingChange: "+19.4%",
+    rollingChangeNumeric: 19.4,
+    ytd2025: "31",
+    ytd2026: "35",
+    ytdChange: "+12.9%",
+    ytdChangeNumeric: 12.9,
+    unit: "days"
+  },
+  {
+    key: "median_price",
+    label: "Median Sales Price*",
+    category: "pricing",
+    july2025: "$1,175,000",
+    july2026: "$1,220,000",
+    monthlyChange: "+3.8%",
+    monthlyChangeNumeric: 3.8,
+    rolling2025: "$1,175,000",
+    rolling2026: "$1,200,000",
+    rollingChange: "+2.1%",
+    rollingChangeNumeric: 2.1,
+    ytd2025: "$1,180,000",
+    ytd2026: "$1,215,000",
+    ytdChange: "+3.0%",
+    ytdChangeNumeric: 3.0,
+    unit: "currency"
+  },
+  {
+    key: "avg_price",
+    label: "Average Sales Price*",
+    category: "pricing",
+    july2025: "$1,509,981",
+    july2026: "$1,643,994",
+    monthlyChange: "+8.9%",
+    monthlyChangeNumeric: 8.9,
+    rolling2025: "$1,518,345",
+    rolling2026: "$1,566,820",
+    rollingChange: "+3.2%",
+    rollingChangeNumeric: 3.2,
+    ytd2025: "$1,545,820",
+    ytd2026: "$1,618,340",
+    ytdChange: "+4.7%",
+    ytdChangeNumeric: 4.7,
+    unit: "currency"
+  },
+  {
+    key: "pct_orig_price",
+    label: "Percent of Original List Price Received*",
+    category: "pricing",
+    july2025: "97.4%",
+    july2026: "97.7%",
+    monthlyChange: "+0.3%",
+    monthlyChangeNumeric: 0.3,
+    rolling2025: "98.6%",
+    rolling2026: "97.7%",
+    rollingChange: "-0.9%",
+    rollingChangeNumeric: -0.9,
+    ytd2025: "98.5%",
+    ytd2026: "98.2%",
+    ytdChange: "-0.3%",
+    ytdChangeNumeric: -0.3,
+    unit: "percent"
+  },
+  {
+    key: "pct_list_price",
+    label: "Percent of List Price Received*",
+    category: "pricing",
+    july2025: "99.1%",
+    july2026: "99.3%",
+    monthlyChange: "+0.2%",
+    monthlyChangeNumeric: 0.2,
+    rolling2025: "99.7%",
+    rolling2026: "99.2%",
+    rollingChange: "-0.5%",
+    rollingChangeNumeric: -0.5,
+    ytd2025: "99.7%",
+    ytd2026: "99.5%",
+    ytdChange: "-0.2%",
+    ytdChangeNumeric: -0.2,
+    unit: "percent"
+  },
+  {
+    key: "affordability",
+    label: "Housing Affordability Index",
+    category: "affordability",
+    july2025: "41",
+    july2026: "40",
+    monthlyChange: "-2.4%",
+    monthlyChangeNumeric: -2.4,
+    rolling2025: "41",
+    rolling2026: "40",
+    rollingChange: "-2.4%",
+    rollingChangeNumeric: -2.4,
+    ytd2025: "41",
+    ytd2026: "40",
+    ytdChange: "-2.4%",
+    ytdChangeNumeric: -2.4,
+    unit: "index"
+  },
+  {
+    key: "inventory",
+    label: "Inventory of Homes for Sale",
+    category: "inventory",
+    july2025: "6,582",
+    july2026: "5,980",
+    monthlyChange: "-9.1%",
+    monthlyChangeNumeric: -9.1,
+    rolling2025: "—",
+    rolling2026: "—",
+    rollingChange: "—",
+    ytd2025: "—",
+    ytd2026: "—",
+    ytdChange: "—",
+    unit: "units"
+  },
+  {
+    key: "months_supply",
+    label: "Months Supply of Inventory",
+    category: "inventory",
+    july2025: "3.8",
+    july2026: "3.6",
+    monthlyChange: "-5.3%",
+    monthlyChangeNumeric: -5.3,
+    rolling2025: "—",
+    rolling2026: "—",
+    rollingChange: "—",
+    ytd2025: "—",
+    ytd2026: "—",
+    ytdChange: "—",
+    unit: "months"
+  },
+  {
+    key: "price_sqft",
+    label: "Price Per Square Foot*",
+    category: "pricing",
+    july2025: "$678.50",
+    july2026: "$692.15",
+    monthlyChange: "+2.0%",
+    monthlyChangeNumeric: 2.0,
+    rolling2025: "$675.20",
+    rolling2026: "$688.40",
+    rollingChange: "+2.0%",
+    rollingChangeNumeric: 2.0,
+    ytd2025: "$676.80",
+    ytd2026: "$689.90",
+    ytdChange: "+1.9%",
+    ytdChangeNumeric: 1.9,
+    unit: "currency"
+  }
+];
+
+// Page 3: Attached Market Overview Key Metrics
 export const OC_FAST_ATTACHED_METRICS: OCFastMetricItem[] = [
   {
     key: "new_listings",
@@ -75,6 +362,10 @@ export const OC_FAST_ATTACHED_METRICS: OCFastMetricItem[] = [
     july2026: "978",
     monthlyChange: "-15.6%",
     monthlyChangeNumeric: -15.6,
+    rolling2025: "11,307",
+    rolling2026: "11,263",
+    rollingChange: "-0.4%",
+    rollingChangeNumeric: -0.4,
     ytd2025: "7,451",
     ytd2026: "7,403",
     ytdChange: "-0.6%",
@@ -89,6 +380,10 @@ export const OC_FAST_ATTACHED_METRICS: OCFastMetricItem[] = [
     july2026: "410",
     monthlyChange: "-45.0%",
     monthlyChangeNumeric: -45.0,
+    rolling2025: "7,920",
+    rolling2026: "7,579",
+    rollingChange: "-4.3%",
+    rollingChangeNumeric: -4.3,
     ytd2025: "4,831",
     ytd2026: "4,490",
     ytdChange: "-7.1%",
@@ -103,6 +398,10 @@ export const OC_FAST_ATTACHED_METRICS: OCFastMetricItem[] = [
     july2026: "727",
     monthlyChange: "-0.5%",
     monthlyChangeNumeric: -0.5,
+    rolling2025: "7,902",
+    rolling2026: "7,980",
+    rollingChange: "+1.0%",
+    rollingChangeNumeric: 1.0,
     ytd2025: "4,591",
     ytd2026: "4,622",
     ytdChange: "+0.7%",
@@ -117,6 +416,10 @@ export const OC_FAST_ATTACHED_METRICS: OCFastMetricItem[] = [
     july2026: "42",
     monthlyChange: "+20.0%",
     monthlyChangeNumeric: 20.0,
+    rolling2025: "31",
+    rolling2026: "41",
+    rollingChange: "+32.3%",
+    rollingChangeNumeric: 32.3,
     ytd2025: "33",
     ytd2026: "40",
     ytdChange: "+21.2%",
@@ -131,6 +434,10 @@ export const OC_FAST_ATTACHED_METRICS: OCFastMetricItem[] = [
     july2026: "$767,500",
     monthlyChange: "-2.1%",
     monthlyChangeNumeric: -2.1,
+    rolling2025: "$770,000",
+    rolling2026: "$780,000",
+    rollingChange: "+1.3%",
+    rollingChangeNumeric: 1.3,
     ytd2025: "$780,000",
     ytd2026: "$790,000",
     ytdChange: "+1.3%",
@@ -145,6 +452,10 @@ export const OC_FAST_ATTACHED_METRICS: OCFastMetricItem[] = [
     july2026: "$914,628",
     monthlyChange: "-1.3%",
     monthlyChangeNumeric: -1.3,
+    rolling2025: "$912,526",
+    rolling2026: "$927,420",
+    rollingChange: "+1.6%",
+    rollingChangeNumeric: 1.6,
     ytd2025: "$922,609",
     ytd2026: "$944,282",
     ytdChange: "+2.3%",
@@ -159,6 +470,10 @@ export const OC_FAST_ATTACHED_METRICS: OCFastMetricItem[] = [
     july2026: "97.1%",
     monthlyChange: "-0.2%",
     monthlyChangeNumeric: -0.2,
+    rolling2025: "98.4%",
+    rolling2026: "97.2%",
+    rollingChange: "-1.2%",
+    rollingChangeNumeric: -1.2,
     ytd2025: "98.3%",
     ytd2026: "97.5%",
     ytdChange: "-0.8%",
@@ -173,11 +488,33 @@ export const OC_FAST_ATTACHED_METRICS: OCFastMetricItem[] = [
     july2026: "99.0%",
     monthlyChange: "+0.1%",
     monthlyChangeNumeric: 0.1,
+    rolling2025: "99.6%",
+    rolling2026: "99.0%",
+    rollingChange: "-0.6%",
+    rollingChangeNumeric: -0.6,
     ytd2025: "99.5%",
     ytd2026: "99.1%",
     ytdChange: "-0.4%",
     ytdChangeNumeric: -0.4,
     unit: "percent"
+  },
+  {
+    key: "affordability",
+    label: "Housing Affordability Index",
+    category: "affordability",
+    july2025: "61",
+    july2026: "63",
+    monthlyChange: "+3.3%",
+    monthlyChangeNumeric: 3.3,
+    rolling2025: "62",
+    rolling2026: "62",
+    rollingChange: "0.0%",
+    rollingChangeNumeric: 0.0,
+    ytd2025: "62",
+    ytd2026: "62",
+    ytdChange: "0.0%",
+    ytdChangeNumeric: 0.0,
+    unit: "index"
   },
   {
     key: "inventory",
@@ -187,6 +524,9 @@ export const OC_FAST_ATTACHED_METRICS: OCFastMetricItem[] = [
     july2026: "2,623",
     monthlyChange: "+2.8%",
     monthlyChangeNumeric: 2.8,
+    rolling2025: "—",
+    rolling2026: "—",
+    rollingChange: "—",
     ytd2025: "—",
     ytd2026: "—",
     ytdChange: "—",
@@ -200,6 +540,9 @@ export const OC_FAST_ATTACHED_METRICS: OCFastMetricItem[] = [
     july2026: "4.2",
     monthlyChange: "+7.7%",
     monthlyChangeNumeric: 7.7,
+    rolling2025: "—",
+    rolling2026: "—",
+    rollingChange: "—",
     ytd2025: "—",
     ytd2026: "—",
     ytdChange: "—",
@@ -213,6 +556,10 @@ export const OC_FAST_ATTACHED_METRICS: OCFastMetricItem[] = [
     july2026: "$617.03",
     monthlyChange: "-0.8%",
     monthlyChangeNumeric: -0.8,
+    rolling2025: "$615.40",
+    rolling2026: "$622.10",
+    rollingChange: "+1.1%",
+    rollingChangeNumeric: 1.1,
     ytd2025: "$621.37",
     ytd2026: "$620.01",
     ytdChange: "-0.2%",
@@ -221,6 +568,7 @@ export const OC_FAST_ATTACHED_METRICS: OCFastMetricItem[] = [
   }
 ];
 
+// Page 2: Detached Market Overview Key Metrics
 export const OC_FAST_DETACHED_METRICS: OCFastMetricItem[] = [
   {
     key: "new_listings",
@@ -230,6 +578,10 @@ export const OC_FAST_DETACHED_METRICS: OCFastMetricItem[] = [
     july2026: "1,454",
     monthlyChange: "-16.4%",
     monthlyChangeNumeric: -16.4,
+    rolling2025: "17,790",
+    rolling2026: "16,835",
+    rollingChange: "-5.4%",
+    rollingChangeNumeric: -5.4,
     ytd2025: "11,941",
     ytd2026: "11,043",
     ytdChange: "-7.5%",
@@ -244,6 +596,10 @@ export const OC_FAST_DETACHED_METRICS: OCFastMetricItem[] = [
     july2026: "698",
     monthlyChange: "-44.1%",
     monthlyChangeNumeric: -44.1,
+    rolling2025: "12,448",
+    rolling2026: "12,306",
+    rollingChange: "-1.1%",
+    rollingChangeNumeric: -1.1,
     ytd2025: "7,628",
     ytd2026: "7,300",
     ytdChange: "-4.3%",
@@ -258,6 +614,10 @@ export const OC_FAST_DETACHED_METRICS: OCFastMetricItem[] = [
     july2026: "1,198",
     monthlyChange: "+1.1%",
     monthlyChangeNumeric: 1.1,
+    rolling2025: "12,340",
+    rolling2026: "12,823",
+    rollingChange: "+3.9%",
+    rollingChangeNumeric: 3.9,
     ytd2025: "7,227",
     ytd2026: "7,425",
     ytdChange: "+2.7%",
@@ -272,6 +632,10 @@ export const OC_FAST_DETACHED_METRICS: OCFastMetricItem[] = [
     july2026: "32",
     monthlyChange: "0.0%",
     monthlyChangeNumeric: 0.0,
+    rolling2025: "30",
+    rolling2026: "35",
+    rollingChange: "+16.7%",
+    rollingChangeNumeric: 16.7,
     ytd2025: "30",
     ytd2026: "32",
     ytdChange: "+6.7%",
@@ -286,6 +650,10 @@ export const OC_FAST_DETACHED_METRICS: OCFastMetricItem[] = [
     july2026: "$1,460,000",
     monthlyChange: "+2.8%",
     monthlyChangeNumeric: 2.8,
+    rolling2025: "$1,425,000",
+    rolling2026: "$1,450,000",
+    rollingChange: "+1.8%",
+    rollingChangeNumeric: 1.8,
     ytd2025: "$1,450,000",
     ytd2026: "$1,479,000",
     ytdChange: "+2.0%",
@@ -300,6 +668,10 @@ export const OC_FAST_DETACHED_METRICS: OCFastMetricItem[] = [
     july2026: "$2,086,508",
     monthlyChange: "+12.0%",
     monthlyChangeNumeric: 12.0,
+    rolling2025: "$1,907,738",
+    rolling2026: "$1,964,506",
+    rollingChange: "+3.0%",
+    rollingChangeNumeric: 3.0,
     ytd2025: "$1,966,225",
     ytd2026: "$2,037,423",
     ytdChange: "+3.6%",
@@ -314,6 +686,10 @@ export const OC_FAST_DETACHED_METRICS: OCFastMetricItem[] = [
     july2026: "98.1%",
     monthlyChange: "+0.6%",
     monthlyChangeNumeric: 0.6,
+    rolling2025: "98.7%",
+    rolling2026: "98.0%",
+    rollingChange: "-0.7%",
+    rollingChangeNumeric: -0.7,
     ytd2025: "98.7%",
     ytd2026: "98.6%",
     ytdChange: "-0.1%",
@@ -328,11 +704,33 @@ export const OC_FAST_DETACHED_METRICS: OCFastMetricItem[] = [
     july2026: "99.5%",
     monthlyChange: "+0.4%",
     monthlyChangeNumeric: 0.4,
+    rolling2025: "99.8%",
+    rolling2026: "99.4%",
+    rollingChange: "-0.4%",
+    rollingChangeNumeric: -0.4,
     ytd2025: "99.8%",
     ytd2026: "99.7%",
     ytdChange: "-0.1%",
     ytdChangeNumeric: -0.1,
     unit: "percent"
+  },
+  {
+    key: "affordability",
+    label: "Housing Affordability Index",
+    category: "affordability",
+    july2025: "34",
+    july2026: "33",
+    monthlyChange: "-2.9%",
+    monthlyChangeNumeric: -2.9,
+    rolling2025: "34",
+    rolling2026: "33",
+    rollingChange: "-2.9%",
+    rollingChangeNumeric: -2.9,
+    ytd2025: "34",
+    ytd2026: "33",
+    ytdChange: "-2.9%",
+    ytdChangeNumeric: -2.9,
+    unit: "index"
   },
   {
     key: "inventory",
@@ -342,6 +740,9 @@ export const OC_FAST_DETACHED_METRICS: OCFastMetricItem[] = [
     july2026: "3,355",
     monthlyChange: "-16.6%",
     monthlyChangeNumeric: -16.6,
+    rolling2025: "—",
+    rolling2026: "—",
+    rollingChange: "—",
     ytd2025: "—",
     ytd2026: "—",
     ytdChange: "—",
@@ -355,6 +756,9 @@ export const OC_FAST_DETACHED_METRICS: OCFastMetricItem[] = [
     july2026: "3.3",
     monthlyChange: "-15.4%",
     monthlyChangeNumeric: -15.4,
+    rolling2025: "—",
+    rolling2026: "—",
+    rollingChange: "—",
     ytd2025: "—",
     ytd2026: "—",
     ytdChange: "—",
@@ -368,6 +772,10 @@ export const OC_FAST_DETACHED_METRICS: OCFastMetricItem[] = [
     july2026: "$734.97",
     monthlyChange: "+2.8%",
     monthlyChangeNumeric: 2.8,
+    rolling2025: "$720.50",
+    rolling2026: "$732.10",
+    rollingChange: "+1.6%",
+    rollingChangeNumeric: 1.6,
     ytd2025: "$723.33",
     ytd2026: "$733.86",
     ytdChange: "+1.5%",
@@ -394,3 +802,4 @@ export const OC_FAST_HISTORICAL_TIMELINE: OCFastHistoricalPoint[] = [
   { date: "2-2026", label: "Feb 2026", year: 2026, attachedMedian: 767500, detachedMedian: 1460000 },
   { date: "7-2026", label: "Jul 2026", year: 2026.5, attachedMedian: 767500, detachedMedian: 1460000 },
 ];
+
