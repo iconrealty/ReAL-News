@@ -68,10 +68,9 @@ export const OCFastTopOverview: React.FC<OCFastTopOverviewProps> = ({
       <div className="bg-white text-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-xs relative overflow-hidden">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-2">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center space-x-1.5 px-3 py-1 bg-rose-50 border border-rose-200/80 rounded-full text-xs font-sans font-bold text-[#FA2D48]">
-                <Activity className="w-3.5 h-3.5" />
-                <span>{OC_FAST_METADATA.reportName} • {OC_FAST_METADATA.reportSubtitle}</span>
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="text-sm font-mono font-black tracking-wider text-[#FA2D48] uppercase">
+                OC FastStats
               </span>
               <span className="inline-flex items-center px-2.5 py-0.5 bg-slate-100 border border-slate-200 rounded-full text-[11px] font-bold text-slate-600">
                 Current as of {OC_FAST_METADATA.currentAsOf}
@@ -81,47 +80,48 @@ export const OCFastTopOverview: React.FC<OCFastTopOverviewProps> = ({
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black font-sans tracking-tight text-slate-950 leading-tight">
               {title}
             </h2>
-            
-            <p className="text-slate-700 text-xs sm:text-sm max-w-2xl font-sans font-medium leading-relaxed">
-              Provided by Orange County REALTORS
-            </p>
           </div>
 
-          {/* Right side controls: Clean Red All Properties / Detached / Attached Switcher */}
-          <div className="flex items-center space-x-1 bg-slate-100 p-1.5 rounded-2xl border border-slate-200/80 self-start md:self-auto overflow-x-auto">
-            <button
-              onClick={() => setPropertyType('all')}
-              className={`px-3.5 py-2 text-xs font-black rounded-xl transition-all cursor-pointer whitespace-nowrap flex items-center space-x-1.5 ${
-                propertyType === 'all'
-                  ? 'bg-[#FA2D48] text-white shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              <Layers className="w-3.5 h-3.5" />
-              <span>All Properties</span>
-            </button>
-            <button
-              onClick={() => setPropertyType('detached')}
-              className={`px-3.5 py-2 text-xs font-black rounded-xl transition-all cursor-pointer whitespace-nowrap flex items-center space-x-1.5 ${
-                propertyType === 'detached'
-                  ? 'bg-[#FA2D48] text-white shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              <Home className="w-3.5 h-3.5" />
-              <span>Detached Homes</span>
-            </button>
-            <button
-              onClick={() => setPropertyType('attached')}
-              className={`px-3.5 py-2 text-xs font-black rounded-xl transition-all cursor-pointer whitespace-nowrap flex items-center space-x-1.5 ${
-                propertyType === 'attached'
-                  ? 'bg-[#FA2D48] text-white shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              <Building2 className="w-3.5 h-3.5" />
-              <span>Attached Condos</span>
-            </button>
+          {/* Right side controls: Separate individual minipills with horizontal slide/scroll on mobile */}
+          <div className="w-full md:w-auto overflow-x-auto pb-1 -mb-1 scrollbar-none">
+            <div className="flex items-center space-x-2 py-0.5 min-w-max">
+              <button
+                type="button"
+                onClick={() => setPropertyType('all')}
+                className={`px-4 py-2 text-xs font-black rounded-full border transition-all cursor-pointer whitespace-nowrap flex items-center space-x-1.5 shrink-0 ${
+                  propertyType === 'all'
+                    ? 'bg-[#FA2D48] text-white border-[#FA2D48] shadow-sm'
+                    : 'bg-white text-slate-700 border-slate-200/90 hover:bg-slate-50 hover:text-slate-950 hover:border-slate-300'
+                }`}
+              >
+                <Layers className="w-3.5 h-3.5" />
+                <span>All Properties</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setPropertyType('detached')}
+                className={`px-4 py-2 text-xs font-black rounded-full border transition-all cursor-pointer whitespace-nowrap flex items-center space-x-1.5 shrink-0 ${
+                  propertyType === 'detached'
+                    ? 'bg-[#FA2D48] text-white border-[#FA2D48] shadow-sm'
+                    : 'bg-white text-slate-700 border-slate-200/90 hover:bg-slate-50 hover:text-slate-950 hover:border-slate-300'
+                }`}
+              >
+                <Home className="w-3.5 h-3.5" />
+                <span>Detached Homes</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setPropertyType('attached')}
+                className={`px-4 py-2 text-xs font-black rounded-full border transition-all cursor-pointer whitespace-nowrap flex items-center space-x-1.5 shrink-0 ${
+                  propertyType === 'attached'
+                    ? 'bg-[#FA2D48] text-white border-[#FA2D48] shadow-sm'
+                    : 'bg-white text-slate-700 border-slate-200/90 hover:bg-slate-50 hover:text-slate-950 hover:border-slate-300'
+                }`}
+              >
+                <Building2 className="w-3.5 h-3.5" />
+                <span>Attached Condos</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>

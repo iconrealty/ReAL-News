@@ -373,11 +373,31 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                     const val = e.target.value;
                     if (!val) {
                       setSelectedCity(null);
+                      if (onSelectCity) {
+                        onSelectCity({
+                          id: 'orange-county',
+                          name: 'Orange County',
+                          state: 'CA',
+                          avgSqftPrice: '$810 sqft',
+                          tagline: 'Countywide Metro News & Real Estate Trends',
+                          image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80',
+                        });
+                      }
                     } else {
                       const city = OC_MARKET_DATA.find(c => c.id === val);
                       if (city) {
                         setSelectedCity(city);
                         setSelectedRegion(city.region);
+                        if (onSelectCity) {
+                          onSelectCity({
+                            id: city.id,
+                            name: city.name,
+                            state: 'CA',
+                            avgSqftPrice: `$${city.avgSqftPrice} sqft`,
+                            tagline: `Local Housing Trends in ${city.name}`,
+                            image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80',
+                          });
+                        }
                       }
                     }
                   }}
@@ -413,6 +433,16 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                   onClick={() => {
                     setSelectedCity(null);
                     setSelectedRegion('All');
+                    if (onSelectCity) {
+                      onSelectCity({
+                        id: 'orange-county',
+                        name: 'Orange County',
+                        state: 'CA',
+                        avgSqftPrice: '$810 sqft',
+                        tagline: 'Countywide Metro News & Real Estate Trends',
+                        image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80',
+                      });
+                    }
                   }}
                   className="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-all cursor-pointer whitespace-nowrap"
                 >
@@ -461,7 +491,19 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                 return (
                   <button
                     key={city.id}
-                    onClick={() => setSelectedCity(city)}
+                    onClick={() => {
+                      setSelectedCity(city);
+                      if (onSelectCity) {
+                        onSelectCity({
+                          id: city.id,
+                          name: city.name,
+                          state: 'CA',
+                          avgSqftPrice: `$${city.avgSqftPrice} sqft`,
+                          tagline: `Local Housing Trends in ${city.name}`,
+                          image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80',
+                        });
+                      }
+                    }}
                     className={`px-3 py-1.5 rounded-xl text-xs font-bold tracking-tight transition-all cursor-pointer ${
                       isSelected
                         ? 'bg-slate-950 text-white shadow-xs'
@@ -499,7 +541,19 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                 </div>
 
                 <button
-                  onClick={() => setSelectedCity(null)}
+                  onClick={() => {
+                    setSelectedCity(null);
+                    if (onSelectCity) {
+                      onSelectCity({
+                        id: 'orange-county',
+                        name: 'Orange County',
+                        state: 'CA',
+                        avgSqftPrice: '$810 sqft',
+                        tagline: 'Countywide Metro News & Real Estate Trends',
+                        image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80',
+                      });
+                    }
+                  }}
                   className="inline-flex items-center space-x-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold rounded-xl transition-all cursor-pointer self-start sm:self-auto"
                 >
                   <span>← Back to Countywide View</span>

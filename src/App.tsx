@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { CityInfo, NewsCategory, NewsArticle, AdBanner } from './types';
 import { CITIES, INITIAL_ARTICLES } from './data/mockNews';
 import { INITIAL_ADS } from './data/mockAds';
-import { OC_HOUSING_REPORT_METADATA } from './data/ocHousingReportData';
+import { OC_HOUSING_REPORT_METADATA, OC_SOLD_REPORT, OC_MARKET_TIME_REPORT } from './data/ocHousingReportData';
 import { AppleNewsHeader } from './components/AppleNewsHeader';
 import { MobileBottomNav } from './components/MobileBottomNav';
 import { CitySelectorModal } from './components/CitySelectorModal';
@@ -17,7 +17,7 @@ import { SavedArticlesDrawer } from './components/SavedArticlesDrawer';
 import { AdBannerRenderer } from './components/AdBannerRenderer';
 import { ManagerAdminModal } from './components/ManagerAdminModal';
 import { NewsManagerModal } from './components/NewsManagerModal';
-import { Sparkles, Building2, Utensils, Flame, Compass, ChevronRight, Users } from 'lucide-react';
+import { Sparkles, Building2, Utensils, Flame, Compass, ChevronRight, Users, MapPin, TrendingUp } from 'lucide-react';
 
 // Helper function to deduplicate articles strictly by ID, normalized Title, and source URL
 function deduplicateArticles(list: NewsArticle[]): NewsArticle[] {
@@ -414,6 +414,27 @@ export function App() {
     return articles.filter(a => bookmarkedIds.has(a.id));
   }, [articles, bookmarkedIds]);
 
+  // Market data for the currently selected city
+  const currentCitySoldData = useMemo(() => {
+    const name = currentCity.name.toLowerCase().trim();
+    if (name === 'orange county' || name === 'all of o.c.') return null;
+    return OC_SOLD_REPORT.find(s => 
+      s.city.toLowerCase() === name || 
+      name.includes(s.city.toLowerCase()) || 
+      s.city.toLowerCase().includes(name)
+    );
+  }, [currentCity.name]);
+
+  const currentCityMarketData = useMemo(() => {
+    const name = currentCity.name.toLowerCase().trim();
+    if (name === 'orange county' || name === 'all of o.c.') return null;
+    return OC_MARKET_TIME_REPORT.find(m => 
+      m.city.toLowerCase() === name || 
+      name.includes(m.city.toLowerCase()) || 
+      m.city.toLowerCase().includes(name)
+    );
+  }, [currentCity.name]);
+
   return (
     <div className="min-h-screen bg-[#F2F2F7] text-slate-900 font-sans selection:bg-[#FA2D48] selection:text-white flex flex-col">
       
@@ -470,6 +491,7 @@ export function App() {
           />
         ) : activeCategory === 'market-trends' ? (
           <OrangeCountyMarketTrends
+            currentCityName={currentCity.name}
             fredStats={fredStats}
             showFilterBar={true}
             ads={ads}
@@ -493,22 +515,105 @@ export function App() {
           />
         ) : (
           <>
-            {/* Apple Style City Masthead Hero Banner */}
-            <div className="relative rounded-3xl bg-white border border-slate-200/90 p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xs">
-              <div className="max-w-2xl">
-                <h2 className="text-3xl sm:text-4xl font-black font-serif text-slate-900 tracking-tight">
-                  {currentCity.name}
-                </h2>
+            {/* Apple Style City Masthead Hero Banner with Live Market Data */}
+            <div className="relative rounded-3xl bg-white border border-slate-200/90 p-5 sm:p-7 shadow-xs space-y-4">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+                <div className="space-y-1">
+                  <span className="text-[12px] font-mono font-black tracking-widest text-[#FA2D48] uppercase block">
+                    Steven Thomas Report
+                  </span>
+                  <h2 className="text-3xl sm:text-4xl font-black font-serif text-slate-950 tracking-tight">
+                    {currentCity.name}
+                  </h2>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2.5">
+                  {/* Direct Dropdown City Selector */}
+                  <div className="relative">
+                    <select
+                      value={currentCity.id}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        const matched = CITIES.find(c => c.id === val);
+                        if (matched) {
+                          setCurrentCity(matched);
+                          showToast(`Selected ${matched.name}`);
+                        }
+                      }}
+                      className="bg-[#F2F2F7] hover:bg-slate-200 border border-slate-200/80 rounded-xl pl-3 pr-8 py-2.5 text-xs font-bold text-slate-900 focus:outline-none focus:border-[#FA2D48] transition-all cursor-pointer appearance-none"
+                    >
+                      {CITIES.map(c => (
+                        <option key={c.id} value={c.id}>
+                          {c.name}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronRight className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-3 rotate-90 pointer-events-none" />
+                  </div>
+
+                  <button
+                    onClick={() => setIsCitySelectorOpen(true)}
+                    className="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-black text-white font-bold text-xs flex items-center space-x-1.5 shadow-xs transition-all cursor-pointer"
+                  >
+                    <span>All Cities</span>
+                    <ChevronRight className="w-3.5 h-3.5" />
+                  </button>
+
+                  <button
+                    onClick={() => setActiveCategory('market-trends')}
+                    className="px-4 py-2.5 rounded-xl bg-[#FA2D48] hover:bg-[#E0263E] text-white font-bold text-xs flex items-center space-x-1.5 shadow-xs transition-all cursor-pointer"
+                  >
+                    <TrendingUp className="w-3.5 h-3.5" />
+                    <span>Market Trends</span>
+                  </button>
+                </div>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-2.5 w-full sm:w-auto shrink-0">
-                <button
-                  onClick={() => setIsCitySelectorOpen(true)}
-                  className="px-5 py-3 rounded-xl bg-[#FA2D48] hover:bg-[#E0263E] text-white font-bold text-xs flex items-center justify-center space-x-2 shadow-xs transition-all cursor-pointer"
-                >
-                  <span>Explore Cities</span>
-                  <ChevronRight className="w-4 h-4" />
-                </button>
+              {/* City Market Trend Highlights */}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                <div className="bg-slate-50/90 rounded-2xl p-3.5 border border-slate-200/70">
+                  <div className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500">Median Sales Price</div>
+                  <div className="text-xl sm:text-2xl font-black text-slate-950 pt-0.5">
+                    {currentCitySoldData?.medianSalesPrice || currentCityMarketData?.medianActiveListPrice || '$1,305,471'}
+                  </div>
+                  <div className="text-[10px] text-slate-500 font-medium pt-0.5">
+                    {currentCitySoldData ? `List: ${currentCitySoldData.medianListPrice}` : 'Countywide Median'}
+                  </div>
+                </div>
+
+                <div className="bg-slate-50/90 rounded-2xl p-3.5 border border-slate-200/70">
+                  <div className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500">Days on Market</div>
+                  <div className="text-xl sm:text-2xl font-black text-emerald-600 pt-0.5">
+                    {currentCitySoldData?.medianDOM ? `${currentCitySoldData.medianDOM} Days` : (currentCityMarketData?.marketTimeDays ? `${currentCityMarketData.marketTimeDays} Days` : '32 Days')}
+                  </div>
+                  <div className="text-[10px] text-emerald-700/80 font-bold pt-0.5">
+                    {currentCityMarketData?.marketTimeDays && currentCityMarketData.marketTimeDays < 60 
+                      ? "Hot Seller's Market" 
+                      : (currentCityMarketData?.marketTimeDays && currentCityMarketData.marketTimeDays < 90 ? "Slight Seller's Market" : "Active Velocity")}
+                  </div>
+                </div>
+
+                <div className="bg-slate-50/90 rounded-2xl p-3.5 border border-slate-200/70">
+                  <div className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500">Price Per Sq. Ft.</div>
+                  <div className="text-xl sm:text-2xl font-black text-[#FA2D48] pt-0.5">
+                    {currentCitySoldData?.medianPricePerSqFt || currentCity.avgSqftPrice || '$692 /sqft'}
+                  </div>
+                  <div className="text-[10px] text-slate-500 font-medium pt-0.5">
+                    {currentCitySoldData ? `Median ${currentCitySoldData.medianSqFt} sqft` : 'July 2026 Avg'}
+                  </div>
+                </div>
+
+                <div className="bg-slate-50/90 rounded-2xl p-3.5 border border-slate-200/70">
+                  <div className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500">
+                    {currentCitySoldData ? 'Sales to List Ratio' : 'Active Inventory'}
+                  </div>
+                  <div className="text-xl sm:text-2xl font-black text-slate-950 pt-0.5">
+                    {currentCitySoldData?.salesToListRatio || (currentCityMarketData ? `${currentCityMarketData.currentActives} Homes` : '5,046 Homes')}
+                  </div>
+                  <div className="text-[10px] text-slate-500 font-medium pt-0.5">
+                    {currentCityMarketData ? `${currentCityMarketData.demand30Days} Pending Escrows` : '1,494 30-Day Demand'}
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -652,6 +757,11 @@ export function App() {
         onSelectCity={(city) => {
           setCurrentCity(city);
           showToast(`Switched to ${city.name} edition`);
+        }}
+        onViewMarketTrends={(city) => {
+          setCurrentCity(city);
+          setActiveCategory('market-trends');
+          showToast(`Opened ${city.name} Market Trends`);
         }}
       />
 
