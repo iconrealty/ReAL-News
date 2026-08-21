@@ -564,7 +564,7 @@ export function App() {
                     className="px-4 py-2.5 rounded-xl bg-[#FA2D48] hover:bg-[#E0263E] text-white font-bold text-xs flex items-center space-x-1.5 shadow-xs transition-all cursor-pointer"
                   >
                     <TrendingUp className="w-3.5 h-3.5" />
-                    <span>Market Trends</span>
+                    <span>Steven Thomas</span>
                   </button>
                 </div>
               </div>
