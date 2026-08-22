@@ -560,12 +560,12 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                 </button>
               </div>
 
-              {/* AUGUST CLOSED SALES DATA */}
+              {/* JULY CLOSED SALES DATA */}
               {soldData && (
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 font-sans">
-                      August 2026 Report Data
+                      July Closed Sales Data
                     </h3>
                   </div>
 

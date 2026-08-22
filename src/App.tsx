@@ -8,7 +8,7 @@ import { MobileBottomNav } from './components/MobileBottomNav';
 import { CitySelectorModal } from './components/CitySelectorModal';
 import { FeaturedHeroStory } from './components/FeaturedHeroStory';
 import { NewsGridSection } from './components/NewsGridSection';
-import { OrangeCountyMarketTrends } from './components/OrangeCountyMarketTrends';
+import { OrangeCountyMarketTrends, getMarketCondition } from './components/OrangeCountyMarketTrends';
 import { OCFastMarketReport } from './components/OCFastMarketReport';
 import { OCFastTopOverview } from './components/OCFastTopOverview';
 import { MortgageCalculator } from './components/MortgageCalculator';
@@ -17,7 +17,7 @@ import { SavedArticlesDrawer } from './components/SavedArticlesDrawer';
 import { AdBannerRenderer } from './components/AdBannerRenderer';
 import { ManagerAdminModal } from './components/ManagerAdminModal';
 import { NewsManagerModal } from './components/NewsManagerModal';
-import { Sparkles, Building2, Utensils, Flame, Compass, ChevronRight, Users, MapPin, TrendingUp } from 'lucide-react';
+import { Sparkles, Building2, Utensils, Flame, Compass, ChevronRight, Users, MapPin, TrendingUp, Clock, Tag, BarChart3, Check } from 'lucide-react';
 
 // Helper function to deduplicate articles strictly by ID, normalized Title, and source URL
 function deduplicateArticles(list: NewsArticle[]): NewsArticle[] {
@@ -77,6 +77,7 @@ export function App() {
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [ads, setAds] = useState<AdBanner[]>(INITIAL_ADS);
   const [isMonetizationEnabled, setIsMonetizationEnabled] = useState<boolean>(false);
+  const [cityReportTab, setCityReportTab] = useState<'velocity' | 'closed' | 'historical' | 'summary'>('velocity');
 
   const [fredStats, setFredStats] = useState<{ 
     source?: string;
@@ -515,16 +516,28 @@ export function App() {
           />
         ) : (
           <>
-            {/* Apple Style City Masthead Hero Banner with Live Market Data */}
-            <div className="relative rounded-3xl bg-white border border-slate-200/90 p-5 sm:p-7 shadow-xs space-y-4">
+            {/* Apple Style City Masthead Hero Banner with Steven Thomas City Tabs */}
+            <div className="relative rounded-3xl bg-white border border-slate-200/90 p-5 sm:p-7 shadow-xs space-y-5">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-100 pb-4">
                 <div className="space-y-1">
-                  <span className="text-[12px] font-mono font-black tracking-widest text-[#FA2D48] uppercase block">
-                    Steven Thomas Report
-                  </span>
+                  <div className="flex items-center space-x-2">
+                    <span className="text-[12px] font-mono font-black tracking-widest text-[#FA2D48] uppercase block">
+                      Steven Thomas Report
+                    </span>
+                    {currentCityMarketData && (
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
+                        {currentCityMarketData.region}
+                      </span>
+                    )}
+                  </div>
                   <h2 className="text-3xl sm:text-4xl font-black font-serif text-slate-950 tracking-tight">
                     {currentCity.name}
                   </h2>
+                  <p className="text-xs text-slate-500 font-medium">
+                    {currentCity.id === 'orange-county' 
+                      ? 'Select any city below to explore localized market time and closed sales.' 
+                      : `Reports On Housing local analytics for ${currentCity.name}.`}
+                  </p>
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2.5">
@@ -551,69 +564,236 @@ export function App() {
                     <ChevronRight className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-3 rotate-90 pointer-events-none" />
                   </div>
 
-                  <button
-                    onClick={() => setIsCitySelectorOpen(true)}
-                    className="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-black text-white font-bold text-xs flex items-center space-x-1.5 shadow-xs transition-all cursor-pointer"
-                  >
-                    <span>All Cities</span>
-                    <ChevronRight className="w-3.5 h-3.5" />
-                  </button>
+                  {currentCity.id !== 'orange-county' && (
+                    <button
+                      onClick={() => {
+                        const ocCity = CITIES.find(c => c.id === 'orange-county') || CITIES[0];
+                        setCurrentCity(ocCity);
+                        showToast('Reset to All Orange County');
+                      }}
+                      className="px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs transition-all cursor-pointer"
+                    >
+                      ← Countywide View
+                    </button>
+                  )}
 
                   <button
                     onClick={() => setActiveCategory('market-trends')}
                     className="px-4 py-2.5 rounded-xl bg-[#FA2D48] hover:bg-[#E0263E] text-white font-bold text-xs flex items-center space-x-1.5 shadow-xs transition-all cursor-pointer"
                   >
                     <TrendingUp className="w-3.5 h-3.5" />
-                    <span>Steven Thomas</span>
+                    <span>Steven Thomas Tab</span>
                   </button>
                 </div>
               </div>
 
-              {/* City Market Trend Highlights */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-                <div className="bg-slate-50/90 rounded-2xl p-3.5 border border-slate-200/70">
-                  <div className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500">Median Sales Price</div>
-                  <div className="text-xl sm:text-2xl font-black text-slate-950 pt-0.5">
-                    {currentCitySoldData?.medianSalesPrice || currentCityMarketData?.medianActiveListPrice || '$1,305,471'}
-                  </div>
-                  <div className="text-[10px] text-slate-500 font-medium pt-0.5">
-                    {currentCitySoldData ? `List: ${currentCitySoldData.medianListPrice}` : 'Countywide Median'}
-                  </div>
-                </div>
+              {/* Dynamic Steven Thomas City Report Format — Displayed when a city is selected */}
+              {currentCity.id !== 'orange-county' && (currentCityMarketData || currentCitySoldData) && (() => {
+                const soldData = currentCitySoldData;
+                const marketData = currentCityMarketData;
+                const yoyUnitsChange = soldData ? soldData.unitsSold2026 - soldData.unitsSold2025 : 0;
 
-                <div className="bg-slate-50/90 rounded-2xl p-3.5 border border-slate-200/70">
-                  <div className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500">Days on Market</div>
-                  <div className="text-xl sm:text-2xl font-black text-emerald-600 pt-0.5">
-                    {currentCitySoldData?.medianDOM ? `${currentCitySoldData.medianDOM} Days` : (currentCityMarketData?.marketTimeDays ? `${currentCityMarketData.marketTimeDays} Days` : '32 Days')}
-                  </div>
-                  <div className="text-[10px] text-emerald-700/80 font-bold pt-0.5">
-                    {currentCityMarketData?.marketTimeDays && currentCityMarketData.marketTimeDays < 60 
-                      ? "Hot Seller's Market" 
-                      : (currentCityMarketData?.marketTimeDays && currentCityMarketData.marketTimeDays < 90 ? "Slight Seller's Market" : "Active Velocity")}
-                  </div>
-                </div>
+                return (
+                  <div className="space-y-6 pt-2">
+                    {/* JULY CLOSED SALES DATA (Format from Steven Thomas Report) */}
+                    {soldData && (
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                          <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 font-sans flex items-center space-x-2">
+                            <Tag className="w-4 h-4 text-[#FA2D48]" />
+                            <span>July Closed Sales Data</span>
+                          </h3>
+                          <span className="text-[11px] font-bold text-slate-500">
+                            Closed Resales & Price Distribution
+                          </span>
+                        </div>
 
-                <div className="bg-slate-50/90 rounded-2xl p-3.5 border border-slate-200/70">
-                  <div className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500">Price Per Sq. Ft.</div>
-                  <div className="text-xl sm:text-2xl font-black text-[#FA2D48] pt-0.5">
-                    {currentCitySoldData?.medianPricePerSqFt || currentCity.avgSqftPrice || '$692 /sqft'}
-                  </div>
-                  <div className="text-[10px] text-slate-500 font-medium pt-0.5">
-                    {currentCitySoldData ? `Median ${currentCitySoldData.medianSqFt} sqft` : 'July 2026 Avg'}
-                  </div>
-                </div>
+                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                          <div className="bg-slate-50/90 rounded-2xl p-4 border border-slate-200/70">
+                            <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">Median Sales Price</div>
+                            <div className="text-2xl sm:text-3xl font-bold text-slate-900 pt-1">{soldData.medianSalesPrice}</div>
+                            <div className="text-[11px] text-emerald-600 pt-1 font-bold">List Price: {soldData.medianListPrice}</div>
+                          </div>
 
-                <div className="bg-slate-50/90 rounded-2xl p-3.5 border border-slate-200/70">
-                  <div className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500">
-                    {currentCitySoldData ? 'Sales to List Ratio' : 'Active Inventory'}
+                          <div className="bg-slate-50/90 rounded-2xl p-4 border border-slate-200/70">
+                            <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">Sales-to-List Ratio</div>
+                            <div className="text-2xl sm:text-3xl font-bold text-emerald-600 pt-1">{soldData.salesToListRatio}</div>
+                            <div className="text-[11px] text-emerald-600 pt-1 font-bold">Countywide Avg: {OC_HOUSING_REPORT_METADATA.salesToListRatio}</div>
+                          </div>
+
+                          <div className="bg-slate-50/90 rounded-2xl p-4 border border-slate-200/70">
+                            <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">Median Price / Sq. Ft.</div>
+                            <div className="text-2xl sm:text-3xl font-bold text-[#FA2D48] pt-1">{soldData.medianPricePerSqFt}</div>
+                            <div className="text-[11px] text-emerald-600 pt-1 font-bold">Median Size: {soldData.medianSqFt.toLocaleString()} sq ft</div>
+                          </div>
+
+                          <div className="bg-slate-50/90 rounded-2xl p-4 border border-slate-200/70">
+                            <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">Closed Resales</div>
+                            <div className="text-2xl sm:text-3xl font-bold text-slate-900 pt-1">{soldData.unitsSold2026} Units</div>
+                            <div className="text-[11px] text-emerald-600 pt-1 font-bold">
+                              {yoyUnitsChange >= 0 ? `+${yoyUnitsChange}` : yoyUnitsChange} vs Prior Year ({soldData.unitsSold2025})
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                          <div className="bg-slate-50/70 rounded-2xl py-2.5 px-4 flex items-center justify-between text-xs border border-slate-200/60">
+                            <span className="font-bold text-black">Price Range (Low to High):</span>
+                            <span className="font-sans font-bold text-black">{soldData.lowPrice} - {soldData.highPrice}</span>
+                          </div>
+                          <div className="bg-slate-50/70 rounded-2xl py-2.5 px-4 flex items-center justify-between text-xs border border-slate-200/60">
+                            <span className="font-bold text-black">Closed Days on Market (DOM):</span>
+                            <span className="font-sans font-black text-sm sm:text-base text-black">{soldData.medianDOM} Days</span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* CURRENT MARKET TIME & INVENTORY (Format from Steven Thomas Report) */}
+                    {marketData && (
+                      <div className="space-y-3 pt-4 border-t border-slate-100">
+                        <div className="flex items-center justify-between">
+                          <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 font-sans flex items-center space-x-2">
+                            <Clock className="w-4 h-4 text-[#FA2D48]" />
+                            <span>Current Active Inventory & Expected Market Time</span>
+                          </h3>
+                          <button
+                            onClick={() => setActiveCategory('market-trends')}
+                            className="text-xs font-bold text-[#FA2D48] hover:underline flex items-center space-x-1"
+                          >
+                            <span>Open Full Steven Thomas Report</span>
+                            <ChevronRight className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+
+                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                          {(() => {
+                            const cond = getMarketCondition(marketData.marketTimeDays);
+                            return (
+                              <div className={`${cond.bgClass} p-4 rounded-2xl flex flex-col justify-between shadow-xs space-y-1`}>
+                                <div className="flex items-center justify-between">
+                                  <span className="text-[11px] font-bold uppercase tracking-wider text-white opacity-90">Expected Market Time</span>
+                                </div>
+                                <div className="text-3xl sm:text-4xl font-black pt-1 text-white tracking-tight">
+                                  {marketData.marketTimeDays} Days
+                                </div>
+                                <div className="pt-2">
+                                  <span className="bg-white text-slate-950 font-extrabold text-xs px-2.5 py-1 rounded-lg inline-block shadow-xs">
+                                    {cond.badgeText}
+                                  </span>
+                                </div>
+                              </div>
+                            );
+                          })()}
+
+                          <div className="bg-slate-50/80 p-4 rounded-2xl border border-slate-200/70">
+                            <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">Active Inventory</div>
+                            <div className="text-2xl sm:text-3xl font-bold text-slate-900 pt-1">{marketData.currentActives} Homes</div>
+                            <div className="text-[11px] text-emerald-600 pt-1 font-bold">Active listings on market</div>
+                          </div>
+
+                          <div className="bg-slate-50/80 p-4 rounded-2xl border border-slate-200/70">
+                            <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">30-Day Demand</div>
+                            <div className="text-2xl sm:text-3xl font-bold text-slate-900 pt-1">{marketData.demand30Days} Pending</div>
+                            <div className="text-[11px] text-emerald-600 pt-1 font-bold">Recent pending escrows</div>
+                          </div>
+
+                          <div className="bg-slate-50/80 p-4 rounded-2xl border border-slate-200/70">
+                            <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">Median Active List Price</div>
+                            <div className="text-2xl sm:text-3xl font-bold text-slate-900 pt-1">{marketData.medianActiveListPrice}</div>
+                            <div className="text-[11px] text-emerald-600 pt-1 font-bold">Current active listings</div>
+                          </div>
+                        </div>
+
+                        {/* Historical DOM Trend Bar */}
+                        <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200/80 space-y-2">
+                          <div className="text-xs font-black text-slate-900 uppercase tracking-wider">Historical Expected Market Time Pace:</div>
+                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs font-sans">
+                            <div className="bg-white p-2.5 rounded-xl border border-slate-200 flex flex-col justify-between shadow-2xs">
+                              <div>
+                                <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">2 Weeks Ago</div>
+                                <div className="text-base font-black text-slate-950 pt-0.5">{marketData.marketTime2WeeksAgo} Days</div>
+                              </div>
+                              <div className={`text-[11px] font-black pt-1 border-t border-slate-100 mt-1 ${getMarketCondition(marketData.marketTime2WeeksAgo).accentText}`}>
+                                {getMarketCondition(marketData.marketTime2WeeksAgo).label}
+                              </div>
+                            </div>
+                            <div className="bg-white p-2.5 rounded-xl border border-slate-200 flex flex-col justify-between shadow-2xs">
+                              <div>
+                                <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">4 Weeks Ago</div>
+                                <div className="text-base font-black text-slate-950 pt-0.5">{marketData.marketTime4WeeksAgo} Days</div>
+                              </div>
+                              <div className={`text-[11px] font-black pt-1 border-t border-slate-100 mt-1 ${getMarketCondition(marketData.marketTime4WeeksAgo).accentText}`}>
+                                {getMarketCondition(marketData.marketTime4WeeksAgo).label}
+                              </div>
+                            </div>
+                            <div className="bg-white p-2.5 rounded-xl border border-slate-200 flex flex-col justify-between shadow-2xs">
+                              <div>
+                                <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">1 Year Ago</div>
+                                <div className="text-base font-black text-slate-950 pt-0.5">{marketData.marketTime1YearAgo} Days</div>
+                              </div>
+                              <div className={`text-[11px] font-black pt-1 border-t border-slate-100 mt-1 ${getMarketCondition(marketData.marketTime1YearAgo).accentText}`}>
+                                {getMarketCondition(marketData.marketTime1YearAgo).label}
+                              </div>
+                            </div>
+                            <div className="bg-white p-2.5 rounded-xl border border-slate-200 flex flex-col justify-between shadow-2xs">
+                              <div>
+                                <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">2 Years Ago</div>
+                                <div className="text-base font-black text-slate-950 pt-0.5">
+                                  {marketData.marketTime2YearsAgo > 0 ? `${marketData.marketTime2YearsAgo} Days` : '—'}
+                                </div>
+                              </div>
+                              <div className={`text-[11px] font-black pt-1 border-t border-slate-100 mt-1 ${getMarketCondition(marketData.marketTime2YearsAgo).accentText}`}>
+                                {marketData.marketTime2YearsAgo > 0 ? getMarketCondition(marketData.marketTime2YearsAgo).label : 'N/A'}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                  <div className="text-xl sm:text-2xl font-black text-slate-950 pt-0.5">
-                    {currentCitySoldData?.salesToListRatio || (currentCityMarketData ? `${currentCityMarketData.currentActives} Homes` : '5,046 Homes')}
-                  </div>
-                  <div className="text-[10px] text-slate-500 font-medium pt-0.5">
-                    {currentCityMarketData ? `${currentCityMarketData.demand30Days} Pending Escrows` : '1,494 30-Day Demand'}
-                  </div>
-                </div>
+                );
+              })()}
+
+              {/* Quick Popular City Selector Pills */}
+              <div className="pt-2 border-t border-slate-100 flex flex-wrap items-center gap-1.5">
+                <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mr-1">
+                  Quick City Switcher:
+                </span>
+                {['Irvine', 'Newport Beach', 'Huntington Beach', 'Anaheim', 'Laguna Beach', 'Costa Mesa', 'Mission Viejo', 'Fullerton', 'San Clemente', 'Brea'].map(cityName => {
+                  const isSelected = currentCity.name.toLowerCase() === cityName.toLowerCase();
+                  return (
+                    <button
+                      key={cityName}
+                      onClick={() => {
+                        const match = CITIES.find(c => c.name.toLowerCase() === cityName.toLowerCase());
+                        if (match) {
+                          setCurrentCity(match);
+                          showToast(`Selected ${match.name}`);
+                        }
+                      }}
+                      className={`px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                        isSelected 
+                          ? 'bg-slate-950 text-white shadow-xs' 
+                          : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200/60'
+                      }`}
+                    >
+                      {cityName}
+                    </button>
+                  );
+                })}
+                {currentCity.id !== 'orange-county' && (
+                  <button
+                    onClick={() => {
+                      const oc = CITIES.find(c => c.id === 'orange-county') || CITIES[0];
+                      setCurrentCity(oc);
+                      showToast('Reset to Orange County (Countywide)');
+                    }}
+                    className="px-3 py-1 rounded-xl text-xs font-bold bg-[#FA2D48]/10 text-[#FA2D48] hover:bg-[#FA2D48]/20 transition-all cursor-pointer"
+                  >
+                    All Orange County
+                  </button>
+                )}
               </div>
             </div>
 
