@@ -23,7 +23,7 @@ const BUDGET_PRESETS = [
   { value: 7500, label: '$7.5k/mo' },
   { value: 10000, label: '$10k/mo' },
 ];
-const DOWN_PERCENT_PRESETS = [3.5, 5, 10, 15, 20, 25, 30];
+const DOWN_PERCENT_PRESETS = [3.5, 5, 10, 15, 20];
 
 interface AppleToggleProps {
   enabled: boolean;
@@ -523,7 +523,7 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
           </div>
 
           {/* Rate Selector Pills */}
-          <div className="flex flex-wrap gap-2 shrink-0 items-center">
+          <div className="flex flex-wrap gap-1.5 sm:gap-2 shrink-0 items-center">
             {rateOptions.map((r) => (
               <button
                 key={r.label}
@@ -532,9 +532,9 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                   setInterestRate(r.rate);
                   setLoanTermYears(r.term);
                 }}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 border ${
+                className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-bold transition-all cursor-pointer flex items-center gap-1 sm:gap-1.5 border whitespace-nowrap ${
                   interestRate === r.rate && loanTermYears === r.term
-                    ? 'bg-[#FA2D48] text-white border-[#FA2D48] shadow-xs scale-105'
+                    ? 'bg-[#FA2D48] text-white border-[#FA2D48] shadow-xs'
                     : 'bg-slate-100 hover:bg-slate-200 text-slate-800 border-slate-200'
                 }`}
               >
@@ -552,33 +552,10 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
         {/* Left Column: Form Controls (7 cols) */}
         <div className="lg:col-span-7 bg-white rounded-3xl border border-slate-200/90 p-5 sm:p-7 shadow-xs space-y-6">
           
-          <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+          <div className="pb-4 border-b border-slate-100">
             <h3 className="text-lg font-black text-slate-900">
               Loan Parameters
             </h3>
-            <button
-              onClick={() => {
-                setCalcMode('standard');
-                setHomePrice(1000000);
-                setMaxMonthlyBudget(5000);
-                setDownPaymentMode('percent');
-                setDownPaymentPercent(20);
-                setDownPaymentDollar(200000);
-                setInterestRate(mnd30Num);
-                setLoanTermYears(30);
-                setIncludeTaxes(false);
-                setIncludeInsurance(false);
-                setIncludeHoa(false);
-                setYearlyTaxesPercent(1.1);
-                setYearlyTaxesDollar(11000);
-                setYearlyInsurance(1400);
-                setMonthlyHoa(350);
-                setIncludePmi(false);
-              }}
-              className="text-xs font-bold text-slate-400 hover:text-[#FA2D48] flex items-center gap-1 transition-colors cursor-pointer"
-            >
-              <span>Reset Defaults</span>
-            </button>
           </div>
 
           {/* Calculator Mode Toggle Switch */}
@@ -751,10 +728,10 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
-              <div className="sm:col-span-8 relative flex items-center">
+            <div className="grid grid-cols-12 gap-2 sm:gap-3 items-center">
+              <div className="col-span-7 sm:col-span-8 relative flex items-center">
                 {downPaymentMode === 'dollar' ? (
-                  <span className="absolute left-4 text-slate-400 font-bold text-base">$</span>
+                  <span className="absolute left-3 sm:left-4 text-slate-400 font-bold text-sm sm:text-base">$</span>
                 ) : null}
                 <input
                   id="down-payment-input"
@@ -769,22 +746,22 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                       handleDownDollarChange(val);
                     }
                   }}
-                  className={`w-full py-3 rounded-2xl bg-slate-50 border border-slate-200 focus:border-[#FA2D48] focus:bg-white focus:ring-2 focus:ring-[#FA2D48]/20 font-bold text-slate-900 text-lg outline-none transition-all ${
-                    downPaymentMode === 'dollar' ? 'pl-9 pr-4' : 'pl-4 pr-9'
+                  className={`w-full py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-200 focus:border-[#FA2D48] focus:bg-white focus:ring-2 focus:ring-[#FA2D48]/20 font-bold text-slate-900 text-base sm:text-lg outline-none transition-all ${
+                    downPaymentMode === 'dollar' ? 'pl-7 sm:pl-9 pr-3 sm:pr-4' : 'pl-3.5 sm:pl-4 pr-7 sm:pr-9'
                   }`}
                   step={downPaymentMode === 'percent' ? '0.1' : '5000'}
                 />
                 {downPaymentMode === 'percent' ? (
-                  <span className="absolute right-4 text-slate-400 font-bold text-base">%</span>
+                  <span className="absolute right-3 sm:right-4 text-slate-400 font-bold text-sm sm:text-base">%</span>
                 ) : null}
               </div>
 
-              {/* Equated Value text display (no background, clean text) */}
-              <div className="sm:col-span-4 px-1 py-1 flex flex-col justify-center">
-                <span className="text-[11px] uppercase tracking-wider text-slate-500 font-bold">
+              {/* Equated Value text display on the SAME line */}
+              <div className="col-span-5 sm:col-span-4 px-1 py-1 flex flex-col justify-center text-right sm:text-left">
+                <span className="text-[10px] sm:text-[11px] uppercase tracking-wider text-slate-500 font-bold whitespace-nowrap">
                   {downPaymentMode === 'percent' ? 'Equates To' : 'Percentage'}
                 </span>
-                <span className="text-base font-black text-slate-900 tracking-tight">
+                <span className="text-sm sm:text-base font-black text-slate-900 tracking-tight whitespace-nowrap">
                   {downPaymentMode === 'percent' 
                     ? `$${calculatedDownPayment.toLocaleString()}`
                     : `${downPaymentActualPct.toFixed(1)}%`
@@ -794,13 +771,13 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
             </div>
 
             {/* Quick Percent Presets */}
-            <div className="flex items-center gap-1.5 flex-wrap pt-1">
-              <span className="text-[11px] font-bold text-slate-400 mr-1">Quick Down %:</span>
+            <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap pt-0.5">
+              <span className="text-[10px] sm:text-[11px] font-bold text-slate-400 mr-1">Quick Down %:</span>
               {DOWN_PERCENT_PRESETS.map((pct) => (
                 <button
                   key={pct}
                   onClick={() => handleDownPercentChange(pct)}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  className={`px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg text-[11px] sm:text-xs font-bold transition-all cursor-pointer ${
                     downPaymentPercent === pct
                       ? 'bg-slate-900 text-white'
                       : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
@@ -813,10 +790,10 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
           </div>
 
           {/* 3. Interest Rate & Loan Term (2 columns) */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             
             {/* Interest Rate */}
-            <div className="space-y-2">
+            <div className="space-y-1.5 sm:space-y-2">
               <label htmlFor="interest-rate-input" className="text-xs font-extrabold uppercase tracking-wider text-slate-700 block">
                 Interest Rate (%)
               </label>
@@ -829,27 +806,27 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                     const val = e.target.value;
                     setInterestRate(val === '' ? '' : Number(val));
                   }}
-                  className="w-full pl-4 pr-9 py-3 rounded-2xl bg-slate-50 border border-slate-200 focus:border-[#FA2D48] focus:bg-white focus:ring-2 focus:ring-[#FA2D48]/20 font-bold text-slate-900 text-lg outline-none transition-all"
+                  className="w-full pl-3.5 sm:pl-4 pr-8 sm:pr-9 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-200 focus:border-[#FA2D48] focus:bg-white focus:ring-2 focus:ring-[#FA2D48]/20 font-bold text-slate-900 text-base sm:text-lg outline-none transition-all"
                   step="0.05"
                   min="0"
                   max="25"
                 />
-                <span className="absolute right-4 text-slate-400 font-bold text-base">%</span>
+                <span className="absolute right-3 sm:right-4 text-slate-400 font-bold text-sm sm:text-base">%</span>
               </div>
             </div>
 
             {/* Loan Term */}
-            <div className="space-y-2">
+            <div className="space-y-1.5 sm:space-y-2">
               <label className="text-xs font-extrabold uppercase tracking-wider text-slate-700 block">
                 Loan Term
               </label>
-              <div className="grid grid-cols-3 gap-1 bg-slate-100 p-1 rounded-2xl border border-slate-200">
+              <div className="grid grid-cols-3 gap-1 bg-slate-100 p-1 rounded-xl sm:rounded-2xl border border-slate-200">
                 {[15, 20, 30].map((term) => (
                   <button
                     key={term}
                     type="button"
                     onClick={() => setLoanTermYears(term)}
-                    className={`py-2.5 rounded-xl text-xs font-black transition-all cursor-pointer ${
+                    className={`py-2 sm:py-2.5 rounded-lg sm:rounded-xl text-xs font-black transition-all cursor-pointer ${
                       loanTermYears === term
                         ? 'bg-[#FA2D48] text-white shadow-2xs'
                         : 'text-slate-700 hover:text-slate-900'
