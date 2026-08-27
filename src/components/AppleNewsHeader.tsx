@@ -30,7 +30,7 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
   searchQuery,
   onSearchChange,
   onResetToMain,
-  fredRate = '6.67%',
+  fredRate = '6.75%',
   asOfDate,
   onOpenManager,
   onOpenNewsManager,
@@ -88,16 +88,16 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
               <button
                 onClick={() => onSelectCategory('mortgage-calculator')}
                 className="text-right group cursor-pointer hover:opacity-80 transition-opacity"
-                title="Live FRED 30-Yr Mortgage Rate Feed - Click for Mortgage Calculator"
+                title="Mortgage News Daily Live 30-Yr Rate - Click for Mortgage Calculator"
               >
                 <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#FA2D48] leading-none block">
-                  FRED 30-Yr Rate
+                  MND Live 30-Yr
                 </span>
                 <span className="text-xl font-black text-slate-950 font-sans tracking-tight leading-none group-hover:text-[#FA2D48] transition-colors pt-0.5 block">
                   {fredRate}
                 </span>
                 <span className="text-[9px] font-bold text-slate-400 block tracking-tight pt-0.5">
-                  As of {asOfDate || 'Aug 13, 2026'}
+                  {asOfDate || 'Live Market'}
                 </span>
               </button>
 
@@ -122,16 +122,16 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
             <button
               onClick={() => onSelectCategory('mortgage-calculator')}
               className="hidden sm:flex flex-col items-end text-right group cursor-pointer hover:opacity-80 transition-opacity shrink-0 px-1"
-              title="Live FRED 30-Yr Mortgage Rate Feed - Click for Mortgage Calculator"
+              title="Mortgage News Daily Live 30-Yr Rate - Click for Mortgage Calculator"
             >
               <span className="text-[10px] font-black uppercase tracking-wider text-[#FA2D48] leading-none block">
-                FRED 30-Yr Rate
+                MND Live 30-Yr Rate
               </span>
               <span className="text-2xl lg:text-3xl font-black text-slate-950 font-sans tracking-tight leading-none group-hover:text-[#FA2D48] transition-colors pt-0.5 block">
                 {fredRate}
               </span>
               <span className="text-[10px] font-bold text-slate-400 block tracking-tight pt-0.5">
-                As of {asOfDate || 'Aug 13, 2026'}
+                {asOfDate || 'Daily Live Market'}
               </span>
             </button>
 

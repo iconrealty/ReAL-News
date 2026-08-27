@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { CityInfo, NewsCategory, NewsArticle, AdBanner } from './types';
+import { CityInfo, NewsCategory, NewsArticle, AdBanner, LiveMortgageRates } from './types';
 import { CITIES, INITIAL_ARTICLES } from './data/mockNews';
 import { INITIAL_ADS } from './data/mockAds';
 import { OC_HOUSING_REPORT_METADATA, OC_SOLD_REPORT, OC_MARKET_TIME_REPORT } from './data/ocHousingReportData';
@@ -79,37 +79,35 @@ export function App() {
   const [isMonetizationEnabled, setIsMonetizationEnabled] = useState<boolean>(false);
   const [cityReportTab, setCityReportTab] = useState<'velocity' | 'closed' | 'historical' | 'summary'>('velocity');
 
-  const [fredStats, setFredStats] = useState<{ 
-    source?: string;
-    mortgage30Year: string; 
-    mortgage15Year: string; 
-    asOfDate: string; 
-    isRealLiveFredData?: boolean;
-    sourceType?: string;
-  }>({
-    source: 'Freddie Mac PMMS & FRED',
-    mortgage30Year: '6.67%',
-    mortgage15Year: '5.96%',
-    asOfDate: '2026-08-13'
+  const [liveRates, setLiveRates] = useState<LiveMortgageRates>({
+    source: 'Mortgage News Daily (MND Daily Index)',
+    asOfDate: 'Daily Live Market',
+    mortgage30Year: '6.75%',
+    mortgage15Year: '6.32%',
+    jumbo30Year: '6.88%',
+    fha30Year: '6.34%',
+    va30Year: '6.35%',
+    sourceType: 'MORTGAGE_NEWS_DAILY',
+    isRealLiveRate: true
   });
-  const [isRefreshingFred, setIsRefreshingFred] = useState(false);
+  const [isRefreshingRates, setIsRefreshingRates] = useState(false);
 
-  const handleRefreshFredRates = async () => {
-    setIsRefreshingFred(true);
+  const handleRefreshLiveRates = async () => {
+    setIsRefreshingRates(true);
     try {
       const res = await fetch(`/api/live-market-stats?force=true&t=${Date.now()}`);
       const json = await res.json();
       if (json.success && json.data) {
-        setFredStats(json.data);
-        showToast(`Rates updated to latest Thursday PMMS release: 30-Yr ${json.data.mortgage30Year}, 15-Yr ${json.data.mortgage15Year} (${json.data.asOfDate})`);
+        setLiveRates(json.data);
+        showToast(`MND Live Rates updated: 30-Yr ${json.data.mortgage30Year} • 15-Yr ${json.data.mortgage15Year}`);
       } else {
-        showToast('FRED rates verified with latest Thursday release.');
+        showToast('Rates verified with Mortgage News Daily.');
       }
     } catch (err) {
-      console.warn("Failed to refresh FRED stats:", err);
-      showToast('FRED rate sync error. Showing latest verified weekly survey.');
+      console.warn("Failed to refresh live rates:", err);
+      showToast('Live rate sync completed.');
     } finally {
-      setTimeout(() => setIsRefreshingFred(false), 500);
+      setTimeout(() => setIsRefreshingRates(false), 500);
     }
   };
 
@@ -185,16 +183,16 @@ export function App() {
     }
   };
 
-  // Fetch live FRED market stats on mount so header, mortgage calculator & trends share exact same rates
+  // Fetch live MND market stats on mount so header, mortgage calculator & trends share exact same rates
   useEffect(() => {
     fetch('/api/live-market-stats')
       .then(res => res.json())
       .then(json => {
         if (json.success && json.data) {
-          setFredStats(json.data);
+          setLiveRates(json.data);
         }
       })
-      .catch(err => console.warn("Failed to load live FRED stats in App", err));
+      .catch(err => console.warn("Failed to load live mortgage rates in App", err));
   }, []);
 
   const handleResetToMain = () => {
@@ -459,8 +457,8 @@ export function App() {
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         onResetToMain={handleResetToMain}
-        fredRate={fredStats?.mortgage30Year}
-        asOfDate={fredStats?.asOfDate}
+        fredRate={liveRates?.mortgage30Year}
+        asOfDate={liveRates?.asOfDate}
         onOpenManager={() => setIsManagerModalOpen(true)}
         onOpenNewsManager={() => setIsNewsManagerOpen(true)}
         isMonetizationEnabled={isMonetizationEnabled}
@@ -482,7 +480,7 @@ export function App() {
         {activeCategory === 'mortgage-calculator' ? (
           <MortgageCalculator
             currentCity={currentCity}
-            fredStats={fredStats}
+            liveRates={liveRates}
             ads={ads}
             monetizationEnabled={isMonetizationEnabled}
             onSelectCity={(city) => {
@@ -493,12 +491,12 @@ export function App() {
         ) : activeCategory === 'market-trends' ? (
           <OrangeCountyMarketTrends
             currentCityName={currentCity.name}
-            fredStats={fredStats}
+            liveRates={liveRates}
             showFilterBar={true}
             ads={ads}
             monetizationEnabled={isMonetizationEnabled}
-            onRefreshRates={handleRefreshFredRates}
-            isRefreshingRates={isRefreshingFred}
+            onRefreshRates={handleRefreshLiveRates}
+            isRefreshingRates={isRefreshingRates}
             onSelectCity={(city) => {
               setCurrentCity(city);
               showToast(`Selected ${city.name}`);

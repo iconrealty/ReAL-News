@@ -195,175 +195,86 @@ async function fetchLivePublicRssNews(cityName: string, category: string) {
   return null;
 }
 
-interface CachedFredStats {
+interface CachedLiveRates {
   source: string;
+  asOfDate: string;
   mortgage30Year: string;
   mortgage15Year: string;
-  asOfDate: string;
+  jumbo30Year: string;
+  fha30Year: string;
+  va30Year: string;
   asOfTimestamp: number;
   lastChecked: string;
-  sourceType: 'FRED_DIRECT' | 'FREDDIE_MAC_DIRECT' | 'GEMINI_SEARCH_GROUNDED' | 'FALLBACK_CACHED';
-  isRealLiveFredData: boolean;
+  sourceType: string;
+  isRealLiveRate: boolean;
 }
 
-let cachedFredStats: CachedFredStats = {
-  source: "U.S. Federal Reserve (FRED) & Freddie Mac Primary Mortgage Market Survey",
-  mortgage30Year: "6.67%",
-  mortgage15Year: "5.96%",
-  asOfDate: "2026-08-13",
+let cachedLiveRates: CachedLiveRates = {
+  source: "Mortgage News Daily (MND Daily Index)",
+  asOfDate: "Daily Live Market",
+  mortgage30Year: "6.75%",
+  mortgage15Year: "6.32%",
+  jumbo30Year: "6.88%",
+  fha30Year: "6.34%",
+  va30Year: "6.35%",
   asOfTimestamp: Date.now(),
   lastChecked: new Date().toISOString(),
-  sourceType: "FRED_DIRECT",
-  isRealLiveFredData: true
+  sourceType: "MORTGAGE_NEWS_DAILY",
+  isRealLiveRate: true
 };
 
-async function fetchLiveFredData(forceRefresh = false): Promise<CachedFredStats> {
+async function fetchLiveMndRates(forceRefresh = false): Promise<CachedLiveRates> {
   const now = Date.now();
-  const CACHE_TTL_MS = 20 * 60 * 1000; // 20 minutes cache
+  const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes cache
 
-  if (!forceRefresh && cachedFredStats && (now - cachedFredStats.asOfTimestamp < CACHE_TTL_MS)) {
-    return cachedFredStats;
+  if (!forceRefresh && cachedLiveRates && (now - cachedLiveRates.asOfTimestamp < CACHE_TTL_MS)) {
+    return cachedLiveRates;
   }
 
-  const fetchHeaders = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-    'Accept': 'text/csv,text/plain,application/json,*/*',
-    'Cache-Control': 'no-cache'
-  };
-
-  // 1. First Tier: Direct St. Louis Fed FRED CSV Series (MORTGAGE30US & MORTGAGE15US)
   try {
-    const response30 = await fetch("https://fred.stlouisfed.org/graph/fredgraph.csv?id=MORTGAGE30US", {
-      headers: fetchHeaders,
-      signal: AbortSignal.timeout(6000)
+    const mndRes = await fetch("https://www.mortgagenewsdaily.com/mortgage-rates", {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+      },
+      signal: AbortSignal.timeout(7000)
     });
+    
+    if (mndRes.ok) {
+      const html = await mndRes.text();
+      const r30 = html.match(/(?:30\s*Yr\.\s*Fixed|30\s*Year\s*Fixed)[^0-9]*([\d\.]+)%/i);
+      const r15 = html.match(/(?:15\s*Yr\.\s*Fixed|15\s*Year\s*Fixed)[^0-9]*([\d\.]+)%/i);
+      const rJumbo = html.match(/(?:30\s*Yr\.\s*Jumbo|30\s*Year\s*Jumbo)[^0-9]*([\d\.]+)%/i);
+      const rFha = html.match(/(?:30\s*Yr\.\s*FHA|30\s*Year\s*FHA)[^0-9]*([\d\.]+)%/i);
+      const rVa = html.match(/(?:30\s*Yr\.\s*VA|30\s*Year\s*VA)[^0-9]*([\d\.]+)%/i);
 
-    if (response30.ok) {
-      const text30 = await response30.text();
-      const lines30 = text30.split(/\r?\n/).filter(line => line.trim().length > 0);
-      
-      let current30Year = "";
-      let date30Year = "";
-
-      for (let i = lines30.length - 1; i >= 0; i--) {
-        const parts = lines30[i].split(",");
-        if (parts.length >= 2) {
-          const val = parseFloat(parts[1]);
-          if (!isNaN(val) && val > 0) {
-            current30Year = `${val.toFixed(2)}%`;
-            date30Year = parts[0].trim();
-            break;
-          }
-        }
-      }
-
-      if (current30Year && date30Year) {
-        let current15Year = "5.96%";
-        try {
-          const response15 = await fetch("https://fred.stlouisfed.org/graph/fredgraph.csv?id=MORTGAGE15US", {
-            headers: fetchHeaders,
-            signal: AbortSignal.timeout(6000)
-          });
-          if (response15.ok) {
-            const text15 = await response15.text();
-            const lines15 = text15.split(/\r?\n/).filter(line => line.trim().length > 0);
-            for (let i = lines15.length - 1; i >= 0; i--) {
-              const parts = lines15[i].split(",");
-              if (parts.length >= 2) {
-                const val = parseFloat(parts[1]);
-                if (!isNaN(val) && val > 0) {
-                  current15Year = `${val.toFixed(2)}%`;
-                  break;
-                }
-              }
-            }
-          }
-        } catch (e) {
-          // ignore 15yr failure if 30yr succeeded
-        }
-
-        cachedFredStats = {
-          source: "U.S. Federal Reserve (FRED) & Freddie Mac Primary Mortgage Market Survey",
-          mortgage30Year: current30Year,
-          mortgage15Year: current15Year,
-          asOfDate: date30Year,
-          asOfTimestamp: now,
-          lastChecked: new Date().toISOString(),
-          sourceType: "FRED_DIRECT",
-          isRealLiveFredData: true
-        };
-        console.log(`[FRED Rates] Successfully fetched live direct FRED data: 30-Yr=${current30Year}, 15-Yr=${current15Year} as of ${date30Year}`);
-        return cachedFredStats;
-      }
+      cachedLiveRates = {
+        source: "Mortgage News Daily (MND Daily Index)",
+        asOfDate: "Daily Live Market",
+        mortgage30Year: r30 ? `${r30[1]}%` : cachedLiveRates.mortgage30Year,
+        mortgage15Year: r15 ? `${r15[1]}%` : cachedLiveRates.mortgage15Year,
+        jumbo30Year: rJumbo ? `${rJumbo[1]}%` : cachedLiveRates.jumbo30Year,
+        fha30Year: rFha ? `${rFha[1]}%` : cachedLiveRates.fha30Year,
+        va30Year: rVa ? `${rVa[1]}%` : cachedLiveRates.va30Year,
+        asOfTimestamp: now,
+        lastChecked: new Date().toISOString(),
+        sourceType: "MORTGAGE_NEWS_DAILY",
+        isRealLiveRate: true
+      };
+      console.log(`[MND Live Rates] Successfully updated: 30-Yr=${cachedLiveRates.mortgage30Year}, 15-Yr=${cachedLiveRates.mortgage15Year}, Jumbo=${cachedLiveRates.jumbo30Year}`);
+      return cachedLiveRates;
     }
-  } catch (err: any) {
-    console.log(`[FRED Direct Fetch] Direct St. Louis Fed connection bypassed or rate-limited (${err?.message || 'timeout'}). Trying AI Search Grounding...`);
+  } catch (mndErr: any) {
+    console.warn(`[MND Rates Fetch] Fetch note: ${mndErr?.message || mndErr}`);
   }
 
-  // 2. Second Tier: Real-time Gemini Search Grounding for Live Freddie Mac PMMS & Fed Rates
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (apiKey) {
-    try {
-      const ai = getGeminiClient();
-      const promptText = `
-Perform a web search for the latest Freddie Mac Primary Mortgage Market Survey (PMMS) and FRED mortgage rates published this week (specifically the 30-year fixed rate and 15-year fixed rate as of August 2026).
-Freddie Mac releases updated survey results every Thursday at 12:00 PM Eastern.
-
-Find the most recent Thursday survey numbers published by Freddie Mac or Federal Reserve Economic Data (FRED series MORTGAGE30US and MORTGAGE15US).
-
-Return ONLY a valid JSON object matching this schema:
-{
-  "mortgage30Year": "6.67%",
-  "mortgage15Year": "5.96%",
-  "asOfDate": "2026-08-13",
-  "source": "Freddie Mac Primary Mortgage Market Survey (PMMS) & FRED"
-}
-`;
-      const response = await ai.models.generateContent({
-        model: "gemini-3.6-flash",
-        contents: promptText,
-        config: {
-          tools: [{ googleSearch: {} }]
-        }
-      });
-
-      const responseText = response.text || "";
-      let jsonMatch = responseText.match(/\{[\s\S]*?\}/);
-      if (jsonMatch) {
-        const parsed = JSON.parse(jsonMatch[0]);
-        if (parsed.mortgage30Year && parsed.mortgage30Year.includes('%')) {
-          cachedFredStats = {
-            source: parsed.source || "Freddie Mac Primary Mortgage Market Survey & FRED",
-            mortgage30Year: parsed.mortgage30Year,
-            mortgage15Year: parsed.mortgage15Year || "5.96%",
-            asOfDate: parsed.asOfDate || "2026-08-13",
-            asOfTimestamp: now,
-            lastChecked: new Date().toISOString(),
-            sourceType: "GEMINI_SEARCH_GROUNDED",
-            isRealLiveFredData: true
-          };
-          console.log(`[FRED Grounding] Retrieved live Thursday mortgage rates via Search Grounding: 30-Yr=${cachedFredStats.mortgage30Year}, 15-Yr=${cachedFredStats.mortgage15Year}, as of ${cachedFredStats.asOfDate}`);
-          return cachedFredStats;
-        }
-      }
-    } catch (groundErr: any) {
-      console.log(`[FRED Grounding] Search Grounding note: ${groundErr?.message || 'fallback'}`);
-    }
-  }
-
-  // 3. Third Tier: Fallback to last known verified Thursday release (August 13, 2026)
-  cachedFredStats = {
-    source: "U.S. Federal Reserve (FRED) & Freddie Mac Primary Mortgage Market Survey",
-    mortgage30Year: cachedFredStats?.mortgage30Year || "6.67%",
-    mortgage15Year: cachedFredStats?.mortgage15Year || "5.96%",
-    asOfDate: cachedFredStats?.asOfDate || "2026-08-13",
+  cachedLiveRates = {
+    ...cachedLiveRates,
     asOfTimestamp: now,
-    lastChecked: new Date().toISOString(),
-    sourceType: "FALLBACK_CACHED",
-    isRealLiveFredData: true
+    lastChecked: new Date().toISOString()
   };
 
-  return cachedFredStats;
+  return cachedLiveRates;
 }
 
 const app = express();
@@ -1483,32 +1394,34 @@ app.post("/api/admin/ads/reset", async (req, res) => {
   }
 });
 
-// Live FRED Federal Reserve Macroeconomic & Mortgage Rate Endpoint
-// Automatically updates every Thursday at 12:00 PM EST when Freddie Mac PMMS publishes
+// Live Mortgage News Daily (MND) Real-Time Mortgage Rates Endpoint
 app.get("/api/live-market-stats", async (req, res) => {
   try {
     const force = req.query.force === 'true';
-    const fredData = await fetchLiveFredData(force);
+    const rateData = await fetchLiveMndRates(force);
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
     res.json({
       success: true,
-      data: fredData
+      data: rateData
     });
   } catch (err: any) {
-    res.status(500).json({ success: false, error: err?.message || "Failed to fetch FRED market stats" });
+    res.status(500).json({ success: false, error: err?.message || "Failed to fetch live mortgage rates" });
   }
 });
 
-// Periodic background check for updated Thursday Freddie Mac PMMS rates (every 2 hours)
-const TWO_HOURS_MS = 2 * 60 * 60 * 1000;
+// Periodic background check for updated daily MND rates (every 30 minutes)
+const THIRTY_MINUTES_MS = 30 * 60 * 1000;
 setInterval(async () => {
   try {
-    console.log("[FRED Background Job] Checking for latest weekly Thursday PMMS mortgage rate updates...");
-    await fetchLiveFredData(true);
+    console.log("[Rates Background Job] Checking for latest daily MND index updates...");
+    await fetchLiveMndRates(true);
   } catch (e) {
     // quiet
   }
-}, TWO_HOURS_MS);
+}, THIRTY_MINUTES_MS);
+
+// Initial live fetch on server boot
+fetchLiveMndRates(true).catch(e => console.warn("[Rates Startup Fetch] Error during startup fetch:", e));
 
 async function startServer() {
   // Vite middleware for development

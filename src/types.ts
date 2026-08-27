@@ -102,14 +102,17 @@ export interface AdBanner {
   updatedAt: string;
 }
 
-export interface FredStats {
+export interface LiveMortgageRates {
   source: string;
+  asOfDate: string;
   mortgage30Year: string;
   mortgage15Year: string;
-  asOfDate: string;
+  jumbo30Year?: string;
+  fha30Year?: string;
+  va30Year?: string;
   lastChecked?: string;
-  sourceType?: string;
-  isRealLiveFredData?: boolean;
+  sourceType: string;
+  isRealLiveRate?: boolean;
 }
 
 export interface FilterState {

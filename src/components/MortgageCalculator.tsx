@@ -1,16 +1,11 @@
 import React, { useState, useMemo } from 'react';
-import { CityInfo, AdBanner } from '../types';
+import { CityInfo, AdBanner, LiveMortgageRates } from '../types';
 import { AdBannerRenderer } from './AdBannerRenderer';
 
 interface MortgageCalculatorProps {
   currentCity?: CityInfo;
   onSelectCity?: (city: CityInfo) => void;
-  fredStats?: {
-    mortgage30Year?: string;
-    mortgage15Year?: string;
-    asOfDate?: string;
-    source?: string;
-  } | null;
+  liveRates?: LiveMortgageRates | null;
   ads?: AdBanner[];
   monetizationEnabled?: boolean;
 }
@@ -60,30 +55,48 @@ const AppleToggle: React.FC<AppleToggleProps> = ({ enabled, onChange, label, id 
 
 export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
   currentCity,
-  fredStats,
+  liveRates: propLiveRates,
   ads = [],
   monetizationEnabled = false,
 }) => {
-  // Parse numeric rates from FRED stats if available (e.g. "6.67%" -> 6.67)
-  const fred30Num = useMemo(() => {
-    if (!fredStats?.mortgage30Year) return 6.67;
-    const val = parseFloat(fredStats.mortgage30Year.replace('%', ''));
-    return isNaN(val) ? 6.67 : val;
-  }, [fredStats?.mortgage30Year]);
+  // MND Daily rates
+  const mnd30Num = useMemo(() => {
+    if (!propLiveRates?.mortgage30Year) return 6.75;
+    const val = parseFloat(propLiveRates.mortgage30Year.replace('%', ''));
+    return isNaN(val) ? 6.75 : val;
+  }, [propLiveRates?.mortgage30Year]);
 
-  const fred15Num = useMemo(() => {
-    if (!fredStats?.mortgage15Year) return 5.96;
-    const val = parseFloat(fredStats.mortgage15Year.replace('%', ''));
-    return isNaN(val) ? 5.96 : val;
-  }, [fredStats?.mortgage15Year]);
+  const mnd15Num = useMemo(() => {
+    if (!propLiveRates?.mortgage15Year) return 6.32;
+    const val = parseFloat(propLiveRates.mortgage15Year.replace('%', ''));
+    return isNaN(val) ? 6.32 : val;
+  }, [propLiveRates?.mortgage15Year]);
 
-  const liveRates = useMemo(() => [
-    { label: '30-Yr Fixed', rate: fred30Num, term: 30 },
-    { label: '15-Yr Fixed', rate: fred15Num, term: 15 },
-    { label: 'FHA 30-Yr', rate: parseFloat((fred30Num - 0.43).toFixed(2)), term: 30 },
-    { label: 'VA 30-Yr', rate: parseFloat((fred30Num - 0.53).toFixed(2)), term: 30 },
-    { label: '5/1 ARM', rate: parseFloat((fred30Num - 0.33).toFixed(2)), term: 30 },
-  ], [fred30Num, fred15Num]);
+  const mndJumboNum = useMemo(() => {
+    if (!propLiveRates?.jumbo30Year) return 6.88;
+    const val = parseFloat(propLiveRates.jumbo30Year.replace('%', ''));
+    return isNaN(val) ? 6.88 : val;
+  }, [propLiveRates?.jumbo30Year]);
+
+  const mndFhaNum = useMemo(() => {
+    if (!propLiveRates?.fha30Year) return 6.34;
+    const val = parseFloat(propLiveRates.fha30Year.replace('%', ''));
+    return isNaN(val) ? 6.34 : val;
+  }, [propLiveRates?.fha30Year]);
+
+  const mndVaNum = useMemo(() => {
+    if (!propLiveRates?.va30Year) return 6.35;
+    const val = parseFloat(propLiveRates.va30Year.replace('%', ''));
+    return isNaN(val) ? 6.35 : val;
+  }, [propLiveRates?.va30Year]);
+
+  const rateOptions = useMemo(() => [
+    { label: '30-Yr Fixed', rate: mnd30Num, term: 30 },
+    { label: '15-Yr Fixed', rate: mnd15Num, term: 15 },
+    { label: '30-Yr Jumbo', rate: mndJumboNum, term: 30 },
+    { label: '30-Yr FHA', rate: mndFhaNum, term: 30 },
+    { label: '30-Yr VA', rate: mndVaNum, term: 30 },
+  ], [mnd30Num, mnd15Num, mndJumboNum, mndFhaNum, mndVaNum]);
 
   // Core Loan Inputs
   const [calcMode, setCalcMode] = useState<'standard' | 'reverse'>('standard');
@@ -92,15 +105,15 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
   const [downPaymentMode, setDownPaymentMode] = useState<'percent' | 'dollar'>('percent');
   const [downPaymentPercent, setDownPaymentPercent] = useState<number | ''>(20);
   const [downPaymentDollar, setDownPaymentDollar] = useState<number | ''>(200000);
-  const [interestRate, setInterestRate] = useState<number | ''>(fred30Num);
+  const [interestRate, setInterestRate] = useState<number | ''>(mnd30Num);
   const [loanTermYears, setLoanTermYears] = useState<number>(30);
 
-  // Sync interestRate when FRED stats load
+  // Sync interestRate when live stats load
   React.useEffect(() => {
-    if (fred30Num) {
-      setInterestRate(fred30Num);
+    if (mnd30Num) {
+      setInterestRate(mnd30Num);
     }
-  }, [fred30Num]);
+  }, [mnd30Num]);
 
   // Optional Extra Costs Toggles (iPhone/Apple style green/grey toggle, set by default to inactive false)
   const [includeTaxes, setIncludeTaxes] = useState<boolean>(false);
@@ -502,15 +515,16 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
         <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-[#FA2D48]/10 to-transparent rounded-full blur-3xl pointer-events-none" />
         
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3.5 relative z-10">
-          <div>
+          <div className="flex items-center gap-2">
             <h2 className="text-lg font-black text-slate-900">
-              Select your interest
+              Live Rates (Mortgage News Daily)
             </h2>
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
           </div>
 
           {/* Rate Selector Pills */}
           <div className="flex flex-wrap gap-2 shrink-0 items-center">
-            {liveRates.map((r) => (
+            {rateOptions.map((r) => (
               <button
                 key={r.label}
                 type="button"
@@ -550,7 +564,7 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                 setDownPaymentMode('percent');
                 setDownPaymentPercent(20);
                 setDownPaymentDollar(200000);
-                setInterestRate(fred30Num);
+                setInterestRate(mnd30Num);
                 setLoanTermYears(30);
                 setIncludeTaxes(false);
                 setIncludeInsurance(false);
