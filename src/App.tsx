@@ -516,8 +516,8 @@ export function App() {
           <>
             {/* Apple Style City Masthead Hero Banner with Steven Thomas City Tabs */}
             <div className="relative rounded-3xl bg-white border border-slate-200/90 p-5 sm:p-7 shadow-xs space-y-5">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-100 pb-4">
-                <div className="space-y-1">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+                <div className="space-y-2">
                   <div className="flex items-center space-x-2">
                     <span className="text-[12px] font-mono font-black tracking-widest text-[#FA2D48] uppercase block">
                       Steven Thomas Report
@@ -528,35 +528,38 @@ export function App() {
                       </span>
                     )}
                   </div>
-                  <h2 className="text-3xl sm:text-4xl font-black font-serif text-slate-950 tracking-tight">
-                    {currentCity.id === 'orange-county' ? 'Select City' : currentCity.name}
-                  </h2>
+
+                  <div className="flex flex-wrap items-center gap-3">
+                    <h2 className="text-2xl sm:text-3xl font-black font-serif text-slate-950 tracking-tight">
+                      {currentCity.id === 'orange-county' ? 'Select City' : currentCity.name}
+                    </h2>
+
+                    {/* Direct Dropdown City Selector */}
+                    <div className="relative">
+                      <select
+                        value={currentCity.id}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          const matched = CITIES.find(c => c.id === val);
+                          if (matched) {
+                            setCurrentCity(matched);
+                            showToast(`Selected ${matched.name}`);
+                          }
+                        }}
+                        className="bg-[#F2F2F7] hover:bg-slate-200 border border-slate-300/80 rounded-xl pl-3 pr-8 py-2 text-sm font-bold text-slate-900 focus:outline-none focus:border-[#FA2D48] transition-all cursor-pointer appearance-none shadow-xs"
+                      >
+                        {CITIES.map(c => (
+                          <option key={c.id} value={c.id}>
+                            {c.name}
+                          </option>
+                        ))}
+                      </select>
+                      <ChevronRight className="w-3.5 h-3.5 text-slate-500 absolute right-2.5 top-3 rotate-90 pointer-events-none" />
+                    </div>
+                  </div>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-2.5">
-                  {/* Direct Dropdown City Selector */}
-                  <div className="relative">
-                    <select
-                      value={currentCity.id}
-                      onChange={(e) => {
-                        const val = e.target.value;
-                        const matched = CITIES.find(c => c.id === val);
-                        if (matched) {
-                          setCurrentCity(matched);
-                          showToast(`Selected ${matched.name}`);
-                        }
-                      }}
-                      className="bg-[#F2F2F7] hover:bg-slate-200 border border-slate-200/80 rounded-xl pl-3 pr-8 py-2.5 text-xs font-bold text-slate-900 focus:outline-none focus:border-[#FA2D48] transition-all cursor-pointer appearance-none"
-                    >
-                      {CITIES.map(c => (
-                        <option key={c.id} value={c.id}>
-                          {c.name}
-                        </option>
-                      ))}
-                    </select>
-                    <ChevronRight className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-3 rotate-90 pointer-events-none" />
-                  </div>
-
+                <div className="flex items-center gap-2.5">
                   {currentCity.id !== 'orange-county' && (
                     <button
                       onClick={() => {
@@ -564,7 +567,7 @@ export function App() {
                         setCurrentCity(ocCity);
                         showToast('Reset to All Orange County');
                       }}
-                      className="px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs transition-all cursor-pointer"
+                      className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs transition-all cursor-pointer"
                     >
                       ← Countywide View
                     </button>
