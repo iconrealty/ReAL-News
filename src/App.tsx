@@ -529,13 +529,8 @@ export function App() {
                     )}
                   </div>
                   <h2 className="text-3xl sm:text-4xl font-black font-serif text-slate-950 tracking-tight">
-                    {currentCity.name}
+                    {currentCity.id === 'orange-county' ? 'Select City' : currentCity.name}
                   </h2>
-                  <p className="text-xs text-slate-500 font-medium">
-                    {currentCity.id === 'orange-county' 
-                      ? 'Select any city below to explore localized market time and closed sales.' 
-                      : `Reports On Housing local analytics for ${currentCity.name}.`}
-                  </p>
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2.5">
@@ -574,14 +569,6 @@ export function App() {
                       ← Countywide View
                     </button>
                   )}
-
-                  <button
-                    onClick={() => setActiveCategory('market-trends')}
-                    className="px-4 py-2.5 rounded-xl bg-[#FA2D48] hover:bg-[#E0263E] text-white font-bold text-xs flex items-center space-x-1.5 shadow-xs transition-all cursor-pointer"
-                  >
-                    <TrendingUp className="w-3.5 h-3.5" />
-                    <span>Steven Thomas Tab</span>
-                  </button>
                 </div>
               </div>
 
