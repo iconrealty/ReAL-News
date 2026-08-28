@@ -585,235 +585,409 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
             </div>
           </div>
 
-          {/* Mode 1: Max Monthly Budget Mode Input */}
-          {calcMode === 'reverse' && (
-            <div className="space-y-3 p-4 bg-rose-50/70 rounded-2xl animate-fadeIn">
-              <div className="flex items-center justify-between">
-                <label htmlFor="max-monthly-budget-input" className="text-xs font-extrabold uppercase tracking-wider text-slate-700">
-                  Target Max Monthly Payment
-                </label>
-                <span className="text-[10px] font-extrabold uppercase tracking-wider text-rose-600 bg-rose-100 px-2 py-0.5 rounded-md">
-                  Reverse Mode Active
-                </span>
-              </div>
-
-              <div className="relative flex items-center">
-                <span className="absolute left-4 text-slate-400 font-bold text-base">$</span>
-                <input
-                  id="max-monthly-budget-input"
-                  type="text"
-                  inputMode="numeric"
-                  value={maxMonthlyBudget !== '' ? maxMonthlyBudget.toLocaleString('en-US') : ''}
-                  onChange={(e) => {
-                    const raw = e.target.value.replace(/[^0-9]/g, '');
-                    setMaxMonthlyBudget(raw === '' ? '' : Number(raw));
-                  }}
-                  className="w-full pl-9 pr-14 py-3 rounded-2xl bg-white focus:ring-2 focus:ring-[#FA2D48]/20 font-bold text-slate-900 text-lg outline-none transition-all"
-                  placeholder="5,000"
-                />
-                <span className="absolute right-4 text-slate-400 font-bold text-xs font-mono text-slate-400">/mo</span>
-              </div>
-            </div>
-          )}
-
-          {/* 1. Home Price */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <label htmlFor="home-price-input" className="text-xs font-extrabold uppercase tracking-wider text-slate-700">
-                {calcMode === 'reverse' ? 'Estimated Home Price (Calculated)' : 'Home Price'}
-              </label>
-              <span className="text-xs font-bold text-slate-500">
-                {homePrice !== '' && homePrice > 0 ? `$${homePrice.toLocaleString()}` : ''}
-              </span>
-            </div>
-            
-            <div className="relative flex items-center">
-              <span className="absolute left-4 text-slate-400 font-bold text-base">$</span>
-              <input
-                id="home-price-input"
-                type="text"
-                inputMode="numeric"
-                value={homePrice !== '' ? homePrice.toLocaleString('en-US') : ''}
-                onChange={(e) => {
-                  const raw = e.target.value.replace(/[^0-9]/g, '');
-                  handleHomePriceChange(raw === '' ? '' : Number(raw));
-                }}
-                className="w-full pl-9 pr-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 focus:border-[#FA2D48] focus:bg-white focus:ring-2 focus:ring-[#FA2D48]/20 font-bold text-slate-900 text-lg outline-none transition-all"
-                placeholder="1,000,000"
-              />
-            </div>
-
-            {/* Quick Price Presets */}
-            {calcMode === 'standard' && (
-              <div className="flex items-center gap-1.5 flex-wrap pt-1">
-                <span className="text-[11px] font-bold text-slate-400 mr-1">Quick Price:</span>
-                {PRICE_PRESETS.map((preset) => (
-                  <button
-                    key={preset.value}
-                    type="button"
-                    onClick={() => handleHomePriceChange(preset.value)}
-                    className={`px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg text-[11px] sm:text-xs font-bold transition-all cursor-pointer ${
-                      homePrice === preset.value
-                        ? 'bg-slate-900 text-white'
-                        : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
-                    }`}
-                  >
-                    {preset.label}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* 2. Down Payment with $ or % Icon Toggle */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <label htmlFor="down-payment-input" className="text-xs font-extrabold uppercase tracking-wider text-slate-700">
-                Down Payment
-              </label>
-              
-              {/* Down Payment Mode Selector Buttons ($ / %) */}
-              <div className="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 gap-1">
-                <button
-                  type="button"
-                  onClick={() => toggleDownPaymentMode('percent')}
-                  className={`px-4 py-1.5 rounded-lg text-sm font-black transition-all cursor-pointer flex items-center justify-center min-w-[38px] ${
-                    downPaymentMode === 'percent'
-                      ? 'bg-[#FA2D48] text-white shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
-                  }`}
-                  title="Switch to Percentage"
-                >
-                  <span>%</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => toggleDownPaymentMode('dollar')}
-                  className={`px-4 py-1.5 rounded-lg text-sm font-black transition-all cursor-pointer flex items-center justify-center min-w-[38px] ${
-                    downPaymentMode === 'dollar'
-                      ? 'bg-[#FA2D48] text-white shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
-                  }`}
-                  title="Switch to Dollar Amount"
-                >
-                  <span>$</span>
-                </button>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-12 gap-2 sm:gap-3 items-center">
-              <div className="col-span-7 sm:col-span-8 relative flex items-center">
-                {downPaymentMode === 'dollar' ? (
-                  <span className="absolute left-3 sm:left-4 text-slate-400 font-bold text-sm sm:text-base">$</span>
-                ) : null}
-                <input
-                  id="down-payment-input"
-                  type={downPaymentMode === 'dollar' ? 'text' : 'number'}
-                  inputMode={downPaymentMode === 'dollar' ? 'numeric' : 'decimal'}
-                  value={
-                    downPaymentMode === 'percent'
-                      ? downPaymentPercent
-                      : downPaymentDollar !== ''
-                      ? downPaymentDollar.toLocaleString('en-US')
-                      : ''
-                  }
-                  onChange={(e) => {
-                    if (downPaymentMode === 'percent') {
-                      const raw = e.target.value;
-                      handleDownPercentChange(raw === '' ? '' : Number(raw));
-                    } else {
+          {/* Mode-Specific Input Ordering */}
+          {calcMode === 'standard' ? (
+            <>
+              {/* 1. Home Price */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <label htmlFor="home-price-input" className="text-xs font-extrabold uppercase tracking-wider text-slate-700">
+                    Home Price
+                  </label>
+                  <span className="text-xs font-bold text-slate-500">
+                    {homePrice !== '' && homePrice > 0 ? `$${homePrice.toLocaleString()}` : ''}
+                  </span>
+                </div>
+                
+                <div className="relative flex items-center">
+                  <span className="absolute left-4 text-slate-400 font-bold text-base">$</span>
+                  <input
+                    id="home-price-input"
+                    type="text"
+                    inputMode="numeric"
+                    value={homePrice !== '' ? homePrice.toLocaleString('en-US') : ''}
+                    onChange={(e) => {
                       const raw = e.target.value.replace(/[^0-9]/g, '');
-                      handleDownDollarChange(raw === '' ? '' : Number(raw));
-                    }
-                  }}
-                  className={`w-full py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-200 focus:border-[#FA2D48] focus:bg-white focus:ring-2 focus:ring-[#FA2D48]/20 font-bold text-slate-900 text-base sm:text-lg outline-none transition-all ${
-                    downPaymentMode === 'dollar' ? 'pl-7 sm:pl-9 pr-3 sm:pr-4' : 'pl-3.5 sm:pl-4 pr-7 sm:pr-9'
-                  }`}
-                  step={downPaymentMode === 'percent' ? '0.1' : undefined}
-                />
-                {downPaymentMode === 'percent' ? (
+                      handleHomePriceChange(raw === '' ? '' : Number(raw));
+                    }}
+                    className="w-full pl-9 pr-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 focus:border-[#FA2D48] focus:bg-white focus:ring-2 focus:ring-[#FA2D48]/20 font-bold text-slate-900 text-lg outline-none transition-all"
+                    placeholder="1,000,000"
+                  />
+                </div>
+
+                {/* Quick Price Presets */}
+                <div className="flex items-center gap-1.5 flex-wrap pt-1">
+                  <span className="text-[11px] font-bold text-slate-400 mr-1">Quick Price:</span>
+                  {PRICE_PRESETS.map((preset) => (
+                    <button
+                      key={preset.value}
+                      type="button"
+                      onClick={() => handleHomePriceChange(preset.value)}
+                      className={`px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg text-[11px] sm:text-xs font-bold transition-all cursor-pointer ${
+                        homePrice === preset.value
+                          ? 'bg-slate-900 text-white'
+                          : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                      }`}
+                    >
+                      {preset.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* 2. Down Payment with $ or % Icon Toggle */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <label htmlFor="down-payment-input" className="text-xs font-extrabold uppercase tracking-wider text-slate-700">
+                    Down Payment
+                  </label>
+                  
+                  {/* Down Payment Mode Selector Buttons ($ / %) */}
+                  <div className="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 gap-1">
+                    <button
+                      type="button"
+                      onClick={() => toggleDownPaymentMode('percent')}
+                      className={`px-4 py-1.5 rounded-lg text-sm font-black transition-all cursor-pointer flex items-center justify-center min-w-[38px] ${
+                        downPaymentMode === 'percent'
+                          ? 'bg-[#FA2D48] text-white shadow-xs'
+                          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
+                      }`}
+                      title="Switch to Percentage"
+                    >
+                      <span>%</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => toggleDownPaymentMode('dollar')}
+                      className={`px-4 py-1.5 rounded-lg text-sm font-black transition-all cursor-pointer flex items-center justify-center min-w-[38px] ${
+                        downPaymentMode === 'dollar'
+                          ? 'bg-[#FA2D48] text-white shadow-xs'
+                          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
+                      }`}
+                      title="Switch to Dollar Amount"
+                    >
+                      <span>$</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-12 gap-2 sm:gap-3 items-center">
+                  <div className="col-span-7 sm:col-span-8 relative flex items-center">
+                    {downPaymentMode === 'dollar' ? (
+                      <span className="absolute left-3 sm:left-4 text-slate-400 font-bold text-sm sm:text-base">$</span>
+                    ) : null}
+                    <input
+                      id="down-payment-input"
+                      type={downPaymentMode === 'dollar' ? 'text' : 'number'}
+                      inputMode={downPaymentMode === 'dollar' ? 'numeric' : 'decimal'}
+                      value={
+                        downPaymentMode === 'percent'
+                          ? downPaymentPercent
+                          : downPaymentDollar !== ''
+                          ? downPaymentDollar.toLocaleString('en-US')
+                          : ''
+                      }
+                      onChange={(e) => {
+                        if (downPaymentMode === 'percent') {
+                          const raw = e.target.value;
+                          handleDownPercentChange(raw === '' ? '' : Number(raw));
+                        } else {
+                          const raw = e.target.value.replace(/[^0-9]/g, '');
+                          handleDownDollarChange(raw === '' ? '' : Number(raw));
+                        }
+                      }}
+                      className={`w-full py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-200 focus:border-[#FA2D48] focus:bg-white focus:ring-2 focus:ring-[#FA2D48]/20 font-bold text-slate-900 text-base sm:text-lg outline-none transition-all ${
+                        downPaymentMode === 'dollar' ? 'pl-7 sm:pl-9 pr-3 sm:pr-4' : 'pl-3.5 sm:pl-4 pr-7 sm:pr-9'
+                      }`}
+                      step={downPaymentMode === 'percent' ? '0.1' : undefined}
+                    />
+                    {downPaymentMode === 'percent' ? (
+                      <span className="absolute right-3 sm:right-4 text-slate-400 font-bold text-sm sm:text-base">%</span>
+                    ) : null}
+                  </div>
+
+                  {/* Equated Value text display on the SAME line */}
+                  <div className="col-span-5 sm:col-span-4 px-1 py-1 flex flex-col justify-center text-right sm:text-left">
+                    <span className="text-[10px] sm:text-[11px] uppercase tracking-wider text-slate-500 font-bold whitespace-nowrap">
+                      {downPaymentMode === 'percent' ? 'Equates To' : 'Percentage'}
+                    </span>
+                    <span className="text-sm sm:text-base font-black text-slate-900 tracking-tight whitespace-nowrap">
+                      {downPaymentMode === 'percent' 
+                        ? `$${calculatedDownPayment.toLocaleString()}`
+                        : `${downPaymentActualPct.toFixed(1)}%`
+                      }
+                    </span>
+                  </div>
+                </div>
+
+                {/* Quick Down % Presets */}
+                <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap pt-0.5">
+                  <span className="text-[10px] sm:text-[11px] font-bold text-slate-400 mr-1">Quick Down %:</span>
+                  {DOWN_PERCENT_PRESETS.map((pct) => (
+                    <button
+                      key={pct}
+                      type="button"
+                      onClick={() => handleDownPercentChange(pct)}
+                      className={`px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg text-[11px] sm:text-xs font-bold transition-all cursor-pointer ${
+                        downPaymentPercent === pct
+                          ? 'bg-slate-900 text-white'
+                          : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                      }`}
+                    >
+                      {pct}%
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* 3. Interest Rate & Loan Term */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <label htmlFor="interest-rate-input" className="text-xs font-extrabold uppercase tracking-wider text-slate-700 block">
+                    Interest Rate (%)
+                  </label>
+                </div>
+
+                <div className="relative flex items-center">
+                  <input
+                    id="interest-rate-input"
+                    type="number"
+                    value={interestRate}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setInterestRate(val === '' ? '' : Number(val));
+                    }}
+                    className="w-full pl-3.5 sm:pl-4 pr-8 sm:pr-9 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-200 focus:border-[#FA2D48] focus:bg-white focus:ring-2 focus:ring-[#FA2D48]/20 font-bold text-slate-900 text-base sm:text-lg outline-none transition-all"
+                    step="0.05"
+                    min="0"
+                    max="25"
+                  />
                   <span className="absolute right-3 sm:right-4 text-slate-400 font-bold text-sm sm:text-base">%</span>
-                ) : null}
+                </div>
+
+                {/* Loan Term Quick Presets directly under Interest Rate */}
+                <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap pt-0.5">
+                  <span className="text-[10px] sm:text-[11px] font-bold text-slate-400 mr-1">Loan Term:</span>
+                  {[15, 20, 30].map((term) => (
+                    <button
+                      key={term}
+                      type="button"
+                      onClick={() => setLoanTermYears(term)}
+                      className={`px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg text-[11px] sm:text-xs font-bold transition-all cursor-pointer ${
+                        loanTermYears === term
+                          ? 'bg-slate-900 text-white'
+                          : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                      }`}
+                    >
+                      {term} yr
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </>
+          ) : (
+            <>
+              {/* Max Monthly Budget Mode Ordering: */}
+              {/* 1. Target Max Monthly Payment */}
+              <div className="space-y-3 p-4 sm:p-5 bg-rose-50/70 rounded-2xl border border-rose-100 animate-fadeIn">
+                <div className="flex items-center justify-between">
+                  <label htmlFor="max-monthly-budget-input" className="text-xs font-extrabold uppercase tracking-wider text-slate-700">
+                    Target Max Monthly Payment
+                  </label>
+                  <span className="text-[10px] font-extrabold uppercase tracking-wider text-rose-600 bg-rose-100 px-2 py-0.5 rounded-md">
+                    Reverse Mode Active
+                  </span>
+                </div>
+
+                <div className="relative flex items-center">
+                  <span className="absolute left-4 text-slate-400 font-bold text-base">$</span>
+                  <input
+                    id="max-monthly-budget-input"
+                    type="text"
+                    inputMode="numeric"
+                    value={maxMonthlyBudget !== '' ? maxMonthlyBudget.toLocaleString('en-US') : ''}
+                    onChange={(e) => {
+                      const raw = e.target.value.replace(/[^0-9]/g, '');
+                      setMaxMonthlyBudget(raw === '' ? '' : Number(raw));
+                    }}
+                    className="w-full pl-9 pr-14 py-3 rounded-2xl bg-white border border-rose-200 focus:border-[#FA2D48] focus:ring-2 focus:ring-[#FA2D48]/20 font-bold text-slate-900 text-lg outline-none transition-all"
+                    placeholder="5,000"
+                  />
+                  <span className="absolute right-4 text-slate-400 font-bold text-xs font-mono text-slate-400">/mo</span>
+                </div>
               </div>
 
-              {/* Equated Value text display on the SAME line */}
-              <div className="col-span-5 sm:col-span-4 px-1 py-1 flex flex-col justify-center text-right sm:text-left">
-                <span className="text-[10px] sm:text-[11px] uppercase tracking-wider text-slate-500 font-bold whitespace-nowrap">
-                  {downPaymentMode === 'percent' ? 'Equates To' : 'Percentage'}
-                </span>
-                <span className="text-sm sm:text-base font-black text-slate-900 tracking-tight whitespace-nowrap">
-                  {downPaymentMode === 'percent' 
-                    ? `$${calculatedDownPayment.toLocaleString()}`
-                    : `${downPaymentActualPct.toFixed(1)}%`
-                  }
-                </span>
+              {/* 2. Estimated Home Price (Calculated) */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-extrabold uppercase tracking-wider text-slate-700">
+                    Estimated Home Price (Calculated)
+                  </label>
+                </div>
+                
+                <div className="relative flex items-center">
+                  <span className="absolute left-4 text-slate-400 font-bold text-base">$</span>
+                  <input
+                    type="text"
+                    readOnly
+                    value={homePrice !== '' && homePrice > 0 ? homePrice.toLocaleString('en-US') : ''}
+                    className="w-full pl-9 pr-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 font-bold text-slate-900 text-lg outline-none transition-all cursor-default"
+                    placeholder="Estimated Price"
+                  />
+                </div>
               </div>
-            </div>
 
-            {/* Quick Down % Presets */}
-            <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap pt-0.5">
-              <span className="text-[10px] sm:text-[11px] font-bold text-slate-400 mr-1">Quick Down %:</span>
-              {DOWN_PERCENT_PRESETS.map((pct) => (
-                <button
-                  key={pct}
-                  type="button"
-                  onClick={() => handleDownPercentChange(pct)}
-                  className={`px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg text-[11px] sm:text-xs font-bold transition-all cursor-pointer ${
-                    downPaymentPercent === pct
-                      ? 'bg-slate-900 text-white'
-                      : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
-                  }`}
-                >
-                  {pct}%
-                </button>
-              ))}
-            </div>
-          </div>
+              {/* 3. Down Payment with $ or % Icon Toggle and Downpayment Pills */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <label htmlFor="down-payment-input-rev" className="text-xs font-extrabold uppercase tracking-wider text-slate-700">
+                    Down Payment
+                  </label>
+                  
+                  {/* Down Payment Mode Selector Buttons ($ / %) */}
+                  <div className="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 gap-1">
+                    <button
+                      type="button"
+                      onClick={() => toggleDownPaymentMode('percent')}
+                      className={`px-4 py-1.5 rounded-lg text-sm font-black transition-all cursor-pointer flex items-center justify-center min-w-[38px] ${
+                        downPaymentMode === 'percent'
+                          ? 'bg-[#FA2D48] text-white shadow-xs'
+                          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
+                      }`}
+                      title="Switch to Percentage"
+                    >
+                      <span>%</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => toggleDownPaymentMode('dollar')}
+                      className={`px-4 py-1.5 rounded-lg text-sm font-black transition-all cursor-pointer flex items-center justify-center min-w-[38px] ${
+                        downPaymentMode === 'dollar'
+                          ? 'bg-[#FA2D48] text-white shadow-xs'
+                          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
+                      }`}
+                      title="Switch to Dollar Amount"
+                    >
+                      <span>$</span>
+                    </button>
+                  </div>
+                </div>
 
-          {/* 3. Interest Rate & Loan Term */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <label htmlFor="interest-rate-input" className="text-xs font-extrabold uppercase tracking-wider text-slate-700 block">
-                Interest Rate (%)
-              </label>
-            </div>
+                <div className="grid grid-cols-12 gap-2 sm:gap-3 items-center">
+                  <div className="col-span-7 sm:col-span-8 relative flex items-center">
+                    {downPaymentMode === 'dollar' ? (
+                      <span className="absolute left-3 sm:left-4 text-slate-400 font-bold text-sm sm:text-base">$</span>
+                    ) : null}
+                    <input
+                      id="down-payment-input-rev"
+                      type={downPaymentMode === 'dollar' ? 'text' : 'number'}
+                      inputMode={downPaymentMode === 'dollar' ? 'numeric' : 'decimal'}
+                      value={
+                        downPaymentMode === 'percent'
+                          ? downPaymentPercent
+                          : downPaymentDollar !== ''
+                          ? downPaymentDollar.toLocaleString('en-US')
+                          : ''
+                      }
+                      onChange={(e) => {
+                        if (downPaymentMode === 'percent') {
+                          const raw = e.target.value;
+                          handleDownPercentChange(raw === '' ? '' : Number(raw));
+                        } else {
+                          const raw = e.target.value.replace(/[^0-9]/g, '');
+                          handleDownDollarChange(raw === '' ? '' : Number(raw));
+                        }
+                      }}
+                      className={`w-full py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-200 focus:border-[#FA2D48] focus:bg-white focus:ring-2 focus:ring-[#FA2D48]/20 font-bold text-slate-900 text-base sm:text-lg outline-none transition-all ${
+                        downPaymentMode === 'dollar' ? 'pl-7 sm:pl-9 pr-3 sm:pr-4' : 'pl-3.5 sm:pl-4 pr-7 sm:pr-9'
+                      }`}
+                      step={downPaymentMode === 'percent' ? '0.1' : undefined}
+                    />
+                    {downPaymentMode === 'percent' ? (
+                      <span className="absolute right-3 sm:right-4 text-slate-400 font-bold text-sm sm:text-base">%</span>
+                    ) : null}
+                  </div>
 
-            <div className="relative flex items-center">
-              <input
-                id="interest-rate-input"
-                type="number"
-                value={interestRate}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  setInterestRate(val === '' ? '' : Number(val));
-                }}
-                className="w-full pl-3.5 sm:pl-4 pr-8 sm:pr-9 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-200 focus:border-[#FA2D48] focus:bg-white focus:ring-2 focus:ring-[#FA2D48]/20 font-bold text-slate-900 text-base sm:text-lg outline-none transition-all"
-                step="0.05"
-                min="0"
-                max="25"
-              />
-              <span className="absolute right-3 sm:right-4 text-slate-400 font-bold text-sm sm:text-base">%</span>
-            </div>
+                  {/* Equated Value text display on the SAME line */}
+                  <div className="col-span-5 sm:col-span-4 px-1 py-1 flex flex-col justify-center text-right sm:text-left">
+                    <span className="text-[10px] sm:text-[11px] uppercase tracking-wider text-slate-500 font-bold whitespace-nowrap">
+                      {downPaymentMode === 'percent' ? 'Equates To' : 'Percentage'}
+                    </span>
+                    <span className="text-sm sm:text-base font-black text-slate-900 tracking-tight whitespace-nowrap">
+                      {downPaymentMode === 'percent' 
+                        ? `$${calculatedDownPayment.toLocaleString()}`
+                        : `${downPaymentActualPct.toFixed(1)}%`
+                      }
+                    </span>
+                  </div>
+                </div>
 
-            {/* Loan Term Quick Presets directly under Interest Rate */}
-            <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap pt-0.5">
-              <span className="text-[10px] sm:text-[11px] font-bold text-slate-400 mr-1">Loan Term:</span>
-              {[15, 20, 30].map((term) => (
-                <button
-                  key={term}
-                  type="button"
-                  onClick={() => setLoanTermYears(term)}
-                  className={`px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg text-[11px] sm:text-xs font-bold transition-all cursor-pointer ${
-                    loanTermYears === term
-                      ? 'bg-slate-900 text-white'
-                      : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
-                  }`}
-                >
-                  {term} yr
-                </button>
-              ))}
-            </div>
-          </div>
+                {/* Quick Down % Presets */}
+                <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap pt-0.5">
+                  <span className="text-[10px] sm:text-[11px] font-bold text-slate-400 mr-1">Quick Down %:</span>
+                  {DOWN_PERCENT_PRESETS.map((pct) => (
+                    <button
+                      key={pct}
+                      type="button"
+                      onClick={() => handleDownPercentChange(pct)}
+                      className={`px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg text-[11px] sm:text-xs font-bold transition-all cursor-pointer ${
+                        downPaymentPercent === pct
+                          ? 'bg-slate-900 text-white'
+                          : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                      }`}
+                    >
+                      {pct}%
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* 4. Interest Rate & Loan Term */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <label htmlFor="interest-rate-input-rev" className="text-xs font-extrabold uppercase tracking-wider text-slate-700 block">
+                    Interest Rate (%)
+                  </label>
+                </div>
+
+                <div className="relative flex items-center">
+                  <input
+                    id="interest-rate-input-rev"
+                    type="number"
+                    value={interestRate}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setInterestRate(val === '' ? '' : Number(val));
+                    }}
+                    className="w-full pl-3.5 sm:pl-4 pr-8 sm:pr-9 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-200 focus:border-[#FA2D48] focus:bg-white focus:ring-2 focus:ring-[#FA2D48]/20 font-bold text-slate-900 text-base sm:text-lg outline-none transition-all"
+                    step="0.05"
+                    min="0"
+                    max="25"
+                  />
+                  <span className="absolute right-3 sm:right-4 text-slate-400 font-bold text-sm sm:text-base">%</span>
+                </div>
+
+                {/* Loan Term Quick Presets */}
+                <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap pt-0.5">
+                  <span className="text-[10px] sm:text-[11px] font-bold text-slate-400 mr-1">Loan Term:</span>
+                  {[15, 20, 30].map((term) => (
+                    <button
+                      key={term}
+                      type="button"
+                      onClick={() => setLoanTermYears(term)}
+                      className={`px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg text-[11px] sm:text-xs font-bold transition-all cursor-pointer ${
+                        loanTermYears === term
+                          ? 'bg-slate-900 text-white'
+                          : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                      }`}
+                    >
+                      {term} yr
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
 
           {/* 4. Optional Extra Expenses Section (Property Taxes, Insurance, HOA, PMI) */}
           <div className="pt-4 border-t border-slate-100 space-y-3">
