@@ -857,20 +857,30 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
 
                 <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto">
                   <div className="flex items-center gap-2">
-                    <div className="flex items-center gap-0.5 bg-slate-100 p-0.5 rounded-lg text-[10px]">
+                    <div className="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 gap-1">
                       <button
                         type="button"
                         onClick={() => toggleTaxMode('percent')}
-                        className={`px-2 py-0.5 rounded-md font-bold transition-all ${yearlyTaxesMode === 'percent' ? 'bg-[#FA2D48] text-white shadow-2xs' : 'text-slate-600'}`}
+                        className={`px-3 sm:px-4 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm font-black transition-all cursor-pointer flex items-center justify-center min-w-[32px] sm:min-w-[38px] ${
+                          yearlyTaxesMode === 'percent'
+                            ? 'bg-[#FA2D48] text-white shadow-xs'
+                            : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
+                        }`}
+                        title="Switch to Percentage"
                       >
-                        %
+                        <span>%</span>
                       </button>
                       <button
                         type="button"
                         onClick={() => toggleTaxMode('dollar')}
-                        className={`px-2 py-0.5 rounded-md font-bold transition-all ${yearlyTaxesMode === 'dollar' ? 'bg-[#FA2D48] text-white shadow-2xs' : 'text-slate-600'}`}
+                        className={`px-3 sm:px-4 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm font-black transition-all cursor-pointer flex items-center justify-center min-w-[32px] sm:min-w-[38px] ${
+                          yearlyTaxesMode === 'dollar'
+                            ? 'bg-[#FA2D48] text-white shadow-xs'
+                            : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
+                        }`}
+                        title="Switch to Dollar Amount"
                       >
-                        $
+                        <span>$</span>
                       </button>
                     </div>
 
