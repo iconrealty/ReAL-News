@@ -797,7 +797,7 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
           ) : (
             <>
               {/* Max Monthly Budget Mode Ordering: */}
-              {/* 1. Down Payment with $ or % Icon Toggle and Downpayment Pills */}
+              {/* 1. Down Payment with $ or % Icon Toggle */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <label htmlFor="down-payment-input-rev" className="text-xs font-extrabold uppercase tracking-wider text-slate-700">
@@ -881,25 +881,6 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                       }
                     </span>
                   </div>
-                </div>
-
-                {/* Quick Down % Presets */}
-                <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap pt-0.5">
-                  <span className="text-[10px] sm:text-[11px] font-bold text-slate-400 mr-1">Quick Down %:</span>
-                  {DOWN_PERCENT_PRESETS.map((pct) => (
-                    <button
-                      key={pct}
-                      type="button"
-                      onClick={() => handleDownPercentChange(pct)}
-                      className={`px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg text-[11px] sm:text-xs font-bold transition-all cursor-pointer ${
-                        downPaymentPercent === pct
-                          ? 'bg-slate-900 text-white'
-                          : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
-                      }`}
-                    >
-                      {pct}%
-                    </button>
-                  ))}
                 </div>
               </div>
 
