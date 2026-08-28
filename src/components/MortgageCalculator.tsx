@@ -554,22 +554,39 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
       {/* Main 2-Column Calculator Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
         
-        {/* Left Column: Form Controls (7 cols) */}
-        <div className="lg:col-span-7 bg-white rounded-3xl border border-slate-200/90 p-5 sm:p-7 shadow-xs space-y-6">
+        {/* Left Column: Form Controls (7 cols) with strong background in Reverse mode */}
+        <div className={`lg:col-span-7 rounded-3xl p-5 sm:p-7 space-y-6 transition-all duration-300 ${
+          calcMode === 'reverse'
+            ? 'bg-slate-900 border border-slate-800 shadow-xl text-white'
+            : 'bg-white border border-slate-200/90 shadow-xs text-slate-900'
+        }`}>
 
           {/* Calculator Mode Toggle Switch */}
           <div className="space-y-2 pb-2">
-            <span className="text-xs font-extrabold uppercase tracking-wider text-slate-700 block">
-              Calculator Mode
-            </span>
-            <div className="grid grid-cols-2 gap-1.5 bg-slate-100 p-1.5 rounded-2xl border border-slate-200">
+            <div className="flex items-center justify-between">
+              <span className={`text-xs font-extrabold uppercase tracking-wider block ${
+                calcMode === 'reverse' ? 'text-slate-200' : 'text-slate-700'
+              }`}>
+                Calculator Mode
+              </span>
+              {calcMode === 'reverse' && (
+                <span className="text-[10px] uppercase font-black tracking-widest text-[#FA2D48] bg-rose-950/70 px-2 py-0.5 rounded-md border border-rose-800/80 animate-pulse">
+                  Reverse Budget Mode Active
+                </span>
+              )}
+            </div>
+            <div className={`grid grid-cols-2 gap-1.5 p-1.5 rounded-2xl border transition-all duration-300 ${
+              calcMode === 'reverse'
+                ? 'bg-slate-800/90 border-slate-700'
+                : 'bg-slate-100 border-slate-200'
+            }`}>
               <button
                 type="button"
                 onClick={() => setCalcMode('standard')}
-                className={`py-2 px-3 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                className={`py-2.5 px-3 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
                   calcMode === 'standard'
                     ? 'bg-slate-900 text-white shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-700/50'
                 }`}
               >
                 <span>Standard (Set Home Price)</span>
@@ -582,9 +599,9 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                     setMaxMonthlyBudget(Math.round(totalMonthlyPayment));
                   }
                 }}
-                className={`py-2 px-3 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                className={`py-2.5 px-3 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
                   calcMode === 'reverse'
-                    ? 'bg-[#FA2D48] text-white shadow-xs'
+                    ? 'bg-[#FA2D48] text-white shadow-sm'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
@@ -800,19 +817,19 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
               {/* 1. Down Payment with $ or % Icon Toggle */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <label htmlFor="down-payment-input-rev" className="text-xs font-extrabold uppercase tracking-wider text-slate-700">
+                  <label htmlFor="down-payment-input-rev" className="text-xs font-extrabold uppercase tracking-wider text-slate-200">
                     Down Payment
                   </label>
                   
                   {/* Down Payment Mode Selector Buttons ($ / %) */}
-                  <div className="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 gap-1">
+                  <div className="flex items-center bg-slate-800 p-1 rounded-xl border border-slate-700 gap-1">
                     <button
                       type="button"
                       onClick={() => toggleDownPaymentMode('percent')}
                       className={`px-4 py-1.5 rounded-lg text-sm font-black transition-all cursor-pointer flex items-center justify-center min-w-[38px] ${
                         downPaymentMode === 'percent'
                           ? 'bg-[#FA2D48] text-white shadow-xs'
-                          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
+                          : 'text-slate-400 hover:text-white hover:bg-slate-700/60'
                       }`}
                       title="Switch to Percentage"
                     >
@@ -824,7 +841,7 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                       className={`px-4 py-1.5 rounded-lg text-sm font-black transition-all cursor-pointer flex items-center justify-center min-w-[38px] ${
                         downPaymentMode === 'dollar'
                           ? 'bg-[#FA2D48] text-white shadow-xs'
-                          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
+                          : 'text-slate-400 hover:text-white hover:bg-slate-700/60'
                       }`}
                       title="Switch to Dollar Amount"
                     >
@@ -858,7 +875,7 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                           handleDownDollarChange(raw === '' ? '' : Number(raw));
                         }
                       }}
-                      className={`w-full py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-200 focus:border-[#FA2D48] focus:bg-white focus:ring-2 focus:ring-[#FA2D48]/20 font-bold text-slate-900 text-base sm:text-lg outline-none transition-all ${
+                      className={`w-full py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-slate-800/90 border border-slate-700 focus:border-[#FA2D48] focus:bg-slate-800 focus:ring-2 focus:ring-[#FA2D48]/20 font-bold text-white text-base sm:text-lg outline-none transition-all ${
                         downPaymentMode === 'dollar' ? 'pl-7 sm:pl-9 pr-3 sm:pr-4' : 'pl-3.5 sm:pl-4 pr-7 sm:pr-9'
                       }`}
                       step={downPaymentMode === 'percent' ? '0.1' : undefined}
@@ -871,10 +888,10 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
 
                   {/* Equated Value text display on the SAME line */}
                   <div className="col-span-5 sm:col-span-4 px-1 py-1 flex flex-col justify-center text-right sm:text-left">
-                    <span className="text-[10px] sm:text-[11px] uppercase tracking-wider text-slate-500 font-bold whitespace-nowrap">
+                    <span className="text-[10px] sm:text-[11px] uppercase tracking-wider text-slate-400 font-bold whitespace-nowrap">
                       {downPaymentMode === 'percent' ? 'Equates To' : 'Percentage'}
                     </span>
-                    <span className="text-sm sm:text-base font-black text-slate-900 tracking-tight whitespace-nowrap">
+                    <span className="text-sm sm:text-base font-black text-white tracking-tight whitespace-nowrap">
                       {downPaymentMode === 'percent' 
                         ? `$${calculatedDownPayment.toLocaleString()}`
                         : `${downPaymentActualPct.toFixed(1)}%`
@@ -885,18 +902,18 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
               </div>
 
               {/* 2. Target Max Monthly Payment */}
-              <div className="space-y-3 p-4 sm:p-5 bg-rose-50/70 rounded-2xl border border-rose-100 animate-fadeIn">
+              <div className="space-y-3 p-4 sm:p-5 bg-rose-950/40 rounded-2xl border border-rose-800/60 animate-fadeIn">
                 <div className="flex items-center justify-between">
-                  <label htmlFor="max-monthly-budget-input" className="text-xs font-extrabold uppercase tracking-wider text-slate-700">
+                  <label htmlFor="max-monthly-budget-input" className="text-xs font-extrabold uppercase tracking-wider text-rose-200">
                     Target Max Monthly Payment
                   </label>
-                  <span className="text-[10px] font-extrabold uppercase tracking-wider text-rose-600 bg-rose-100 px-2 py-0.5 rounded-md">
+                  <span className="text-[10px] font-extrabold uppercase tracking-wider text-rose-300 bg-rose-900/60 border border-rose-700/60 px-2 py-0.5 rounded-md">
                     Reverse Mode Active
                   </span>
                 </div>
 
                 <div className="relative flex items-center">
-                  <span className="absolute left-4 text-slate-400 font-bold text-base">$</span>
+                  <span className="absolute left-4 text-rose-400 font-bold text-base">$</span>
                   <input
                     id="max-monthly-budget-input"
                     type="text"
@@ -906,17 +923,17 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                       const raw = e.target.value.replace(/[^0-9]/g, '');
                       setMaxMonthlyBudget(raw === '' ? '' : Number(raw));
                     }}
-                    className="w-full pl-9 pr-14 py-3 rounded-2xl bg-white border border-rose-200 focus:border-[#FA2D48] focus:ring-2 focus:ring-[#FA2D48]/20 font-bold text-slate-900 text-lg outline-none transition-all"
+                    className="w-full pl-9 pr-14 py-3 rounded-2xl bg-slate-800/90 border border-slate-700 focus:border-[#FA2D48] focus:ring-2 focus:ring-[#FA2D48]/20 font-bold text-white text-lg outline-none transition-all placeholder:text-slate-500"
                     placeholder="5,000"
                   />
-                  <span className="absolute right-4 text-slate-400 font-bold text-xs font-mono text-slate-400">/mo</span>
+                  <span className="absolute right-4 text-slate-400 font-bold text-xs font-mono">/mo</span>
                 </div>
               </div>
 
               {/* 3. Estimated Home Price (Calculated) */}
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-extrabold uppercase tracking-wider text-slate-700">
+                  <label className="text-xs font-extrabold uppercase tracking-wider text-slate-200">
                     Estimated Home Price (Calculated)
                   </label>
                 </div>
@@ -927,7 +944,7 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                     type="text"
                     readOnly
                     value={homePrice !== '' && homePrice > 0 ? homePrice.toLocaleString('en-US') : ''}
-                    className="w-full pl-5 sm:pl-6 pr-4 py-1.5 bg-transparent border-0 font-black text-slate-900 text-xl sm:text-2xl tracking-tight outline-none cursor-default"
+                    className="w-full pl-5 sm:pl-6 pr-4 py-1.5 bg-transparent border-0 font-black text-white text-xl sm:text-2xl tracking-tight outline-none cursor-default"
                     placeholder="0"
                   />
                 </div>
@@ -936,7 +953,7 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
               {/* 4. Interest Rate & Loan Term */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <label htmlFor="interest-rate-input-rev" className="text-xs font-extrabold uppercase tracking-wider text-slate-700 block">
+                  <label htmlFor="interest-rate-input-rev" className="text-xs font-extrabold uppercase tracking-wider text-slate-200 block">
                     Interest Rate (%)
                   </label>
                 </div>
@@ -951,7 +968,7 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                       const val = e.target.value;
                       setInterestRate(val === '' ? '' : Number(val));
                     }}
-                    className="w-full pl-3.5 sm:pl-4 pr-8 sm:pr-9 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-200 focus:border-[#FA2D48] focus:bg-white focus:ring-2 focus:ring-[#FA2D48]/20 font-bold text-slate-900 text-base sm:text-lg outline-none transition-all"
+                    className="w-full pl-3.5 sm:pl-4 pr-8 sm:pr-9 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-slate-800/90 border border-slate-700 focus:border-[#FA2D48] focus:bg-slate-800 focus:ring-2 focus:ring-[#FA2D48]/20 font-bold text-white text-base sm:text-lg outline-none transition-all"
                     step="0.05"
                     min="0"
                     max="25"
@@ -969,8 +986,8 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                       onClick={() => setLoanTermYears(term)}
                       className={`px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg text-[11px] sm:text-xs font-bold transition-all cursor-pointer ${
                         loanTermYears === term
-                          ? 'bg-slate-900 text-white'
-                          : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                          ? 'bg-white text-slate-900 font-black'
+                          : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700'
                       }`}
                     >
                       {term} yr
@@ -982,17 +999,29 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
           )}
 
           {/* 4. Optional Extra Expenses Section (Property Taxes, Insurance, HOA, PMI) */}
-          <div className="pt-4 border-t border-slate-100 space-y-3">
+          <div className={`pt-4 border-t space-y-3 transition-colors ${
+            calcMode === 'reverse' ? 'border-slate-800' : 'border-slate-100'
+          }`}>
             <div className="flex items-center justify-between px-1">
-              <h4 className="text-sm font-black text-slate-900">
+              <h4 className={`text-sm font-black ${
+                calcMode === 'reverse' ? 'text-white' : 'text-slate-900'
+              }`}>
                 Taxes, Insurance & HOA
               </h4>
             </div>
 
-            <div className="bg-slate-50/70 border border-slate-200/80 rounded-2xl divide-y divide-slate-200/60 overflow-hidden">
+            <div className={`rounded-2xl border overflow-hidden transition-colors ${
+              calcMode === 'reverse'
+                ? 'bg-slate-800/50 border-slate-700/80 divide-y divide-slate-700/60'
+                : 'bg-slate-50/70 border-slate-200/80 divide-y divide-slate-200/60'
+            }`}>
               
               {/* Row 1: Property Taxes */}
-              <div className={`p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-colors ${includeTaxes ? 'bg-white' : ''}`}>
+              <div className={`p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-colors ${
+                calcMode === 'reverse'
+                  ? includeTaxes ? 'bg-slate-800/80' : ''
+                  : includeTaxes ? 'bg-white' : ''
+              }`}>
                 <div className="flex items-center space-x-3 shrink-0">
                   <AppleToggle
                     enabled={includeTaxes}
@@ -1000,20 +1029,28 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                     label="Include Property Taxes"
                     id="taxes-toggle"
                   />
-                  <label htmlFor="taxes-toggle" className="text-xs font-extrabold uppercase tracking-wider text-slate-700 cursor-pointer block">
+                  <label htmlFor="taxes-toggle" className={`text-xs font-extrabold uppercase tracking-wider cursor-pointer block ${
+                    calcMode === 'reverse' ? 'text-slate-200' : 'text-slate-700'
+                  }`}>
                     Property Taxes
                   </label>
                 </div>
 
                 <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto">
                   <div className="flex items-center gap-2">
-                    <div className="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 gap-1">
+                    <div className={`flex items-center p-1 rounded-xl border gap-1 ${
+                      calcMode === 'reverse'
+                        ? 'bg-slate-800 border-slate-700'
+                        : 'bg-slate-100 border-slate-200'
+                    }`}>
                       <button
                         type="button"
                         onClick={() => toggleTaxMode('percent')}
                         className={`px-3 sm:px-4 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm font-black transition-all cursor-pointer flex items-center justify-center min-w-[32px] sm:min-w-[38px] ${
                           yearlyTaxesMode === 'percent'
                             ? 'bg-[#FA2D48] text-white shadow-xs'
+                            : calcMode === 'reverse'
+                            ? 'text-slate-400 hover:text-white hover:bg-slate-700/60'
                             : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
                         }`}
                         title="Switch to Percentage"
@@ -1026,6 +1063,8 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                         className={`px-3 sm:px-4 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm font-black transition-all cursor-pointer flex items-center justify-center min-w-[32px] sm:min-w-[38px] ${
                           yearlyTaxesMode === 'dollar'
                             ? 'bg-[#FA2D48] text-white shadow-xs'
+                            : calcMode === 'reverse'
+                            ? 'text-slate-400 hover:text-white hover:bg-slate-700/60'
                             : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
                         }`}
                         title="Switch to Dollar Amount"
@@ -1058,7 +1097,11 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                             handleTaxDollarChange(raw === '' ? '' : Number(raw));
                           }
                         }}
-                        className={`w-full py-1.5 rounded-xl bg-slate-100/80 border border-slate-200 focus:border-[#FA2D48] font-bold text-slate-900 text-xs outline-none ${
+                        className={`w-full py-1.5 rounded-xl border focus:border-[#FA2D48] font-bold text-xs outline-none ${
+                          calcMode === 'reverse'
+                            ? 'bg-slate-800 border-slate-700 text-white'
+                            : 'bg-slate-100/80 border-slate-200 text-slate-900'
+                        } ${
                           yearlyTaxesMode === 'dollar' ? 'pl-6 pr-2' : 'pl-2.5 pr-6'
                         }`}
                         step={yearlyTaxesMode === 'percent' ? '0.1' : undefined}
@@ -1070,7 +1113,11 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                   </div>
 
                   <div className="text-right w-20 shrink-0">
-                    <span className={`text-xs font-bold ${includeTaxes ? 'text-slate-900' : 'text-slate-400'}`}>
+                    <span className={`text-xs font-bold ${
+                      includeTaxes
+                        ? calcMode === 'reverse' ? 'text-white' : 'text-slate-900'
+                        : 'text-slate-500'
+                    }`}>
                       {includeTaxes ? `$${Math.round(rawMonthlyTaxes).toLocaleString()}` : '$0'}
                     </span>
                     <span className="text-[10px] text-slate-400 block font-normal">/mo</span>
@@ -1079,7 +1126,11 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
               </div>
 
               {/* Row 2: Homeowners Insurance */}
-              <div className={`p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-colors ${includeInsurance ? 'bg-white' : ''}`}>
+              <div className={`p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-colors ${
+                calcMode === 'reverse'
+                  ? includeInsurance ? 'bg-slate-800/80' : ''
+                  : includeInsurance ? 'bg-white' : ''
+              }`}>
                 <div className="flex items-center space-x-3 shrink-0">
                   <AppleToggle
                     enabled={includeInsurance}
@@ -1087,7 +1138,9 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                     label="Include Home Insurance"
                     id="insurance-toggle"
                   />
-                  <label htmlFor="insurance-toggle" className="text-xs font-extrabold uppercase tracking-wider text-slate-700 cursor-pointer block">
+                  <label htmlFor="insurance-toggle" className={`text-xs font-extrabold uppercase tracking-wider cursor-pointer block ${
+                    calcMode === 'reverse' ? 'text-slate-200' : 'text-slate-700'
+                  }`}>
                     Homeowners Insurance
                   </label>
                 </div>
@@ -1104,12 +1157,20 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                         const raw = e.target.value.replace(/[^0-9]/g, '');
                         setYearlyInsurance(raw === '' ? '' : Number(raw));
                       }}
-                      className="w-full pl-6 pr-2.5 py-1.5 rounded-xl bg-slate-100/80 border border-slate-200 focus:border-[#FA2D48] font-bold text-slate-900 text-xs outline-none"
+                      className={`w-full pl-6 pr-2.5 py-1.5 rounded-xl border focus:border-[#FA2D48] font-bold text-xs outline-none ${
+                        calcMode === 'reverse'
+                          ? 'bg-slate-800 border-slate-700 text-white'
+                          : 'bg-slate-100/80 border-slate-200 text-slate-900'
+                      }`}
                     />
                   </div>
 
                   <div className="text-right w-20 shrink-0">
-                    <span className={`text-xs font-bold ${includeInsurance ? 'text-slate-900' : 'text-slate-400'}`}>
+                    <span className={`text-xs font-bold ${
+                      includeInsurance
+                        ? calcMode === 'reverse' ? 'text-white' : 'text-slate-900'
+                        : 'text-slate-500'
+                    }`}>
                       {includeInsurance ? `$${Math.round(rawMonthlyInsurance).toLocaleString()}` : '$0'}
                     </span>
                     <span className="text-[10px] text-slate-400 block font-normal">/mo</span>
@@ -1118,7 +1179,11 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
               </div>
 
               {/* Row 3: HOA Dues */}
-              <div className={`p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-colors ${includeHoa ? 'bg-white' : ''}`}>
+              <div className={`p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-colors ${
+                calcMode === 'reverse'
+                  ? includeHoa ? 'bg-slate-800/80' : ''
+                  : includeHoa ? 'bg-white' : ''
+              }`}>
                 <div className="flex items-center space-x-3 shrink-0">
                   <AppleToggle
                     enabled={includeHoa}
@@ -1126,7 +1191,9 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                     label="Include HOA Dues"
                     id="hoa-toggle"
                   />
-                  <label htmlFor="hoa-toggle" className="text-xs font-extrabold uppercase tracking-wider text-slate-700 cursor-pointer block">
+                  <label htmlFor="hoa-toggle" className={`text-xs font-extrabold uppercase tracking-wider cursor-pointer block ${
+                    calcMode === 'reverse' ? 'text-slate-200' : 'text-slate-700'
+                  }`}>
                     HOA Dues
                   </label>
                 </div>
@@ -1143,12 +1210,20 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                         const raw = e.target.value.replace(/[^0-9]/g, '');
                         setMonthlyHoa(raw === '' ? '' : Number(raw));
                       }}
-                      className="w-full pl-6 pr-2.5 py-1.5 rounded-xl bg-slate-100/80 border border-slate-200 focus:border-[#FA2D48] font-bold text-slate-900 text-xs outline-none"
+                      className={`w-full pl-6 pr-2.5 py-1.5 rounded-xl border focus:border-[#FA2D48] font-bold text-xs outline-none ${
+                        calcMode === 'reverse'
+                          ? 'bg-slate-800 border-slate-700 text-white'
+                          : 'bg-slate-100/80 border-slate-200 text-slate-900'
+                      }`}
                     />
                   </div>
 
                   <div className="text-right w-20 shrink-0">
-                    <span className={`text-xs font-bold ${includeHoa ? 'text-slate-900' : 'text-slate-400'}`}>
+                    <span className={`text-xs font-bold ${
+                      includeHoa
+                        ? calcMode === 'reverse' ? 'text-white' : 'text-slate-900'
+                        : 'text-slate-500'
+                    }`}>
                       {includeHoa ? `$${Math.round(rawMonthlyHoa).toLocaleString()}` : '$0'}
                     </span>
                     <span className="text-[10px] text-slate-400 block font-normal">/mo</span>
@@ -1157,7 +1232,11 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
               </div>
 
               {/* Row 4: PMI */}
-              <div className={`p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-colors ${includePmi ? 'bg-white' : ''}`}>
+              <div className={`p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-colors ${
+                calcMode === 'reverse'
+                  ? includePmi ? 'bg-slate-800/80' : ''
+                  : includePmi ? 'bg-white' : ''
+              }`}>
                 <div className="flex items-center space-x-3 shrink-0">
                   <AppleToggle
                     enabled={includePmi}
@@ -1166,7 +1245,9 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                     id="pmi-toggle"
                   />
                   <div>
-                    <label htmlFor="pmi-toggle" className="text-xs font-extrabold uppercase tracking-wider text-slate-700 cursor-pointer block">
+                    <label htmlFor="pmi-toggle" className={`text-xs font-extrabold uppercase tracking-wider cursor-pointer block ${
+                      calcMode === 'reverse' ? 'text-slate-200' : 'text-slate-700'
+                    }`}>
                       PMI (Private Mortgage Insurance)
                     </label>
                     {downPaymentActualPct >= 20 && (
@@ -1179,7 +1260,11 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
 
                 <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto">
                   <div className="text-right w-24 shrink-0 ml-auto">
-                    <span className={`text-xs font-bold ${includePmi && downPaymentActualPct < 20 ? 'text-slate-900' : 'text-slate-400'}`}>
+                    <span className={`text-xs font-bold ${
+                      includePmi && downPaymentActualPct < 20
+                        ? calcMode === 'reverse' ? 'text-white' : 'text-slate-900'
+                        : 'text-slate-500'
+                    }`}>
                       {includePmi && downPaymentActualPct < 20 ? `$${Math.round(monthlyPmi).toLocaleString()}` : '$0'}
                     </span>
                     <span className="text-[10px] text-slate-400 block font-normal">/mo</span>
