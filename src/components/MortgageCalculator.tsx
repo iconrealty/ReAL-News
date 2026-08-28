@@ -903,13 +903,10 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
 
               {/* 2. Target Max Monthly Payment */}
               <div className="space-y-3 p-4 sm:p-5 bg-rose-950/40 rounded-2xl border border-rose-800/60 animate-fadeIn">
-                <div className="flex items-center justify-between">
-                  <label htmlFor="max-monthly-budget-input" className="text-xs font-extrabold uppercase tracking-wider text-rose-200">
+                <div>
+                  <label htmlFor="max-monthly-budget-input" className="text-xs font-extrabold uppercase tracking-wider text-rose-200 block">
                     Target Max Monthly Payment
                   </label>
-                  <span className="text-[10px] font-extrabold uppercase tracking-wider text-rose-300 bg-rose-900/60 border border-rose-700/60 px-2 py-0.5 rounded-md">
-                    Reverse Mode Active
-                  </span>
                 </div>
 
                 <div className="relative flex items-center">
