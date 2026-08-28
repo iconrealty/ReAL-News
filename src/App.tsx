@@ -529,8 +529,8 @@ export function App() {
                     )}
                   </div>
 
-                  <div className="flex flex-wrap items-center gap-3">
-                    <h2 className="text-2xl sm:text-3xl font-black font-serif text-slate-950 tracking-tight">
+                  <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap">
+                    <h2 className="text-xl sm:text-2xl lg:text-3xl font-black font-serif text-slate-950 tracking-tight whitespace-nowrap">
                       {currentCity.id === 'orange-county' ? 'Select City' : currentCity.name}
                     </h2>
 
@@ -546,7 +546,7 @@ export function App() {
                             showToast(`Selected ${matched.name}`);
                           }
                         }}
-                        className="bg-[#F2F2F7] hover:bg-slate-200 border border-slate-300/80 rounded-xl pl-3 pr-8 py-2 text-sm font-bold text-slate-900 focus:outline-none focus:border-[#FA2D48] transition-all cursor-pointer appearance-none shadow-xs"
+                        className="bg-[#F2F2F7] hover:bg-slate-200 border border-slate-300/80 rounded-xl pl-3 pr-7 py-1.5 sm:py-2 text-xs sm:text-sm font-bold text-slate-900 focus:outline-none focus:border-[#FA2D48] transition-all cursor-pointer appearance-none shadow-xs"
                       >
                         {CITIES.map(c => (
                           <option key={c.id} value={c.id}>
@@ -554,7 +554,7 @@ export function App() {
                           </option>
                         ))}
                       </select>
-                      <ChevronRight className="w-3.5 h-3.5 text-slate-500 absolute right-2.5 top-3 rotate-90 pointer-events-none" />
+                      <ChevronRight className="w-3.5 h-3.5 text-slate-500 absolute right-2 top-2.5 sm:top-3 rotate-90 pointer-events-none" />
                     </div>
                   </div>
                 </div>
