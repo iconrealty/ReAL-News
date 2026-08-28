@@ -95,11 +95,19 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
   const [calcMode, setCalcMode] = useState<'standard' | 'reverse'>('standard');
   const [maxMonthlyBudget, setMaxMonthlyBudget] = useState<number | ''>(''); // No preset initial value
   const [homePrice, setHomePrice] = useState<number | ''>(''); // No preset initial value
-  const [downPaymentMode, setDownPaymentMode] = useState<'percent' | 'dollar'>('percent');
-  const [downPaymentPercent, setDownPaymentPercent] = useState<number | ''>(20);
+  const [downPaymentMode, setDownPaymentMode] = useState<'percent' | 'dollar'>('dollar');
+  const [downPaymentPercent, setDownPaymentPercent] = useState<number | ''>('');
   const [downPaymentDollar, setDownPaymentDollar] = useState<number | ''>('');
-  const [interestRate, setInterestRate] = useState<number | ''>(10); // Preset default 10%
+  const [interestRate, setInterestRate] = useState<number | ''>(mnd30Num); // Preset default to 30-year rate
   const [loanTermYears, setLoanTermYears] = useState<number>(30);
+
+  // Sync interest rate with live 30-year rate when propLiveRates updates initially
+  const hasUserEditedRate = React.useRef(false);
+  React.useEffect(() => {
+    if (!hasUserEditedRate.current && mnd30Num > 0) {
+      setInterestRate(mnd30Num);
+    }
+  }, [mnd30Num]);
 
   // Optional Extra Costs Toggles (iPhone/Apple style green/grey toggle, set by default to inactive false)
   const [includeTaxes, setIncludeTaxes] = useState<boolean>(false);
@@ -754,6 +762,7 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                     type="number"
                     value={interestRate}
                     onChange={(e) => {
+                      hasUserEditedRate.current = true;
                       const val = e.target.value;
                       setInterestRate(val === '' ? '' : Number(val));
                     }}
@@ -788,56 +797,7 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
           ) : (
             <>
               {/* Max Monthly Budget Mode Ordering: */}
-              {/* 1. Target Max Monthly Payment */}
-              <div className="space-y-3 p-4 sm:p-5 bg-rose-50/70 rounded-2xl border border-rose-100 animate-fadeIn">
-                <div className="flex items-center justify-between">
-                  <label htmlFor="max-monthly-budget-input" className="text-xs font-extrabold uppercase tracking-wider text-slate-700">
-                    Target Max Monthly Payment
-                  </label>
-                  <span className="text-[10px] font-extrabold uppercase tracking-wider text-rose-600 bg-rose-100 px-2 py-0.5 rounded-md">
-                    Reverse Mode Active
-                  </span>
-                </div>
-
-                <div className="relative flex items-center">
-                  <span className="absolute left-4 text-slate-400 font-bold text-base">$</span>
-                  <input
-                    id="max-monthly-budget-input"
-                    type="text"
-                    inputMode="numeric"
-                    value={maxMonthlyBudget !== '' ? maxMonthlyBudget.toLocaleString('en-US') : ''}
-                    onChange={(e) => {
-                      const raw = e.target.value.replace(/[^0-9]/g, '');
-                      setMaxMonthlyBudget(raw === '' ? '' : Number(raw));
-                    }}
-                    className="w-full pl-9 pr-14 py-3 rounded-2xl bg-white border border-rose-200 focus:border-[#FA2D48] focus:ring-2 focus:ring-[#FA2D48]/20 font-bold text-slate-900 text-lg outline-none transition-all"
-                    placeholder="5,000"
-                  />
-                  <span className="absolute right-4 text-slate-400 font-bold text-xs font-mono text-slate-400">/mo</span>
-                </div>
-              </div>
-
-              {/* 2. Estimated Home Price (Calculated) */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <label className="text-xs font-extrabold uppercase tracking-wider text-slate-700">
-                    Estimated Home Price (Calculated)
-                  </label>
-                </div>
-                
-                <div className="relative flex items-center">
-                  <span className="absolute left-4 text-slate-400 font-bold text-base">$</span>
-                  <input
-                    type="text"
-                    readOnly
-                    value={homePrice !== '' && homePrice > 0 ? homePrice.toLocaleString('en-US') : ''}
-                    className="w-full pl-9 pr-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 font-bold text-slate-900 text-lg outline-none transition-all cursor-default"
-                    placeholder="Estimated Price"
-                  />
-                </div>
-              </div>
-
-              {/* 3. Down Payment with $ or % Icon Toggle and Downpayment Pills */}
+              {/* 1. Down Payment with $ or % Icon Toggle and Downpayment Pills */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <label htmlFor="down-payment-input-rev" className="text-xs font-extrabold uppercase tracking-wider text-slate-700">
@@ -902,6 +862,7 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                         downPaymentMode === 'dollar' ? 'pl-7 sm:pl-9 pr-3 sm:pr-4' : 'pl-3.5 sm:pl-4 pr-7 sm:pr-9'
                       }`}
                       step={downPaymentMode === 'percent' ? '0.1' : undefined}
+                      placeholder={downPaymentMode === 'dollar' ? '0' : '0'}
                     />
                     {downPaymentMode === 'percent' ? (
                       <span className="absolute right-3 sm:right-4 text-slate-400 font-bold text-sm sm:text-base">%</span>
@@ -942,6 +903,55 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                 </div>
               </div>
 
+              {/* 2. Target Max Monthly Payment */}
+              <div className="space-y-3 p-4 sm:p-5 bg-rose-50/70 rounded-2xl border border-rose-100 animate-fadeIn">
+                <div className="flex items-center justify-between">
+                  <label htmlFor="max-monthly-budget-input" className="text-xs font-extrabold uppercase tracking-wider text-slate-700">
+                    Target Max Monthly Payment
+                  </label>
+                  <span className="text-[10px] font-extrabold uppercase tracking-wider text-rose-600 bg-rose-100 px-2 py-0.5 rounded-md">
+                    Reverse Mode Active
+                  </span>
+                </div>
+
+                <div className="relative flex items-center">
+                  <span className="absolute left-4 text-slate-400 font-bold text-base">$</span>
+                  <input
+                    id="max-monthly-budget-input"
+                    type="text"
+                    inputMode="numeric"
+                    value={maxMonthlyBudget !== '' ? maxMonthlyBudget.toLocaleString('en-US') : ''}
+                    onChange={(e) => {
+                      const raw = e.target.value.replace(/[^0-9]/g, '');
+                      setMaxMonthlyBudget(raw === '' ? '' : Number(raw));
+                    }}
+                    className="w-full pl-9 pr-14 py-3 rounded-2xl bg-white border border-rose-200 focus:border-[#FA2D48] focus:ring-2 focus:ring-[#FA2D48]/20 font-bold text-slate-900 text-lg outline-none transition-all"
+                    placeholder="5,000"
+                  />
+                  <span className="absolute right-4 text-slate-400 font-bold text-xs font-mono text-slate-400">/mo</span>
+                </div>
+              </div>
+
+              {/* 3. Estimated Home Price (Calculated) */}
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-extrabold uppercase tracking-wider text-slate-700">
+                    Estimated Home Price (Calculated)
+                  </label>
+                </div>
+                
+                <div className="relative flex items-center">
+                  <span className="absolute left-0 text-slate-400 font-bold text-xl sm:text-2xl">$</span>
+                  <input
+                    type="text"
+                    readOnly
+                    value={homePrice !== '' && homePrice > 0 ? homePrice.toLocaleString('en-US') : ''}
+                    className="w-full pl-5 sm:pl-6 pr-4 py-1.5 bg-transparent border-0 font-black text-slate-900 text-xl sm:text-2xl tracking-tight outline-none cursor-default"
+                    placeholder="0"
+                  />
+                </div>
+              </div>
+
               {/* 4. Interest Rate & Loan Term */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
@@ -956,6 +966,7 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                     type="number"
                     value={interestRate}
                     onChange={(e) => {
+                      hasUserEditedRate.current = true;
                       const val = e.target.value;
                       setInterestRate(val === '' ? '' : Number(val));
                     }}
