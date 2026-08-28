@@ -515,11 +515,14 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
         <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-[#FA2D48]/10 to-transparent rounded-full blur-3xl pointer-events-none" />
         
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3.5 relative z-10">
-          <div className="flex items-center gap-2">
-            <h2 className="text-lg font-black text-slate-900">
-              Live Rates (Mortgage News Daily)
+          <div>
+            <h2 className="text-lg font-black text-slate-900 tracking-tight leading-tight">
+              Select Your Interest Rate
             </h2>
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <div className="flex items-center gap-1.5 pt-0.5">
+              <span className="text-xs font-bold text-slate-500">Live Rates (Mortgage News Daily)</span>
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            </div>
           </div>
 
           {/* Rate Selector Pills */}
@@ -551,12 +554,6 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
         
         {/* Left Column: Form Controls (7 cols) */}
         <div className="lg:col-span-7 bg-white rounded-3xl border border-slate-200/90 p-5 sm:p-7 shadow-xs space-y-6">
-          
-          <div className="pb-4 border-b border-slate-100">
-            <h3 className="text-lg font-black text-slate-900">
-              Loan Parameters
-            </h3>
-          </div>
 
           {/* Calculator Mode Toggle Switch */}
           <div className="space-y-2 pb-2">
@@ -789,55 +786,49 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
             </div>
           </div>
 
-          {/* 3. Interest Rate & Loan Term (2 columns) */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-            
-            {/* Interest Rate */}
-            <div className="space-y-1.5 sm:space-y-2">
+          {/* 3. Interest Rate & Loan Term */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
               <label htmlFor="interest-rate-input" className="text-xs font-extrabold uppercase tracking-wider text-slate-700 block">
                 Interest Rate (%)
               </label>
-              <div className="relative flex items-center">
-                <input
-                  id="interest-rate-input"
-                  type="number"
-                  value={interestRate}
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    setInterestRate(val === '' ? '' : Number(val));
-                  }}
-                  className="w-full pl-3.5 sm:pl-4 pr-8 sm:pr-9 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-200 focus:border-[#FA2D48] focus:bg-white focus:ring-2 focus:ring-[#FA2D48]/20 font-bold text-slate-900 text-base sm:text-lg outline-none transition-all"
-                  step="0.05"
-                  min="0"
-                  max="25"
-                />
-                <span className="absolute right-3 sm:right-4 text-slate-400 font-bold text-sm sm:text-base">%</span>
-              </div>
             </div>
 
-            {/* Loan Term */}
-            <div className="space-y-1.5 sm:space-y-2">
-              <label className="text-xs font-extrabold uppercase tracking-wider text-slate-700 block">
-                Loan Term
-              </label>
-              <div className="grid grid-cols-3 gap-1 bg-slate-100 p-1 rounded-xl sm:rounded-2xl border border-slate-200">
-                {[15, 20, 30].map((term) => (
-                  <button
-                    key={term}
-                    type="button"
-                    onClick={() => setLoanTermYears(term)}
-                    className={`py-2 sm:py-2.5 rounded-lg sm:rounded-xl text-xs font-black transition-all cursor-pointer ${
-                      loanTermYears === term
-                        ? 'bg-[#FA2D48] text-white shadow-2xs'
-                        : 'text-slate-700 hover:text-slate-900'
-                    }`}
-                  >
-                    {term} yr
-                  </button>
-                ))}
-              </div>
+            <div className="relative flex items-center">
+              <input
+                id="interest-rate-input"
+                type="number"
+                value={interestRate}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setInterestRate(val === '' ? '' : Number(val));
+                }}
+                className="w-full pl-3.5 sm:pl-4 pr-8 sm:pr-9 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-200 focus:border-[#FA2D48] focus:bg-white focus:ring-2 focus:ring-[#FA2D48]/20 font-bold text-slate-900 text-base sm:text-lg outline-none transition-all"
+                step="0.05"
+                min="0"
+                max="25"
+              />
+              <span className="absolute right-3 sm:right-4 text-slate-400 font-bold text-sm sm:text-base">%</span>
             </div>
 
+            {/* Loan Term Quick Presets directly under Interest Rate */}
+            <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap pt-0.5">
+              <span className="text-[10px] sm:text-[11px] font-bold text-slate-400 mr-1">Loan Term:</span>
+              {[15, 20, 30].map((term) => (
+                <button
+                  key={term}
+                  type="button"
+                  onClick={() => setLoanTermYears(term)}
+                  className={`px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg text-[11px] sm:text-xs font-bold transition-all cursor-pointer ${
+                    loanTermYears === term
+                      ? 'bg-slate-900 text-white'
+                      : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                  }`}
+                >
+                  {term} yr
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* 4. Optional Extra Expenses Section (Property Taxes, Insurance, HOA, PMI) */}
