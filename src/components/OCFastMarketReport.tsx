@@ -357,9 +357,12 @@ export const OCFastMarketReport: React.FC<OCFastMarketReportProps> = ({
                       {snap.value}
                     </span>
                   </div>
-                  <span className="text-[8px] sm:text-[10px] font-medium text-slate-400 font-mono shrink-0">
-                    {snap.subtext.replace('July 2025: ', 'Prior: ')}
-                  </span>
+                  <div className="text-[9px] sm:text-[11px] font-mono shrink-0 flex items-center space-x-1">
+                    <span className="font-black text-black">Prior:</span>
+                    <span className={`font-black ${isPositive ? 'text-[#FA2D48]' : 'text-emerald-600'}`}>
+                      {snap.subtext.replace(/^.*:\s*/, '')}
+                    </span>
+                  </div>
                 </div>
               </button>
             );
