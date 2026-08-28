@@ -15,14 +15,7 @@ const PRICE_PRESETS = [
   { value: 750000, label: '$750k' },
   { value: 1000000, label: '$1M' },
 ];
-const BUDGET_PRESETS = [
-  { value: 3500, label: '$3.5k/mo' },
-  { value: 4500, label: '$4.5k/mo' },
-  { value: 5000, label: '$5k/mo' },
-  { value: 6000, label: '$6k/mo' },
-  { value: 7500, label: '$7.5k/mo' },
-  { value: 10000, label: '$10k/mo' },
-];
+
 const DOWN_PERCENT_PRESETS = [3.5, 5, 10, 15, 20];
 
 interface AppleToggleProps {
@@ -100,20 +93,13 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
 
   // Core Loan Inputs
   const [calcMode, setCalcMode] = useState<'standard' | 'reverse'>('standard');
-  const [maxMonthlyBudget, setMaxMonthlyBudget] = useState<number | ''>(5000); // Default max budget $5,000/mo
-  const [homePrice, setHomePrice] = useState<number | ''>(1000000); // Default home price $1M
+  const [maxMonthlyBudget, setMaxMonthlyBudget] = useState<number | ''>(''); // No preset initial value
+  const [homePrice, setHomePrice] = useState<number | ''>(''); // No preset initial value
   const [downPaymentMode, setDownPaymentMode] = useState<'percent' | 'dollar'>('percent');
   const [downPaymentPercent, setDownPaymentPercent] = useState<number | ''>(20);
-  const [downPaymentDollar, setDownPaymentDollar] = useState<number | ''>(200000);
-  const [interestRate, setInterestRate] = useState<number | ''>(mnd30Num);
+  const [downPaymentDollar, setDownPaymentDollar] = useState<number | ''>('');
+  const [interestRate, setInterestRate] = useState<number | ''>(10); // Preset default 10%
   const [loanTermYears, setLoanTermYears] = useState<number>(30);
-
-  // Sync interestRate when live stats load
-  React.useEffect(() => {
-    if (mnd30Num) {
-      setInterestRate(mnd30Num);
-    }
-  }, [mnd30Num]);
 
   // Optional Extra Costs Toggles (iPhone/Apple style green/grey toggle, set by default to inactive false)
   const [includeTaxes, setIncludeTaxes] = useState<boolean>(false);
@@ -134,14 +120,16 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
   const handleHomePriceChange = (newPrice: number | '') => {
     if (newPrice === '') {
       setHomePrice('');
-      setDownPaymentDollar('');
+      if (downPaymentMode === 'percent') {
+        setDownPaymentDollar('');
+      }
       setYearlyTaxesDollar('');
       return;
     }
     const val = Math.max(0, newPrice);
     setHomePrice(val);
-    const currentPct = downPaymentPercent === '' ? 0 : downPaymentPercent;
-    const currentTaxPct = yearlyTaxesPercent === '' ? 0 : yearlyTaxesPercent;
+    const currentPct = downPaymentPercent === '' ? 20 : downPaymentPercent;
+    const currentTaxPct = yearlyTaxesPercent === '' ? 1.1 : yearlyTaxesPercent;
     if (downPaymentMode === 'percent') {
       setDownPaymentDollar(Math.round((val * currentPct) / 100));
     } else {
@@ -164,7 +152,9 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
     const cleanPct = Math.min(100, Math.max(0, pct));
     setDownPaymentPercent(cleanPct);
     const hp = homePrice === '' ? 0 : homePrice;
-    setDownPaymentDollar(Math.round((hp * cleanPct) / 100));
+    if (hp > 0) {
+      setDownPaymentDollar(Math.round((hp * cleanPct) / 100));
+    }
   };
 
   const handleDownDollarChange = (dlr: number | '') => {
@@ -183,13 +173,17 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
   const toggleDownPaymentMode = (mode: 'percent' | 'dollar') => {
     setDownPaymentMode(mode);
     const hp = homePrice === '' ? 0 : homePrice;
-    const currentPct = downPaymentPercent === '' ? 0 : downPaymentPercent;
-    const currentDollar = downPaymentDollar === '' ? 0 : downPaymentDollar;
+    const currentPct = downPaymentPercent === '' ? 20 : downPaymentPercent;
+    const currentDollar = downPaymentDollar === '' ? (hp > 0 ? Math.round((hp * currentPct) / 100) : '') : downPaymentDollar;
     if (mode === 'percent') {
-      setDownPaymentDollar(Math.round((hp * currentPct) / 100));
+      if (hp > 0 && typeof currentDollar === 'number') {
+        const pct = (currentDollar / hp) * 100;
+        setDownPaymentPercent(parseFloat(pct.toFixed(2)));
+      }
     } else {
-      const pct = hp > 0 ? (currentDollar / hp) * 100 : 0;
-      setDownPaymentPercent(parseFloat(pct.toFixed(2)));
+      if (hp > 0) {
+        setDownPaymentDollar(Math.round((hp * currentPct) / 100));
+      }
     }
   };
 
@@ -452,7 +446,7 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
     const formattedDownPct = Number(downPaymentActualPct.toFixed(1));
     const lines = [
       `MORTGAGE PAYMENT ESTIMATE`,
-      `• Home Price: $${homePrice.toLocaleString()}`,
+      `• Home Price: $${homePrice ? homePrice.toLocaleString() : '0'}`,
       `• Down Payment: $${Math.round(calculatedDownPayment).toLocaleString()} (${formattedDownPct}%)`,
       `• Loan Amount: $${Math.round(loanAmount).toLocaleString()}`,
       `• Interest Rate: ${interestRate}%`,
@@ -607,36 +601,17 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                 <span className="absolute left-4 text-slate-400 font-bold text-base">$</span>
                 <input
                   id="max-monthly-budget-input"
-                  type="number"
-                  value={maxMonthlyBudget}
+                  type="text"
+                  inputMode="numeric"
+                  value={maxMonthlyBudget !== '' ? maxMonthlyBudget.toLocaleString('en-US') : ''}
                   onChange={(e) => {
-                    const val = e.target.value;
-                    setMaxMonthlyBudget(val === '' ? '' : Number(val));
+                    const raw = e.target.value.replace(/[^0-9]/g, '');
+                    setMaxMonthlyBudget(raw === '' ? '' : Number(raw));
                   }}
                   className="w-full pl-9 pr-14 py-3 rounded-2xl bg-white focus:ring-2 focus:ring-[#FA2D48]/20 font-bold text-slate-900 text-lg outline-none transition-all"
                   placeholder="5,000"
-                  step="100"
                 />
                 <span className="absolute right-4 text-slate-400 font-bold text-xs font-mono text-slate-400">/mo</span>
-              </div>
-
-              {/* Quick Budget Presets */}
-              <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
-                <span className="text-[11px] font-bold text-slate-400 mr-1">Quick Budget:</span>
-                {BUDGET_PRESETS.map((preset) => (
-                  <button
-                    key={preset.value}
-                    type="button"
-                    onClick={() => setMaxMonthlyBudget(preset.value)}
-                    className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                      maxMonthlyBudget === preset.value
-                        ? 'bg-[#FA2D48] text-white'
-                        : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200'
-                    }`}
-                  >
-                    {preset.label}
-                  </button>
-                ))}
               </div>
             </div>
           )}
@@ -648,7 +623,7 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                 {calcMode === 'reverse' ? 'Estimated Home Price (Calculated)' : 'Home Price'}
               </label>
               <span className="text-xs font-bold text-slate-500">
-                ${homePrice.toLocaleString()}
+                {homePrice !== '' && homePrice > 0 ? `$${homePrice.toLocaleString()}` : ''}
               </span>
             </div>
             
@@ -656,27 +631,28 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
               <span className="absolute left-4 text-slate-400 font-bold text-base">$</span>
               <input
                 id="home-price-input"
-                type="number"
-                value={homePrice}
+                type="text"
+                inputMode="numeric"
+                value={homePrice !== '' ? homePrice.toLocaleString('en-US') : ''}
                 onChange={(e) => {
-                  const val = e.target.value;
-                  handleHomePriceChange(val === '' ? '' : Number(val));
+                  const raw = e.target.value.replace(/[^0-9]/g, '');
+                  handleHomePriceChange(raw === '' ? '' : Number(raw));
                 }}
                 className="w-full pl-9 pr-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 focus:border-[#FA2D48] focus:bg-white focus:ring-2 focus:ring-[#FA2D48]/20 font-bold text-slate-900 text-lg outline-none transition-all"
                 placeholder="1,000,000"
-                step="10000"
               />
             </div>
 
-            {/* Quick Presets */}
+            {/* Quick Price Presets */}
             {calcMode === 'standard' && (
               <div className="flex items-center gap-1.5 flex-wrap pt-1">
                 <span className="text-[11px] font-bold text-slate-400 mr-1">Quick Price:</span>
                 {PRICE_PRESETS.map((preset) => (
                   <button
                     key={preset.value}
+                    type="button"
                     onClick={() => handleHomePriceChange(preset.value)}
-                    className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    className={`px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg text-[11px] sm:text-xs font-bold transition-all cursor-pointer ${
                       homePrice === preset.value
                         ? 'bg-slate-900 text-white'
                         : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
@@ -732,21 +708,28 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                 ) : null}
                 <input
                   id="down-payment-input"
-                  type="number"
-                  value={downPaymentMode === 'percent' ? downPaymentPercent : downPaymentDollar}
+                  type={downPaymentMode === 'dollar' ? 'text' : 'number'}
+                  inputMode={downPaymentMode === 'dollar' ? 'numeric' : 'decimal'}
+                  value={
+                    downPaymentMode === 'percent'
+                      ? downPaymentPercent
+                      : downPaymentDollar !== ''
+                      ? downPaymentDollar.toLocaleString('en-US')
+                      : ''
+                  }
                   onChange={(e) => {
-                    const raw = e.target.value;
-                    const val = raw === '' ? '' : Number(raw);
                     if (downPaymentMode === 'percent') {
-                      handleDownPercentChange(val);
+                      const raw = e.target.value;
+                      handleDownPercentChange(raw === '' ? '' : Number(raw));
                     } else {
-                      handleDownDollarChange(val);
+                      const raw = e.target.value.replace(/[^0-9]/g, '');
+                      handleDownDollarChange(raw === '' ? '' : Number(raw));
                     }
                   }}
                   className={`w-full py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-200 focus:border-[#FA2D48] focus:bg-white focus:ring-2 focus:ring-[#FA2D48]/20 font-bold text-slate-900 text-base sm:text-lg outline-none transition-all ${
                     downPaymentMode === 'dollar' ? 'pl-7 sm:pl-9 pr-3 sm:pr-4' : 'pl-3.5 sm:pl-4 pr-7 sm:pr-9'
                   }`}
-                  step={downPaymentMode === 'percent' ? '0.1' : '5000'}
+                  step={downPaymentMode === 'percent' ? '0.1' : undefined}
                 />
                 {downPaymentMode === 'percent' ? (
                   <span className="absolute right-3 sm:right-4 text-slate-400 font-bold text-sm sm:text-base">%</span>
@@ -767,12 +750,13 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
               </div>
             </div>
 
-            {/* Quick Percent Presets */}
+            {/* Quick Down % Presets */}
             <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap pt-0.5">
               <span className="text-[10px] sm:text-[11px] font-bold text-slate-400 mr-1">Quick Down %:</span>
               {DOWN_PERCENT_PRESETS.map((pct) => (
                 <button
                   key={pct}
+                  type="button"
                   onClick={() => handleDownPercentChange(pct)}
                   className={`px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg text-[11px] sm:text-xs font-bold transition-all cursor-pointer ${
                     downPaymentPercent === pct
@@ -890,21 +874,28 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                       )}
                       <input
                         id="yearly-taxes-input"
-                        type="number"
-                        value={yearlyTaxesMode === 'percent' ? yearlyTaxesPercent : yearlyTaxesDollar}
+                        type={yearlyTaxesMode === 'dollar' ? 'text' : 'number'}
+                        inputMode={yearlyTaxesMode === 'dollar' ? 'numeric' : 'decimal'}
+                        value={
+                          yearlyTaxesMode === 'percent'
+                            ? yearlyTaxesPercent
+                            : yearlyTaxesDollar !== ''
+                            ? yearlyTaxesDollar.toLocaleString('en-US')
+                            : ''
+                        }
                         onChange={(e) => {
-                          const raw = e.target.value;
-                          const val = raw === '' ? '' : Number(raw);
                           if (yearlyTaxesMode === 'percent') {
-                            handleTaxPercentChange(val);
+                            const raw = e.target.value;
+                            handleTaxPercentChange(raw === '' ? '' : Number(raw));
                           } else {
-                            handleTaxDollarChange(val);
+                            const raw = e.target.value.replace(/[^0-9]/g, '');
+                            handleTaxDollarChange(raw === '' ? '' : Number(raw));
                           }
                         }}
                         className={`w-full py-1.5 rounded-xl bg-slate-100/80 border border-slate-200 focus:border-[#FA2D48] font-bold text-slate-900 text-xs outline-none ${
                           yearlyTaxesMode === 'dollar' ? 'pl-6 pr-2' : 'pl-2.5 pr-6'
                         }`}
-                        step={yearlyTaxesMode === 'percent' ? '0.1' : '500'}
+                        step={yearlyTaxesMode === 'percent' ? '0.1' : undefined}
                       />
                       {yearlyTaxesMode === 'percent' && (
                         <span className="absolute right-2.5 text-slate-400 font-bold text-xs">%</span>
@@ -940,14 +931,14 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                     <span className="absolute left-2.5 text-slate-400 font-bold text-xs">$</span>
                     <input
                       id="yearly-insurance-input"
-                      type="number"
-                      value={yearlyInsurance}
+                      type="text"
+                      inputMode="numeric"
+                      value={yearlyInsurance !== '' ? yearlyInsurance.toLocaleString('en-US') : ''}
                       onChange={(e) => {
-                        const val = e.target.value;
-                        setYearlyInsurance(val === '' ? '' : Number(val));
+                        const raw = e.target.value.replace(/[^0-9]/g, '');
+                        setYearlyInsurance(raw === '' ? '' : Number(raw));
                       }}
                       className="w-full pl-6 pr-2.5 py-1.5 rounded-xl bg-slate-100/80 border border-slate-200 focus:border-[#FA2D48] font-bold text-slate-900 text-xs outline-none"
-                      step="100"
                     />
                   </div>
 
@@ -979,14 +970,14 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                     <span className="absolute left-2.5 text-slate-400 font-bold text-xs">$</span>
                     <input
                       id="monthly-hoa-input"
-                      type="number"
-                      value={monthlyHoa}
+                      type="text"
+                      inputMode="numeric"
+                      value={monthlyHoa !== '' ? monthlyHoa.toLocaleString('en-US') : ''}
                       onChange={(e) => {
-                        const val = e.target.value;
-                        setMonthlyHoa(val === '' ? '' : Number(val));
+                        const raw = e.target.value.replace(/[^0-9]/g, '');
+                        setMonthlyHoa(raw === '' ? '' : Number(raw));
                       }}
                       className="w-full pl-6 pr-2.5 py-1.5 rounded-xl bg-slate-100/80 border border-slate-200 focus:border-[#FA2D48] font-bold text-slate-900 text-xs outline-none"
-                      step="25"
                     />
                   </div>
 
@@ -1064,7 +1055,7 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                 <span className="text-white/90 text-lg font-bold">/ mo</span>
               </div>
               <p className="text-xs text-white/90 font-medium">
-                Based on <span className="font-black text-white">${homePrice.toLocaleString()}</span> home price &amp; <span className="font-black text-white">{interestRate}%</span> interest rate
+                Based on <span className="font-black text-white">${homePrice ? homePrice.toLocaleString() : '0'}</span> home price &amp; <span className="font-black text-white">{interestRate || 0}%</span> interest rate
               </p>
             </div>
 
