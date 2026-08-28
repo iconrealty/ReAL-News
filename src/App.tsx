@@ -739,47 +739,6 @@ export function App() {
                   </div>
                 );
               })()}
-
-              {/* Quick Popular City Selector Pills */}
-              <div className="pt-2 border-t border-slate-100 flex flex-wrap items-center gap-1.5">
-                <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mr-1">
-                  Quick City Switcher:
-                </span>
-                {['Irvine', 'Newport Beach', 'Huntington Beach', 'Anaheim', 'Laguna Beach', 'Costa Mesa', 'Mission Viejo', 'Fullerton', 'San Clemente', 'Brea'].map(cityName => {
-                  const isSelected = currentCity.name.toLowerCase() === cityName.toLowerCase();
-                  return (
-                    <button
-                      key={cityName}
-                      onClick={() => {
-                        const match = CITIES.find(c => c.name.toLowerCase() === cityName.toLowerCase());
-                        if (match) {
-                          setCurrentCity(match);
-                          showToast(`Selected ${match.name}`);
-                        }
-                      }}
-                      className={`px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                        isSelected 
-                          ? 'bg-slate-950 text-white shadow-xs' 
-                          : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200/60'
-                      }`}
-                    >
-                      {cityName}
-                    </button>
-                  );
-                })}
-                {currentCity.id !== 'orange-county' && (
-                  <button
-                    onClick={() => {
-                      const oc = CITIES.find(c => c.id === 'orange-county') || CITIES[0];
-                      setCurrentCity(oc);
-                      showToast('Reset to Orange County (Countywide)');
-                    }}
-                    className="px-3 py-1 rounded-xl text-xs font-bold bg-[#FA2D48]/10 text-[#FA2D48] hover:bg-[#FA2D48]/20 transition-all cursor-pointer"
-                  >
-                    All Orange County
-                  </button>
-                )}
-              </div>
             </div>
 
             {/* Main Page Top Market Overview: Days on Market, Months of Supply, % Orig List Price, Price/SqFt */}
