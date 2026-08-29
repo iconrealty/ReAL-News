@@ -133,41 +133,41 @@ export function cleanText(text?: string): string {
 }
 
 export const CITY_ROOT_URLS: Record<string, string> = {
-  'Orange County': 'https://www.ocgov.com/gov/bos',
-  'Irvine': 'https://www.cityofirvine.org/great-park',
-  'Costa Mesa': 'https://www.costamesaca.gov/city-hall/city-departments/development-services/planning-division',
-  'Newport Beach': 'https://www.newportbeachca.gov/government/departments/public-works/harbor-resources-division',
-  'Orange': 'https://www.cityoforange.org/our-city/departments/community-development',
-  'Huntington Beach': 'https://www.huntingtonbeachca.gov/government/departments/public-works/',
-  'Laguna Beach': 'https://www.lagunabeachcity.net/government/departments/community-development/planning-building',
-  'Anaheim': 'https://www.anaheim.net/ocvibe',
-  'Dana Point': 'https://www.danapoint.org/department/ocean-water-quality/harbor-revitalization',
-  'San Clemente': 'https://www.san-clemente.org/government/city-departments/public-works/coastal-resiliency',
-  'Fullerton': 'https://www.cityoffullerton.com/government/departments/community-economic-development',
-  'Mission Viejo': 'https://cityofmissionviejo.org/departments/public-works/core-city-center',
-  'Lake Forest': 'https://www.lakeforestca.gov/en/departments/community-development',
-  'Tustin': 'https://www.tustinca.org/tustinlegacy',
-  'San Juan Capistrano': 'https://www.sanjuancapistrano.org/departments/development-services',
-  'Aliso Viejo': 'https://www.cityofalisoviejo.com/264/Town-Center-Master-Plan',
-  'Brea': 'https://www.cityofbrea.net/145/Downtown-Birch-Street-Plan',
-  'Buena Park': 'https://www.buenapark.com/city_departments/community_development/beach_blvd_revitalization.php',
-  'Cypress': 'https://www.cypressca.org/government/departments/community-development',
-  'Fountain Valley': 'https://www.fountainvalley.org/1120/Mile-Square-Regional-Park-Corridor',
-  'Garden Grove': 'https://ggcity.org/economic-development/brookhurst-street-district',
-  'La Habra': 'https://www.lahabraca.gov/432/La-Habra-Boulevard-Enhancements',
-  'La Palma': 'https://www.cityoflapalma.org/321/Central-Park-Renewal',
-  'Laguna Hills': 'https://www.lagunahillsca.gov/318/Mall-Village-Revitalization',
-  'Laguna Niguel': 'https://www.cityoflagunaniguel.org/189/Town-Center-Master-Plan',
-  'Laguna Woods': 'https://www.cityoflagunawoods.org/departments/community-development/housing',
-  'Los Alamitos': 'https://www.cityoflosalamitos.org/214/Katella-Corridor-Enhancement',
-  'Placentia': 'https://www.placentia.org/852/Metrolink-Transit-District',
-  'Rancho Santa Margarita': 'https://www.cityofrsm.org/340/Lake-Park-Town-Center-Plan',
-  'Santa Ana': 'https://www.santa-ana.org/oc-streetcar-arts-district/',
-  'Seal Beach': 'https://www.sealbeachca.gov/Departments/Public-Works/Pier-Main-Street-Project',
-  'Stanton': 'https://www.ci.stanton.ca.us/Departments/Community-Development/Beach-Boulevard-Renewal',
-  'Villa Park': 'https://villapark.org/government/city-departments/planning-building/',
-  'Westminster': 'https://www.westminster-ca.gov/departments/community-development/civic-center-master-plan',
-  'Yorba Linda': 'https://www.yorbalindaca.gov/395/Town-Center-Equestrian-Preservation'
+  'Orange County': 'https://www.ocgov.com',
+  'Irvine': 'https://www.cityofirvine.org',
+  'Costa Mesa': 'https://www.costamesaca.gov',
+  'Newport Beach': 'https://www.newportbeachca.gov',
+  'Orange': 'https://www.cityoforange.org',
+  'Huntington Beach': 'https://www.huntingtonbeachca.gov',
+  'Laguna Beach': 'https://www.lagunabeachcity.net',
+  'Anaheim': 'https://www.anaheim.net',
+  'Dana Point': 'https://www.danapoint.org',
+  'San Clemente': 'https://www.san-clemente.org',
+  'Fullerton': 'https://www.cityoffullerton.com',
+  'Mission Viejo': 'https://cityofmissionviejo.org',
+  'Lake Forest': 'https://www.lakeforestca.gov',
+  'Tustin': 'https://www.tustinca.org',
+  'San Juan Capistrano': 'https://www.sanjuancapistrano.org',
+  'Aliso Viejo': 'https://www.cityofalisoviejo.com',
+  'Brea': 'https://www.cityofbrea.net',
+  'Buena Park': 'https://www.buenapark.com',
+  'Cypress': 'https://www.cypressca.org',
+  'Fountain Valley': 'https://www.fountainvalley.org',
+  'Garden Grove': 'https://ggcity.org',
+  'La Habra': 'https://www.lahabraca.gov',
+  'La Palma': 'https://www.cityoflapalma.org',
+  'Laguna Hills': 'https://www.lagunahillsca.gov',
+  'Laguna Niguel': 'https://www.cityoflagunaniguel.org',
+  'Laguna Woods': 'https://www.cityoflagunawoods.org',
+  'Los Alamitos': 'https://www.cityoflosalamitos.org',
+  'Placentia': 'https://www.placentia.org',
+  'Rancho Santa Margarita': 'https://www.cityofrsm.org',
+  'Santa Ana': 'https://www.santa-ana.org',
+  'Seal Beach': 'https://www.sealbeachca.gov',
+  'Stanton': 'https://www.ci.stanton.ca.us',
+  'Villa Park': 'https://villapark.org',
+  'Westminster': 'https://www.westminster-ca.gov',
+  'Yorba Linda': 'https://www.yorbalindaca.gov'
 };
 
 export function getCityRootUrl(cityName?: string, sourceUrl?: string): string {
@@ -177,24 +177,35 @@ export function getCityRootUrl(cityName?: string, sourceUrl?: string): string {
   if (cityName && CITY_ROOT_URLS[cityName]) {
     return CITY_ROOT_URLS[cityName];
   }
-  return 'https://www.ocgov.com/gov/bos';
+  return 'https://www.ocgov.com';
 }
 
-export function getDirectStoryUrl(article: { sourceUrl?: string; cityName?: string; category?: string; title?: string }): string {
-  if (article.sourceUrl && (article.sourceUrl.startsWith('http://') || article.sourceUrl.startsWith('https://'))) {
+export function getDirectStoryUrl(article: { 
+  sourceUrl?: string; 
+  cityName?: string; 
+  category?: string; 
+  title?: string; 
+  publisher?: string;
+  isLivePublicRss?: boolean;
+}): string {
+  // 1. If this article is from a live public RSS feed (with a real live article link)
+  if (article.isLivePublicRss && article.sourceUrl && (article.sourceUrl.startsWith('http://') || article.sourceUrl.startsWith('https://'))) {
     const trimmed = article.sourceUrl.trim();
-    // If it is just a naked homepage for MND, route directly to mortgage rates news
-    if (trimmed === 'https://www.mortgagenewsdaily.com' || trimmed === 'http://www.mortgagenewsdaily.com') {
-      return 'https://www.mortgagenewsdaily.com/mortgage-rates';
+    // Verify it is an actual article link and not a generic homepage
+    if (trimmed !== 'https://news.google.com' && trimmed !== 'https://www.mortgagenewsdaily.com') {
+      return trimmed;
     }
-    return trimmed;
   }
-  if (article.cityName && CITY_ROOT_URLS[article.cityName]) {
-    return CITY_ROOT_URLS[article.cityName];
-  }
-  if (article.category === 'mortgage-news') {
-    return 'https://www.mortgagenewsdaily.com/mortgage-rates';
-  }
-  return 'https://www.ocgov.com/gov/bos';
+
+  // 2. Build targeted Google search query for the headline + publisher/city
+  // &igu=1 allows Google search to render inside in-app frames seamlessly
+  const cleanTitle = article.title
+    ? article.title.replace(/\s*\([^)]*(\.com|\.gov|\.org|\.net|\.edu|http|www|\.io|\.ca|\.us)[^)]*\)/gi, '').trim()
+    : '';
+  const publisherOrCity = article.publisher || article.cityName || '';
+  const query = [cleanTitle, publisherOrCity].filter(Boolean).join(' ');
+
+  return `https://www.google.com/search?q=${encodeURIComponent(query || cleanTitle || 'Orange County Real Estate News')}&igu=1`;
 }
+
 
