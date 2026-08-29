@@ -43,10 +43,10 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
 
   const categories: { id: NewsCategory; label: string }[] = [
     { id: 'all', label: 'Top Stories' },
+    { id: 'mortgage-calculator', label: 'Mortgage Calculator' },
     { id: 'real-estate', label: 'Orange County News' },
     { id: 'market-trends', label: 'Steven Thomas' },
     { id: 'oc-fast', label: 'OC FastStats' },
-    { id: 'mortgage-calculator', label: 'Mortgage Calculator' },
     { id: 'team-news', label: 'Team News & Events' },
     { id: 'restaurants-bars', label: 'New Restaurants & Bars' },
   ];
