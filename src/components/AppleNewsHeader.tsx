@@ -1,6 +1,6 @@
 import React from 'react';
 import { CityInfo, NewsCategory } from '../types';
-import { Bookmark, Search } from 'lucide-react';
+import { Bookmark } from 'lucide-react';
 
 interface AppleNewsHeaderProps {
   currentCity: CityInfo;
@@ -10,8 +10,8 @@ interface AppleNewsHeaderProps {
   onSelectCategory: (cat: NewsCategory) => void;
   savedCount: number;
   onOpenSavedDrawer: () => void;
-  searchQuery: string;
-  onSearchChange: (q: string) => void;
+  searchQuery?: string;
+  onSearchChange?: (q: string) => void;
   onResetToMain?: () => void;
   fredRate?: string;
   asOfDate?: string;
@@ -27,8 +27,6 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
   onSelectCategory,
   savedCount,
   onOpenSavedDrawer,
-  searchQuery,
-  onSearchChange,
   onResetToMain,
   fredRate = '6.81%',
   asOfDate,
@@ -115,8 +113,8 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
             </div>
           </div>
 
-          {/* Search & Controls (Tablet / Desktop Row) */}
-          <div className="flex items-center space-x-3 w-full sm:w-auto">
+          {/* Controls (Tablet / Desktop Row: Live Mortgage Rate & Bookmarks) */}
+          <div className="flex items-center space-x-3">
             {/* Desktop 30-Day Mortgage Rate Display - Large Text Outside Pill */}
             <button
               onClick={() => onSelectCategory('mortgage-calculator')}
@@ -133,19 +131,6 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
                 {asOfDate || 'Daily Live Market'}
               </span>
             </button>
-
-            {/* Search Input */}
-            <div className="relative flex-1 sm:w-64">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-2.5" />
-              <input
-                id="header-search-input"
-                type="text"
-                value={searchQuery}
-                onChange={(e) => onSearchChange(e.target.value)}
-                placeholder="Search news, venues..."
-                className="w-full bg-[#EBEBEF] focus:bg-white border border-transparent focus:border-[#FA2D48] focus:ring-1 focus:ring-[#FA2D48] rounded-full pl-9 pr-4 py-2 text-xs text-slate-900 placeholder-slate-400 transition-all outline-none min-h-[38px]"
-              />
-            </div>
 
             {/* Desktop Saved Bookmarks Button */}
             <button
