@@ -304,36 +304,16 @@ export function App() {
   // Filter articles based on city, category, and search query
   const filteredArticles = useMemo(() => {
     const q = searchQuery.toLowerCase().trim();
-
-    // 1. Principal Main Feed ("Top Stories" / "all") or "mortgage-news":
-    // Always showcase Mortgage News Daily (MND) wire stories on all devices, independent of city filter
-    if (activeCategory === 'all' || activeCategory === 'mortgage-news') {
-      let mndList = articles.filter(art => art.category === 'mortgage-news' || art.publisher === 'Mortgage News Daily');
-      
-      if (q) {
-        mndList = mndList.filter(art => 
-          art.title.toLowerCase().includes(q) ||
-          art.subtitle.toLowerCase().includes(q) ||
-          art.publisher.toLowerCase().includes(q)
-        );
-      }
-
-      if (mndList.length > 0) {
-        return deduplicateArticles(mndList);
-      }
-    }
-
-    // 2. Local News Pages (Orange County News, Team News, Dining):
     const isOrangeCountyAll = currentCity.id === 'orange-county';
     const cName = currentCity.name.toLowerCase().trim();
 
-    let matched: NewsArticle[] = [];
-
-    if (isOrangeCountyAll) {
-      matched = [...articles];
-    } else {
-      // Direct city matches ONLY when a specific city is selected
+    // Match articles to current city or countywide
+    let matched = articles;
+    if (!isOrangeCountyAll) {
       matched = articles.filter(art => {
+        // MND national wire articles are always included on main feed
+        if (art.category === 'mortgage-news' || art.publisher === 'Mortgage News Daily') return true;
+
         const artCity = (art.cityName || '').toLowerCase().trim();
         const artTitle = (art.title || '').toLowerCase();
         const artSub = (art.subtitle || '').toLowerCase();
@@ -351,11 +331,14 @@ export function App() {
       });
     }
 
-    // Category & Search query filtering for local pages
+    // Category & Search query filtering
     let finalFiltered = matched.filter(art => {
       let matchesCat = false;
-      if (activeCategory === 'real-estate') {
-        // "Orange County News" page: show all local Orange County news (Real Estate, Dining, Events, Developments, etc.)
+      if (activeCategory === 'all') {
+        // Main page displays ALL stories: MND live market wire + all local OC news & updates
+        matchesCat = true;
+      } else if (activeCategory === 'real-estate') {
+        // "Orange County News" page: show all local Orange County news
         matchesCat = art.category !== 'mortgage-news' && art.publisher !== 'Mortgage News Daily';
       } else {
         matchesCat = art.category === activeCategory;
@@ -885,8 +868,8 @@ export function App() {
               onOpenManager={() => setIsManagerModalOpen(true)}
             />
 
-            {/* Section: Mortgage News Daily • Live Market Reports (Shown on Principal Page & MND Tab) */}
-            {mortgageArticles.length > 0 && (
+            {/* Section: Mortgage News Daily • Live Market Reports (Shown on Main Page & MND Wire) */}
+            {mortgageArticles.length > 0 && (activeCategory === 'all' || activeCategory === 'mortgage-news') && (
               <NewsGridSection
                 title={activeCategory === 'all' ? "Mortgage News Daily • Live Market Wire & Top Stories" : "Mortgage News Daily • Live Market Wire & Rates"}
                 icon={<Newspaper className="w-5 h-5 text-[#FA2D48]" />}
@@ -897,65 +880,60 @@ export function App() {
               />
             )}
 
-            {/* Local Orange County News Sections - Displayed under 'Orange County News' tab and other specific local tabs */}
-            {activeCategory !== 'all' && activeCategory !== 'mortgage-news' && (
-              <>
-                {/* Section 1: Team News & Events */}
-                {teamAndEventArticles.length > 0 && (
-                  <NewsGridSection
-                    title={`Team News, Brokerage Updates & Local Events`}
-                    icon={<Users className="w-5 h-5 text-indigo-600" />}
-                    articles={teamAndEventArticles}
-                    onSelectArticle={setSelectedArticle}
-                    bookmarkedIds={bookmarkedIds}
-                    onToggleBookmark={toggleBookmark}
+            {/* Section 1: Real Estate & Housing Market */}
+            {realEstateArticles.length > 0 && (activeCategory === 'all' || activeCategory === 'real-estate') && (
+              <NewsGridSection
+                title={`Real Estate & Housing in ${currentCity.name}`}
+                icon={<Building2 className="w-5 h-5 text-amber-600" />}
+                articles={realEstateArticles}
+                onSelectArticle={setSelectedArticle}
+                bookmarkedIds={bookmarkedIds}
+                onToggleBookmark={toggleBookmark}
+                adBanner={
+                  <AdBannerRenderer 
+                    placement="feed-native" 
+                    ads={ads} 
+                    cityName={currentCity.name} 
+                    monetizationEnabled={isMonetizationEnabled}
                   />
-                )}
+                }
+              />
+            )}
 
-                {/* Section 2: Real Estate & Housing Market */}
-                {realEstateArticles.length > 0 && (
-                  <NewsGridSection
-                    title={`Real Estate & Housing in ${currentCity.name}`}
-                    icon={<Building2 className="w-5 h-5 text-amber-600" />}
-                    articles={realEstateArticles}
-                    onSelectArticle={setSelectedArticle}
-                    bookmarkedIds={bookmarkedIds}
-                    onToggleBookmark={toggleBookmark}
-                    adBanner={
-                      <AdBannerRenderer 
-                        placement="feed-native" 
-                        ads={ads} 
-                        cityName={currentCity.name} 
-                        monetizationEnabled={isMonetizationEnabled}
-                      />
-                    }
-                  />
-                )}
+            {/* Section 2: Team News & Events */}
+            {teamAndEventArticles.length > 0 && (activeCategory === 'all' || activeCategory === 'real-estate' || activeCategory === 'team-news') && (
+              <NewsGridSection
+                title={`Team News, Brokerage Updates & Local Events`}
+                icon={<Users className="w-5 h-5 text-indigo-600" />}
+                articles={teamAndEventArticles}
+                onSelectArticle={setSelectedArticle}
+                bookmarkedIds={bookmarkedIds}
+                onToggleBookmark={toggleBookmark}
+              />
+            )}
 
-                {/* Section 3: Hot New Restaurant & Bar Openings */}
-                {diningArticles.length > 0 && (
-                  <NewsGridSection
-                    title={`New Restaurant & Bar Debuts in ${currentCity.name}`}
-                    icon={<Utensils className="w-5 h-5 text-emerald-600" />}
-                    articles={diningArticles}
-                    onSelectArticle={setSelectedArticle}
-                    bookmarkedIds={bookmarkedIds}
-                    onToggleBookmark={toggleBookmark}
-                  />
-                )}
+            {/* Section 3: Hot New Restaurant & Bar Openings */}
+            {diningArticles.length > 0 && (activeCategory === 'all' || activeCategory === 'real-estate' || activeCategory === 'restaurants-bars') && (
+              <NewsGridSection
+                title={`New Restaurant & Bar Debuts in ${currentCity.name}`}
+                icon={<Utensils className="w-5 h-5 text-emerald-600" />}
+                articles={diningArticles}
+                onSelectArticle={setSelectedArticle}
+                bookmarkedIds={bookmarkedIds}
+                onToggleBookmark={toggleBookmark}
+              />
+            )}
 
-                {/* Section 4: Other Local Coverage */}
-                {otherArticles.length > 0 && (
-                  <NewsGridSection
-                    title={`More Local Updates in ${currentCity.name}`}
-                    icon={<Sparkles className="w-5 h-5 text-[#FA2D48]" />}
-                    articles={otherArticles}
-                    onSelectArticle={setSelectedArticle}
-                    bookmarkedIds={bookmarkedIds}
-                    onToggleBookmark={toggleBookmark}
-                  />
-                )}
-              </>
+            {/* Section 4: Other Local Coverage */}
+            {otherArticles.length > 0 && (activeCategory === 'all' || activeCategory === 'real-estate') && (
+              <NewsGridSection
+                title={`More Local Updates in ${currentCity.name}`}
+                icon={<Sparkles className="w-5 h-5 text-[#FA2D48]" />}
+                articles={otherArticles}
+                onSelectArticle={setSelectedArticle}
+                bookmarkedIds={bookmarkedIds}
+                onToggleBookmark={toggleBookmark}
+              />
             )}
 
             {/* Loading / Empty state if no news found for selected city */}
