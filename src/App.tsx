@@ -87,8 +87,6 @@ export function App() {
     jumbo30Year: '6.90%',
     fha30Year: '6.37%',
     va30Year: '6.37%',
-    sevenDaysAgoRate: '6.89%',
-    sevenDaysChange: -0.08,
     sourceType: 'MORTGAGE_NEWS_DAILY',
     isRealLiveRate: true
   });
@@ -509,8 +507,6 @@ export function App() {
         onSearchChange={setSearchQuery}
         onResetToMain={handleResetToMain}
         fredRate={liveRates?.mortgage30Year}
-        sevenDaysAgoRate={liveRates?.sevenDaysAgoRate}
-        sevenDaysChange={liveRates?.sevenDaysChange}
         asOfDate={liveRates?.asOfDate}
         onOpenManager={() => setIsManagerModalOpen(true)}
         onOpenNewsManager={() => setIsNewsManagerOpen(true)}

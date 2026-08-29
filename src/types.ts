@@ -112,8 +112,6 @@ export interface LiveMortgageRates {
   jumbo30Year?: string;
   fha30Year?: string;
   va30Year?: string;
-  sevenDaysAgoRate?: string;
-  sevenDaysChange?: number; // e.g. +0.08 or -0.12
   lastChecked?: string;
   sourceType: string;
   isRealLiveRate?: boolean;
