@@ -49,7 +49,6 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
     { id: 'mortgage-calculator', label: 'Mortgage Calculator' },
     { id: 'team-news', label: 'Team News & Events' },
     { id: 'restaurants-bars', label: 'New Restaurants & Bars' },
-    { id: 'city-developments', label: 'City Developments' },
   ];
 
   return (
