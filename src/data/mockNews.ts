@@ -284,7 +284,74 @@ export const CITIES: CityInfo[] = [
 ];
 
 export const INITIAL_ARTICLES: NewsArticle[] = [
-  // 0. ORANGE COUNTY HOUSING REPORT (The Condo Conundrum)
+  // 0. MORTGAGE NEWS DAILY (MND) LIVE WIRE ARTICLES
+  {
+    id: 'news-mnd-live-featured-1',
+    title: 'Mortgage Rates Hold Steady as Bond Markets Digest Federal Reserve & Inflation Data',
+    subtitle: 'Conforming 30-year fixed rate indices hover near recent range as treasury yields stabilize amid fresh economic reports and housing demand.',
+    category: 'mortgage-news',
+    cityName: 'Daily Mortgage Market',
+    publisher: 'Mortgage News Daily',
+    publisherLogo: '📈',
+    publishedAt: '1h ago',
+    readTime: '4 min read',
+    heroImage: 'https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&w=1200&q=80',
+    sourceUrl: 'https://www.mortgagenewsdaily.com',
+    sourceCitation: 'Mortgage News Daily • Live Daily Market Wire',
+    isBreaking: true,
+    isFeatured: true,
+    keyTakeaways: [
+      'Mortgage News Daily Index monitors conforming 30-Year fixed rate movements daily across top US mortgage lenders.',
+      'Bond market traders reacting to latest economic indicators, CPI trends, and Federal Reserve guidance.',
+      'Borrowers locking in rates as purchase demand and refinance volume respond to day-to-day rate sheet shifts.'
+    ],
+    content: `Mortgage interest rates traded in a tight, disciplined range today as bond market volatility subsided following the latest economic data releases.\n\nAccording to the Mortgage News Daily rate survey, conforming 30-year fixed mortgages remain responsive to movements in 10-year Treasury yields and inflation expectations.\n\nFinancial market analysts and loan originators continue to monitor central bank guidance, employment statistics, and Treasury auction results for direction on upcoming rate moves. MND continues to provide transparent daily rate benchmarks for prospective homebuyers and refinancers.`
+  },
+  {
+    id: 'news-mnd-live-wire-2',
+    title: 'Understanding the 10-Year Treasury Yield Spread and Daily Lender Rate Sheets',
+    subtitle: 'A breakdown of why mortgage interest rates move with benchmark bond yields and how loan originators price daily rate sheets for buyers.',
+    category: 'mortgage-news',
+    cityName: 'Daily Mortgage Market',
+    publisher: 'Mortgage News Daily',
+    publisherLogo: '📊',
+    publishedAt: '3h ago',
+    readTime: '5 min read',
+    heroImage: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=1200&q=80',
+    sourceUrl: 'https://www.mortgagenewsdaily.com',
+    sourceCitation: 'Mortgage News Daily • Rate Watch Technical Analysis',
+    isBreaking: false,
+    isFeatured: false,
+    keyTakeaways: [
+      'Mortgage-Backed Securities (MBS) pricing directly influences lender rate sheet adjustments.',
+      'The primary-secondary mortgage rate spread provides critical insight into originator capacity and market liquidity.',
+      'Daily updates from MND provide market transparency for homebuyers comparing 30-year, 15-year, and Jumbo loan options.'
+    ],
+    content: `The relationship between 10-year Treasury yields and mortgage rates is one of the most closely watched barometers in real estate finance.\n\nWhile mortgage rates typically track long-term Treasury yields, the spread between them widens and narrows based on market liquidity, prepayment risk, and Federal Reserve balance sheet activity.\n\nToday's report examines current MBS coupon performance and offers tactical guidance for borrowers weighing floating vs. locking decisions in the current rate environment.`
+  },
+  {
+    id: 'news-mnd-live-wire-3',
+    title: 'MBS Market Overview: Mortgage-Backed Securities Steady Amid Steady Treasury Action',
+    subtitle: 'Mortgage-backed bonds maintain support levels as originators report balanced purchase volume across regional markets.',
+    category: 'mortgage-news',
+    cityName: 'Daily Mortgage Market',
+    publisher: 'Mortgage News Daily',
+    publisherLogo: '🏦',
+    publishedAt: '5h ago',
+    readTime: '3 min read',
+    heroImage: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=1200&q=80',
+    sourceUrl: 'https://www.mortgagenewsdaily.com',
+    sourceCitation: 'Mortgage News Daily • MBS Morning Report',
+    isBreaking: false,
+    isFeatured: false,
+    keyTakeaways: [
+      'Agency MBS prices trade within established weekly resistance channels.',
+      'Lender pricing remains competitive with attractive pricing on conforming and FHA loan products.',
+      'Technical indicators point to continued rangebound movement heading into upcoming FOMC meetings.'
+    ],
+    content: `Agency mortgage-backed securities held their ground in today's trading session, providing price stability for residential mortgage loan pricing across major wholesale and retail lenders.\n\nOriginators report steady pipeline flow from qualified buyers taking advantage of price adjustments in several major housing markets.`
+  },
+  // 1. ORANGE COUNTY HOUSING REPORT (The Condo Conundrum)
   {
     id: 'report-oc-condo-conundrum',
     title: 'The Condo Conundrum: Orange County Housing Market Report (August 3, 2026)',

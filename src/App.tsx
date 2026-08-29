@@ -255,9 +255,12 @@ export function App() {
     fetchMndNews();
   }, []);
 
-  // Fetch live city news when city or category changes
+  // Fetch live city news when city or category changes (only on local municipal pages, not on main page or special report tabs)
   useEffect(() => {
     if (!currentCity) return;
+    if (activeCategory === 'all' || activeCategory === 'mortgage-news' || activeCategory === 'market-trends' || activeCategory === 'oc-fast' || activeCategory === 'mortgage-calculator') {
+      return;
+    }
     
     fetch('/api/fetch-city-news', {
       method: 'POST',
@@ -300,6 +303,27 @@ export function App() {
 
   // Filter articles based on city, category, and search query
   const filteredArticles = useMemo(() => {
+    const q = searchQuery.toLowerCase().trim();
+
+    // 1. Principal Main Feed ("Top Stories" / "all") or "mortgage-news":
+    // Always showcase Mortgage News Daily (MND) wire stories on all devices, independent of city filter
+    if (activeCategory === 'all' || activeCategory === 'mortgage-news') {
+      let mndList = articles.filter(art => art.category === 'mortgage-news' || art.publisher === 'Mortgage News Daily');
+      
+      if (q) {
+        mndList = mndList.filter(art => 
+          art.title.toLowerCase().includes(q) ||
+          art.subtitle.toLowerCase().includes(q) ||
+          art.publisher.toLowerCase().includes(q)
+        );
+      }
+
+      if (mndList.length > 0) {
+        return deduplicateArticles(mndList);
+      }
+    }
+
+    // 2. Local News Pages (Orange County News, Team News, Dining):
     const isOrangeCountyAll = currentCity.id === 'orange-county';
     const cName = currentCity.name.toLowerCase().trim();
 
@@ -327,22 +351,16 @@ export function App() {
       });
     }
 
-    // Category & Search query filtering
+    // Category & Search query filtering for local pages
     let finalFiltered = matched.filter(art => {
-      // Category match
       let matchesCat = false;
-      if (activeCategory === 'all' || activeCategory === 'mortgage-news') {
-        // Principal page ("Top Stories") & "Mortgage Daily News": show ONLY Mortgage News Daily news
-        matchesCat = art.category === 'mortgage-news' || art.publisher === 'Mortgage News Daily' || !!art.isLivePublicRss;
-      } else if (activeCategory === 'real-estate') {
-        // "Orange County News" page: show all other local Orange County news (Real Estate, Dining, Events, Developments, etc.)
+      if (activeCategory === 'real-estate') {
+        // "Orange County News" page: show all local Orange County news (Real Estate, Dining, Events, Developments, etc.)
         matchesCat = art.category !== 'mortgage-news' && art.publisher !== 'Mortgage News Daily';
       } else {
         matchesCat = art.category === activeCategory;
       }
 
-      // Search query match
-      const q = searchQuery.toLowerCase().trim();
       const matchesQuery = !q || 
         art.title.toLowerCase().includes(q) ||
         art.subtitle.toLowerCase().includes(q) ||
@@ -356,18 +374,11 @@ export function App() {
     // Fallback: If category filter resulted in 0 articles for a specific city,
     // fallback to showing regional articles matching that requested category
     if (finalFiltered.length === 0 && activeCategory !== 'all') {
-      if (activeCategory === 'mortgage-news') {
-        finalFiltered = articles.filter(art => art.category === 'mortgage-news' || art.publisher === 'Mortgage News Daily');
-      } else if (activeCategory === 'real-estate') {
+      if (activeCategory === 'real-estate') {
         finalFiltered = articles.filter(art => art.category !== 'mortgage-news' && art.publisher !== 'Mortgage News Daily');
       } else {
         finalFiltered = articles.filter(art => art.category === activeCategory);
       }
-    }
-
-    // If on principal page ('all') and empty, make sure MND news shows
-    if (finalFiltered.length === 0 && activeCategory === 'all') {
-      finalFiltered = articles.filter(art => art.category === 'mortgage-news' || art.publisher === 'Mortgage News Daily');
     }
 
     return deduplicateArticles(finalFiltered);
