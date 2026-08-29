@@ -54,33 +54,33 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
 }) => {
   // MND Daily rates
   const mnd30Num = useMemo(() => {
-    if (!propLiveRates?.mortgage30Year) return 6.75;
+    if (!propLiveRates?.mortgage30Year) return 6.81;
     const val = parseFloat(propLiveRates.mortgage30Year.replace('%', ''));
-    return isNaN(val) ? 6.75 : val;
+    return isNaN(val) ? 6.81 : val;
   }, [propLiveRates?.mortgage30Year]);
 
   const mnd15Num = useMemo(() => {
-    if (!propLiveRates?.mortgage15Year) return 6.32;
+    if (!propLiveRates?.mortgage15Year) return 6.35;
     const val = parseFloat(propLiveRates.mortgage15Year.replace('%', ''));
-    return isNaN(val) ? 6.32 : val;
+    return isNaN(val) ? 6.35 : val;
   }, [propLiveRates?.mortgage15Year]);
 
   const mndJumboNum = useMemo(() => {
-    if (!propLiveRates?.jumbo30Year) return 6.88;
+    if (!propLiveRates?.jumbo30Year) return 6.90;
     const val = parseFloat(propLiveRates.jumbo30Year.replace('%', ''));
-    return isNaN(val) ? 6.88 : val;
+    return isNaN(val) ? 6.90 : val;
   }, [propLiveRates?.jumbo30Year]);
 
   const mndFhaNum = useMemo(() => {
-    if (!propLiveRates?.fha30Year) return 6.34;
+    if (!propLiveRates?.fha30Year) return 6.37;
     const val = parseFloat(propLiveRates.fha30Year.replace('%', ''));
-    return isNaN(val) ? 6.34 : val;
+    return isNaN(val) ? 6.37 : val;
   }, [propLiveRates?.fha30Year]);
 
   const mndVaNum = useMemo(() => {
-    if (!propLiveRates?.va30Year) return 6.35;
+    if (!propLiveRates?.va30Year) return 6.37;
     const val = parseFloat(propLiveRates.va30Year.replace('%', ''));
-    return isNaN(val) ? 6.35 : val;
+    return isNaN(val) ? 6.37 : val;
   }, [propLiveRates?.va30Year]);
 
   const rateOptions = useMemo(() => [

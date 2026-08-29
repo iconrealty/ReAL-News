@@ -30,7 +30,7 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
   searchQuery,
   onSearchChange,
   onResetToMain,
-  fredRate = '6.75%',
+  fredRate = '6.81%',
   asOfDate,
   onOpenManager,
   onOpenNewsManager,

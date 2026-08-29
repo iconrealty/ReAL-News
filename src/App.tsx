@@ -82,20 +82,35 @@ export function App() {
   const [liveRates, setLiveRates] = useState<LiveMortgageRates>({
     source: 'Mortgage News Daily (MND Daily Index)',
     asOfDate: 'Daily Live Market',
-    mortgage30Year: '6.75%',
-    mortgage15Year: '6.32%',
-    jumbo30Year: '6.88%',
-    fha30Year: '6.34%',
-    va30Year: '6.35%',
+    mortgage30Year: '6.81%',
+    mortgage15Year: '6.35%',
+    jumbo30Year: '6.90%',
+    fha30Year: '6.37%',
+    va30Year: '6.37%',
     sourceType: 'MORTGAGE_NEWS_DAILY',
     isRealLiveRate: true
   });
   const [isRefreshingRates, setIsRefreshingRates] = useState(false);
 
+  const fetchLiveRates = () => {
+    fetch(`/api/live-market-stats?t=${Date.now()}`, {
+      headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' }
+    })
+      .then(res => res.json())
+      .then(json => {
+        if (json.success && json.data) {
+          setLiveRates(json.data);
+        }
+      })
+      .catch(err => console.warn("Failed to sync live mortgage rates:", err));
+  };
+
   const handleRefreshLiveRates = async () => {
     setIsRefreshingRates(true);
     try {
-      const res = await fetch(`/api/live-market-stats?force=true&t=${Date.now()}`);
+      const res = await fetch(`/api/live-market-stats?force=true&t=${Date.now()}`, {
+        headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' }
+      });
       const json = await res.json();
       if (json.success && json.data) {
         setLiveRates(json.data);
@@ -138,18 +153,21 @@ export function App() {
     // 1. Initial immediate sync
     fetchAds();
     fetchMonetizationStatus();
+    fetchLiveRates();
 
-    // 2. Active background heartbeat (syncs changes made on any device automatically)
+    // 2. Active background heartbeat (syncs live MND rates & changes across all devices)
     const syncInterval = setInterval(() => {
       fetchAds();
       fetchMonetizationStatus();
-    }, 6000);
+      fetchLiveRates();
+    }, 10000);
 
-    // 3. Instant sync on focus / tab visibility change
+    // 3. Instant sync on mobile/desktop focus / tab visibility change
     const handleSyncOnFocus = () => {
       if (document.visibilityState === 'visible') {
         fetchAds();
         fetchMonetizationStatus();
+        fetchLiveRates();
       }
     };
 
@@ -182,18 +200,6 @@ export function App() {
       showToast(enabled ? 'Monetization Manager ENABLED' : 'Monetization Manager TURNED OFF');
     }
   };
-
-  // Fetch live MND market stats on mount so header, mortgage calculator & trends share exact same rates
-  useEffect(() => {
-    fetch('/api/live-market-stats')
-      .then(res => res.json())
-      .then(json => {
-        if (json.success && json.data) {
-          setLiveRates(json.data);
-        }
-      })
-      .catch(err => console.warn("Failed to load live mortgage rates in App", err));
-  }, []);
 
   const handleResetToMain = () => {
     setCurrentCity(CITIES[0]);

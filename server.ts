@@ -478,11 +478,11 @@ interface CachedLiveRates {
 let cachedLiveRates: CachedLiveRates = {
   source: "Mortgage News Daily (MND Daily Index)",
   asOfDate: "Daily Live Market",
-  mortgage30Year: "6.75%",
-  mortgage15Year: "6.32%",
-  jumbo30Year: "6.88%",
-  fha30Year: "6.34%",
-  va30Year: "6.35%",
+  mortgage30Year: "6.81%",
+  mortgage15Year: "6.35%",
+  jumbo30Year: "6.90%",
+  fha30Year: "6.37%",
+  va30Year: "6.37%",
   asOfTimestamp: Date.now(),
   lastChecked: new Date().toISOString(),
   sourceType: "MORTGAGE_NEWS_DAILY",
@@ -491,7 +491,7 @@ let cachedLiveRates: CachedLiveRates = {
 
 async function fetchLiveMndRates(forceRefresh = false): Promise<CachedLiveRates> {
   const now = Date.now();
-  const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes cache
+  const CACHE_TTL_MS = 2 * 60 * 1000; // 2 minutes cache for high accuracy across devices
 
   if (!forceRefresh && cachedLiveRates && (now - cachedLiveRates.asOfTimestamp < CACHE_TTL_MS)) {
     return cachedLiveRates;
@@ -501,27 +501,31 @@ async function fetchLiveMndRates(forceRefresh = false): Promise<CachedLiveRates>
     const mndRes = await fetch("https://www.mortgagenewsdaily.com/mortgage-rates", {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Cache-Control': 'no-cache',
+        'Pragma': 'no-cache'
       },
       signal: AbortSignal.timeout(7000)
     });
     
     if (mndRes.ok) {
       const html = await mndRes.text();
-      const r30 = html.match(/(?:30\s*Yr\.\s*Fixed|30\s*Year\s*Fixed)[^0-9]*([\d\.]+)%/i);
-      const r15 = html.match(/(?:15\s*Yr\.\s*Fixed|15\s*Year\s*Fixed)[^0-9]*([\d\.]+)%/i);
-      const rJumbo = html.match(/(?:30\s*Yr\.\s*Jumbo|30\s*Year\s*Jumbo)[^0-9]*([\d\.]+)%/i);
-      const rFha = html.match(/(?:30\s*Yr\.\s*FHA|30\s*Year\s*FHA)[^0-9]*([\d\.]+)%/i);
-      const rVa = html.match(/(?:30\s*Yr\.\s*VA|30\s*Year\s*VA)[^0-9]*([\d\.]+)%/i);
+
+      // Check header product boxes and rate table
+      const r30 = html.match(/(?:30\s*Yr\.\s*Fixed|30\s*Year\s*Fixed|30YR\s*Fixed\s*Rate)[^0-9]*([\d\.]+)%/i);
+      const r15 = html.match(/(?:15\s*Yr\.\s*Fixed|15\s*Year\s*Fixed|15YR\s*Fixed\s*Rate)[^0-9]*([\d\.]+)%/i);
+      const rJumbo = html.match(/(?:30\s*Yr\.\s*Jumbo|30\s*Year\s*Jumbo|30YR\s*Jumbo)[^0-9]*([\d\.]+)%/i);
+      const rFha = html.match(/(?:30\s*Yr\.\s*FHA|30\s*Year\s*FHA|30YR\s*FHA)[^0-9]*([\d\.]+)%/i);
+      const rVa = html.match(/(?:30\s*Yr\.\s*VA|30\s*Year\s*VA|30YR\s*VA)[^0-9]*([\d\.]+)%/i);
 
       cachedLiveRates = {
         source: "Mortgage News Daily (MND Daily Index)",
         asOfDate: "Daily Live Market",
-        mortgage30Year: r30 ? `${r30[1]}%` : cachedLiveRates.mortgage30Year,
-        mortgage15Year: r15 ? `${r15[1]}%` : cachedLiveRates.mortgage15Year,
-        jumbo30Year: rJumbo ? `${rJumbo[1]}%` : cachedLiveRates.jumbo30Year,
-        fha30Year: rFha ? `${rFha[1]}%` : cachedLiveRates.fha30Year,
-        va30Year: rVa ? `${rVa[1]}%` : cachedLiveRates.va30Year,
+        mortgage30Year: r30 ? `${r30[1]}%` : (cachedLiveRates.mortgage30Year || "6.81%"),
+        mortgage15Year: r15 ? `${r15[1]}%` : (cachedLiveRates.mortgage15Year || "6.35%"),
+        jumbo30Year: rJumbo ? `${rJumbo[1]}%` : (cachedLiveRates.jumbo30Year || "6.90%"),
+        fha30Year: rFha ? `${rFha[1]}%` : (cachedLiveRates.fha30Year || "6.37%"),
+        va30Year: rVa ? `${rVa[1]}%` : (cachedLiveRates.va30Year || "6.37%"),
         asOfTimestamp: now,
         lastChecked: new Date().toISOString(),
         sourceType: "MORTGAGE_NEWS_DAILY",
@@ -1665,7 +1669,9 @@ app.get("/api/live-market-stats", async (req, res) => {
   try {
     const force = req.query.force === 'true';
     const rateData = await fetchLiveMndRates(force);
-    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
     res.json({
       success: true,
       data: rateData

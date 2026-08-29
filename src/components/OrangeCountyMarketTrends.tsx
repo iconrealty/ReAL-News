@@ -158,11 +158,11 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
   const [liveRates, setLiveRates] = useState<LiveMortgageRates>(
     propLiveRates || { 
       source: 'Mortgage News Daily (MND Daily Index)',
-      mortgage30Year: '6.75%',
-      mortgage15Year: '6.32%',
-      jumbo30Year: '6.88%',
-      fha30Year: '6.34%',
-      va30Year: '6.35%',
+      mortgage30Year: '6.81%',
+      mortgage15Year: '6.35%',
+      jumbo30Year: '6.90%',
+      fha30Year: '6.37%',
+      va30Year: '6.37%',
       asOfDate: 'Daily Live Market',
       sourceType: 'MORTGAGE_NEWS_DAILY',
       isRealLiveRate: true
@@ -192,7 +192,9 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
     }
     setLocalRefreshing(true);
     try {
-      const res = await fetch('/api/live-market-stats?force=true');
+      const res = await fetch(`/api/live-market-stats?force=true&t=${Date.now()}`, {
+        headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' }
+      });
       const json = await res.json();
       if (json.success && json.data) {
         setLiveRates(json.data);
@@ -230,7 +232,9 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
 
   React.useEffect(() => {
     if (!propLiveRates) {
-      fetch('/api/live-market-stats')
+      fetch(`/api/live-market-stats?t=${Date.now()}`, {
+        headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' }
+      })
         .then(res => res.json())
         .then(json => {
           if (json.success && json.data) {
@@ -749,9 +753,9 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                         <span className="text-[9px] text-slate-400 font-bold">{liveRates?.asOfDate || 'Daily Live Market'}</span>
                       </div>
                       <div className="flex items-baseline space-x-2.5 pt-1">
-                        <span className="text-3xl sm:text-4xl font-black text-slate-900">{liveRates?.mortgage30Year || '6.75%'}</span>
+                        <span className="text-3xl sm:text-4xl font-black text-slate-900">{liveRates?.mortgage30Year || '6.81%'}</span>
                         <span className="text-xs font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md">
-                          15-Yr: {liveRates?.mortgage15Year || '6.32%'}
+                          15-Yr: {liveRates?.mortgage15Year || '6.35%'}
                         </span>
                       </div>
                       <div className="flex flex-wrap items-center gap-1.5 pt-2">
