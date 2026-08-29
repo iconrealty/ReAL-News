@@ -93,37 +93,41 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
             </button>
 
             {/* Mobile Top Controls (Quick Mortgage Rate Feed & Bookmarks) */}
-            <div className="flex items-center gap-2.5 sm:hidden">
+            <div className="flex items-center gap-2 sm:hidden shrink-0">
               <button
                 onClick={() => onSelectCategory('mortgage-calculator')}
-                className="text-right group cursor-pointer hover:opacity-80 transition-opacity bg-white/70 px-2.5 py-1 rounded-xl border border-slate-200 shadow-2xs"
+                className="text-right group cursor-pointer hover:opacity-85 active:scale-98 transition-all bg-white/90 px-3 py-1.5 rounded-2xl border border-slate-200/90 shadow-xs"
                 title="Mortgage News Daily Live 30-Yr Rate - Click for Mortgage Calculator"
               >
-                <div className="flex items-center justify-end gap-1">
-                  <span className="text-[9px] font-extrabold uppercase tracking-wider text-[#FA2D48] leading-none">
+                <div className="flex items-center justify-end gap-1.5">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-[#FA2D48] leading-none">
                     30-Yr
                   </span>
-                  <span className="text-base font-black text-slate-950 font-sans tracking-tight leading-none group-hover:text-[#FA2D48] transition-colors">
+                  <span className="text-lg font-black text-slate-950 font-sans tracking-tight leading-none group-hover:text-[#FA2D48] transition-colors">
                     {fredRate}
                   </span>
                 </div>
 
                 {/* 7 Days Ago Rate & Up/Down Arrow Indicator */}
-                <div className="flex items-center justify-end gap-1 pt-0.5">
-                  <span className="text-[8px] text-slate-500 font-medium">
-                    7d: <span className="font-semibold text-slate-700">{sevenDaysAgoRate}</span>
+                <div className="flex items-center justify-end gap-1.5 pt-1">
+                  <span className="text-[10px] text-slate-500 font-medium">
+                    7d: <span className="font-bold text-slate-700">{sevenDaysAgoRate}</span>
                   </span>
                   <span 
-                    className={`inline-flex items-center text-[9px] font-bold ${
-                      isUp ? 'text-emerald-600' : isDown ? 'text-rose-600' : 'text-slate-500'
+                    className={`inline-flex items-center gap-0.5 text-[10px] font-black px-1.5 py-0.5 rounded-md ${
+                      isUp 
+                        ? 'bg-emerald-50 text-emerald-600 border border-emerald-200/80' 
+                        : isDown 
+                        ? 'bg-rose-50 text-rose-600 border border-rose-200/80' 
+                        : 'bg-slate-100 text-slate-600'
                     }`}
                   >
                     {isUp ? (
-                      <ArrowUpRight className="w-3 h-3 stroke-[2.5]" />
+                      <ArrowUpRight className="w-3.5 h-3.5 stroke-[2.5]" />
                     ) : isDown ? (
-                      <ArrowDownRight className="w-3 h-3 stroke-[2.5]" />
+                      <ArrowDownRight className="w-3.5 h-3.5 stroke-[2.5]" />
                     ) : (
-                      <Minus className="w-2.5 h-2.5 stroke-[2.5]" />
+                      <Minus className="w-3 h-3 stroke-[2.5]" />
                     )}
                     <span>{changeFormatted}</span>
                   </span>
@@ -132,10 +136,10 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
 
               <button
                 onClick={onOpenSavedDrawer}
-                className="p-2 rounded-full bg-[#EBEBEF] active:bg-slate-300 border border-slate-200/80 text-slate-800 relative transition-all cursor-pointer min-h-[38px] min-w-[38px] flex items-center justify-center"
+                className="p-2.5 rounded-full bg-[#EBEBEF] active:bg-slate-300 border border-slate-200/80 text-slate-800 relative transition-all cursor-pointer min-h-[42px] min-w-[42px] flex items-center justify-center shrink-0"
                 title="Saved Bookmarks"
               >
-                <Bookmark className="w-4 h-4 text-[#FA2D48]" />
+                <Bookmark className="w-4.5 h-4.5 text-[#FA2D48]" />
                 {savedCount > 0 && (
                   <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#FA2D48] text-white font-bold text-[10px] flex items-center justify-center shadow-xs">
                     {savedCount}
