@@ -494,33 +494,35 @@ export function App() {
         </div>
       )}
 
-      {/* Main Apple News Navigation Header */}
-      <AppleNewsHeader
-        currentCity={currentCity}
-        onOpenCitySelector={() => {
-          setSelectedArticle(null);
-          setIsCitySelectorOpen(true);
-        }}
-        onSelectCity={(city) => {
-          setSelectedArticle(null);
-          setCurrentCity(city);
-        }}
-        activeCategory={activeCategory}
-        onSelectCategory={(cat) => {
-          setSelectedArticle(null);
-          setActiveCategory(cat);
-        }}
-        savedCount={bookmarkedIds.size}
-        onOpenSavedDrawer={() => setIsSavedDrawerOpen(true)}
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
-        onResetToMain={handleResetToMain}
-        fredRate={liveRates?.mortgage30Year}
-        asOfDate={liveRates?.asOfDate}
-        onOpenManager={() => setIsManagerModalOpen(true)}
-        onOpenNewsManager={() => setIsNewsManagerOpen(true)}
-        isMonetizationEnabled={isMonetizationEnabled}
-      />
+      {/* Main Apple News Navigation Header (Hidden on article page) */}
+      {!selectedArticle && (
+        <AppleNewsHeader
+          currentCity={currentCity}
+          onOpenCitySelector={() => {
+            setSelectedArticle(null);
+            setIsCitySelectorOpen(true);
+          }}
+          onSelectCity={(city) => {
+            setSelectedArticle(null);
+            setCurrentCity(city);
+          }}
+          activeCategory={activeCategory}
+          onSelectCategory={(cat) => {
+            setSelectedArticle(null);
+            setActiveCategory(cat);
+          }}
+          savedCount={bookmarkedIds.size}
+          onOpenSavedDrawer={() => setIsSavedDrawerOpen(true)}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          onResetToMain={handleResetToMain}
+          fredRate={liveRates?.mortgage30Year}
+          asOfDate={liveRates?.asOfDate}
+          onOpenManager={() => setIsManagerModalOpen(true)}
+          onOpenNewsManager={() => setIsNewsManagerOpen(true)}
+          isMonetizationEnabled={isMonetizationEnabled}
+        />
+      )}
 
       {/* Main Layout Content */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-3.5 sm:px-6 lg:px-8 py-3 sm:py-6 space-y-6 sm:space-y-8 pb-28 sm:pb-12">
