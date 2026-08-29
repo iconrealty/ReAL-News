@@ -191,21 +191,52 @@ export function getDirectStoryUrl(article: {
   // 1. If this article is from a live public RSS feed (with a real live article link)
   if (article.isLivePublicRss && article.sourceUrl && (article.sourceUrl.startsWith('http://') || article.sourceUrl.startsWith('https://'))) {
     const trimmed = article.sourceUrl.trim();
-    // Verify it is an actual article link and not a generic homepage
     if (trimmed !== 'https://news.google.com' && trimmed !== 'https://www.mortgagenewsdaily.com') {
       return trimmed;
     }
   }
 
-  // 2. Build targeted Google search query for the headline + publisher/city
-  // &igu=1 allows Google search to render inside in-app frames seamlessly
-  const cleanTitle = article.title
-    ? article.title.replace(/\s*\([^)]*(\.com|\.gov|\.org|\.net|\.edu|http|www|\.io|\.ca|\.us)[^)]*\)/gi, '').trim()
-    : '';
-  const publisherOrCity = article.publisher || article.cityName || '';
-  const query = [cleanTitle, publisherOrCity].filter(Boolean).join(' ');
+  // 2. If a clean, specific external source URL exists that isn't a dead subpath
+  if (article.sourceUrl && (article.sourceUrl.startsWith('http://') || article.sourceUrl.startsWith('https://'))) {
+    const trimmed = article.sourceUrl.trim();
+    // Valid specific URLs like reportsonhousing blog or direct MND articles
+    if (trimmed.includes('reportsonhousing.com') || trimmed.includes('mortgagenewsdaily.com/news') || trimmed.includes('mortgagenewsdaily.com/mbs')) {
+      return trimmed;
+    }
+  }
 
-  return `https://www.google.com/search?q=${encodeURIComponent(query || cleanTitle || 'Orange County Real Estate News')}&igu=1`;
+  // 3. Build a high-precision, highly specific Google Search query
+  // Clean headline: remove brackets, source tags like (Orange County Register), file extensions
+  let cleanTitle = (article.title || '')
+    .replace(/\s*\([^)]*\)/gi, '') // remove parenthetical source notes
+    .replace(/[:"“”'’]/g, ' ') // remove problematic quotes
+    .replace(/[^\w\s\-$]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  // Extract core keywords from title (first 8 key words to avoid over-constraining)
+  const titleWords = cleanTitle.split(' ').filter(w => w.length > 2);
+  const coreHeadline = titleWords.slice(0, 8).join(' ');
+
+  // Extract clean publisher / entity name
+  let entity = '';
+  if (article.publisher) {
+    entity = article.publisher
+      .replace(/\s*\([^)]*\)/gi, '')
+      .replace(/Official Government Site|News Wire|News/gi, '')
+      .trim();
+  }
+  
+  const city = article.cityName && article.cityName !== 'Orange County' ? `${article.cityName} California` : 'Orange County';
+  
+  // Combine core headline with city and entity
+  const searchTerms = [coreHeadline, entity, city]
+    .filter(Boolean)
+    .join(' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  return `https://www.google.com/search?q=${encodeURIComponent(searchTerms || cleanTitle || 'Orange County Real Estate News')}`;
 }
 
 
