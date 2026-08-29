@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { NewsArticle, AdBanner, getCityRootUrl } from '../types';
+import { NewsArticle, AdBanner, getDirectStoryUrl } from '../types';
 import { ArrowLeft, Bookmark, MoreHorizontal, Globe, ExternalLink, Share2, Lock, RefreshCw } from 'lucide-react';
 import { AdBannerRenderer } from './AdBannerRenderer';
 
@@ -29,7 +29,7 @@ export const ArticleReaderPage: React.FC<ArticleReaderPageProps> = ({
   const [inAppSourceView, setInAppSourceView] = useState(false);
   const [iframeKey, setIframeKey] = useState(0);
 
-  const directUrl = article.sourceUrl || getCityRootUrl(article.cityName, article.sourceUrl);
+  const directUrl = getDirectStoryUrl(article);
   const publisherName = article.publisher || `${article.cityName} News Wire`;
 
   // Scroll to top when article changes or when entering in-app source view
@@ -217,44 +217,55 @@ export const ArticleReaderPage: React.FC<ArticleReaderPageProps> = ({
         </div>
       </div>
 
-      {/* Main Full-Page Article Reader Body or In-App Web View */}
-      <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-7 space-y-6">
+      {/* Main Article Reading Canvas - Clean, un-boxed, open magazine layout */}
+      <article className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
         
         {inAppSourceView ? (
-          /* In-App Direct Source Page View */
-          <div className="bg-white border border-slate-200/90 rounded-3xl p-4 sm:p-6 shadow-xs space-y-4">
+          /* In-App Direct Source Page View - Edge-to-Edge Clean Canvas */
+          <div className="space-y-4">
             
-            {/* In-App Browser Bar */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
-              <div className="flex items-center space-x-2 bg-slate-100 rounded-full px-3.5 py-1.5 text-xs text-slate-700 min-w-0 max-w-full truncate border border-slate-200">
+            {/* Top Browser Control Ribbon */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200">
+              <div className="flex items-center space-x-2 text-xs text-slate-700 min-w-0 max-w-full truncate">
                 <Lock className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                <span className="font-bold text-slate-900 shrink-0">{publisherName}</span>
+                <span className="font-semibold text-slate-900 shrink-0">{publisherName}</span>
                 <span className="text-slate-300 shrink-0">•</span>
                 <span className="text-slate-500 font-mono text-[11px] truncate">{directUrl}</span>
               </div>
 
-              <div className="flex items-center space-x-2 shrink-0">
+              <div className="flex items-center space-x-2 shrink-0 flex-wrap">
                 <button
                   onClick={() => setIframeKey((k) => k + 1)}
-                  className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-all cursor-pointer"
+                  className="inline-flex items-center space-x-1 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-all cursor-pointer"
                   title="Reload In-App Page"
                 >
                   <RefreshCw className="w-3.5 h-3.5" />
                   <span>Reload</span>
                 </button>
 
+                <a
+                  href={directUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center space-x-1 px-3 py-1.5 rounded-lg text-[#FA2D48] hover:bg-rose-50 text-xs font-bold transition-all cursor-pointer"
+                  title="Open Direct Story in New Tab"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                  <span>Open in Tab</span>
+                </a>
+
                 <button
                   onClick={() => setInAppSourceView(false)}
-                  className="inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-full bg-slate-900 text-white hover:bg-slate-800 text-xs font-bold transition-all cursor-pointer shadow-2xs"
+                  className="inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg bg-slate-900 text-white hover:bg-slate-800 text-xs font-bold transition-all cursor-pointer"
                 >
                   <ArrowLeft className="w-3.5 h-3.5" />
-                  <span>Return to Story</span>
+                  <span>Reader View</span>
                 </button>
               </div>
             </div>
 
-            {/* Embedded Source In-App View */}
-            <div className="w-full rounded-2xl overflow-hidden border border-slate-200 bg-slate-50 shadow-inner relative min-h-[600px] h-[78vh]">
+            {/* Embedded Source View - Full width without double card encapsulation */}
+            <div className="w-full rounded-xl overflow-hidden border border-slate-200 bg-slate-50 relative min-h-[640px] h-[82vh]">
               <iframe
                 key={iframeKey}
                 src={directUrl}
@@ -266,57 +277,48 @@ export const ArticleReaderPage: React.FC<ArticleReaderPageProps> = ({
             </div>
 
             {/* In-App Direct Browser Fallback Footer */}
-            <div className="pt-3 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+            <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500">
               <span className="font-medium text-center sm:text-left">
-                Viewing official direct webpage for <strong className="text-slate-900">{article.cityName}</strong> inside the app.
+                Viewing official direct source report for <strong className="text-slate-900">{cleanText(article.title)}</strong>.
               </span>
               <button
                 onClick={() => setInAppSourceView(false)}
                 className="text-[#FA2D48] hover:underline font-bold cursor-pointer"
               >
-                ← Back to Clean Reader View
+                ← Back to Clean Article View
               </button>
             </div>
 
           </div>
         ) : (
-          /* Standard Clean Article Reader Card */
-          <div className="bg-white border border-slate-200/90 rounded-3xl p-5 sm:p-8 lg:p-10 shadow-xs space-y-5">
+          /* Clean, Un-Tabbed, Natural Flow Article Layout */
+          <div className="space-y-6 sm:space-y-7">
             
-            {/* Metadata Row */}
-            <div className="flex items-center space-x-2.5 flex-wrap gap-y-2 text-xs font-semibold text-slate-500">
-              <span className="bg-[#FA2D48] text-white px-3 py-1 rounded-full font-black uppercase tracking-wider text-[11px] shadow-2xs">
-                {article.cityName}
+            {/* Clean Minimalist Byline & Source: Only the red font publisher name + timestamp */}
+            <div className="flex items-center space-x-2.5 text-xs font-semibold">
+              <span className="text-[#FA2D48] font-bold text-xs uppercase tracking-wider">
+                {publisherName}
               </span>
-              <span className="bg-slate-100 text-slate-700 px-3 py-1 rounded-full font-bold">
+              <span className="text-slate-300">•</span>
+              <span className="text-slate-500 font-normal">
                 {article.publishedAt}
               </span>
-              {article.publisher && (
-                <span className="bg-rose-50 text-[#FA2D48] px-3 py-1 rounded-full font-bold border border-rose-100">
-                  {article.publisher}
-                </span>
-              )}
-              {article.readTime && (
-                <span className="text-slate-400 font-medium pl-1">
-                  {article.readTime}
-                </span>
-              )}
             </div>
 
             {/* Headline Title */}
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-slate-950 tracking-tight leading-tight sm:leading-tight">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-[42px] font-black text-slate-950 tracking-tight leading-[1.18]">
               {cleanText(article.title)}
             </h1>
 
-            {/* Subtitle / Key Takeaways Callout */}
+            {/* Subtitle / Executive Summary (Clean italic quote without heavy pill card) */}
             {article.subtitle && (
-              <div className="border-l-4 border-[#FA2D48] bg-slate-50 p-4 sm:p-5 rounded-r-2xl text-slate-800 text-base sm:text-lg font-medium italic leading-relaxed">
+              <p className="text-base sm:text-lg text-slate-600 leading-relaxed italic border-l-2 border-[#FA2D48] pl-4 py-0.5">
                 {cleanText(article.subtitle)}
-              </div>
+              </p>
             )}
 
-            {/* Formatted Article Paragraphs */}
-            <div className={`prose max-w-none space-y-4 sm:space-y-5 text-slate-950 font-normal pt-2 ${bodyFontSizeClass[fontSize]}`}>
+            {/* Full Story Body Paragraphs - Natural typography directly on page */}
+            <div className={`space-y-5 text-slate-900 tracking-normal ${bodyFontSizeClass[fontSize]}`}>
               {article.content.split('\n\n').map((paragraph, idx) => (
                 <p key={idx} className="leading-relaxed">
                   {paragraph}
@@ -336,17 +338,17 @@ export const ArticleReaderPage: React.FC<ArticleReaderPageProps> = ({
               </div>
             )}
 
-            {/* Bottom Action Footer with Direct In-App Link */}
-            <div className="pt-6 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+            {/* Bottom Action Footer */}
+            <div className="pt-8 mt-8 border-t border-slate-200/90 flex flex-col sm:flex-row items-center justify-between gap-4">
               <button
                 onClick={onBack}
-                className="inline-flex items-center justify-center space-x-2 px-5 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs sm:text-sm font-bold transition-all active:scale-95 cursor-pointer w-full sm:w-auto"
+                className="inline-flex items-center justify-center space-x-2 px-4 py-2.5 rounded-lg text-slate-600 hover:text-slate-950 text-xs sm:text-sm font-semibold transition-all active:scale-95 cursor-pointer w-full sm:w-auto"
               >
                 <ArrowLeft className="w-4 h-4 text-[#FA2D48]" />
                 <span>Back to Stories</span>
               </button>
 
-              {/* Direct In-App Link (Opens direct source page in-app) */}
+              {/* Direct In-App Link Button */}
               <button
                 onClick={() => {
                   setInAppSourceView(true);
