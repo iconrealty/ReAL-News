@@ -12,7 +12,7 @@ import { OrangeCountyMarketTrends, getMarketCondition } from './components/Orang
 import { OCFastMarketReport } from './components/OCFastMarketReport';
 import { OCFastTopOverview } from './components/OCFastTopOverview';
 import { MortgageCalculator } from './components/MortgageCalculator';
-import { ArticleReaderModal } from './components/ArticleReaderModal';
+import { ArticleReaderPage } from './components/ArticleReaderPage';
 import { SavedArticlesDrawer } from './components/SavedArticlesDrawer';
 import { AdBannerRenderer } from './components/AdBannerRenderer';
 import { ManagerAdminModal } from './components/ManagerAdminModal';
@@ -497,10 +497,19 @@ export function App() {
       {/* Main Apple News Navigation Header */}
       <AppleNewsHeader
         currentCity={currentCity}
-        onOpenCitySelector={() => setIsCitySelectorOpen(true)}
-        onSelectCity={setCurrentCity}
+        onOpenCitySelector={() => {
+          setSelectedArticle(null);
+          setIsCitySelectorOpen(true);
+        }}
+        onSelectCity={(city) => {
+          setSelectedArticle(null);
+          setCurrentCity(city);
+        }}
         activeCategory={activeCategory}
-        onSelectCategory={setActiveCategory}
+        onSelectCategory={(cat) => {
+          setSelectedArticle(null);
+          setActiveCategory(cat);
+        }}
         savedCount={bookmarkedIds.size}
         onOpenSavedDrawer={() => setIsSavedDrawerOpen(true)}
         searchQuery={searchQuery}
@@ -515,15 +524,29 @@ export function App() {
 
       {/* Main Layout Content */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-3.5 sm:px-6 lg:px-8 py-3 sm:py-6 space-y-6 sm:space-y-8 pb-28 sm:pb-12">
-        
-        {/* Top Leaderboard Spread Banner - Prominently Displayed on ALL Devices (Mobile, Tablet, Desktop) */}
-        <AdBannerRenderer
-          placement="header-banner"
-          ads={ads}
-          cityName={currentCity.name}
-          monetizationEnabled={isMonetizationEnabled}
-          onOpenManager={() => setIsManagerModalOpen(true)}
-        />
+        {selectedArticle ? (
+          <ArticleReaderPage
+            article={selectedArticle}
+            onBack={() => {
+              setSelectedArticle(null);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            isBookmarked={bookmarkedIds.has(selectedArticle.id)}
+            onToggleBookmark={toggleBookmark}
+            onShowToast={showToast}
+            ads={ads}
+            monetizationEnabled={isMonetizationEnabled}
+          />
+        ) : (
+          <>
+            {/* Top Leaderboard Spread Banner - Prominently Displayed on ALL Devices (Mobile, Tablet, Desktop) */}
+            <AdBannerRenderer
+              placement="header-banner"
+              ads={ads}
+              cityName={currentCity.name}
+              monetizationEnabled={isMonetizationEnabled}
+              onOpenManager={() => setIsManagerModalOpen(true)}
+            />
 
         {/* Category Views */}
         {activeCategory === 'mortgage-calculator' ? (
@@ -970,19 +993,9 @@ export function App() {
             )}
           </>
         )}
-
+          </>
+        )}
       </main>
-
-      {/* Apple News Reader Modal */}
-      <ArticleReaderModal
-        article={selectedArticle}
-        onClose={() => setSelectedArticle(null)}
-        isBookmarked={selectedArticle ? bookmarkedIds.has(selectedArticle.id) : false}
-        onToggleBookmark={toggleBookmark}
-        onShowToast={showToast}
-        ads={ads}
-        monetizationEnabled={isMonetizationEnabled}
-      />
 
       {/* City Switcher Modal */}
       <CitySelectorModal
@@ -990,10 +1003,12 @@ export function App() {
         onClose={() => setIsCitySelectorOpen(false)}
         currentCity={currentCity}
         onSelectCity={(city) => {
+          setSelectedArticle(null);
           setCurrentCity(city);
           showToast(`Switched to ${city.name} edition`);
         }}
         onViewMarketTrends={(city) => {
+          setSelectedArticle(null);
           setCurrentCity(city);
           setActiveCategory('market-trends');
           showToast(`Opened ${city.name} Market Trends`);
@@ -1005,7 +1020,10 @@ export function App() {
         isOpen={isSavedDrawerOpen}
         onClose={() => setIsSavedDrawerOpen(false)}
         savedArticles={savedArticlesList}
-        onSelectArticle={setSelectedArticle}
+        onSelectArticle={(article) => {
+          setSelectedArticle(article);
+          window.scrollTo({ top: 0, behavior: 'instant' });
+        }}
         onRemoveBookmark={toggleBookmark}
         onClearAll={() => {
           setBookmarkedIds(new Set());
@@ -1037,9 +1055,15 @@ export function App() {
       {/* Mobile Bottom Navigation Bar */}
       <MobileBottomNav
         currentCity={currentCity}
-        onOpenCitySelector={() => setIsCitySelectorOpen(true)}
+        onOpenCitySelector={() => {
+          setSelectedArticle(null);
+          setIsCitySelectorOpen(true);
+        }}
         activeCategory={activeCategory}
-        onSelectCategory={setActiveCategory}
+        onSelectCategory={(cat) => {
+          setSelectedArticle(null);
+          setActiveCategory(cat);
+        }}
         savedCount={bookmarkedIds.size}
         onOpenSavedDrawer={() => setIsSavedDrawerOpen(true)}
         onResetToMain={handleResetToMain}
