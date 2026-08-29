@@ -1,5 +1,6 @@
 export type NewsCategory = 
   | 'all' 
+  | 'mortgage-news'
   | 'market-trends'
   | 'oc-fast'
   | 'mortgage-calculator'
@@ -57,6 +58,7 @@ export interface NewsArticle {
   sourceUrl?: string;
   sourceCitation?: string;
   isLiveAi?: boolean;
+  isLivePublicRss?: boolean;
 }
 
 export type AdCategory = 
