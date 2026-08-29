@@ -207,13 +207,6 @@ export const OCFastTopOverview: React.FC<OCFastTopOverviewProps> = ({
       <div className="bg-white rounded-3xl border border-slate-200/90 p-5 sm:p-7 shadow-xs space-y-5">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
           <div className="flex items-center space-x-2.5 flex-wrap gap-y-2">
-            <span className="text-sm font-black uppercase tracking-wider text-black font-sans">
-              {propertyType === 'all'
-                ? 'Combined Market Indicators • All Properties OC'
-                : propertyType === 'detached'
-                  ? 'Detached Single-Family Market Indicators'
-                  : 'Attached Condominiums Market Indicators'}
-            </span>
             <span className="text-xs font-black uppercase tracking-wider px-3.5 py-1 rounded-full bg-[#FA2D48] text-white shadow-xs">
               {propertyType === 'all' ? 'Combined (All Properties)' : propertyType === 'detached' ? 'Detached SFH' : 'Attached Condos'}
             </span>
