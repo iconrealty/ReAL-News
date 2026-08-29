@@ -304,16 +304,32 @@ export function App() {
   // Filter articles based on city, category, and search query
   const filteredArticles = useMemo(() => {
     const q = searchQuery.toLowerCase().trim();
+
+    // 1. Main Page ("Top Stories" / "all") & "Mortgage Daily News":
+    // Exclusively showcase Mortgage News Daily (MND) wire stories
+    if (activeCategory === 'all' || activeCategory === 'mortgage-news') {
+      let mndList = articles.filter(art => art.category === 'mortgage-news' || art.publisher === 'Mortgage News Daily');
+      
+      if (q) {
+        mndList = mndList.filter(art => 
+          art.title.toLowerCase().includes(q) ||
+          art.subtitle.toLowerCase().includes(q) ||
+          art.publisher.toLowerCase().includes(q)
+        );
+      }
+
+      if (mndList.length > 0) {
+        return deduplicateArticles(mndList);
+      }
+    }
+
+    // 2. Local Orange County & Municipal News Pages (Orange County News, Team News, Dining):
     const isOrangeCountyAll = currentCity.id === 'orange-county';
     const cName = currentCity.name.toLowerCase().trim();
 
-    // Match articles to current city or countywide
     let matched = articles;
     if (!isOrangeCountyAll) {
       matched = articles.filter(art => {
-        // MND national wire articles are always included on main feed
-        if (art.category === 'mortgage-news' || art.publisher === 'Mortgage News Daily') return true;
-
         const artCity = (art.cityName || '').toLowerCase().trim();
         const artTitle = (art.title || '').toLowerCase();
         const artSub = (art.subtitle || '').toLowerCase();
@@ -331,14 +347,11 @@ export function App() {
       });
     }
 
-    // Category & Search query filtering
+    // Category & Search query filtering for local pages
     let finalFiltered = matched.filter(art => {
       let matchesCat = false;
-      if (activeCategory === 'all') {
-        // Main page displays ALL stories: MND live market wire + all local OC news & updates
-        matchesCat = true;
-      } else if (activeCategory === 'real-estate') {
-        // "Orange County News" page: show all local Orange County news
+      if (activeCategory === 'real-estate') {
+        // "Orange County News" page: show all local Orange County news (exclude national mortgage wire)
         matchesCat = art.category !== 'mortgage-news' && art.publisher !== 'Mortgage News Daily';
       } else {
         matchesCat = art.category === activeCategory;
@@ -880,8 +893,8 @@ export function App() {
               />
             )}
 
-            {/* Section 1: Real Estate & Housing Market */}
-            {realEstateArticles.length > 0 && (activeCategory === 'all' || activeCategory === 'real-estate') && (
+            {/* Section 1: Real Estate & Housing Market (Shown exclusively on 'Orange County News' tab) */}
+            {realEstateArticles.length > 0 && activeCategory === 'real-estate' && (
               <NewsGridSection
                 title={`Real Estate & Housing in ${currentCity.name}`}
                 icon={<Building2 className="w-5 h-5 text-amber-600" />}
@@ -900,8 +913,8 @@ export function App() {
               />
             )}
 
-            {/* Section 2: Team News & Events */}
-            {teamAndEventArticles.length > 0 && (activeCategory === 'all' || activeCategory === 'real-estate' || activeCategory === 'team-news') && (
+            {/* Section 2: Team News & Events (Shown on 'Team News & Events' tab or 'Orange County News' tab) */}
+            {teamAndEventArticles.length > 0 && (activeCategory === 'team-news' || activeCategory === 'real-estate') && (
               <NewsGridSection
                 title={`Team News, Brokerage Updates & Local Events`}
                 icon={<Users className="w-5 h-5 text-indigo-600" />}
@@ -912,8 +925,8 @@ export function App() {
               />
             )}
 
-            {/* Section 3: Hot New Restaurant & Bar Openings */}
-            {diningArticles.length > 0 && (activeCategory === 'all' || activeCategory === 'real-estate' || activeCategory === 'restaurants-bars') && (
+            {/* Section 3: Hot New Restaurant & Bar Openings (Shown on 'New Restaurants & Bars' tab or 'Orange County News' tab) */}
+            {diningArticles.length > 0 && (activeCategory === 'restaurants-bars' || activeCategory === 'real-estate') && (
               <NewsGridSection
                 title={`New Restaurant & Bar Debuts in ${currentCity.name}`}
                 icon={<Utensils className="w-5 h-5 text-emerald-600" />}
@@ -924,8 +937,8 @@ export function App() {
               />
             )}
 
-            {/* Section 4: Other Local Coverage */}
-            {otherArticles.length > 0 && (activeCategory === 'all' || activeCategory === 'real-estate') && (
+            {/* Section 4: Other Local Coverage (Shown on 'Orange County News' tab) */}
+            {otherArticles.length > 0 && activeCategory === 'real-estate' && (
               <NewsGridSection
                 title={`More Local Updates in ${currentCity.name}`}
                 icon={<Sparkles className="w-5 h-5 text-[#FA2D48]" />}
