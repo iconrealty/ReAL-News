@@ -174,16 +174,33 @@ export const ArticleReaderModal: React.FC<ArticleReaderModalProps> = ({
           <div className="space-y-3 sm:space-y-4">
             <div className="flex items-center space-x-2 flex-wrap gap-2 text-xs font-semibold text-slate-500">
               <span className="bg-slate-100 text-slate-700 px-2.5 py-1 rounded-full font-bold">{article.publishedAt}</span>
+              {article.publisher && (
+                <span className="bg-rose-50 text-[#FA2D48] px-2.5 py-1 rounded-full font-bold">{article.publisher}</span>
+              )}
             </div>
 
             <h1 className="text-xl sm:text-3xl lg:text-4xl font-black text-slate-950 tracking-tight leading-tight sm:leading-tight">
               {cleanText(article.title)}
             </h1>
 
-            <p className="text-sm sm:text-lg text-slate-950 leading-relaxed border-l-4 border-[#FA2D48] pl-3.5 py-1 font-bold italic bg-slate-50/50 rounded-r-xl">
-              {cleanText(article.subtitle)}
-            </p>
+            {article.subtitle && (
+              <p className="text-sm sm:text-lg text-slate-950 leading-relaxed border-l-4 border-[#FA2D48] pl-3.5 py-1 font-bold italic bg-slate-50/50 rounded-r-xl">
+                {cleanText(article.subtitle)}
+              </p>
+            )}
           </div>
+
+          {/* Hero Image */}
+          {article.heroImage && (
+            <div className="overflow-hidden rounded-2xl border border-slate-200/80 bg-slate-100 shadow-sm">
+              <img
+                src={article.heroImage}
+                alt={cleanText(article.title)}
+                className="w-full max-h-72 sm:max-h-96 object-cover"
+                referrerPolicy="no-referrer"
+              />
+            </div>
+          )}
 
           {/* Article Paragraph Text with Dynamic Font Size */}
           <div className={`prose max-w-none space-y-3.5 sm:space-y-4 text-slate-950 font-medium ${bodyFontSizeClass[fontSize]}`}>

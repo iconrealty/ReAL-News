@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { MapPin, ChevronDown, TrendingUp, Clock, Tag, Building, Search, ArrowUpDown, ShieldCheck, AlertCircle, Home, Layers, Check, RefreshCw, Calendar, Sparkles } from 'lucide-react';
+import { MapPin, ChevronDown, TrendingUp, Clock, Tag, Building, Search, ArrowUpDown, ShieldCheck, AlertCircle, Home, Layers, Check, RefreshCw, Calendar, Sparkles, ArrowUpRight, ArrowDownRight, Minus } from 'lucide-react';
 import { CityInfo, AdBanner, LiveMortgageRates } from '../types';
 import { AdBannerRenderer } from './AdBannerRenderer';
 import {
@@ -758,6 +758,47 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                           15-Yr: {liveRates?.mortgage15Year || '6.35%'}
                         </span>
                       </div>
+
+                      {/* 7 Days Ago Comparison */}
+                      <div className="flex items-center gap-2 pt-1.5">
+                        <span className="text-[11px] text-slate-500 font-medium">
+                          7d ago: <span className="font-semibold text-slate-700">{liveRates?.sevenDaysAgoRate || '6.89%'}</span>
+                        </span>
+                        {(() => {
+                          const change = liveRates?.sevenDaysChange ?? -0.08;
+                          const isUp = change > 0;
+                          const isDown = change < 0;
+                          return (
+                            <span 
+                              className={`inline-flex items-center gap-0.5 text-[10px] font-extrabold px-1.5 py-0.5 rounded-md ${
+                                isUp 
+                                  ? 'bg-emerald-50 text-emerald-600 border border-emerald-200/80' 
+                                  : isDown 
+                                  ? 'bg-rose-50 text-rose-600 border border-rose-200/80' 
+                                  : 'bg-slate-100 text-slate-600'
+                              }`}
+                            >
+                              {isUp ? (
+                                <>
+                                  <ArrowUpRight className="w-3 h-3 stroke-[2.5]" />
+                                  <span>+{change.toFixed(2)}%</span>
+                                </>
+                              ) : isDown ? (
+                                <>
+                                  <ArrowDownRight className="w-3 h-3 stroke-[2.5]" />
+                                  <span>{change.toFixed(2)}%</span>
+                                </>
+                              ) : (
+                                <>
+                                  <Minus className="w-2.5 h-2.5 stroke-[2.5]" />
+                                  <span>0.00%</span>
+                                </>
+                              )}
+                            </span>
+                          );
+                        })()}
+                      </div>
+
                       <div className="flex flex-wrap items-center gap-1.5 pt-2">
                         {liveRates?.jumbo30Year && (
                           <span className="text-[10px] font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md">

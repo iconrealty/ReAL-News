@@ -87,6 +87,8 @@ export function App() {
     jumbo30Year: '6.90%',
     fha30Year: '6.37%',
     va30Year: '6.37%',
+    sevenDaysAgoRate: '6.89%',
+    sevenDaysChange: -0.08,
     sourceType: 'MORTGAGE_NEWS_DAILY',
     isRealLiveRate: true
   });
@@ -208,12 +210,11 @@ export function App() {
     setSelectedArticle(null);
     setIsCitySelectorOpen(false);
     setIsSavedDrawerOpen(false);
-    window.scrollTo({ top: 0, behavior: 'instant' });
-    
-    // Force a complete browser refresh with timestamp cache-buster to fetch new app versions on mobile & desktop
-    const origin = window.location.origin;
-    const pathname = window.location.pathname;
-    window.location.href = `${origin}${pathname}?refresh=${Date.now()}`;
+    setArticles(INITIAL_ARTICLES);
+    fetchMndNews();
+    fetchLiveRates();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    showToast('Feed refreshed & reset to Top Stories');
   };
 
   // Sync bookmarks to localStorage
@@ -508,6 +509,8 @@ export function App() {
         onSearchChange={setSearchQuery}
         onResetToMain={handleResetToMain}
         fredRate={liveRates?.mortgage30Year}
+        sevenDaysAgoRate={liveRates?.sevenDaysAgoRate}
+        sevenDaysChange={liveRates?.sevenDaysChange}
         asOfDate={liveRates?.asOfDate}
         onOpenManager={() => setIsManagerModalOpen(true)}
         onOpenNewsManager={() => setIsNewsManagerOpen(true)}

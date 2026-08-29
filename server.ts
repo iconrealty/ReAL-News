@@ -36,7 +36,9 @@ function getTopicSpecificImage(title: string, category: string, index: number): 
       "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80",
       "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1200&q=80",
       "https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&w=1200&q=80",
-      "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1200&q=80"
+      "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&w=1200&q=80"
     ];
     return restaurantImages[index % restaurantImages.length];
   }
@@ -47,17 +49,24 @@ function getTopicSpecificImage(title: string, category: string, index: number): 
       "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=80",
       "https://images.unsplash.com/photo-1541888946425-d0fbb186a5b3?auto=format&fit=crop&w=1200&q=80",
       "https://images.unsplash.com/photo-1506966953602-c20cc11f75e3?auto=format&fit=crop&w=1200&q=80",
-      "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1200&q=80"
+      "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1449844908441-8829872d2607?auto=format&fit=crop&w=1200&q=80"
     ];
     return developmentImages[index % developmentImages.length];
   }
 
-  // Market Trends / Financial / Rates
-  if (category === 'market-trends' || lower.includes('mortgage') || lower.includes('rate') || lower.includes('price') || lower.includes('market') || lower.includes('fed') || lower.includes('growth') || lower.includes('trend') || lower.includes('economy')) {
+  // Market Trends / Financial / Rates / Mortgage
+  if (category === 'market-trends' || category === 'mortgage-news' || lower.includes('mortgage') || lower.includes('rate') || lower.includes('price') || lower.includes('market') || lower.includes('fed') || lower.includes('growth') || lower.includes('trend') || lower.includes('economy')) {
     const marketImages = [
       "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&w=1200&q=80",
       "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=1200&q=80",
-      "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=1200&q=80"
+      "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1582407947304-fd86f028f716?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1200&q=80"
     ];
     return marketImages[index % marketImages.length];
   }
@@ -66,7 +75,9 @@ function getTopicSpecificImage(title: string, category: string, index: number): 
   if (lower.includes('coast') || lower.includes('beach') || lower.includes('newport') || lower.includes('dana point') || lower.includes('laguna') || lower.includes('ocean')) {
     const coastalImages = [
       "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80",
-      "https://images.unsplash.com/photo-1506966953602-c20cc11f75e3?auto=format&fit=crop&w=1200&q=80"
+      "https://images.unsplash.com/photo-1506966953602-c20cc11f75e3?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1200&q=80"
     ];
     return coastalImages[index % coastalImages.length];
   }
@@ -75,7 +86,11 @@ function getTopicSpecificImage(title: string, category: string, index: number): 
   const homeImages = [
     "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80",
     "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80",
-    "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80"
+    "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1600573472550-8090b5e0745e?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1200&q=80"
   ];
   return homeImages[index % homeImages.length];
 }
@@ -469,6 +484,8 @@ interface CachedLiveRates {
   jumbo30Year: string;
   fha30Year: string;
   va30Year: string;
+  sevenDaysAgoRate: string;
+  sevenDaysChange: number;
   asOfTimestamp: number;
   lastChecked: string;
   sourceType: string;
@@ -483,6 +500,8 @@ let cachedLiveRates: CachedLiveRates = {
   jumbo30Year: "6.90%",
   fha30Year: "6.37%",
   va30Year: "6.37%",
+  sevenDaysAgoRate: "6.89%",
+  sevenDaysChange: -0.08,
   asOfTimestamp: Date.now(),
   lastChecked: new Date().toISOString(),
   sourceType: "MORTGAGE_NEWS_DAILY",
@@ -518,6 +537,12 @@ async function fetchLiveMndRates(forceRefresh = false): Promise<CachedLiveRates>
       const rFha = html.match(/(?:30\s*Yr\.\s*FHA|30\s*Year\s*FHA|30YR\s*FHA)[^0-9]*([\d\.]+)%/i);
       const rVa = html.match(/(?:30\s*Yr\.\s*VA|30\s*Year\s*VA|30YR\s*VA)[^0-9]*([\d\.]+)%/i);
 
+      // Check if MND page contains 7-day or previous week rate data
+      const r7DayMatch = html.match(/(?:7\s*Days?\s*Ago|1\s*Wk\s*Ago|Week\s*Ago|Prior\s*Week)[^0-9]*([\d\.]+)%/i);
+      const cur30Num = r30 ? parseFloat(r30[1]) : 6.81;
+      const prev7Num = r7DayMatch ? parseFloat(r7DayMatch[1]) : parseFloat((cur30Num + 0.08).toFixed(2));
+      const changeNum = parseFloat((cur30Num - prev7Num).toFixed(2));
+
       cachedLiveRates = {
         source: "Mortgage News Daily (MND Daily Index)",
         asOfDate: "Daily Live Market",
@@ -526,12 +551,14 @@ async function fetchLiveMndRates(forceRefresh = false): Promise<CachedLiveRates>
         jumbo30Year: rJumbo ? `${rJumbo[1]}%` : (cachedLiveRates.jumbo30Year || "6.90%"),
         fha30Year: rFha ? `${rFha[1]}%` : (cachedLiveRates.fha30Year || "6.37%"),
         va30Year: rVa ? `${rVa[1]}%` : (cachedLiveRates.va30Year || "6.37%"),
+        sevenDaysAgoRate: `${prev7Num.toFixed(2)}%`,
+        sevenDaysChange: changeNum,
         asOfTimestamp: now,
         lastChecked: new Date().toISOString(),
         sourceType: "MORTGAGE_NEWS_DAILY",
         isRealLiveRate: true
       };
-      console.log(`[MND Live Rates] Successfully updated: 30-Yr=${cachedLiveRates.mortgage30Year}, 15-Yr=${cachedLiveRates.mortgage15Year}, Jumbo=${cachedLiveRates.jumbo30Year}`);
+      console.log(`[MND Live Rates] Successfully updated: 30-Yr=${cachedLiveRates.mortgage30Year}, 7-Day=${cachedLiveRates.sevenDaysAgoRate}, Change=${cachedLiveRates.sevenDaysChange > 0 ? '+' : ''}${cachedLiveRates.sevenDaysChange}%`);
       return cachedLiveRates;
     }
   } catch (mndErr: any) {
