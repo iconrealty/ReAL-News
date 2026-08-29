@@ -31,12 +31,6 @@ export const FeaturedHeroStory: React.FC<FeaturedHeroStoryProps> = ({
           <h2 className="text-base sm:text-lg md:text-xl font-black text-slate-950 tracking-tight leading-snug group-hover:text-[#FA2D48] transition-colors line-clamp-3">
             {cleanText(article.title)}
           </h2>
-
-          {article.subtitle && (
-            <p className="text-xs sm:text-sm text-slate-600 line-clamp-2 leading-relaxed font-normal">
-              {cleanText(article.subtitle)}
-            </p>
-          )}
         </div>
 
         <div className="flex items-center space-x-2 pt-1 text-xs font-bold text-[#FA2D48]">
