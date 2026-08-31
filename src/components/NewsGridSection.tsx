@@ -39,44 +39,38 @@ export const NewsGridSection: React.FC<NewsGridSectionProps> = ({
             <div
               key={article.id}
               onClick={() => onSelectArticle(article)}
-              className="group bg-white border border-slate-200/90 hover:border-slate-300 rounded-2xl overflow-hidden shadow-2xs hover:shadow-md transition-all duration-200 flex items-stretch justify-between cursor-pointer hover:-translate-y-0.5 text-slate-900"
+              className="group bg-white border border-slate-200/90 hover:border-slate-300 rounded-2xl p-4 sm:p-5 shadow-2xs hover:shadow-md transition-all duration-200 flex flex-col justify-between cursor-pointer hover:-translate-y-0.5 text-slate-900 min-h-[140px]"
             >
               {/* Content: City tag, Title, Published Time */}
-              <div className="flex-1 min-w-0 p-4 sm:p-4.5 flex flex-col justify-between space-y-2">
-                <div className="space-y-1.5">
-                  <div className="flex items-center space-x-2 text-[11px] font-bold text-slate-500">
-                    <span className="text-[#FA2D48] font-black uppercase tracking-wider truncate">
-                      {article.cityName}
-                    </span>
-                    <span>•</span>
-                    <span className="text-slate-400 font-medium truncate">{article.publishedAt}</span>
-                  </div>
-
-                  {/* Title */}
-                  <h4 className="text-sm sm:text-[15px] font-bold text-slate-950 group-hover:text-[#FA2D48] transition-colors leading-snug line-clamp-3">
-                    {cleanText(article.title)}
-                  </h4>
+              <div className="space-y-2">
+                <div className="flex items-center space-x-2 text-[11px] font-bold text-slate-500">
+                  <span className="text-[#FA2D48] font-black uppercase tracking-wider truncate">
+                    {article.cityName}
+                  </span>
+                  <span>•</span>
+                  <span className="text-slate-400 font-medium truncate">{article.publishedAt}</span>
                 </div>
 
-                {article.readTime && (
-                  <div className="text-[11px] text-slate-400 font-medium pt-1">
-                    {article.readTime}
-                  </div>
+                {/* Title */}
+                <h4 className="text-sm sm:text-[15px] font-bold text-slate-950 group-hover:text-[#FA2D48] transition-colors leading-snug line-clamp-3">
+                  {cleanText(article.title)}
+                </h4>
+
+                {article.subtitle && (
+                  <p className="text-xs text-slate-600 font-medium line-clamp-2 leading-relaxed pt-0.5">
+                    {cleanText(article.subtitle)}
+                  </p>
                 )}
               </div>
 
-              {/* Big Frameless Side Image - Flush with card edges */}
-              {article.heroImage && (
-                <div className="w-32 sm:w-36 md:w-36 lg:w-40 shrink-0 relative overflow-hidden bg-slate-100 self-stretch min-h-[110px]">
-                  <img
-                    src={article.heroImage}
-                    alt={cleanText(article.title)}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    loading="lazy"
-                    referrerPolicy="no-referrer"
-                  />
-                </div>
-              )}
+              <div className="flex items-center justify-between pt-3 border-t border-slate-100 mt-2 text-[11px]">
+                <span className="text-[#FA2D48] font-bold">Read story →</span>
+                {article.readTime && (
+                  <span className="text-slate-400 font-medium">
+                    {article.readTime}
+                  </span>
+                )}
+              </div>
             </div>
           );
         })}

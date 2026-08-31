@@ -603,9 +603,9 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                     </div>
 
                     <div className="p-2">
-                      <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">Closed Resales</div>
+                      <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">Closed Sales</div>
                       <div className="text-2xl sm:text-3xl font-bold text-slate-900 pt-1">{soldData.unitsSold2026} Units</div>
-                      <div className="text-[11px] text-emerald-600 pt-1 font-bold">
+                      <div className={`text-[11px] pt-1 font-bold ${yoyUnitsChange < 0 ? 'text-[#FA2D48]' : 'text-emerald-600'}`}>
                         {yoyUnitsChange >= 0 ? `+${yoyUnitsChange}` : yoyUnitsChange} vs Prior Year ({soldData.unitsSold2025})
                       </div>
                     </div>
@@ -796,7 +796,7 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                   <p className="text-sm text-slate-700 font-normal mt-2 leading-snug">Across {OC_HOUSING_REPORT_METADATA.countywideActives.toLocaleString()} active listings in all 34 OC municipalities.</p>
                 </div>
                 <div className="bg-white border border-slate-200/90 rounded-3xl p-6 shadow-xs">
-                  <div className="text-xs font-sans uppercase tracking-widest text-black font-extrabold">August Report Closed Resales</div>
+                  <div className="text-xs font-sans uppercase tracking-widest text-black font-extrabold">August Report Closed Sales</div>
                   <div className="text-3xl font-black text-[#FA2D48] pt-1">1,994 Sales</div>
                   <p className="text-sm text-slate-700 font-normal mt-2 leading-snug">+9% compared to prior year (1,828 sales). Average 99.9% sales-to-list ratio.</p>
                 </div>
@@ -1087,7 +1087,7 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                 <div className="bg-white border border-slate-200/90 rounded-3xl p-5 sm:p-6 shadow-xs flex flex-col justify-between">
                   <div className="text-xs font-sans uppercase tracking-widest text-black font-extrabold">Countywide Median $/Sq.Ft.</div>
                   <div className="text-3xl sm:text-4xl font-black text-[#FA2D48] pt-1">$717 <span className="text-sm font-bold text-slate-500">/ sq.ft.</span></div>
-                  <p className="text-xs text-slate-600 font-medium mt-2">Across 1,994 closed resales countywide (August 2026 report).</p>
+                  <p className="text-xs text-slate-600 font-medium mt-2">Across 1,994 closed sales countywide (August 2026 report).</p>
                 </div>
 
                 <div className="bg-white border border-slate-200/90 rounded-3xl p-5 sm:p-6 shadow-xs flex flex-col justify-between">
@@ -1119,7 +1119,7 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                   <div>
                     <h3 className="text-xl sm:text-2xl font-black text-slate-950">Orange County Price Per Sq. Ft. by City</h3>
                     <p className="text-xs sm:text-sm text-slate-600 font-medium mt-0.5">
-                      Verified closed resale statistics for all Orange County municipalities from the August 2026 report.
+                      Verified closed sales statistics for all Orange County municipalities from the August 2026 report.
                     </p>
                   </div>
 
@@ -1308,7 +1308,7 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                 </div>
 
                 <p className="text-[11px] text-slate-500 italic">
-                  * Price per square foot and sales metric data sourced from verified closed escrow resales across all Orange County submarkets for the August 2026 report period. Click any city to view localized market trends.
+                  * Price per square foot and sales metric data sourced from verified closed escrow sales across all Orange County submarkets for the August 2026 report period. Click any city to view localized market trends.
                 </p>
               </div>
             </div>

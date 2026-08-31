@@ -14,7 +14,7 @@ import fs from "fs";
 import path from "path";
 import { INITIAL_ARTICLES } from "../data/mockNews.js";
 
-const RETENTION_DAYS = 14;
+const RETENTION_DAYS = 15;
 const RETENTION_MS = RETENTION_DAYS * 24 * 60 * 60 * 1000;
 
 const DEFAULT_FIREBASE_CONFIG = {
@@ -69,7 +69,8 @@ export function getDb() {
 }
 
 /**
- * Automatically prunes articles in Firestore that are older than 14 days.
+ * Automatically prunes articles in Firestore that are older than 15 days,
+ * as well as explicitly deprecated/removed stories.
  */
 export async function pruneOldArticles(): Promise<{ prunedCount: number; remainingCount: number }> {
   try {
@@ -88,8 +89,9 @@ export async function pruneOldArticles(): Promise<{ prunedCount: number; remaini
     snapshot.forEach((docSnap) => {
       const data = docSnap.data();
       const createdAtMs = data.createdAtMs || (data.publishedAtMs ? Number(data.publishedAtMs) : now);
+      const isCondoConundrum = docSnap.id === 'report-oc-condo-conundrum' || (data.title && data.title.toLowerCase().includes('condo conundrum'));
       
-      if (createdAtMs < cutoffMs) {
+      if (createdAtMs < cutoffMs || isCondoConundrum) {
         prunedCount++;
         deletePromises.push(deleteDoc(doc(db, "articles", docSnap.id)));
       } else {
@@ -99,7 +101,7 @@ export async function pruneOldArticles(): Promise<{ prunedCount: number; remaini
 
     await Promise.all(deletePromises);
     if (prunedCount > 0) {
-      console.log(`[Firebase Pruner] Pruned ${prunedCount} articles older than 14 days.`);
+      console.log(`[Firebase Pruner] Pruned ${prunedCount} articles (older than 15 days or deprecated).`);
     }
     return { prunedCount, remainingCount };
   } catch (error) {

@@ -248,48 +248,6 @@ export const OCFastMarketReport: React.FC<OCFastMarketReportProps> = ({
               Orange County Local Market Update
             </h1>
           </div>
-
-          {/* Clean Property Type Switcher with All Properties Support as separate minipills with horizontal scrolling */}
-          <div className="w-full md:w-auto overflow-x-auto pb-1 -mb-1 scrollbar-none">
-            <div className="flex items-center space-x-2 py-0.5 min-w-max">
-              <button
-                type="button"
-                onClick={() => handlePropertyTypeChange('all')}
-                className={`px-4 py-2 text-xs font-black rounded-full border transition-all cursor-pointer whitespace-nowrap flex items-center space-x-1.5 shrink-0 ${
-                  propertyType === 'all'
-                    ? 'bg-[#FA2D48] text-white border-[#FA2D48] shadow-sm'
-                    : 'bg-white text-slate-700 border-slate-200/90 hover:bg-slate-50 hover:text-slate-950 hover:border-slate-300'
-                }`}
-              >
-                <Layers className="w-3.5 h-3.5" />
-                <span>All Properties</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => handlePropertyTypeChange('detached')}
-                className={`px-4 py-2 text-xs font-black rounded-full border transition-all cursor-pointer whitespace-nowrap flex items-center space-x-1.5 shrink-0 ${
-                  propertyType === 'detached'
-                    ? 'bg-[#FA2D48] text-white border-[#FA2D48] shadow-sm'
-                    : 'bg-white text-slate-700 border-slate-200/90 hover:bg-slate-50 hover:text-slate-950 hover:border-slate-300'
-                }`}
-              >
-                <Home className="w-3.5 h-3.5" />
-                <span>Detached</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => handlePropertyTypeChange('attached')}
-                className={`px-4 py-2 text-xs font-black rounded-full border transition-all cursor-pointer whitespace-nowrap flex items-center space-x-1.5 shrink-0 ${
-                  propertyType === 'attached'
-                    ? 'bg-[#FA2D48] text-white border-[#FA2D48] shadow-sm'
-                    : 'bg-white text-slate-700 border-slate-200/90 hover:bg-slate-50 hover:text-slate-950 hover:border-slate-300'
-                }`}
-              >
-                <Building2 className="w-3.5 h-3.5" />
-                <span>Attached</span>
-              </button>
-            </div>
-          </div>
         </div>
       </div>
 
@@ -308,6 +266,7 @@ export const OCFastMarketReport: React.FC<OCFastMarketReportProps> = ({
           {OC_FAST_PAGE_1_DATA.snapshot.map((snap) => {
             const isSelected = propertyType === snap.propertyCategory;
             const isPositive = snap.type === 'positive';
+
             return (
               <button
                 key={snap.id}
@@ -315,12 +274,12 @@ export const OCFastMarketReport: React.FC<OCFastMarketReportProps> = ({
                 onClick={() => handlePropertyTypeChange(snap.propertyCategory)}
                 className={`text-left p-3 sm:p-4 md:p-5 rounded-2xl border transition-all cursor-pointer shadow-2xs relative flex flex-col justify-between space-y-2.5 sm:space-y-3 ${
                   isSelected
-                    ? 'bg-white border-[#FA2D48] shadow-md scale-[1.01]'
-                    : 'bg-white border-slate-200/90 hover:bg-slate-50/60 hover:border-black hover:shadow-xs'
+                    ? 'bg-white border-[#FA2D48] shadow-md scale-[1.01] ring-2 ring-[#FA2D48]/20'
+                    : 'bg-white border-slate-200/90 hover:bg-slate-50/60 hover:border-slate-400 hover:shadow-xs'
                 }`}
               >
                 {/* Top: Property Type Badge & Label */}
-                <div className="flex items-center justify-between gap-1">
+                <div className="flex items-center justify-between gap-1 flex-wrap">
                   <span className={`text-[9px] sm:text-[11px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md border truncate ${
                     isSelected
                       ? 'bg-[#FA2D48] text-white border-[#FA2D48]'
@@ -338,10 +297,10 @@ export const OCFastMarketReport: React.FC<OCFastMarketReportProps> = ({
                   {isPositive ? (
                     <ArrowUpRight className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 text-emerald-600 shrink-0" />
                   ) : (
-                    <ArrowDownRight className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 text-rose-600 shrink-0" />
+                    <ArrowDownRight className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 text-[#FA2D48] shrink-0" />
                   )}
                   <span className={`text-xl sm:text-3xl md:text-4xl font-black font-sans tracking-tight leading-none ${
-                    isPositive ? 'text-emerald-600' : 'text-rose-600'
+                    isPositive ? 'text-emerald-600' : 'text-[#FA2D48]'
                   }`}>
                     {snap.change}
                   </span>
@@ -358,8 +317,8 @@ export const OCFastMarketReport: React.FC<OCFastMarketReportProps> = ({
                     </span>
                   </div>
                   <div className="text-[9px] sm:text-[11px] font-mono shrink-0 flex items-center space-x-1">
-                    <span className="font-black text-black">Prior:</span>
-                    <span className={`font-black ${isPositive ? 'text-[#FA2D48]' : 'text-emerald-600'}`}>
+                    <span className="font-bold text-slate-500">Prior:</span>
+                    <span className="font-bold text-slate-800">
                       {snap.subtext.replace(/^.*:\s*/, '')}
                     </span>
                   </div>
@@ -465,19 +424,34 @@ export const OCFastMarketReport: React.FC<OCFastMarketReportProps> = ({
 
             <div className="pt-2.5 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
               <span className="text-black font-black text-[11px] uppercase tracking-wider">Market Condition:</span>
-              {propertyType === 'detached' ? (
-                <span className="inline-flex items-center px-3 py-1 rounded-lg text-xs font-black bg-[#FA2D48] text-white shadow-xs tracking-wide">
-                  Seller's Market (3.3 mos)
-                </span>
-              ) : propertyType === 'attached' ? (
-                <span className="inline-flex items-center px-3 py-1 rounded-lg text-xs font-black bg-amber-600 text-white shadow-xs tracking-wide">
-                  Seller's Market (4.2 mos)
-                </span>
-              ) : (
-                <span className="inline-flex items-center px-3 py-1 rounded-lg text-xs font-black bg-[#FA2D48] text-white shadow-xs tracking-wide">
-                  Seller's Market (3.6 mos)
-                </span>
-              )}
+              {(() => {
+                const mosVal = parseFloat(supplyMetric.july2026) || (propertyType === 'detached' ? 3.3 : propertyType === 'attached' ? 4.2 : 3.6);
+                let badgeClass = "bg-sky-600 text-white shadow-xs";
+                let conditionName = "Balanced Market";
+
+                if (mosVal < 3.0) {
+                  badgeClass = "bg-[#FA2D48] text-white shadow-xs";
+                  conditionName = "Hot Seller's";
+                } else if (mosVal < 4.0) {
+                  badgeClass = "bg-amber-500 text-white shadow-xs";
+                  conditionName = "Slight Seller's";
+                } else if (mosVal <= 6.0) {
+                  badgeClass = "bg-sky-600 text-white shadow-xs";
+                  conditionName = "Balanced Market";
+                } else if (mosVal <= 7.0) {
+                  badgeClass = "bg-emerald-600 text-white shadow-xs";
+                  conditionName = "Slight Buyer's";
+                } else {
+                  badgeClass = "bg-emerald-700 text-white shadow-xs";
+                  conditionName = "Buyer's Market";
+                }
+
+                return (
+                  <span className={`inline-flex items-center px-3 py-1 rounded-lg text-xs font-black tracking-wide ${badgeClass}`}>
+                    {conditionName} ({supplyMetric.july2026} mos)
+                  </span>
+                );
+              })()}
             </div>
           </div>
 

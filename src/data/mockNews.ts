@@ -461,44 +461,6 @@ export const INITIAL_ARTICLES: NewsArticle[] = [
     ],
     content: `Navigating entry into homeownership is made easier with current specialty lending programs. This guide details qualifying guidelines, credit score tiers, and income limit waivers available to prospective first-time homebuyers today.`
   },
-  // 1. ORANGE COUNTY HOUSING REPORT (The Condo Conundrum)
-  {
-    id: 'report-oc-condo-conundrum',
-    title: 'The Condo Conundrum: Orange County Housing Market Report (August 3, 2026)',
-    subtitle: 'Attached home inventory surges while detached single-family homes maintain momentum. Active listings reach 5,046 homes with 101 Days Expected Market Time.',
-    category: 'real-estate',
-    cityName: 'Orange County',
-    publisher: 'Reports On Housing (Steven Thomas)',
-    publisherLogo: '📊',
-    publishedAt: 'Today at 09:00 AM',
-    readTime: '6 min read',
-    heroImage: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
-    sourceUrl: 'https://www.reportsonhousing.com/blog/orange-county-housing-market-report',
-    sourceCitation: 'Reports On Housing Orange County Housing Report • August 3, 2026 Edition',
-    isBreaking: true,
-    isFeatured: true,
-    keyTakeaways: [
-      'Active listing inventory rose by 26 homes over the past two weeks to 5,046 active listings.',
-      'Demand (30-day pending sales) increased 1% to 1,494 pending escrows.',
-      'Expected market time countywide stands at 101 days (114 days for attached condos vs 93 days for detached).'
-    ],
-    content: `The Orange County housing market is adjusting to "The Condo Conundrum" as attached listing inventory surges while detached single-family homes maintain momentum across all 34 municipalities.
-
-According to the latest official market report published on August 3, 2026 by Steven Thomas of Reports On Housing, active listing inventory increased by 26 homes over the past two weeks to reach 5,046 active listings.
-
-Concurrently, 30-day demand—measured by new pending sales over the prior month—rose slightly to 1,494 pending escrows, marking the first increase in demand since early May.
-
-With supply and demand nearly balanced, countywide Expected Market Time sits at 101 days.
-
-Closed resales in the August report totaled 1,994 homes (+9% YoY) with a median sales price of $1,256,412 and a countywide 99.9% sales-to-list price ratio.`,
-    realEstateData: {
-      priceRange: '$1,300,000 Median',
-      avgSqftPrice: '$590 sqft',
-      neighborhood: 'Countywide Market Tiers',
-      trend: 'stable',
-      keyStat: '5,046 Active Listings • 101 Days Market Time'
-    }
-  },
   // 1. ORANGE COUNTY (Countywide Metro & Regional Government News)
   {
     id: 'gov-oc-board-1',

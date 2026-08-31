@@ -41,9 +41,9 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
 
   const categories: { id: NewsCategory; label: string }[] = [
     { id: 'all', label: 'Top Stories' },
+    { id: 'market-trends', label: 'Market Update' },
     { id: 'mortgage-calculator', label: 'Mortgage Calculator' },
     { id: 'real-estate', label: 'Orange County News' },
-    { id: 'market-trends', label: 'Steven Thomas' },
     { id: 'oc-fast', label: 'OC FastStats' },
     { id: 'team-news', label: 'Team News & Events' },
     { id: 'restaurants-bars', label: 'New Restaurants & Bars' },
@@ -164,10 +164,10 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
                     }
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                   }}
-                  className={`px-3.5 py-2 rounded-full text-xs font-semibold transition-all cursor-pointer shrink-0 active:scale-95 touch-manipulation min-h-[36px] flex items-center ${
+                  className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer shrink-0 active:scale-95 touch-manipulation min-h-[36px] flex items-center shadow-xs tracking-tight ${
                     isActive
-                      ? 'bg-[#FA2D48] text-white shadow-xs font-bold'
-                      : 'bg-white text-black hover:bg-slate-100 active:bg-slate-200 border border-slate-200/90 shadow-2xs'
+                      ? 'bg-[#FA2D48] text-white font-black shadow-md ring-2 ring-[#FA2D48]/30'
+                      : 'bg-white text-slate-900 font-extrabold hover:bg-slate-100 hover:text-black active:bg-slate-200 border-2 border-slate-200 hover:border-slate-300'
                   }`}
                 >
                   {cat.label}

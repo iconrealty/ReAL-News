@@ -596,13 +596,13 @@ app.get("/api/health", (req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
-// Firestore Articles API (With 14-Day Retention Auto-Pruning)
+// Firestore Articles API (With 15-Day Retention Auto-Pruning)
 app.get("/api/news/articles", async (req, res) => {
   try {
     const articles = await getArticlesFromDb();
     res.json({
       success: true,
-      retentionDays: 14,
+      retentionDays: 15,
       database: "Firebase Firestore",
       count: articles.length,
       articles
@@ -646,12 +646,12 @@ app.get("/api/news/retention-info", async (req, res) => {
   try {
     const articles = await getArticlesFromDb();
     const now = Date.now();
-    const fourteenDaysMs = 14 * 24 * 60 * 60 * 1000;
+    const fifteenDaysMs = 15 * 24 * 60 * 60 * 1000;
 
     const stats = articles.map(art => {
       const ageMs = now - (art.createdAtMs || now);
       const ageDays = Math.floor(ageMs / (1000 * 60 * 60 * 24));
-      const daysLeft = Math.max(0, 14 - ageDays);
+      const daysLeft = Math.max(0, 15 - ageDays);
       return {
         id: art.id,
         title: art.title,
@@ -665,7 +665,7 @@ app.get("/api/news/retention-info", async (req, res) => {
       success: true,
       storageEngine: "Firebase Firestore",
       collection: "articles",
-      retentionPolicy: "14 Days Automatic Pruning (Option 2)",
+      retentionPolicy: "15 Days Automatic Pruning",
       totalActiveArticles: articles.length,
       articlesStatus: stats
     });
@@ -679,7 +679,7 @@ app.post("/api/news/prune", async (req, res) => {
     const result = await pruneOldArticles();
     res.json({
       success: true,
-      message: "Automatic 14-day retention pruning pass completed",
+      message: "Automatic 15-day retention pruning pass completed",
       ...result
     });
   } catch (err: any) {
