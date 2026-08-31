@@ -23,25 +23,18 @@ export const FeaturedHeroStory: React.FC<FeaturedHeroStoryProps> = ({
           <span className="font-extrabold text-[#FA2D48] uppercase tracking-wider">{article.cityName}</span>
           <span>•</span>
           <span className="text-slate-400 font-semibold">{article.publishedAt}</span>
+          {article.readTime && (
+            <>
+              <span>•</span>
+              <span className="text-slate-400 font-medium">{article.readTime}</span>
+            </>
+          )}
         </div>
 
         {/* Main Title */}
         <h2 className="text-lg sm:text-xl md:text-2xl font-black text-slate-950 tracking-tight leading-snug group-hover:text-[#FA2D48] transition-colors">
           {cleanText(article.title)}
         </h2>
-
-        {article.subtitle && (
-          <p className="text-xs sm:text-sm text-slate-600 font-medium line-clamp-2 leading-relaxed">
-            {cleanText(article.subtitle)}
-          </p>
-        )}
-
-        <div className="flex items-center space-x-2 pt-1 text-xs font-bold text-[#FA2D48]">
-          <span>Read full story →</span>
-          {article.readTime && (
-            <span className="text-slate-400 font-medium">• {article.readTime}</span>
-          )}
-        </div>
       </div>
     </div>
   );

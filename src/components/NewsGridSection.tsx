@@ -39,7 +39,7 @@ export const NewsGridSection: React.FC<NewsGridSectionProps> = ({
             <div
               key={article.id}
               onClick={() => onSelectArticle(article)}
-              className="group bg-white border border-slate-200/90 hover:border-slate-300 rounded-2xl p-4 sm:p-5 shadow-2xs hover:shadow-md transition-all duration-200 flex flex-col justify-between cursor-pointer hover:-translate-y-0.5 text-slate-900 min-h-[140px]"
+              className="group bg-white border border-slate-200/90 hover:border-slate-300 rounded-2xl p-4 sm:p-5 shadow-2xs hover:shadow-md transition-all duration-200 flex flex-col justify-between cursor-pointer hover:-translate-y-0.5 text-slate-900"
             >
               {/* Content: City tag, Title, Published Time */}
               <div className="space-y-2">
@@ -49,27 +49,18 @@ export const NewsGridSection: React.FC<NewsGridSectionProps> = ({
                   </span>
                   <span>•</span>
                   <span className="text-slate-400 font-medium truncate">{article.publishedAt}</span>
+                  {article.readTime && (
+                    <>
+                      <span>•</span>
+                      <span className="text-slate-400 font-medium truncate">{article.readTime}</span>
+                    </>
+                  )}
                 </div>
 
                 {/* Title */}
-                <h4 className="text-sm sm:text-[15px] font-bold text-slate-950 group-hover:text-[#FA2D48] transition-colors leading-snug line-clamp-3">
+                <h4 className="text-sm sm:text-[15px] font-bold text-slate-950 group-hover:text-[#FA2D48] transition-colors leading-snug">
                   {cleanText(article.title)}
                 </h4>
-
-                {article.subtitle && (
-                  <p className="text-xs text-slate-600 font-medium line-clamp-2 leading-relaxed pt-0.5">
-                    {cleanText(article.subtitle)}
-                  </p>
-                )}
-              </div>
-
-              <div className="flex items-center justify-between pt-3 border-t border-slate-100 mt-2 text-[11px]">
-                <span className="text-[#FA2D48] font-bold">Read story →</span>
-                {article.readTime && (
-                  <span className="text-slate-400 font-medium">
-                    {article.readTime}
-                  </span>
-                )}
               </div>
             </div>
           );
