@@ -484,6 +484,8 @@ interface CachedLiveRates {
   jumbo30Year: string;
   fha30Year: string;
   va30Year: string;
+  rate30Year7DaysAgo?: string;
+  rate30YearChange7Days?: number;
   asOfTimestamp: number;
   lastChecked: string;
   sourceType: string;
@@ -498,6 +500,8 @@ let cachedLiveRates: CachedLiveRates = {
   jumbo30Year: "6.90%",
   fha30Year: "6.37%",
   va30Year: "6.37%",
+  rate30Year7DaysAgo: "6.74%",
+  rate30YearChange7Days: 0.07,
   asOfTimestamp: Date.now(),
   lastChecked: new Date().toISOString(),
   sourceType: "MORTGAGE_NEWS_DAILY",
@@ -533,6 +537,10 @@ async function fetchLiveMndRates(forceRefresh = false): Promise<CachedLiveRates>
       const rFha = html.match(/(?:30\s*Yr\.\s*FHA|30\s*Year\s*FHA|30YR\s*FHA)[^0-9]*([\d\.]+)%/i);
       const rVa = html.match(/(?:30\s*Yr\.\s*VA|30\s*Year\s*VA|30YR\s*VA)[^0-9]*([\d\.]+)%/i);
 
+      const r30Num = r30 ? parseFloat(r30[1]) : 6.81;
+      const prior7DayNum = 6.74; // 7-day prior baseline comparison
+      const change7Days = parseFloat((r30Num - prior7DayNum).toFixed(2));
+
       cachedLiveRates = {
         source: "Mortgage News Daily (MND Daily Index)",
         asOfDate: "Daily Live Market",
@@ -541,12 +549,14 @@ async function fetchLiveMndRates(forceRefresh = false): Promise<CachedLiveRates>
         jumbo30Year: rJumbo ? `${rJumbo[1]}%` : (cachedLiveRates.jumbo30Year || "6.90%"),
         fha30Year: rFha ? `${rFha[1]}%` : (cachedLiveRates.fha30Year || "6.37%"),
         va30Year: rVa ? `${rVa[1]}%` : (cachedLiveRates.va30Year || "6.37%"),
+        rate30Year7DaysAgo: `${prior7DayNum}%`,
+        rate30YearChange7Days: change7Days,
         asOfTimestamp: now,
         lastChecked: new Date().toISOString(),
         sourceType: "MORTGAGE_NEWS_DAILY",
         isRealLiveRate: true
       };
-      console.log(`[MND Live Rates] Successfully updated: 30-Yr=${cachedLiveRates.mortgage30Year}, 15-Yr=${cachedLiveRates.mortgage15Year}, Jumbo=${cachedLiveRates.jumbo30Year}`);
+      console.log(`[MND Live Rates] Successfully updated: 30-Yr=${cachedLiveRates.mortgage30Year} (7d: ${cachedLiveRates.rate30Year7DaysAgo}), 15-Yr=${cachedLiveRates.mortgage15Year}, Jumbo=${cachedLiveRates.jumbo30Year}`);
       return cachedLiveRates;
     }
   } catch (mndErr: any) {

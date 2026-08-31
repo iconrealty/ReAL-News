@@ -115,6 +115,8 @@ export interface LiveMortgageRates {
   lastChecked?: string;
   sourceType: string;
   isRealLiveRate?: boolean;
+  rate30Year7DaysAgo?: string;
+  rate30YearChange7Days?: number;
 }
 
 export interface FilterState {
