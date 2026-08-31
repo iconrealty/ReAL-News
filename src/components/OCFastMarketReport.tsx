@@ -236,7 +236,7 @@ export const OCFastMarketReport: React.FC<OCFastMarketReportProps> = ({
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-2">
             <div className="flex flex-wrap items-center gap-3">
-              <span className="text-sm font-mono font-black tracking-wider text-[#FA2D48] uppercase">
+              <span className="text-xs sm:text-sm font-sans font-black tracking-wider text-[#FA2D48] uppercase">
                 OC FastStats
               </span>
               <span className="inline-flex items-center px-2.5 py-0.5 bg-slate-100 border border-slate-200 rounded-full text-[11px] font-bold text-slate-600">

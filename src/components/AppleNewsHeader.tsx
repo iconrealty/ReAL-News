@@ -41,7 +41,7 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
 
   const categories: { id: NewsCategory; label: string }[] = [
     { id: 'all', label: 'Top Stories' },
-    { id: 'market-trends', label: 'Market Update' },
+    { id: 'market-trends', label: 'Steven Thomas' },
     { id: 'mortgage-calculator', label: 'Mortgage Calculator' },
     { id: 'real-estate', label: 'Orange County News' },
     { id: 'oc-fast', label: 'OC FastStats' },
@@ -153,6 +153,7 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
           <div className="flex items-center space-x-2 py-0.5 min-w-max">
             {categories.map((cat) => {
               const isActive = activeCategory === cat.id;
+              const isStevenThomas = cat.id === 'market-trends';
               return (
                 <button
                   key={cat.id}
@@ -167,6 +168,8 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
                   className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer shrink-0 active:scale-95 touch-manipulation min-h-[36px] flex items-center shadow-xs tracking-tight ${
                     isActive
                       ? 'bg-[#FA2D48] text-white font-black shadow-md ring-2 ring-[#FA2D48]/30'
+                      : isStevenThomas
+                      ? 'bg-white text-[#FA2D48] font-black hover:bg-rose-50 hover:text-[#FA2D48] active:bg-rose-100 border-2 border-rose-200 hover:border-[#FA2D48]/40'
                       : 'bg-white text-slate-900 font-extrabold hover:bg-slate-100 hover:text-black active:bg-slate-200 border-2 border-slate-200 hover:border-slate-300'
                   }`}
                 >

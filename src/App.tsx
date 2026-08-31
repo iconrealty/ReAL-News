@@ -623,6 +623,7 @@ export function App() {
           />
         ) : activeCategory === 'market-trends' ? (
           <IconMarketIntelligence
+            currentCity={currentCity}
             onSelectCity={(city) => {
               setCurrentCity(city);
               showToast(`Selected ${city.name}`);
@@ -648,30 +649,29 @@ export function App() {
                 <div className="relative rounded-3xl bg-white border border-slate-200/90 p-5 sm:p-7 shadow-xs space-y-5">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
                     <div className="space-y-2">
-                      {/* Byline: Title, Steven Thomas (Reports On Housing) & Report Date */}
+                      {/* Byline: Steven Thomas in red, Reports On Housing & Report Date */}
                       <div className="flex items-center gap-2 flex-wrap text-xs">
-                        <span className="text-[12px] font-mono font-black tracking-widest text-[#FA2D48] uppercase">
-                          Market Update
+                        <span className="text-xs sm:text-sm font-sans font-black tracking-wider text-[#FA2D48] uppercase">
+                          Steven Thomas
                         </span>
                         <span className="text-slate-300 font-bold hidden sm:inline">•</span>
-                        <span className="font-bold text-slate-800 flex items-center gap-1">
-                          <span>Steven Thomas</span>
-                          <span className="text-slate-500 font-normal hidden md:inline">(Reports On Housing)</span>
+                        <span className="font-bold text-slate-700 flex items-center gap-1 font-sans text-xs">
+                          <span>Reports On Housing</span>
                         </span>
                         <span className="text-slate-300 font-bold">•</span>
-                        <span className="font-bold text-slate-500 font-mono text-[11px] sm:text-xs">
+                        <span className="font-bold text-slate-500 font-sans text-xs">
                           {OC_HOUSING_REPORT_METADATA.reportDate}
                         </span>
                         {currentCityMarketData && (
-                          <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200 ml-auto sm:ml-0">
+                          <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200 ml-auto sm:ml-0 font-sans">
                             {currentCityMarketData.region}
                           </span>
                         )}
                       </div>
 
                       <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap">
-                        <h2 className="text-xl sm:text-2xl lg:text-3xl font-black font-serif text-slate-950 tracking-tight whitespace-nowrap">
-                          {currentCity.id === 'orange-county' ? 'Orange County Market' : `${currentCity.name} Market Update`}
+                        <h2 className="text-xl sm:text-2xl lg:text-3xl font-black font-sans text-slate-950 tracking-tight whitespace-nowrap">
+                          {currentCity.id === 'orange-county' ? 'Select City' : currentCity.name}
                         </h2>
 
                         {/* Direct Dropdown City Selector */}

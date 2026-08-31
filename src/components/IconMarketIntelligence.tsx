@@ -4,19 +4,27 @@ import {
   ArrowDownRight, 
   Calendar,
   Info,
-  X
+  X,
+  ChevronRight
 } from 'lucide-react';
 import {
   OC_HOUSING_REPORT_METADATA,
   OC_HOUSING_SUMMARY_CARDS
 } from '../data/ocHousingReportData';
+import { CITIES } from '../data/mockNews';
+import { CityInfo } from '../types';
 
 interface IconMarketIntelligenceProps {
-  onSelectCity?: (city: any) => void;
+  currentCity?: CityInfo;
+  onSelectCity?: (city: CityInfo) => void;
   onShowToast?: (msg: string) => void;
 }
 
-export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = () => {
+export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
+  currentCity = CITIES[0],
+  onSelectCity,
+  onShowToast
+}) => {
   const [showMarketTimeModal, setShowMarketTimeModal] = useState<boolean>(false);
 
   const meta = OC_HOUSING_REPORT_METADATA;
@@ -45,9 +53,35 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = () 
               </span>
             </div>
 
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black font-sans tracking-tight text-slate-950 leading-tight">
-              Orange County Housing Report
-            </h1>
+            <div className="flex items-center gap-3 flex-wrap">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black font-sans tracking-tight text-slate-950 leading-tight">
+                Select City
+              </h1>
+
+              {/* Direct Dropdown City Selector */}
+              {onSelectCity && (
+                <div className="relative">
+                  <select
+                    value={currentCity?.id || 'orange-county'}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      const matched = CITIES.find(c => c.id === val);
+                      if (matched) {
+                        onSelectCity(matched);
+                      }
+                    }}
+                    className="bg-[#F2F2F7] hover:bg-slate-200 border border-slate-300/80 rounded-xl pl-3 pr-7 py-1.5 sm:py-2 text-xs sm:text-sm font-bold text-slate-900 focus:outline-none focus:border-[#FA2D48] transition-all cursor-pointer appearance-none shadow-xs"
+                  >
+                    {CITIES.map(c => (
+                      <option key={c.id} value={c.id}>
+                        {c.name}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronRight className="w-3.5 h-3.5 text-slate-500 absolute right-2 top-2.5 sm:top-3 rotate-90 pointer-events-none" />
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="flex flex-col sm:flex-row md:flex-col items-start md:items-end gap-2 shrink-0">
