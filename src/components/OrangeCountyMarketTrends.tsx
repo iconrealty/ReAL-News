@@ -158,11 +158,11 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
   const [liveRates, setLiveRates] = useState<LiveMortgageRates>(
     propLiveRates || { 
       source: 'Mortgage News Daily (MND Daily Index)',
-      mortgage30Year: '6.81%',
-      mortgage15Year: '6.35%',
-      jumbo30Year: '6.90%',
-      fha30Year: '6.37%',
-      va30Year: '6.37%',
+      mortgage30Year: '6.91%',
+      mortgage15Year: '6.50%',
+      jumbo30Year: '7.00%',
+      fha30Year: '6.45%',
+      va30Year: '6.47%',
       asOfDate: 'Daily Live Market',
       sourceType: 'MORTGAGE_NEWS_DAILY',
       isRealLiveRate: true
@@ -192,8 +192,10 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
     }
     setLocalRefreshing(true);
     try {
-      const res = await fetch(`/api/live-market-stats?force=true&t=${Date.now()}`, {
-        headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' }
+      const res = await fetch(`/api/live-market-stats?force=true&t=${Date.now()}&device=mobile`, {
+        method: 'GET',
+        cache: 'no-store',
+        headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate', 'Pragma': 'no-cache' }
       });
       const json = await res.json();
       if (json.success && json.data) {
@@ -232,8 +234,10 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
 
   React.useEffect(() => {
     if (!propLiveRates) {
-      fetch(`/api/live-market-stats?t=${Date.now()}`, {
-        headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' }
+      fetch(`/api/live-market-stats?t=${Date.now()}&device=mobile`, {
+        method: 'GET',
+        cache: 'no-store',
+        headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate', 'Pragma': 'no-cache' }
       })
         .then(res => res.json())
         .then(json => {

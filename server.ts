@@ -495,14 +495,14 @@ interface CachedLiveRates {
 let cachedLiveRates: CachedLiveRates = {
   source: "Mortgage News Daily (MND Daily Index)",
   asOfDate: "Daily Live Market",
-  mortgage30Year: "6.81%",
-  mortgage15Year: "6.35%",
-  jumbo30Year: "6.90%",
-  fha30Year: "6.37%",
-  va30Year: "6.37%",
+  mortgage30Year: "6.91%",
+  mortgage15Year: "6.50%",
+  jumbo30Year: "7.00%",
+  fha30Year: "6.45%",
+  va30Year: "6.47%",
   rate30Year7DaysAgo: "6.74%",
-  rate30YearChange7Days: 0.07,
-  asOfTimestamp: Date.now(),
+  rate30YearChange7Days: 0.17,
+  asOfTimestamp: 0, // 0 forces immediate live fetch on first request or startup
   lastChecked: new Date().toISOString(),
   sourceType: "MORTGAGE_NEWS_DAILY",
   isRealLiveRate: true
@@ -510,21 +510,21 @@ let cachedLiveRates: CachedLiveRates = {
 
 async function fetchLiveMndRates(forceRefresh = false): Promise<CachedLiveRates> {
   const now = Date.now();
-  const CACHE_TTL_MS = 2 * 60 * 1000; // 2 minutes cache for high accuracy across devices
+  const CACHE_TTL_MS = 90 * 1000; // 90 seconds cache for high accuracy across devices
 
-  if (!forceRefresh && cachedLiveRates && (now - cachedLiveRates.asOfTimestamp < CACHE_TTL_MS)) {
+  if (!forceRefresh && cachedLiveRates && (now - cachedLiveRates.asOfTimestamp < CACHE_TTL_MS) && cachedLiveRates.asOfTimestamp > 0) {
     return cachedLiveRates;
   }
 
   try {
     const mndRes = await fetch("https://www.mortgagenewsdaily.com/mortgage-rates", {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        'Cache-Control': 'no-cache',
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
         'Pragma': 'no-cache'
       },
-      signal: AbortSignal.timeout(7000)
+      signal: AbortSignal.timeout(6000)
     });
     
     if (mndRes.ok) {
@@ -537,18 +537,19 @@ async function fetchLiveMndRates(forceRefresh = false): Promise<CachedLiveRates>
       const rFha = html.match(/(?:30\s*Yr\.\s*FHA|30\s*Year\s*FHA|30YR\s*FHA)[^0-9]*([\d\.]+)%/i);
       const rVa = html.match(/(?:30\s*Yr\.\s*VA|30\s*Year\s*VA|30YR\s*VA)[^0-9]*([\d\.]+)%/i);
 
-      const r30Num = r30 ? parseFloat(r30[1]) : 6.81;
+      // Check 30-day or 7-day prior delta
+      const r30Num = r30 ? parseFloat(r30[1]) : (parseFloat(cachedLiveRates.mortgage30Year.replace('%', '')) || 6.91);
       const prior7DayNum = 6.74; // 7-day prior baseline comparison
       const change7Days = parseFloat((r30Num - prior7DayNum).toFixed(2));
 
       cachedLiveRates = {
         source: "Mortgage News Daily (MND Daily Index)",
         asOfDate: "Daily Live Market",
-        mortgage30Year: r30 ? `${r30[1]}%` : (cachedLiveRates.mortgage30Year || "6.81%"),
-        mortgage15Year: r15 ? `${r15[1]}%` : (cachedLiveRates.mortgage15Year || "6.35%"),
-        jumbo30Year: rJumbo ? `${rJumbo[1]}%` : (cachedLiveRates.jumbo30Year || "6.90%"),
-        fha30Year: rFha ? `${rFha[1]}%` : (cachedLiveRates.fha30Year || "6.37%"),
-        va30Year: rVa ? `${rVa[1]}%` : (cachedLiveRates.va30Year || "6.37%"),
+        mortgage30Year: r30 ? `${r30[1]}%` : (cachedLiveRates.mortgage30Year || "6.91%"),
+        mortgage15Year: r15 ? `${r15[1]}%` : (cachedLiveRates.mortgage15Year || "6.50%"),
+        jumbo30Year: rJumbo ? `${rJumbo[1]}%` : (cachedLiveRates.jumbo30Year || "7.00%"),
+        fha30Year: rFha ? `${rFha[1]}%` : (cachedLiveRates.fha30Year || "6.45%"),
+        va30Year: rVa ? `${rVa[1]}%` : (cachedLiveRates.va30Year || "6.47%"),
         rate30Year7DaysAgo: `${prior7DayNum}%`,
         rate30YearChange7Days: change7Days,
         asOfTimestamp: now,
@@ -571,6 +572,9 @@ async function fetchLiveMndRates(forceRefresh = false): Promise<CachedLiveRates>
 
   return cachedLiveRates;
 }
+
+// Prefetch live MND rates on server launch
+fetchLiveMndRates(true).catch(err => console.warn("[Startup Rates Prefetch] Initial fetch error:", err));
 
 const app = express();
 const PORT = 3000;

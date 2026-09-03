@@ -1,6 +1,6 @@
 import React from 'react';
 import { CityInfo, NewsCategory } from '../types';
-import { Bookmark, ArrowUp, ArrowDown, Minus } from 'lucide-react';
+import { Bookmark, ArrowUp, ArrowDown, Minus, RefreshCw } from 'lucide-react';
 
 interface AppleNewsHeaderProps {
   currentCity: CityInfo;
@@ -20,6 +20,8 @@ interface AppleNewsHeaderProps {
   onOpenManager?: () => void;
   onOpenNewsManager?: () => void;
   isMonetizationEnabled?: boolean;
+  onRefreshRates?: () => void;
+  isRefreshingRates?: boolean;
 }
 
 export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
@@ -30,13 +32,15 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
   savedCount,
   onOpenSavedDrawer,
   onResetToMain,
-  fredRate = '6.81%',
+  fredRate = '6.91%',
   rate30Year7DaysAgo = '6.74%',
   rate30YearChange7Days,
   asOfDate,
   onOpenManager,
   onOpenNewsManager,
   isMonetizationEnabled = false,
+  onRefreshRates,
+  isRefreshingRates = false,
 }) => {
   const monthDay = new Date().toLocaleDateString('en-US', {
     month: 'long',
@@ -97,21 +101,27 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
             {/* Mobile Top Controls (Quick Mortgage Rate Feed & Bookmarks) */}
             <div className="flex items-center gap-3 sm:hidden">
               <button
-                onClick={() => onSelectCategory('mortgage-calculator')}
-                className="text-right group cursor-pointer hover:opacity-80 transition-opacity"
-                title="Mortgage News Daily Live 30-Yr Rate - Click for Mortgage Calculator"
+                onClick={() => {
+                  if (onRefreshRates) onRefreshRates();
+                  onSelectCategory('mortgage-calculator');
+                }}
+                className="text-right group cursor-pointer hover:opacity-80 transition-opacity active:scale-95 touch-manipulation select-none"
+                title="Mortgage News Daily Live 30-Yr Rate - Tap to sync & calculate"
               >
                 <div className="flex items-center justify-end gap-1">
                   <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#FA2D48] leading-none">
                     MND Live 30-Yr
                   </span>
-                  {isUp && (
+                  {isRefreshingRates && (
+                    <RefreshCw className="w-2.5 h-2.5 text-[#FA2D48] animate-spin inline" />
+                  )}
+                  {isUp && !isRefreshingRates && (
                     <span className="inline-flex items-center text-[10px] font-black text-emerald-600">
                       <ArrowUp className="w-2.5 h-2.5 stroke-[3] inline mr-0.5" />
                       +{Math.abs(computedDiff).toFixed(2)}%
                     </span>
                   )}
-                  {isDown && (
+                  {isDown && !isRefreshingRates && (
                     <span className="inline-flex items-center text-[10px] font-black text-rose-600">
                       <ArrowDown className="w-2.5 h-2.5 stroke-[3] inline mr-0.5" />
                       -{Math.abs(computedDiff).toFixed(2)}%
@@ -150,27 +160,33 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
           <div className="flex items-center space-x-3">
             {/* Desktop 30-Day Mortgage Rate Display - Large Text Outside Pill */}
             <button
-              onClick={() => onSelectCategory('mortgage-calculator')}
-              className="hidden sm:flex flex-col items-end text-right group cursor-pointer hover:opacity-80 transition-opacity shrink-0 px-1"
-              title="Mortgage News Daily Live 30-Yr Rate - Click for Mortgage Calculator"
+              onClick={() => {
+                if (onRefreshRates) onRefreshRates();
+                onSelectCategory('mortgage-calculator');
+              }}
+              className="hidden sm:flex flex-col items-end text-right group cursor-pointer hover:opacity-80 transition-opacity shrink-0 px-1 select-none"
+              title="Mortgage News Daily Live 30-Yr Rate - Click to sync & calculate"
             >
               <div className="flex items-center gap-1.5">
                 <span className="text-[10px] font-black uppercase tracking-wider text-[#FA2D48] leading-none">
                   MND Live 30-Yr Rate
                 </span>
-                {isUp && (
+                {isRefreshingRates ? (
+                  <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#FA2D48] bg-rose-50 px-1.5 py-0.5 rounded-md">
+                    <RefreshCw className="w-3 h-3 animate-spin" />
+                    Syncing...
+                  </span>
+                ) : isUp ? (
                   <span className="inline-flex items-center gap-0.5 text-[11px] font-black text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-md">
                     <ArrowUp className="w-3 h-3 stroke-[3]" />
                     +{Math.abs(computedDiff).toFixed(2)}%
                   </span>
-                )}
-                {isDown && (
+                ) : isDown ? (
                   <span className="inline-flex items-center gap-0.5 text-[11px] font-black text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded-md">
                     <ArrowDown className="w-3 h-3 stroke-[3]" />
                     -{Math.abs(computedDiff).toFixed(2)}%
                   </span>
-                )}
-                {!isUp && !isDown && (
+                ) : (
                   <span className="inline-flex items-center gap-0.5 text-[11px] font-black text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded-md">
                     <Minus className="w-3 h-3" />
                     0.00%

@@ -136,29 +136,54 @@ export function App() {
   const [isMonetizationEnabled, setIsMonetizationEnabled] = useState<boolean>(false);
   const [cityReportTab, setCityReportTab] = useState<'velocity' | 'closed' | 'historical' | 'summary'>('velocity');
 
-  const [liveRates, setLiveRates] = useState<LiveMortgageRates>({
-    source: 'Mortgage News Daily (MND Daily Index)',
-    asOfDate: 'Daily Live Market',
-    mortgage30Year: '6.81%',
-    mortgage15Year: '6.35%',
-    jumbo30Year: '6.90%',
-    fha30Year: '6.37%',
-    va30Year: '6.37%',
-    rate30Year7DaysAgo: '6.74%',
-    rate30YearChange7Days: 0.07,
-    sourceType: 'MORTGAGE_NEWS_DAILY',
-    isRealLiveRate: true
-  });
+  // Read cached rates from localStorage for instant mobile loading & offline resilience
+  const getInitialRates = (): LiveMortgageRates => {
+    try {
+      const saved = localStorage.getItem('cached_live_mortgage_rates');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && parsed.mortgage30Year) return parsed;
+      }
+    } catch (e) {
+      console.warn("Could not read cached rates from localStorage", e);
+    }
+    return {
+      source: 'Mortgage News Daily (MND Daily Index)',
+      asOfDate: 'Daily Live Market',
+      mortgage30Year: '6.91%',
+      mortgage15Year: '6.50%',
+      jumbo30Year: '7.00%',
+      fha30Year: '6.45%',
+      va30Year: '6.47%',
+      rate30Year7DaysAgo: '6.74%',
+      rate30YearChange7Days: 0.17,
+      sourceType: 'MORTGAGE_NEWS_DAILY',
+      isRealLiveRate: true
+    };
+  };
+
+  const [liveRates, setLiveRates] = useState<LiveMortgageRates>(getInitialRates);
   const [isRefreshingRates, setIsRefreshingRates] = useState(false);
 
   const fetchLiveRates = () => {
-    fetch(`/api/live-market-stats?t=${Date.now()}`, {
-      headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' }
+    fetch(`/api/live-market-stats?t=${Date.now()}&device=mobile`, {
+      method: 'GET',
+      cache: 'no-store',
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      }
     })
       .then(res => res.json())
       .then(json => {
         if (json.success && json.data) {
           setLiveRates(json.data);
+          try {
+            localStorage.setItem('cached_live_mortgage_rates', JSON.stringify(json.data));
+          } catch (e) {
+            console.warn("Could not cache live rates in localStorage", e);
+          }
         }
       })
       .catch(err => console.warn("Failed to sync live mortgage rates:", err));
@@ -167,12 +192,23 @@ export function App() {
   const handleRefreshLiveRates = async () => {
     setIsRefreshingRates(true);
     try {
-      const res = await fetch(`/api/live-market-stats?force=true&t=${Date.now()}`, {
-        headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' }
+      const res = await fetch(`/api/live-market-stats?force=true&t=${Date.now()}&device=mobile`, {
+        method: 'GET',
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
+        }
       });
       const json = await res.json();
       if (json.success && json.data) {
         setLiveRates(json.data);
+        try {
+          localStorage.setItem('cached_live_mortgage_rates', JSON.stringify(json.data));
+        } catch (e) {
+          console.warn("Could not cache live rates in localStorage", e);
+        }
         showToast(`MND Live Rates updated: 30-Yr ${json.data.mortgage30Year} • 15-Yr ${json.data.mortgage15Year}`);
       } else {
         showToast('Rates verified with Mortgage News Daily.');
@@ -186,7 +222,11 @@ export function App() {
   };
 
   const fetchAds = () => {
-    fetch(`/api/ads?all=true&t=${Date.now()}`)
+    fetch(`/api/ads?all=true&t=${Date.now()}`, {
+      method: 'GET',
+      cache: 'no-store',
+      headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate', 'Pragma': 'no-cache' }
+    })
       .then(res => res.json())
       .then(data => {
         if (data.success && Array.isArray(data.ads)) {
@@ -197,7 +237,11 @@ export function App() {
   };
 
   const fetchMonetizationStatus = () => {
-    fetch(`/api/monetization-status?t=${Date.now()}`)
+    fetch(`/api/monetization-status?t=${Date.now()}`, {
+      method: 'GET',
+      cache: 'no-store',
+      headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate', 'Pragma': 'no-cache' }
+    })
       .then(res => res.json())
       .then(json => {
         if (json.success && typeof json.enabled === 'boolean') {
@@ -221,22 +265,33 @@ export function App() {
       fetchLiveRates();
     }, 10000);
 
-    // 3. Instant sync on mobile/desktop focus / tab visibility change
-    const handleSyncOnFocus = () => {
-      if (document.visibilityState === 'visible') {
+    // 3. Instant sync on mobile/desktop focus, tab visibility change, page show, online & resume
+    const handleSyncOnResume = () => {
+      if (document.visibilityState === 'visible' || document.visibilityState === undefined) {
         fetchAds();
         fetchMonetizationStatus();
         fetchLiveRates();
       }
     };
 
-    window.addEventListener('focus', handleSyncOnFocus);
-    document.addEventListener('visibilitychange', handleSyncOnFocus);
+    window.addEventListener('focus', handleSyncOnResume);
+    window.addEventListener('pageshow', handleSyncOnResume);
+    window.addEventListener('online', handleSyncOnResume);
+    document.addEventListener('visibilitychange', handleSyncOnResume);
+
+    // First touch trigger on mobile devices to guarantee wake-up synchronization
+    const handleFirstTouch = () => {
+      fetchLiveRates();
+    };
+    window.addEventListener('touchstart', handleFirstTouch, { once: true, passive: true });
 
     return () => {
       clearInterval(syncInterval);
-      window.removeEventListener('focus', handleSyncOnFocus);
-      document.removeEventListener('visibilitychange', handleSyncOnFocus);
+      window.removeEventListener('focus', handleSyncOnResume);
+      window.removeEventListener('pageshow', handleSyncOnResume);
+      window.removeEventListener('online', handleSyncOnResume);
+      document.removeEventListener('visibilitychange', handleSyncOnResume);
+      window.removeEventListener('touchstart', handleFirstTouch);
     };
   }, []);
 
@@ -584,6 +639,8 @@ export function App() {
           onOpenManager={() => setIsManagerModalOpen(true)}
           onOpenNewsManager={() => setIsNewsManagerOpen(true)}
           isMonetizationEnabled={isMonetizationEnabled}
+          onRefreshRates={handleRefreshLiveRates}
+          isRefreshingRates={isRefreshingRates}
         />
       )}
 
