@@ -517,15 +517,17 @@ async function fetchLiveMndRates(forceRefresh = false): Promise<CachedLiveRates>
   }
 
   try {
-    const mndRes = await fetch("https://www.mortgagenewsdaily.com/mortgage-rates", {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        'Cache-Control': 'no-cache, no-store, must-revalidate',
-        'Pragma': 'no-cache'
-      },
-      signal: AbortSignal.timeout(6000)
-    });
+    const headers = {
+      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
+      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      'Pragma': 'no-cache'
+    };
+
+    const [mndRes, histRes] = await Promise.all([
+      fetch("https://www.mortgagenewsdaily.com/mortgage-rates", { headers, signal: AbortSignal.timeout(6000) }),
+      fetch("https://www.mortgagenewsdaily.com/mortgage-rates/30-year-fixed", { headers, signal: AbortSignal.timeout(6000) }).catch(() => null)
+    ]);
     
     if (mndRes.ok) {
       const html = await mndRes.text();
@@ -544,16 +546,53 @@ async function fetchLiveMndRates(forceRefresh = false): Promise<CachedLiveRates>
       const rFha = extractProductRate("30 Yr. FHA");
       const rVa = extractProductRate("30 Yr. VA");
 
-      // Extract date and daily change from table header and change cell
+      // Extract date from table header
       const dateMatch = html.match(/<th class=[\"\\']rate-product[\"\\'][^>]*>[\s\S]*?<div class=[\"\\']pull-right text-muted[\"\\'][^>]*>([^<]+)<\/div>/i);
       const asOfStr = dateMatch ? `MND Live (${dateMatch[1].trim()})` : "Daily Live Market";
 
-      const changeMatch = html.match(/<td class=[\"\\']rate-product[\"\\'][^>]*>[\s\S]*?30 Yr\. Fixed[\s\S]*?<\/td>[\s\S]*?<td class=[\"\\']text-center change[\"\\'][^>]*>[\s\S]*?([+-]?[\d\.]+)%/i);
-      const dailyChange = changeMatch ? parseFloat(changeMatch[1]) : -0.03;
-
       const r30Num = r30 ? parseFloat(r30.replace('%', '')) : 6.88;
-      const prior7DayNum = 6.74; // 7-day prior baseline comparison
-      const change7Days = parseFloat((r30Num - prior7DayNum).toFixed(2));
+      let dynamicPrior7DayNum = 6.74; // Reliable baseline fallback
+
+      // Extract dynamic historical 30-year rate from MND daily survey history
+      if (histRes && histRes.ok) {
+        try {
+          const histHtml = await histRes.text();
+          const mndHistSection = histHtml.match(/MND.+?30 Year Fixed[\s\S]*?(?:MBA|Freddie|<\/tbody>)/i);
+          if (mndHistSection) {
+            const rowRegex = /<td class="rate-date">[\s\S]*?<span class="hidden-xs">([^<]+)<\/span>[\s\S]*?<\/td>[\s\S]*?<td class="rate">([0-9.]+)%<\/td>/gi;
+            const historyList: { date: string; rate: number }[] = [];
+            let hMatch;
+            while ((hMatch = rowRegex.exec(mndHistSection[0])) !== null) {
+              historyList.push({ date: hMatch[1].trim(), rate: parseFloat(hMatch[2]) });
+            }
+
+            if (historyList.length > 0) {
+              const latestDate = new Date(historyList[0].date);
+              const target7DaysAgoTime = latestDate.getTime() - 7 * 24 * 60 * 60 * 1000;
+              
+              // Find the historical entry closest to exactly 7 calendar days prior
+              let closest = historyList[0];
+              let minDelta = Infinity;
+              for (const item of historyList) {
+                const itemTime = new Date(item.date).getTime();
+                const delta = Math.abs(itemTime - target7DaysAgoTime);
+                if (delta < minDelta) {
+                  minDelta = delta;
+                  closest = item;
+                }
+              }
+
+              if (closest && closest.rate > 0) {
+                dynamicPrior7DayNum = closest.rate;
+              }
+            }
+          }
+        } catch (hErr) {
+          console.warn("[MND History Parse] Non-blocking history note:", hErr);
+        }
+      }
+
+      const change7Days = parseFloat((r30Num - dynamicPrior7DayNum).toFixed(2));
 
       cachedLiveRates = {
         source: "Mortgage News Daily (MND Daily Index)",
@@ -563,14 +602,14 @@ async function fetchLiveMndRates(forceRefresh = false): Promise<CachedLiveRates>
         jumbo30Year: rJumbo || cachedLiveRates.jumbo30Year || "7.05%",
         fha30Year: rFha || cachedLiveRates.fha30Year || "6.44%",
         va30Year: rVa || cachedLiveRates.va30Year || "6.46%",
-        rate30Year7DaysAgo: `${prior7DayNum}%`,
-        rate30YearChange7Days: dailyChange || change7Days,
+        rate30Year7DaysAgo: `${dynamicPrior7DayNum}%`,
+        rate30YearChange7Days: change7Days,
         asOfTimestamp: now,
         lastChecked: new Date().toISOString(),
         sourceType: "MORTGAGE_NEWS_DAILY",
         isRealLiveRate: true
       };
-      console.log(`[MND Live Rates] Successfully updated: 30-Yr=${cachedLiveRates.mortgage30Year} (Change: ${cachedLiveRates.rate30YearChange7Days}), 15-Yr=${cachedLiveRates.mortgage15Year}, Jumbo=${cachedLiveRates.jumbo30Year}`);
+      console.log(`[MND Live Rates] Dynamic update: Current 30-Yr=${cachedLiveRates.mortgage30Year}, 7-Day Prior=${cachedLiveRates.rate30Year7DaysAgo}, 7-Day Delta=${cachedLiveRates.rate30YearChange7Days}`);
       return cachedLiveRates;
     }
   } catch (mndErr: any) {

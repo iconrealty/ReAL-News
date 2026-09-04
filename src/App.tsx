@@ -156,7 +156,7 @@ export function App() {
       fha30Year: '6.44%',
       va30Year: '6.46%',
       rate30Year7DaysAgo: '6.74%',
-      rate30YearChange7Days: -0.03,
+      rate30YearChange7Days: 0.14,
       sourceType: 'MORTGAGE_NEWS_DAILY',
       isRealLiveRate: true
     };

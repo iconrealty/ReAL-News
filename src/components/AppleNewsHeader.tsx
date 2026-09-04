@@ -57,12 +57,10 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
     { id: 'restaurants-bars', label: 'New Restaurants & Bars' },
   ];
 
-  // Calculate 7-day prior comparison
+  // Calculate 7-day prior comparison strictly from current rate vs 7-day prior rate
   const currentNum = parseFloat((fredRate || '6.88%').replace(/[^0-9.]/g, '')) || 6.88;
   const priorNum = parseFloat((rate30Year7DaysAgo || '6.74%').replace(/[^0-9.]/g, '')) || 6.74;
-  const computedDiff = typeof rate30YearChange7Days === 'number'
-    ? rate30YearChange7Days
-    : parseFloat((currentNum - priorNum).toFixed(2));
+  const computedDiff = parseFloat((currentNum - priorNum).toFixed(2));
 
   const isUp = computedDiff > 0;
   const isDown = computedDiff < 0;
