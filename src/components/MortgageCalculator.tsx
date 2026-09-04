@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { RefreshCw } from 'lucide-react';
 import { CityInfo, AdBanner, LiveMortgageRates } from '../types';
 import { AdBannerRenderer } from './AdBannerRenderer';
 
@@ -8,6 +9,8 @@ interface MortgageCalculatorProps {
   liveRates?: LiveMortgageRates | null;
   ads?: AdBanner[];
   monetizationEnabled?: boolean;
+  onRefreshRates?: () => void;
+  isRefreshingRates?: boolean;
 }
 
 const PRICE_PRESETS = [
@@ -51,6 +54,8 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
   liveRates: propLiveRates,
   ads = [],
   monetizationEnabled = false,
+  onRefreshRates,
+  isRefreshingRates = false,
 }) => {
   // MND Daily rates
   const mnd30Num = useMemo(() => {
@@ -517,14 +522,29 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
         <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-[#FA2D48]/10 to-transparent rounded-full blur-3xl pointer-events-none" />
         
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3.5 relative z-10">
-          <div>
-            <h2 className="text-lg font-black text-slate-900 tracking-tight leading-tight">
-              Select Your Interest Rate
-            </h2>
-            <div className="flex items-center gap-1.5 pt-0.5">
-              <span className="text-xs font-bold text-slate-500">Live Rates (Mortgage News Daily)</span>
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <h2 className="text-lg font-black text-slate-900 tracking-tight leading-tight">
+                Select Your Interest Rate
+              </h2>
+              <div className="flex items-center gap-1.5 pt-0.5">
+                <span className="text-xs font-bold text-slate-500">Live Rates (Mortgage News Daily)</span>
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              </div>
             </div>
+
+            {onRefreshRates && (
+              <button
+                type="button"
+                onClick={onRefreshRates}
+                disabled={isRefreshingRates}
+                className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 border border-slate-200 shrink-0"
+                title="Refresh Live Mortgage Rates"
+              >
+                <RefreshCw className={`w-3.5 h-3.5 text-[#FA2D48] ${isRefreshingRates ? 'animate-spin' : ''}`} />
+                <span className="font-extrabold">{isRefreshingRates ? 'Syncing...' : 'Sync Rates'}</span>
+              </button>
+            )}
           </div>
 
           {/* Rate Selector Pills */}

@@ -633,6 +633,7 @@ export function App() {
           onSearchChange={setSearchQuery}
           onResetToMain={handleResetToMain}
           fredRate={liveRates?.mortgage30Year}
+          mortgage15Year={liveRates?.mortgage15Year}
           rate30Year7DaysAgo={liveRates?.rate30Year7DaysAgo}
           rate30YearChange7Days={liveRates?.rate30YearChange7Days}
           asOfDate={liveRates?.asOfDate}
@@ -677,6 +678,8 @@ export function App() {
             liveRates={liveRates}
             ads={ads}
             monetizationEnabled={isMonetizationEnabled}
+            onRefreshRates={handleRefreshLiveRates}
+            isRefreshingRates={isRefreshingRates}
             onSelectCity={(city) => {
               setCurrentCity(city);
               showToast(`Selected ${city.name}`);
