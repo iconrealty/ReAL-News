@@ -158,11 +158,11 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
   const [liveRates, setLiveRates] = useState<LiveMortgageRates>(
     propLiveRates || { 
       source: 'Mortgage News Daily (MND Daily Index)',
-      mortgage30Year: '6.91%',
-      mortgage15Year: '6.50%',
-      jumbo30Year: '7.00%',
-      fha30Year: '6.45%',
-      va30Year: '6.47%',
+      mortgage30Year: '6.88%',
+      mortgage15Year: '6.48%',
+      jumbo30Year: '7.05%',
+      fha30Year: '6.44%',
+      va30Year: '6.46%',
       asOfDate: 'Daily Live Market',
       sourceType: 'MORTGAGE_NEWS_DAILY',
       isRealLiveRate: true
@@ -757,9 +757,9 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                         <span className="text-[9px] text-slate-400 font-bold">{liveRates?.asOfDate || 'Daily Live Market'}</span>
                       </div>
                       <div className="flex items-baseline space-x-2.5 pt-1">
-                        <span className="text-3xl sm:text-4xl font-black text-slate-900">{liveRates?.mortgage30Year || '6.81%'}</span>
+                        <span className="text-3xl sm:text-4xl font-black text-slate-900">{liveRates?.mortgage30Year || '6.88%'}</span>
                         <span className="text-xs font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md">
-                          15-Yr: {liveRates?.mortgage15Year || '6.35%'}
+                          15-Yr: {liveRates?.mortgage15Year || '6.48%'}
                         </span>
                       </div>
                       <div className="flex flex-wrap items-center gap-1.5 pt-2">

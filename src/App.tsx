@@ -150,13 +150,13 @@ export function App() {
     return {
       source: 'Mortgage News Daily (MND Daily Index)',
       asOfDate: 'Daily Live Market',
-      mortgage30Year: '6.91%',
-      mortgage15Year: '6.50%',
-      jumbo30Year: '7.00%',
-      fha30Year: '6.45%',
-      va30Year: '6.47%',
+      mortgage30Year: '6.88%',
+      mortgage15Year: '6.48%',
+      jumbo30Year: '7.05%',
+      fha30Year: '6.44%',
+      va30Year: '6.46%',
       rate30Year7DaysAgo: '6.74%',
-      rate30YearChange7Days: 0.17,
+      rate30YearChange7Days: -0.03,
       sourceType: 'MORTGAGE_NEWS_DAILY',
       isRealLiveRate: true
     };
@@ -633,7 +633,6 @@ export function App() {
           onSearchChange={setSearchQuery}
           onResetToMain={handleResetToMain}
           fredRate={liveRates?.mortgage30Year}
-          mortgage15Year={liveRates?.mortgage15Year}
           rate30Year7DaysAgo={liveRates?.rate30Year7DaysAgo}
           rate30YearChange7Days={liveRates?.rate30YearChange7Days}
           asOfDate={liveRates?.asOfDate}

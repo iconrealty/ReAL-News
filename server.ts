@@ -495,13 +495,13 @@ interface CachedLiveRates {
 let cachedLiveRates: CachedLiveRates = {
   source: "Mortgage News Daily (MND Daily Index)",
   asOfDate: "Daily Live Market",
-  mortgage30Year: "6.91%",
-  mortgage15Year: "6.50%",
-  jumbo30Year: "7.00%",
-  fha30Year: "6.45%",
-  va30Year: "6.47%",
+  mortgage30Year: "6.88%",
+  mortgage15Year: "6.48%",
+  jumbo30Year: "7.05%",
+  fha30Year: "6.44%",
+  va30Year: "6.46%",
   rate30Year7DaysAgo: "6.74%",
-  rate30YearChange7Days: 0.17,
+  rate30YearChange7Days: 0.14,
   asOfTimestamp: 0, // 0 forces immediate live fetch on first request or startup
   lastChecked: new Date().toISOString(),
   sourceType: "MORTGAGE_NEWS_DAILY",
@@ -510,7 +510,7 @@ let cachedLiveRates: CachedLiveRates = {
 
 async function fetchLiveMndRates(forceRefresh = false): Promise<CachedLiveRates> {
   const now = Date.now();
-  const CACHE_TTL_MS = 90 * 1000; // 90 seconds cache for high accuracy across devices
+  const CACHE_TTL_MS = 60 * 1000; // 60 seconds cache for high accuracy across devices
 
   if (!forceRefresh && cachedLiveRates && (now - cachedLiveRates.asOfTimestamp < CACHE_TTL_MS) && cachedLiveRates.asOfTimestamp > 0) {
     return cachedLiveRates;
@@ -530,34 +530,47 @@ async function fetchLiveMndRates(forceRefresh = false): Promise<CachedLiveRates>
     if (mndRes.ok) {
       const html = await mndRes.text();
 
-      // Check header product boxes and rate table
-      const r30 = html.match(/(?:30\s*Yr\.\s*Fixed|30\s*Year\s*Fixed|30YR\s*Fixed\s*Rate)[^0-9]*([\d\.]+)%/i);
-      const r15 = html.match(/(?:15\s*Yr\.\s*Fixed|15\s*Year\s*Fixed|15YR\s*Fixed\s*Rate)[^0-9]*([\d\.]+)%/i);
-      const rJumbo = html.match(/(?:30\s*Yr\.\s*Jumbo|30\s*Year\s*Jumbo|30YR\s*Jumbo)[^0-9]*([\d\.]+)%/i);
-      const rFha = html.match(/(?:30\s*Yr\.\s*FHA|30\s*Year\s*FHA|30YR\s*FHA)[^0-9]*([\d\.]+)%/i);
-      const rVa = html.match(/(?:30\s*Yr\.\s*VA|30\s*Year\s*VA|30YR\s*VA)[^0-9]*([\d\.]+)%/i);
+      // Precision table cell extraction for Mortgage News Daily rate products
+      function extractProductRate(productName: string): string | null {
+        const escaped = productName.replace(".", "\\.");
+        const reg = new RegExp("<td class=[\"\\']rate-product[\"\\'][^>]*>[\\s\\S]*?" + escaped + "[\\s\\S]*?<\\/td>[\\s\\S]*?<td class=[\"\\']rate[\"\\'][^>]*>([\\d\\.]+)%?<\\/td>", "i");
+        const m = html.match(reg);
+        return m ? `${m[1]}%` : null;
+      }
 
-      // Check 30-day or 7-day prior delta
-      const r30Num = r30 ? parseFloat(r30[1]) : (parseFloat(cachedLiveRates.mortgage30Year.replace('%', '')) || 6.91);
+      const r30 = extractProductRate("30 Yr. Fixed");
+      const r15 = extractProductRate("15 Yr. Fixed");
+      const rJumbo = extractProductRate("30 Yr. Jumbo");
+      const rFha = extractProductRate("30 Yr. FHA");
+      const rVa = extractProductRate("30 Yr. VA");
+
+      // Extract date and daily change from table header and change cell
+      const dateMatch = html.match(/<th class=[\"\\']rate-product[\"\\'][^>]*>[\s\S]*?<div class=[\"\\']pull-right text-muted[\"\\'][^>]*>([^<]+)<\/div>/i);
+      const asOfStr = dateMatch ? `MND Live (${dateMatch[1].trim()})` : "Daily Live Market";
+
+      const changeMatch = html.match(/<td class=[\"\\']rate-product[\"\\'][^>]*>[\s\S]*?30 Yr\. Fixed[\s\S]*?<\/td>[\s\S]*?<td class=[\"\\']text-center change[\"\\'][^>]*>[\s\S]*?([+-]?[\d\.]+)%/i);
+      const dailyChange = changeMatch ? parseFloat(changeMatch[1]) : -0.03;
+
+      const r30Num = r30 ? parseFloat(r30.replace('%', '')) : 6.88;
       const prior7DayNum = 6.74; // 7-day prior baseline comparison
       const change7Days = parseFloat((r30Num - prior7DayNum).toFixed(2));
 
       cachedLiveRates = {
         source: "Mortgage News Daily (MND Daily Index)",
-        asOfDate: "Daily Live Market",
-        mortgage30Year: r30 ? `${r30[1]}%` : (cachedLiveRates.mortgage30Year || "6.91%"),
-        mortgage15Year: r15 ? `${r15[1]}%` : (cachedLiveRates.mortgage15Year || "6.50%"),
-        jumbo30Year: rJumbo ? `${rJumbo[1]}%` : (cachedLiveRates.jumbo30Year || "7.00%"),
-        fha30Year: rFha ? `${rFha[1]}%` : (cachedLiveRates.fha30Year || "6.45%"),
-        va30Year: rVa ? `${rVa[1]}%` : (cachedLiveRates.va30Year || "6.47%"),
+        asOfDate: asOfStr,
+        mortgage30Year: r30 || cachedLiveRates.mortgage30Year || "6.88%",
+        mortgage15Year: r15 || cachedLiveRates.mortgage15Year || "6.48%",
+        jumbo30Year: rJumbo || cachedLiveRates.jumbo30Year || "7.05%",
+        fha30Year: rFha || cachedLiveRates.fha30Year || "6.44%",
+        va30Year: rVa || cachedLiveRates.va30Year || "6.46%",
         rate30Year7DaysAgo: `${prior7DayNum}%`,
-        rate30YearChange7Days: change7Days,
+        rate30YearChange7Days: dailyChange || change7Days,
         asOfTimestamp: now,
         lastChecked: new Date().toISOString(),
         sourceType: "MORTGAGE_NEWS_DAILY",
         isRealLiveRate: true
       };
-      console.log(`[MND Live Rates] Successfully updated: 30-Yr=${cachedLiveRates.mortgage30Year} (7d: ${cachedLiveRates.rate30Year7DaysAgo}), 15-Yr=${cachedLiveRates.mortgage15Year}, Jumbo=${cachedLiveRates.jumbo30Year}`);
+      console.log(`[MND Live Rates] Successfully updated: 30-Yr=${cachedLiveRates.mortgage30Year} (Change: ${cachedLiveRates.rate30YearChange7Days}), 15-Yr=${cachedLiveRates.mortgage15Year}, Jumbo=${cachedLiveRates.jumbo30Year}`);
       return cachedLiveRates;
     }
   } catch (mndErr: any) {
