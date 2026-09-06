@@ -128,8 +128,13 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
       setSelectedRateProgram('custom');
       return;
     }
-    const num = Number(valStr);
-    setInterestRate(num);
+    const parts = valStr.split('.');
+    let cleanStr = valStr;
+    if (parts[1] && parts[1].length > 2) {
+      cleanStr = `${parts[0]}.${parts[1].slice(0, 2)}`;
+    }
+    const num = Number(cleanStr);
+    setInterestRate(isNaN(num) ? '' : num);
     const matched = rateOptions.find((r) => r.rate === num);
     if (matched) {
       setSelectedRateProgram(matched.label);
@@ -553,62 +558,6 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
 
   return (
     <div className="space-y-6 sm:space-y-8 animate-fadeIn">
-      
-      {/* Header Banner */}
-      <div className="rounded-3xl bg-white border border-slate-200/90 p-4 sm:p-5 shadow-xs relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-[#FA2D48]/10 to-transparent rounded-full blur-3xl pointer-events-none" />
-        
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3.5 relative z-10">
-          <div className="flex items-center justify-between gap-3">
-            <div>
-              <h2 className="text-lg font-black text-slate-900 tracking-tight leading-tight">
-                Select Your Interest Rate
-              </h2>
-              <div className="flex items-center gap-1.5 pt-0.5">
-                <span className="text-xs font-bold text-slate-500">Live Rates (Mortgage News Daily)</span>
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              </div>
-            </div>
-
-            {onRefreshRates && (
-              <button
-                type="button"
-                onClick={onRefreshRates}
-                disabled={isRefreshingRates}
-                className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 border border-slate-200 shrink-0"
-                title="Refresh Live Mortgage Rates"
-              >
-                <RefreshCw className={`w-3.5 h-3.5 text-[#FA2D48] ${isRefreshingRates ? 'animate-spin' : ''}`} />
-                <span className="font-extrabold">{isRefreshingRates ? 'Syncing...' : 'Sync Rates'}</span>
-              </button>
-            )}
-          </div>
-
-          {/* Rate Selector Pills */}
-          <div className="flex flex-wrap gap-1.5 sm:gap-2 shrink-0 items-center">
-            {rateOptions.map((r) => {
-              const isSelected = selectedRateProgram === r.label || (interestRate === r.rate && loanTermYears === r.term);
-              return (
-                <button
-                  key={r.label}
-                  type="button"
-                  id={`top-rate-pill-${r.label.toLowerCase().replace(/[^a-z0-9]/g, '-')}`}
-                  onClick={() => handleProgramSelect(r.label)}
-                  className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-bold transition-all cursor-pointer flex items-center gap-1 sm:gap-1.5 border whitespace-nowrap ${
-                    isSelected
-                      ? 'bg-[#FA2D48] text-white border-[#FA2D48] shadow-xs'
-                      : 'bg-slate-100 hover:bg-slate-200 text-slate-800 border-slate-200'
-                  }`}
-                >
-                  <span>{r.label}</span>
-                  <span className="font-extrabold">{r.rate}%</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-
       {/* Main 2-Column Calculator Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
         
@@ -853,32 +802,33 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                   <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3.5 sm:right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
                 </div>
 
-                {/* Custom Rate Input + Loan Term Quick Selector */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-0.5">
-                  <div className="space-y-1.5">
+                {/* Custom Rate Input (Compact Pill) + Loan Term Quick Selector */}
+                <div className="flex flex-wrap items-end justify-between gap-3 pt-0.5">
+                  <div className="space-y-1.5 shrink-0">
                     <label htmlFor="interest-rate-input" className="text-[11px] font-extrabold uppercase tracking-wider text-slate-500 block">
                       Custom Rate (%)
                     </label>
-                    <div className="relative flex items-center">
+                    <div className="relative flex items-center w-24 sm:w-28">
                       <input
                         id="interest-rate-input"
                         type="number"
                         value={interestRate}
                         onChange={(e) => handleRateInputChange(e.target.value)}
-                        className="w-full pl-3.5 sm:pl-4 pr-8 py-2 sm:py-2.5 rounded-xl bg-slate-50 border border-slate-200 focus:border-[#FA2D48] focus:bg-white focus:ring-2 focus:ring-[#FA2D48]/20 font-bold text-slate-900 text-sm sm:text-base outline-none transition-all"
-                        step="0.05"
+                        className="w-full pl-2.5 pr-6 py-2 rounded-xl bg-slate-50 border border-slate-200 focus:border-[#FA2D48] focus:bg-white focus:ring-2 focus:ring-[#FA2D48]/20 font-black text-slate-900 text-sm outline-none transition-all text-center tracking-tight"
+                        step="0.01"
                         min="0"
                         max="25"
+                        placeholder="6.89"
                       />
-                      <span className="absolute right-3 text-slate-400 font-bold text-sm">%</span>
+                      <span className="absolute right-2 text-slate-400 font-bold text-xs pointer-events-none">%</span>
                     </div>
                   </div>
 
-                  <div className="space-y-1.5">
+                  <div className="space-y-1.5 flex-1 min-w-[170px] max-w-xs">
                     <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-500 block">
                       Loan Term
                     </span>
-                    <div className="flex items-center gap-1.5 pt-0.5">
+                    <div className="flex items-center gap-1.5">
                       {[15, 20, 30].map((term) => (
                         <button
                           key={term}
@@ -1047,7 +997,7 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                   </span>
                 </div>
 
-                {/* Dropdown with live rate programs: 30-Yr Fixed (default), 15-Yr Fixed, 30-Yr Jumbo, 30-Yr FHA, 30-Yr VA */}
+                {/* Dropdown with live rate programs */}
                 <div className="relative">
                   <select
                     id="interest-rate-program-select-rev"
@@ -1065,32 +1015,33 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                   <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3.5 sm:right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
                 </div>
 
-                {/* Custom Rate Input + Loan Term Quick Selector */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-0.5">
-                  <div className="space-y-1.5">
+                {/* Custom Rate Input (Compact Pill) + Loan Term Quick Selector */}
+                <div className="flex flex-wrap items-end justify-between gap-3 pt-0.5">
+                  <div className="space-y-1.5 shrink-0">
                     <label htmlFor="interest-rate-input-rev" className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 block">
                       Custom Rate (%)
                     </label>
-                    <div className="relative flex items-center">
+                    <div className="relative flex items-center w-24 sm:w-28">
                       <input
                         id="interest-rate-input-rev"
                         type="number"
                         value={interestRate}
                         onChange={(e) => handleRateInputChange(e.target.value)}
-                        className="w-full pl-3.5 sm:pl-4 pr-8 py-2 sm:py-2.5 rounded-xl bg-slate-800/90 border border-slate-700 focus:border-[#FA2D48] focus:bg-slate-800 focus:ring-2 focus:ring-[#FA2D48]/20 font-bold text-white text-sm sm:text-base outline-none transition-all"
-                        step="0.05"
+                        className="w-full pl-2.5 pr-6 py-2 rounded-xl bg-slate-800/90 border border-slate-700 focus:border-[#FA2D48] focus:bg-slate-800 focus:ring-2 focus:ring-[#FA2D48]/20 font-black text-white text-sm outline-none transition-all text-center tracking-tight"
+                        step="0.01"
                         min="0"
                         max="25"
+                        placeholder="6.89"
                       />
-                      <span className="absolute right-3 text-slate-400 font-bold text-sm">%</span>
+                      <span className="absolute right-2 text-slate-400 font-bold text-xs pointer-events-none">%</span>
                     </div>
                   </div>
 
-                  <div className="space-y-1.5">
+                  <div className="space-y-1.5 flex-1 min-w-[170px] max-w-xs">
                     <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 block">
                       Loan Term
                     </span>
-                    <div className="flex items-center gap-1.5 pt-0.5">
+                    <div className="flex items-center gap-1.5">
                       {[15, 20, 30].map((term) => (
                         <button
                           key={term}

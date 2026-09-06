@@ -1,6 +1,7 @@
-import React from 'react';
-import { CityInfo, NewsCategory } from '../types';
-import { Bookmark, ArrowUp, ArrowDown, Minus, RefreshCw } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
+import { CityInfo, NewsCategory, LiveMortgageRates } from '../types';
+import { Bookmark, ArrowUp, ArrowDown, Minus, RefreshCw, X, ChevronRight, Calculator } from 'lucide-react';
 
 interface AppleNewsHeaderProps {
   currentCity: CityInfo;
@@ -13,6 +14,7 @@ interface AppleNewsHeaderProps {
   searchQuery?: string;
   onSearchChange?: (q: string) => void;
   onResetToMain?: () => void;
+  liveRates?: LiveMortgageRates | null;
   fredRate?: string;
   rate30Year7DaysAgo?: string;
   rate30YearChange7Days?: number;
@@ -32,6 +34,7 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
   savedCount,
   onOpenSavedDrawer,
   onResetToMain,
+  liveRates,
   fredRate = '6.88%',
   rate30Year7DaysAgo = '6.74%',
   rate30YearChange7Days,
@@ -42,6 +45,26 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
   onRefreshRates,
   isRefreshingRates = false,
 }) => {
+  const [isRatesModalOpen, setIsRatesModalOpen] = useState(false);
+
+  // Escape key listener to close modal and prevent body scroll
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsRatesModalOpen(false);
+      }
+    };
+    if (isRatesModalOpen) {
+      window.addEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = '';
+    };
+  }, [isRatesModalOpen]);
   const monthDay = new Date().toLocaleDateString('en-US', {
     month: 'long',
     day: 'numeric',
@@ -97,18 +120,19 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
 
           {/* Right Side: Live Mortgage Rate & Bookmarks */}
           <div className="flex items-center space-x-3">
-            {/* Live 30-Day Mortgage Rate Display */}
+            {/* Live 30-Day Mortgage Rate Display - Click toggles MND 5 Live Rates Modal */}
             <button
               onClick={() => {
-                if (onRefreshRates) onRefreshRates();
-                onSelectCategory('mortgage-calculator');
+                setIsRatesModalOpen((prev) => !prev);
+                if (!isRatesModalOpen && onRefreshRates) onRefreshRates();
               }}
               className="flex flex-col items-end text-right group cursor-pointer hover:opacity-80 transition-opacity shrink-0 px-1 select-none"
-              title="Mortgage News Daily Live 30-Yr Rate - Click to sync & calculate"
+              title="Mortgage News Daily Live Rates - Click to view 5 live rates"
             >
               <div className="flex items-center gap-1.5">
-                <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#FA2D48] leading-none">
-                  MND Live 30-Yr
+                <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#FA2D48] leading-none flex items-center gap-1">
+                  <span>MND Live 30-Yr</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                 </span>
                 {isRefreshingRates ? (
                   <RefreshCw className="w-2.5 h-2.5 text-[#FA2D48] animate-spin inline" />
@@ -188,6 +212,123 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
         </div>
 
       </div>
+
+      {/* Simple, Minimalistic Mortgage News Daily Rates Modal mounted directly to document.body via Portal */}
+      {isRatesModalOpen && typeof document !== 'undefined' && createPortal(
+        <div
+          id="mnd-header-rates-modal-backdrop"
+          className="fixed inset-0 z-[99999] flex items-center justify-center p-4 sm:p-6 bg-slate-950/70 backdrop-blur-xs animate-fadeIn overflow-y-auto"
+          onClick={() => setIsRatesModalOpen(false)}
+        >
+          <div
+            id="mnd-header-rates-modal-card"
+            className="bg-white rounded-3xl max-w-md w-full my-auto max-h-[88vh] flex flex-col p-5 sm:p-6 shadow-2xl border border-slate-200 relative text-left overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100 shrink-0">
+              <div className="flex items-center gap-2">
+                <h3 className="text-xl font-semibold text-slate-900 tracking-tight font-sans">
+                  Daily Rates
+                </h3>
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              </div>
+
+              <div className="flex items-center gap-1 shrink-0">
+                {onRefreshRates && (
+                  <button
+                    type="button"
+                    onClick={onRefreshRates}
+                    disabled={isRefreshingRates}
+                    className="p-2 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+                    title="Sync Latest Live Rates"
+                  >
+                    <RefreshCw className={`w-3.5 h-3.5 text-[#FA2D48] ${isRefreshingRates ? 'animate-spin' : ''}`} />
+                  </button>
+                )}
+                <button
+                  type="button"
+                  id="close-mnd-header-rates-modal-btn"
+                  onClick={() => setIsRatesModalOpen(false)}
+                  className="p-2 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+                  title="Close modal"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
+            {/* 5 Live Rates List - Apple / Tesla Minimalist Typography */}
+            <div className="divide-y divide-slate-100 overflow-y-auto flex-1 py-1">
+              {[
+                {
+                  id: '30-yr-fixed',
+                  label: '30-Yr Fixed',
+                  rate: liveRates?.mortgage30Year || fredRate || '6.89%',
+                },
+                {
+                  id: '15-yr-fixed',
+                  label: '15-Yr Fixed',
+                  rate: liveRates?.mortgage15Year || '6.49%',
+                },
+                {
+                  id: '30-yr-jumbo',
+                  label: '30-Yr Jumbo',
+                  rate: liveRates?.jumbo30Year || '7.06%',
+                },
+                {
+                  id: '30-yr-fha',
+                  label: '30-Yr FHA',
+                  rate: liveRates?.fha30Year || '6.44%',
+                },
+                {
+                  id: '30-yr-va',
+                  label: '30-Yr VA',
+                  rate: liveRates?.va30Year || '6.46%',
+                },
+              ].map((r) => (
+                <button
+                  key={r.id}
+                  type="button"
+                  id={`mnd-header-rate-${r.id}`}
+                  onClick={() => {
+                    setIsRatesModalOpen(false);
+                    onSelectCategory('mortgage-calculator');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className="w-full py-3.5 px-3 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer flex items-center justify-between text-left group"
+                >
+                  <span className="text-[15px] font-medium text-slate-800 group-hover:text-slate-950 tracking-tight font-sans">
+                    {r.label}
+                  </span>
+
+                  <span className="text-base font-semibold text-slate-900 group-hover:text-[#FA2D48] tracking-tight tabular-nums font-sans transition-colors">
+                    {r.rate}
+                  </span>
+                </button>
+              ))}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="pt-3 border-t border-slate-100 shrink-0">
+              <button
+                type="button"
+                id="open-calculator-from-mnd-modal-btn"
+                onClick={() => {
+                  setIsRatesModalOpen(false);
+                  onSelectCategory('mortgage-calculator');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="w-full py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-medium text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-xs"
+              >
+                <Calculator className="w-3.5 h-3.5 text-[#FA2D48]" />
+                <span>Calculate Payments</span>
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
     </header>
   );
 };

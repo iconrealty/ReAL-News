@@ -632,6 +632,7 @@ export function App() {
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
           onResetToMain={handleResetToMain}
+          liveRates={liveRates}
           fredRate={liveRates?.mortgage30Year}
           rate30Year7DaysAgo={liveRates?.rate30Year7DaysAgo}
           rate30YearChange7Days={liveRates?.rate30YearChange7Days}
