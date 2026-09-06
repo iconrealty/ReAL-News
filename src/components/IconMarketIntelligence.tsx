@@ -204,16 +204,20 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                             {marketData.marketTimeDays} Days
                           </div>
 
-                          <div className="pt-1">
+                          <div className="pt-1 flex items-center justify-between flex-wrap gap-2 w-full">
                             <span className="bg-white text-slate-950 font-black text-xs px-2.5 py-1 rounded-lg inline-block shadow-xs font-sans">
                               {cond.badgeText}
+                            </span>
+                            <span className="text-xs font-bold text-white/90 group-hover:text-white underline underline-offset-2 flex items-center gap-1 transition-colors">
+                              <span>Click to see historical pace</span>
+                              <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
                             </span>
                           </div>
                         </button>
                       );
                     })()}
 
-                    {/* Closed Days on Market (DOM) - Vivid Blue Highlighted Speed Gauge */}
+                    {/* Days on Market - Vivid Blue Highlighted Speed Gauge */}
                     {(() => {
                       const closedDays = soldData ? soldData.medianDOM : 0;
                       return (
@@ -221,14 +225,14 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                           <div className="w-full space-y-1">
                             <div className="flex items-center justify-between gap-2">
                               <span className="text-xs sm:text-sm font-black uppercase tracking-wider text-white font-sans">
-                                Closed Days on Market (DOM)
+                                Days on Market
                               </span>
                               <span className="text-xs font-bold text-white bg-white/20 px-2.5 py-0.5 rounded-full backdrop-blur-xs shrink-0">
                                 July Closed
                               </span>
                             </div>
                             <div className="text-xs sm:text-sm font-bold text-white tracking-normal">
-                              Median list to close
+                              Time to Sell Once Properly Priced
                             </div>
                           </div>
 
@@ -495,8 +499,11 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
             className="bg-white border border-slate-200 rounded-3xl p-5 sm:p-6 max-w-sm sm:max-w-md w-full shadow-2xl space-y-4 relative animate-in zoom-in-95 duration-150 text-left font-sans"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Close Button Header */}
-            <div className="flex items-center justify-end">
+            {/* Modal Header with Title & Close Button */}
+            <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+              <h3 className="text-base sm:text-lg font-black text-slate-900 tracking-tight font-sans">
+                Historical Pace
+              </h3>
               <button
                 onClick={() => setShowHistoricalMarketTimeModal(false)}
                 className="p-1.5 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
