@@ -402,19 +402,17 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
           onClick={() => setShowMarketTimeModal(false)}
         >
           <div 
-            className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-7 max-w-lg w-full shadow-2xl space-y-5 relative animate-in zoom-in-95 duration-150"
+            className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-7 max-w-lg w-full shadow-2xl space-y-5 relative animate-in zoom-in-95 duration-150 font-sans text-left"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
-            <div className="flex items-start justify-between gap-4 border-b border-slate-100 pb-4">
-              <div>
-                <h3 className="text-xl font-black text-slate-950 tracking-tight">
-                  Expected Market Time Ranges
-                </h3>
-              </div>
+            <div className="flex items-center justify-between gap-4 border-b border-slate-100 pb-4">
+              <h3 className="text-xl sm:text-2xl font-black font-sans text-slate-950 tracking-tight">
+                Expected Market Time Ranges
+              </h3>
               <button
                 onClick={() => setShowMarketTimeModal(false)}
-                className="p-1.5 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
+                className="p-2 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
                 title="Close"
               >
                 <X className="w-5 h-5" />
@@ -422,56 +420,56 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
             </div>
 
             {/* Ranges Table */}
-            <div className="overflow-hidden rounded-2xl border border-slate-200">
-              <table className="w-full text-left text-xs border-collapse">
+            <div className="overflow-hidden rounded-2xl border border-slate-200/90 bg-white">
+              <table className="w-full text-left text-xs border-collapse font-sans">
                 <thead>
-                  <tr className="bg-slate-50 border-b border-slate-200 text-slate-700 font-mono font-black uppercase tracking-wider">
-                    <th className="py-3 px-4">Market Time (Days)</th>
-                    <th className="py-3 px-4">Classification</th>
+                  <tr className="bg-slate-50/90 border-b border-slate-200/80 text-slate-600 font-sans font-bold text-[11px] uppercase tracking-wider">
+                    <th className="py-3 px-4 font-sans">Speed (Days)</th>
+                    <th className="py-3 px-4 font-sans">Market Classification</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 font-medium">
+                <tbody className="divide-y divide-slate-100 font-sans">
                   <tr className="hover:bg-slate-50/60 transition-colors">
-                    <td className="py-3.5 px-4 font-mono font-bold text-slate-900">&lt; 60 Days</td>
+                    <td className="py-3.5 px-4 font-sans font-extrabold text-sm text-slate-900">&lt; 60 Days</td>
                     <td className="py-3.5 px-4">
-                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-black bg-[#FA2D48] text-white shadow-xs">
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold font-sans bg-[#FA2D48] text-white shadow-xs">
                         Hot Seller's Market
                       </span>
                     </td>
                   </tr>
                   <tr className="hover:bg-slate-50/60 transition-colors">
-                    <td className="py-3.5 px-4 font-mono font-bold text-slate-900">60 – 89 Days</td>
+                    <td className="py-3.5 px-4 font-sans font-extrabold text-sm text-slate-900">60 – 89 Days</td>
                     <td className="py-3.5 px-4">
-                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-black bg-amber-500 text-white shadow-xs">
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold font-sans bg-amber-500 text-white shadow-xs">
                         Slight Seller's Market
                       </span>
                     </td>
                   </tr>
-                  <tr className="bg-sky-50/60 hover:bg-sky-50/90 transition-colors">
-                    <td className="py-3.5 px-4 font-mono font-black text-sky-950 flex items-center gap-2">
+                  <tr className="bg-sky-50/70 hover:bg-sky-50/90 transition-colors">
+                    <td className="py-3.5 px-4 font-sans font-black text-sm text-sky-950 flex items-center gap-2">
                       <span>90 – 119 Days</span>
-                      <span className="px-1.5 py-0.5 rounded-sm bg-[#FA2D48] text-white text-[9px] font-mono font-black">
+                      <span className="px-2 py-0.5 rounded-full bg-[#FA2D48] text-white text-[10px] font-sans font-black shadow-2xs">
                         Current OC (99d)
                       </span>
                     </td>
                     <td className="py-3.5 px-4">
-                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-black bg-sky-600 text-white shadow-xs">
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold font-sans bg-sky-600 text-white shadow-xs">
                         Balanced Market
                       </span>
                     </td>
                   </tr>
                   <tr className="hover:bg-slate-50/60 transition-colors">
-                    <td className="py-3.5 px-4 font-mono font-bold text-slate-900">120 – 149 Days</td>
+                    <td className="py-3.5 px-4 font-sans font-extrabold text-sm text-slate-900">120 – 149 Days</td>
                     <td className="py-3.5 px-4">
-                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-black bg-emerald-600 text-white shadow-xs">
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold font-sans bg-emerald-600 text-white shadow-xs">
                         Slight Buyer's Market
                       </span>
                     </td>
                   </tr>
                   <tr className="hover:bg-slate-50/60 transition-colors">
-                    <td className="py-3.5 px-4 font-mono font-bold text-slate-900">150+ Days</td>
+                    <td className="py-3.5 px-4 font-sans font-extrabold text-sm text-slate-900">150+ Days</td>
                     <td className="py-3.5 px-4">
-                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-black bg-emerald-700 text-white shadow-xs">
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold font-sans bg-emerald-700 text-white shadow-xs">
                         Buyer's Market
                       </span>
                     </td>
@@ -484,7 +482,7 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
             <div className="flex justify-end pt-1">
               <button
                 onClick={() => setShowMarketTimeModal(false)}
-                className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition-all cursor-pointer"
+                className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold font-sans transition-all cursor-pointer shadow-xs"
               >
                 Close
               </button>
@@ -500,12 +498,12 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
           onClick={() => setShowHistoricalMarketTimeModal(false)}
         >
           <div 
-            className="bg-white border border-slate-200 rounded-3xl p-5 sm:p-6 max-w-sm sm:max-w-md w-full shadow-2xl space-y-4 relative animate-in zoom-in-95 duration-150 text-left font-sans"
+            className="bg-white border border-slate-200/90 rounded-3xl p-5 sm:p-6 max-w-sm sm:max-w-md w-full shadow-2xl space-y-4 relative animate-in zoom-in-95 duration-150 text-left font-sans"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header with Title & Close Button */}
-            <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-              <h3 className="text-base sm:text-lg font-black text-slate-900 tracking-tight font-sans">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <h3 className="text-lg font-black text-slate-900 tracking-tight font-sans">
                 Historical Pace
               </h3>
               <button
@@ -518,45 +516,45 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
             </div>
 
             {/* Historical Pace Cards Only */}
-            <div className="grid grid-cols-2 gap-2.5 sm:gap-3 text-left">
-              <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 flex flex-col justify-between shadow-2xs">
+            <div className="grid grid-cols-2 gap-2.5 sm:gap-3 text-left font-sans">
+              <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 flex flex-col justify-between shadow-2xs font-sans">
                 <div>
-                  <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">2 Weeks Ago</div>
-                  <div className="text-xl sm:text-2xl font-black text-slate-950 pt-0.5">{currentCityMarketData.marketTime2WeeksAgo} Days</div>
+                  <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider font-sans">2 Weeks Ago</div>
+                  <div className="text-xl sm:text-2xl font-black text-slate-950 pt-0.5 font-sans">{currentCityMarketData.marketTime2WeeksAgo} Days</div>
                 </div>
-                <div className={`text-xs font-black pt-2 border-t border-slate-200/60 mt-2 ${getMarketCondition(currentCityMarketData.marketTime2WeeksAgo).accentText}`}>
+                <div className={`text-xs font-bold pt-2 border-t border-slate-200/60 mt-2 font-sans ${getMarketCondition(currentCityMarketData.marketTime2WeeksAgo).accentText}`}>
                   {getMarketCondition(currentCityMarketData.marketTime2WeeksAgo).label}
                 </div>
               </div>
 
-              <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 flex flex-col justify-between shadow-2xs">
+              <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 flex flex-col justify-between shadow-2xs font-sans">
                 <div>
-                  <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">4 Weeks Ago</div>
-                  <div className="text-xl sm:text-2xl font-black text-slate-950 pt-0.5">{currentCityMarketData.marketTime4WeeksAgo} Days</div>
+                  <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider font-sans">4 Weeks Ago</div>
+                  <div className="text-xl sm:text-2xl font-black text-slate-950 pt-0.5 font-sans">{currentCityMarketData.marketTime4WeeksAgo} Days</div>
                 </div>
-                <div className={`text-xs font-black pt-2 border-t border-slate-200/60 mt-2 ${getMarketCondition(currentCityMarketData.marketTime4WeeksAgo).accentText}`}>
+                <div className={`text-xs font-bold pt-2 border-t border-slate-200/60 mt-2 font-sans ${getMarketCondition(currentCityMarketData.marketTime4WeeksAgo).accentText}`}>
                   {getMarketCondition(currentCityMarketData.marketTime4WeeksAgo).label}
                 </div>
               </div>
 
-              <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 flex flex-col justify-between shadow-2xs">
+              <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 flex flex-col justify-between shadow-2xs font-sans">
                 <div>
-                  <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">1 Year Ago</div>
-                  <div className="text-xl sm:text-2xl font-black text-slate-950 pt-0.5">{currentCityMarketData.marketTime1YearAgo} Days</div>
+                  <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider font-sans">1 Year Ago</div>
+                  <div className="text-xl sm:text-2xl font-black text-slate-950 pt-0.5 font-sans">{currentCityMarketData.marketTime1YearAgo} Days</div>
                 </div>
-                <div className={`text-xs font-black pt-2 border-t border-slate-200/60 mt-2 ${getMarketCondition(currentCityMarketData.marketTime1YearAgo).accentText}`}>
+                <div className={`text-xs font-bold pt-2 border-t border-slate-200/60 mt-2 font-sans ${getMarketCondition(currentCityMarketData.marketTime1YearAgo).accentText}`}>
                   {getMarketCondition(currentCityMarketData.marketTime1YearAgo).label}
                 </div>
               </div>
 
-              <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 flex flex-col justify-between shadow-2xs">
+              <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 flex flex-col justify-between shadow-2xs font-sans">
                 <div>
-                  <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">2 Years Ago</div>
-                  <div className="text-xl sm:text-2xl font-black text-slate-950 pt-0.5">
+                  <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider font-sans">2 Years Ago</div>
+                  <div className="text-xl sm:text-2xl font-black text-slate-950 pt-0.5 font-sans">
                     {currentCityMarketData.marketTime2YearsAgo > 0 ? `${currentCityMarketData.marketTime2YearsAgo} Days` : '—'}
                   </div>
                 </div>
-                <div className={`text-xs font-black pt-2 border-t border-slate-200/60 mt-2 ${getMarketCondition(currentCityMarketData.marketTime2YearsAgo).accentText}`}>
+                <div className={`text-xs font-bold pt-2 border-t border-slate-200/60 mt-2 font-sans ${getMarketCondition(currentCityMarketData.marketTime2YearsAgo).accentText}`}>
                   {currentCityMarketData.marketTime2YearsAgo > 0 ? getMarketCondition(currentCityMarketData.marketTime2YearsAgo).label : 'N/A'}
                 </div>
               </div>
@@ -566,7 +564,7 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
             <div className="flex justify-end pt-1">
               <button
                 onClick={() => setShowHistoricalMarketTimeModal(false)}
-                className="w-full sm:w-auto px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition-all cursor-pointer shadow-xs"
+                className="w-full sm:w-auto px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold font-sans transition-all cursor-pointer shadow-xs"
               >
                 Close
               </button>

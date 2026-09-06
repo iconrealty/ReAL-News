@@ -1228,12 +1228,12 @@ export function App() {
           onClick={() => setShowHistoricalMarketTimeModal(false)}
         >
           <div 
-            className="bg-white border border-slate-200 rounded-3xl p-5 sm:p-6 max-w-sm sm:max-w-md w-full shadow-2xl space-y-4 relative animate-in zoom-in-95 duration-150 text-left font-sans"
+            className="bg-white border border-slate-200/90 rounded-3xl p-5 sm:p-6 max-w-sm sm:max-w-md w-full shadow-2xl space-y-4 relative animate-in zoom-in-95 duration-150 text-left font-sans"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header with Title & Close Button */}
-            <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-              <h3 className="text-base sm:text-lg font-black text-slate-900 tracking-tight font-sans">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <h3 className="text-lg font-black text-slate-900 tracking-tight font-sans">
                 Historical Pace
               </h3>
               <button
@@ -1246,45 +1246,45 @@ export function App() {
             </div>
 
             {/* Historical Pace Cards Only */}
-            <div className="grid grid-cols-2 gap-2.5 sm:gap-3 text-left">
-              <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 flex flex-col justify-between shadow-2xs">
+            <div className="grid grid-cols-2 gap-2.5 sm:gap-3 text-left font-sans">
+              <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 flex flex-col justify-between shadow-2xs font-sans">
                 <div>
-                  <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">2 Weeks Ago</div>
-                  <div className="text-xl sm:text-2xl font-black text-slate-950 pt-0.5">{currentCityMarketData.marketTime2WeeksAgo} Days</div>
+                  <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider font-sans">2 Weeks Ago</div>
+                  <div className="text-xl sm:text-2xl font-black text-slate-950 pt-0.5 font-sans">{currentCityMarketData.marketTime2WeeksAgo} Days</div>
                 </div>
-                <div className={`text-xs font-black pt-2 border-t border-slate-200/60 mt-2 ${getMarketCondition(currentCityMarketData.marketTime2WeeksAgo).accentText}`}>
+                <div className={`text-xs font-bold pt-2 border-t border-slate-200/60 mt-2 font-sans ${getMarketCondition(currentCityMarketData.marketTime2WeeksAgo).accentText}`}>
                   {getMarketCondition(currentCityMarketData.marketTime2WeeksAgo).label}
                 </div>
               </div>
 
-              <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 flex flex-col justify-between shadow-2xs">
+              <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 flex flex-col justify-between shadow-2xs font-sans">
                 <div>
-                  <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">4 Weeks Ago</div>
-                  <div className="text-xl sm:text-2xl font-black text-slate-950 pt-0.5">{currentCityMarketData.marketTime4WeeksAgo} Days</div>
+                  <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider font-sans">4 Weeks Ago</div>
+                  <div className="text-xl sm:text-2xl font-black text-slate-950 pt-0.5 font-sans">{currentCityMarketData.marketTime4WeeksAgo} Days</div>
                 </div>
-                <div className={`text-xs font-black pt-2 border-t border-slate-200/60 mt-2 ${getMarketCondition(currentCityMarketData.marketTime4WeeksAgo).accentText}`}>
+                <div className={`text-xs font-bold pt-2 border-t border-slate-200/60 mt-2 font-sans ${getMarketCondition(currentCityMarketData.marketTime4WeeksAgo).accentText}`}>
                   {getMarketCondition(currentCityMarketData.marketTime4WeeksAgo).label}
                 </div>
               </div>
 
-              <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 flex flex-col justify-between shadow-2xs">
+              <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 flex flex-col justify-between shadow-2xs font-sans">
                 <div>
-                  <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">1 Year Ago</div>
-                  <div className="text-xl sm:text-2xl font-black text-slate-950 pt-0.5">{currentCityMarketData.marketTime1YearAgo} Days</div>
+                  <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider font-sans">1 Year Ago</div>
+                  <div className="text-xl sm:text-2xl font-black text-slate-950 pt-0.5 font-sans">{currentCityMarketData.marketTime1YearAgo} Days</div>
                 </div>
-                <div className={`text-xs font-black pt-2 border-t border-slate-200/60 mt-2 ${getMarketCondition(currentCityMarketData.marketTime1YearAgo).accentText}`}>
+                <div className={`text-xs font-bold pt-2 border-t border-slate-200/60 mt-2 font-sans ${getMarketCondition(currentCityMarketData.marketTime1YearAgo).accentText}`}>
                   {getMarketCondition(currentCityMarketData.marketTime1YearAgo).label}
                 </div>
               </div>
 
-              <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 flex flex-col justify-between shadow-2xs">
+              <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 flex flex-col justify-between shadow-2xs font-sans">
                 <div>
-                  <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">2 Years Ago</div>
-                  <div className="text-xl sm:text-2xl font-black text-slate-950 pt-0.5">
+                  <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider font-sans">2 Years Ago</div>
+                  <div className="text-xl sm:text-2xl font-black text-slate-950 pt-0.5 font-sans">
                     {currentCityMarketData.marketTime2YearsAgo > 0 ? `${currentCityMarketData.marketTime2YearsAgo} Days` : '—'}
                   </div>
                 </div>
-                <div className={`text-xs font-black pt-2 border-t border-slate-200/60 mt-2 ${getMarketCondition(currentCityMarketData.marketTime2YearsAgo).accentText}`}>
+                <div className={`text-xs font-bold pt-2 border-t border-slate-200/60 mt-2 font-sans ${getMarketCondition(currentCityMarketData.marketTime2YearsAgo).accentText}`}>
                   {currentCityMarketData.marketTime2YearsAgo > 0 ? getMarketCondition(currentCityMarketData.marketTime2YearsAgo).label : 'N/A'}
                 </div>
               </div>
@@ -1294,7 +1294,7 @@ export function App() {
             <div className="flex justify-end pt-1">
               <button
                 onClick={() => setShowHistoricalMarketTimeModal(false)}
-                className="w-full sm:w-auto px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition-all cursor-pointer shadow-xs"
+                className="w-full sm:w-auto px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold font-sans transition-all cursor-pointer shadow-xs"
               >
                 Close
               </button>
