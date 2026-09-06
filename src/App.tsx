@@ -810,60 +810,57 @@ export function App() {
                                   <button
                                     type="button"
                                     onClick={() => setShowHistoricalMarketTimeModal(true)}
-                                    className={`${cond.bgClass} p-4 sm:p-5 rounded-2xl sm:rounded-3xl flex flex-col justify-between shadow-xs space-y-2 text-left text-white transition-all cursor-pointer hover:opacity-95 active:scale-[0.99] group`}
+                                    className={`${cond.bgClass} p-4 sm:p-5 rounded-2xl sm:rounded-3xl flex flex-col justify-between shadow-xs space-y-3 text-left text-white transition-all cursor-pointer hover:opacity-95 active:scale-[0.99] group`}
                                     title="Click to view historical expected market time pace"
                                   >
-                                    <div className="flex items-center justify-between w-full">
-                                      <span className="text-xs font-black uppercase tracking-wider text-white/90 font-sans">
+                                    <div className="w-full space-y-1">
+                                      <div className="text-xs sm:text-sm font-black uppercase tracking-wider text-white font-sans">
                                         Expected Market Time
-                                      </span>
-                                      <span className="text-[11px] font-bold text-white/90 group-hover:text-white flex items-center gap-1 bg-black/20 px-2.5 py-0.5 rounded-full transition-colors">
-                                        <span>Pace History</span>
-                                        <ChevronRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
-                                      </span>
+                                      </div>
+                                      <div className="text-xs sm:text-sm font-bold text-white tracking-normal">
+                                        If no new homes came on the market
+                                      </div>
                                     </div>
 
                                     <div className="text-3xl sm:text-4xl font-black text-white tracking-tight font-sans">
                                       {marketData.marketTimeDays} Days
                                     </div>
 
-                                    <div className="pt-1 flex items-center justify-between flex-wrap gap-2 w-full">
+                                    <div className="pt-1">
                                       <span className="bg-white text-slate-950 font-black text-xs px-2.5 py-1 rounded-lg inline-block shadow-xs font-sans">
                                         {cond.badgeText}
-                                      </span>
-                                      <span className="text-[11px] text-white/85 font-medium">
-                                        Tap for history →
                                       </span>
                                     </div>
                                   </button>
                                 );
                               })()}
 
-                              {/* Closed Days on Market (DOM) - Same Weight & Prominence */}
+                              {/* Closed Days on Market (DOM) - Vivid Blue Highlighted Speed Gauge */}
                               {(() => {
                                 const closedDays = soldData ? soldData.medianDOM : 0;
-                                const closedCond = getMarketCondition(closedDays);
                                 return (
-                                  <div className="bg-slate-900 p-4 sm:p-5 rounded-2xl sm:rounded-3xl flex flex-col justify-between shadow-xs space-y-2 text-left text-white">
-                                    <div className="flex items-center justify-between w-full">
-                                      <span className="text-xs font-black uppercase tracking-wider text-slate-300 font-sans">
-                                        Closed Days on Market (DOM)
-                                      </span>
-                                      <span className="text-[11px] font-bold text-slate-300 bg-white/10 px-2.5 py-0.5 rounded-full">
-                                        July Closed Escrows
-                                      </span>
+                                  <div className="bg-blue-600 p-4 sm:p-5 rounded-2xl sm:rounded-3xl flex flex-col justify-between shadow-xs space-y-3 text-left text-white">
+                                    <div className="w-full space-y-1">
+                                      <div className="flex items-center justify-between gap-2">
+                                        <span className="text-xs sm:text-sm font-black uppercase tracking-wider text-white font-sans">
+                                          Closed Days on Market (DOM)
+                                        </span>
+                                        <span className="text-xs font-bold text-white bg-white/20 px-2.5 py-0.5 rounded-full backdrop-blur-xs shrink-0">
+                                          July Closed
+                                        </span>
+                                      </div>
+                                      <div className="text-xs sm:text-sm font-bold text-white tracking-normal">
+                                        Median list to close
+                                      </div>
                                     </div>
 
                                     <div className="text-3xl sm:text-4xl font-black text-white tracking-tight font-sans">
                                       {closedDays > 0 ? `${closedDays} Days` : '—'}
                                     </div>
 
-                                    <div className="pt-1 flex items-center justify-between flex-wrap gap-2 w-full">
-                                      <span className="bg-emerald-500 text-white font-black text-xs px-2.5 py-1 rounded-lg inline-block shadow-xs font-sans">
-                                        {closedDays > 0 ? closedCond.label : 'Closed Escrow Speed'}
-                                      </span>
-                                      <span className="text-[11px] text-slate-400 font-medium">
-                                        Median List to Close
+                                    <div className="pt-1">
+                                      <span className="bg-white text-blue-950 font-black text-xs px-2.5 py-1 rounded-lg inline-block shadow-xs font-sans">
+                                        Closed Escrows
                                       </span>
                                     </div>
                                   </div>
@@ -1225,28 +1222,11 @@ export function App() {
           onClick={() => setShowHistoricalMarketTimeModal(false)}
         >
           <div 
-            className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-7 max-w-lg w-full shadow-2xl space-y-5 relative animate-in zoom-in-95 duration-150 text-left font-sans"
+            className="bg-white border border-slate-200 rounded-3xl p-5 sm:p-6 max-w-sm sm:max-w-md w-full shadow-2xl space-y-4 relative animate-in zoom-in-95 duration-150 text-left font-sans"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Modal Header */}
-            <div className="flex items-start justify-between gap-4 border-b border-slate-100 pb-4">
-              <div className="space-y-1">
-                <div className="flex items-center gap-2 text-xs">
-                  <span className="font-black tracking-wider text-[#FA2D48] uppercase">
-                    Steven Thomas Analysis
-                  </span>
-                  <span className="text-slate-300">•</span>
-                  <span className="font-bold text-slate-500">
-                    {OC_HOUSING_REPORT_METADATA.reportDate}
-                  </span>
-                </div>
-                <h3 className="text-xl font-black text-slate-950 tracking-tight">
-                  {currentCity.name} Expected Market Time History
-                </h3>
-                <p className="text-xs text-slate-500 font-medium">
-                  Expected Market Time measures velocity — how fast active listings convert to pending escrows.
-                </p>
-              </div>
+            {/* Close Button Header */}
+            <div className="flex items-center justify-end">
               <button
                 onClick={() => setShowHistoricalMarketTimeModal(false)}
                 className="p-1.5 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
@@ -1256,79 +1236,56 @@ export function App() {
               </button>
             </div>
 
-            {/* Current Pace Spotlight */}
-            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-between">
-              <div>
-                <div className="text-[10px] font-black uppercase tracking-wider text-slate-500">Current Velocity</div>
-                <div className="text-3xl font-black text-slate-950 mt-0.5 tracking-tight">
-                  {currentCityMarketData.marketTimeDays} Days
+            {/* Historical Pace Cards Only */}
+            <div className="grid grid-cols-2 gap-2.5 sm:gap-3 text-left">
+              <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 flex flex-col justify-between shadow-2xs">
+                <div>
+                  <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">2 Weeks Ago</div>
+                  <div className="text-xl sm:text-2xl font-black text-slate-950 pt-0.5">{currentCityMarketData.marketTime2WeeksAgo} Days</div>
+                </div>
+                <div className={`text-xs font-black pt-2 border-t border-slate-200/60 mt-2 ${getMarketCondition(currentCityMarketData.marketTime2WeeksAgo).accentText}`}>
+                  {getMarketCondition(currentCityMarketData.marketTime2WeeksAgo).label}
                 </div>
               </div>
-              <span className={`px-3 py-1.5 rounded-xl text-xs font-black text-white shadow-xs ${getMarketCondition(currentCityMarketData.marketTimeDays).bgClass}`}>
-                {getMarketCondition(currentCityMarketData.marketTimeDays).label}
-              </span>
-            </div>
 
-            {/* Historical Trend Cards */}
-            <div className="space-y-2">
-              <div className="text-xs font-black text-slate-900 uppercase tracking-wider">
-                Historical Pace Comparison:
-              </div>
-              <div className="grid grid-cols-2 gap-2.5 text-left">
-                <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80 flex flex-col justify-between shadow-2xs">
-                  <div>
-                    <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">2 Weeks Ago</div>
-                    <div className="text-lg font-black text-slate-950 pt-0.5">{currentCityMarketData.marketTime2WeeksAgo} Days</div>
-                  </div>
-                  <div className={`text-xs font-black pt-1.5 border-t border-slate-200/60 mt-2 ${getMarketCondition(currentCityMarketData.marketTime2WeeksAgo).accentText}`}>
-                    {getMarketCondition(currentCityMarketData.marketTime2WeeksAgo).label}
-                  </div>
+              <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 flex flex-col justify-between shadow-2xs">
+                <div>
+                  <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">4 Weeks Ago</div>
+                  <div className="text-xl sm:text-2xl font-black text-slate-950 pt-0.5">{currentCityMarketData.marketTime4WeeksAgo} Days</div>
                 </div>
-
-                <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80 flex flex-col justify-between shadow-2xs">
-                  <div>
-                    <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">4 Weeks Ago</div>
-                    <div className="text-lg font-black text-slate-950 pt-0.5">{currentCityMarketData.marketTime4WeeksAgo} Days</div>
-                  </div>
-                  <div className={`text-xs font-black pt-1.5 border-t border-slate-200/60 mt-2 ${getMarketCondition(currentCityMarketData.marketTime4WeeksAgo).accentText}`}>
-                    {getMarketCondition(currentCityMarketData.marketTime4WeeksAgo).label}
-                  </div>
-                </div>
-
-                <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80 flex flex-col justify-between shadow-2xs">
-                  <div>
-                    <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">1 Year Ago</div>
-                    <div className="text-lg font-black text-slate-950 pt-0.5">{currentCityMarketData.marketTime1YearAgo} Days</div>
-                  </div>
-                  <div className={`text-xs font-black pt-1.5 border-t border-slate-200/60 mt-2 ${getMarketCondition(currentCityMarketData.marketTime1YearAgo).accentText}`}>
-                    {getMarketCondition(currentCityMarketData.marketTime1YearAgo).label}
-                  </div>
-                </div>
-
-                <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80 flex flex-col justify-between shadow-2xs">
-                  <div>
-                    <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">2 Years Ago</div>
-                    <div className="text-lg font-black text-slate-950 pt-0.5">
-                      {currentCityMarketData.marketTime2YearsAgo > 0 ? `${currentCityMarketData.marketTime2YearsAgo} Days` : '—'}
-                    </div>
-                  </div>
-                  <div className={`text-xs font-black pt-1.5 border-t border-slate-200/60 mt-2 ${getMarketCondition(currentCityMarketData.marketTime2YearsAgo).accentText}`}>
-                    {currentCityMarketData.marketTime2YearsAgo > 0 ? getMarketCondition(currentCityMarketData.marketTime2YearsAgo).label : 'N/A'}
-                  </div>
+                <div className={`text-xs font-black pt-2 border-t border-slate-200/60 mt-2 ${getMarketCondition(currentCityMarketData.marketTime4WeeksAgo).accentText}`}>
+                  {getMarketCondition(currentCityMarketData.marketTime4WeeksAgo).label}
                 </div>
               </div>
-            </div>
 
-            {/* Steven Thomas Speed Reference Key */}
-            <div className="p-3 bg-slate-50 rounded-xl border border-slate-200/60 text-[11px] text-slate-600 leading-relaxed">
-              <span className="font-bold text-slate-800">Speed Benchmark:</span> &lt;60 Days = Hot Seller's Market • 60–90 Days = Slight Seller's • 90–120 Days = Balanced Market • 120+ Days = Buyer's Market.
+              <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 flex flex-col justify-between shadow-2xs">
+                <div>
+                  <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">1 Year Ago</div>
+                  <div className="text-xl sm:text-2xl font-black text-slate-950 pt-0.5">{currentCityMarketData.marketTime1YearAgo} Days</div>
+                </div>
+                <div className={`text-xs font-black pt-2 border-t border-slate-200/60 mt-2 ${getMarketCondition(currentCityMarketData.marketTime1YearAgo).accentText}`}>
+                  {getMarketCondition(currentCityMarketData.marketTime1YearAgo).label}
+                </div>
+              </div>
+
+              <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 flex flex-col justify-between shadow-2xs">
+                <div>
+                  <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">2 Years Ago</div>
+                  <div className="text-xl sm:text-2xl font-black text-slate-950 pt-0.5">
+                    {currentCityMarketData.marketTime2YearsAgo > 0 ? `${currentCityMarketData.marketTime2YearsAgo} Days` : '—'}
+                  </div>
+                </div>
+                <div className={`text-xs font-black pt-2 border-t border-slate-200/60 mt-2 ${getMarketCondition(currentCityMarketData.marketTime2YearsAgo).accentText}`}>
+                  {currentCityMarketData.marketTime2YearsAgo > 0 ? getMarketCondition(currentCityMarketData.marketTime2YearsAgo).label : 'N/A'}
+                </div>
+              </div>
             </div>
 
             {/* Close Action */}
             <div className="flex justify-end pt-1">
               <button
                 onClick={() => setShowHistoricalMarketTimeModal(false)}
-                className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition-all cursor-pointer shadow-xs"
+                className="w-full sm:w-auto px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition-all cursor-pointer shadow-xs"
               >
                 Close
               </button>
