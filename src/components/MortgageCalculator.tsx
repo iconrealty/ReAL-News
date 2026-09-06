@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { RefreshCw } from 'lucide-react';
+import { RefreshCw, ChevronDown } from 'lucide-react';
 import { CityInfo, AdBanner, LiveMortgageRates } from '../types';
 import { AdBannerRenderer } from './AdBannerRenderer';
 
@@ -103,16 +103,53 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
   const [downPaymentMode, setDownPaymentMode] = useState<'percent' | 'dollar'>('dollar');
   const [downPaymentPercent, setDownPaymentPercent] = useState<number | ''>('');
   const [downPaymentDollar, setDownPaymentDollar] = useState<number | ''>('');
+  const [selectedRateProgram, setSelectedRateProgram] = useState<string>('30-Yr Fixed');
   const [interestRate, setInterestRate] = useState<number | ''>(mnd30Num); // Preset default to 30-year rate
   const [loanTermYears, setLoanTermYears] = useState<number>(30);
 
-  // Sync interest rate with live 30-year rate when propLiveRates updates initially
+  const handleProgramSelect = (programLabel: string) => {
+    setSelectedRateProgram(programLabel);
+    if (programLabel === 'custom') {
+      hasUserEditedRate.current = true;
+      return;
+    }
+    const found = rateOptions.find((r) => r.label === programLabel);
+    if (found) {
+      hasUserEditedRate.current = false;
+      setInterestRate(found.rate);
+      setLoanTermYears(found.term);
+    }
+  };
+
+  const handleRateInputChange = (valStr: string) => {
+    hasUserEditedRate.current = true;
+    if (valStr === '') {
+      setInterestRate('');
+      setSelectedRateProgram('custom');
+      return;
+    }
+    const num = Number(valStr);
+    setInterestRate(num);
+    const matched = rateOptions.find((r) => r.rate === num);
+    if (matched) {
+      setSelectedRateProgram(matched.label);
+    } else {
+      setSelectedRateProgram('custom');
+    }
+  };
+
+  // Sync interest rate with live rates when propLiveRates updates initially or refreshes
   const hasUserEditedRate = React.useRef(false);
   React.useEffect(() => {
-    if (!hasUserEditedRate.current && mnd30Num > 0) {
-      setInterestRate(mnd30Num);
+    if (!hasUserEditedRate.current) {
+      const activeProg = rateOptions.find((r) => r.label === selectedRateProgram);
+      if (activeProg && activeProg.rate > 0) {
+        setInterestRate(activeProg.rate);
+      } else if (mnd30Num > 0) {
+        setInterestRate(mnd30Num);
+      }
     }
-  }, [mnd30Num]);
+  }, [rateOptions, selectedRateProgram, mnd30Num]);
 
   // Optional Extra Costs Toggles (iPhone/Apple style green/grey toggle, set by default to inactive false)
   const [includeTaxes, setIncludeTaxes] = useState<boolean>(false);
@@ -549,24 +586,25 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
 
           {/* Rate Selector Pills */}
           <div className="flex flex-wrap gap-1.5 sm:gap-2 shrink-0 items-center">
-            {rateOptions.map((r) => (
-              <button
-                key={r.label}
-                type="button"
-                onClick={() => {
-                  setInterestRate(r.rate);
-                  setLoanTermYears(r.term);
-                }}
-                className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-bold transition-all cursor-pointer flex items-center gap-1 sm:gap-1.5 border whitespace-nowrap ${
-                  interestRate === r.rate && loanTermYears === r.term
-                    ? 'bg-[#FA2D48] text-white border-[#FA2D48] shadow-xs'
-                    : 'bg-slate-100 hover:bg-slate-200 text-slate-800 border-slate-200'
-                }`}
-              >
-                <span>{r.label}</span>
-                <span className="font-extrabold">{r.rate}%</span>
-              </button>
-            ))}
+            {rateOptions.map((r) => {
+              const isSelected = selectedRateProgram === r.label || (interestRate === r.rate && loanTermYears === r.term);
+              return (
+                <button
+                  key={r.label}
+                  type="button"
+                  id={`top-rate-pill-${r.label.toLowerCase().replace(/[^a-z0-9]/g, '-')}`}
+                  onClick={() => handleProgramSelect(r.label)}
+                  className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-bold transition-all cursor-pointer flex items-center gap-1 sm:gap-1.5 border whitespace-nowrap ${
+                    isSelected
+                      ? 'bg-[#FA2D48] text-white border-[#FA2D48] shadow-xs'
+                      : 'bg-slate-100 hover:bg-slate-200 text-slate-800 border-slate-200'
+                  }`}
+                >
+                  <span>{r.label}</span>
+                  <span className="font-extrabold">{r.rate}%</span>
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -609,7 +647,7 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                     : 'text-slate-400 hover:text-white hover:bg-slate-700/50'
                 }`}
               >
-                <span>Standard (Set Home Price)</span>
+                <span>Standard</span>
               </button>
               <button
                 type="button"
@@ -785,49 +823,79 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                 </div>
               </div>
 
-              {/* 3. Interest Rate & Loan Term */}
-              <div className="space-y-2">
+              {/* 3. Interest Rate & Loan Program */}
+              <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <label htmlFor="interest-rate-input" className="text-xs font-extrabold uppercase tracking-wider text-slate-700 block">
-                    Interest Rate (%)
+                  <label htmlFor="interest-rate-program-select" className="text-xs font-extrabold uppercase tracking-wider text-slate-700 block">
+                    Interest Rate &amp; Program
                   </label>
+                  <span className="text-[10px] sm:text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200/60 flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    Live Market Rates
+                  </span>
                 </div>
 
-                <div className="relative flex items-center">
-                  <input
-                    id="interest-rate-input"
-                    type="number"
-                    value={interestRate}
-                    onChange={(e) => {
-                      hasUserEditedRate.current = true;
-                      const val = e.target.value;
-                      setInterestRate(val === '' ? '' : Number(val));
-                    }}
-                    className="w-full pl-3.5 sm:pl-4 pr-8 sm:pr-9 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-200 focus:border-[#FA2D48] focus:bg-white focus:ring-2 focus:ring-[#FA2D48]/20 font-bold text-slate-900 text-base sm:text-lg outline-none transition-all"
-                    step="0.05"
-                    min="0"
-                    max="25"
-                  />
-                  <span className="absolute right-3 sm:right-4 text-slate-400 font-bold text-sm sm:text-base">%</span>
+                {/* Dropdown with live rate programs: 30-Yr Fixed (default), 15-Yr Fixed, 30-Yr Jumbo, 30-Yr FHA, 30-Yr VA */}
+                <div className="relative">
+                  <select
+                    id="interest-rate-program-select"
+                    value={selectedRateProgram}
+                    onChange={(e) => handleProgramSelect(e.target.value)}
+                    className="w-full pl-3.5 sm:pl-4 pr-10 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-200 focus:border-[#FA2D48] focus:bg-white focus:ring-2 focus:ring-[#FA2D48]/20 font-bold text-slate-900 text-sm sm:text-base outline-none transition-all cursor-pointer appearance-none shadow-xs"
+                  >
+                    <option value="30-Yr Fixed">30-Yr Fixed — {mnd30Num}% (Live Default)</option>
+                    <option value="15-Yr Fixed">15-Yr Fixed — {mnd15Num}% (Live)</option>
+                    <option value="30-Yr Jumbo">30-Yr Jumbo — {mndJumboNum}% (Live)</option>
+                    <option value="30-Yr FHA">30-Yr FHA — {mndFhaNum}% (Live)</option>
+                    <option value="30-Yr VA">30-Yr VA — {mndVaNum}% (Live)</option>
+                    <option value="custom">Custom Rate ({interestRate !== '' ? `${interestRate}%` : 'Manual'})</option>
+                  </select>
+                  <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3.5 sm:right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
                 </div>
 
-                {/* Loan Term Quick Presets directly under Interest Rate */}
-                <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap pt-0.5">
-                  <span className="text-[10px] sm:text-[11px] font-bold text-slate-400 mr-1">Loan Term:</span>
-                  {[15, 20, 30].map((term) => (
-                    <button
-                      key={term}
-                      type="button"
-                      onClick={() => setLoanTermYears(term)}
-                      className={`px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg text-[11px] sm:text-xs font-bold transition-all cursor-pointer ${
-                        loanTermYears === term
-                          ? 'bg-slate-900 text-white'
-                          : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
-                      }`}
-                    >
-                      {term} yr
-                    </button>
-                  ))}
+                {/* Custom Rate Input + Loan Term Quick Selector */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-0.5">
+                  <div className="space-y-1.5">
+                    <label htmlFor="interest-rate-input" className="text-[11px] font-extrabold uppercase tracking-wider text-slate-500 block">
+                      Custom Rate (%)
+                    </label>
+                    <div className="relative flex items-center">
+                      <input
+                        id="interest-rate-input"
+                        type="number"
+                        value={interestRate}
+                        onChange={(e) => handleRateInputChange(e.target.value)}
+                        className="w-full pl-3.5 sm:pl-4 pr-8 py-2 sm:py-2.5 rounded-xl bg-slate-50 border border-slate-200 focus:border-[#FA2D48] focus:bg-white focus:ring-2 focus:ring-[#FA2D48]/20 font-bold text-slate-900 text-sm sm:text-base outline-none transition-all"
+                        step="0.05"
+                        min="0"
+                        max="25"
+                      />
+                      <span className="absolute right-3 text-slate-400 font-bold text-sm">%</span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-500 block">
+                      Loan Term
+                    </span>
+                    <div className="flex items-center gap-1.5 pt-0.5">
+                      {[15, 20, 30].map((term) => (
+                        <button
+                          key={term}
+                          type="button"
+                          id={`loan-term-btn-${term}`}
+                          onClick={() => setLoanTermYears(term)}
+                          className={`flex-1 py-2 rounded-xl text-xs font-black transition-all cursor-pointer text-center ${
+                            loanTermYears === term
+                              ? 'bg-slate-900 text-white shadow-xs'
+                              : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200/80'
+                          }`}
+                        >
+                          {term} yr
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </div>
             </>
@@ -967,49 +1035,79 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                 </div>
               </div>
 
-              {/* 4. Interest Rate & Loan Term */}
-              <div className="space-y-2">
+              {/* 4. Interest Rate & Loan Program */}
+              <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <label htmlFor="interest-rate-input-rev" className="text-xs font-extrabold uppercase tracking-wider text-slate-200 block">
-                    Interest Rate (%)
+                  <label htmlFor="interest-rate-program-select-rev" className="text-xs font-extrabold uppercase tracking-wider text-slate-200 block">
+                    Interest Rate &amp; Program
                   </label>
+                  <span className="text-[10px] sm:text-[11px] font-bold text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded-md border border-emerald-500/30 flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                    Live Market Rates
+                  </span>
                 </div>
 
-                <div className="relative flex items-center">
-                  <input
-                    id="interest-rate-input-rev"
-                    type="number"
-                    value={interestRate}
-                    onChange={(e) => {
-                      hasUserEditedRate.current = true;
-                      const val = e.target.value;
-                      setInterestRate(val === '' ? '' : Number(val));
-                    }}
-                    className="w-full pl-3.5 sm:pl-4 pr-8 sm:pr-9 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-slate-800/90 border border-slate-700 focus:border-[#FA2D48] focus:bg-slate-800 focus:ring-2 focus:ring-[#FA2D48]/20 font-bold text-white text-base sm:text-lg outline-none transition-all"
-                    step="0.05"
-                    min="0"
-                    max="25"
-                  />
-                  <span className="absolute right-3 sm:right-4 text-slate-400 font-bold text-sm sm:text-base">%</span>
+                {/* Dropdown with live rate programs: 30-Yr Fixed (default), 15-Yr Fixed, 30-Yr Jumbo, 30-Yr FHA, 30-Yr VA */}
+                <div className="relative">
+                  <select
+                    id="interest-rate-program-select-rev"
+                    value={selectedRateProgram}
+                    onChange={(e) => handleProgramSelect(e.target.value)}
+                    className="w-full pl-3.5 sm:pl-4 pr-10 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-slate-800/90 border border-slate-700 focus:border-[#FA2D48] focus:bg-slate-800 focus:ring-2 focus:ring-[#FA2D48]/20 font-bold text-white text-sm sm:text-base outline-none transition-all cursor-pointer appearance-none shadow-xs"
+                  >
+                    <option value="30-Yr Fixed" className="bg-slate-900 text-white">30-Yr Fixed — {mnd30Num}% (Live Default)</option>
+                    <option value="15-Yr Fixed" className="bg-slate-900 text-white">15-Yr Fixed — {mnd15Num}% (Live)</option>
+                    <option value="30-Yr Jumbo" className="bg-slate-900 text-white">30-Yr Jumbo — {mndJumboNum}% (Live)</option>
+                    <option value="30-Yr FHA" className="bg-slate-900 text-white">30-Yr FHA — {mndFhaNum}% (Live)</option>
+                    <option value="30-Yr VA" className="bg-slate-900 text-white">30-Yr VA — {mndVaNum}% (Live)</option>
+                    <option value="custom" className="bg-slate-900 text-white">Custom Rate ({interestRate !== '' ? `${interestRate}%` : 'Manual'})</option>
+                  </select>
+                  <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3.5 sm:right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
                 </div>
 
-                {/* Loan Term Quick Presets */}
-                <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap pt-0.5">
-                  <span className="text-[10px] sm:text-[11px] font-bold text-slate-400 mr-1">Loan Term:</span>
-                  {[15, 20, 30].map((term) => (
-                    <button
-                      key={term}
-                      type="button"
-                      onClick={() => setLoanTermYears(term)}
-                      className={`px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg text-[11px] sm:text-xs font-bold transition-all cursor-pointer ${
-                        loanTermYears === term
-                          ? 'bg-white text-slate-900 font-black'
-                          : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700'
-                      }`}
-                    >
-                      {term} yr
-                    </button>
-                  ))}
+                {/* Custom Rate Input + Loan Term Quick Selector */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-0.5">
+                  <div className="space-y-1.5">
+                    <label htmlFor="interest-rate-input-rev" className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 block">
+                      Custom Rate (%)
+                    </label>
+                    <div className="relative flex items-center">
+                      <input
+                        id="interest-rate-input-rev"
+                        type="number"
+                        value={interestRate}
+                        onChange={(e) => handleRateInputChange(e.target.value)}
+                        className="w-full pl-3.5 sm:pl-4 pr-8 py-2 sm:py-2.5 rounded-xl bg-slate-800/90 border border-slate-700 focus:border-[#FA2D48] focus:bg-slate-800 focus:ring-2 focus:ring-[#FA2D48]/20 font-bold text-white text-sm sm:text-base outline-none transition-all"
+                        step="0.05"
+                        min="0"
+                        max="25"
+                      />
+                      <span className="absolute right-3 text-slate-400 font-bold text-sm">%</span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 block">
+                      Loan Term
+                    </span>
+                    <div className="flex items-center gap-1.5 pt-0.5">
+                      {[15, 20, 30].map((term) => (
+                        <button
+                          key={term}
+                          type="button"
+                          id={`loan-term-btn-rev-${term}`}
+                          onClick={() => setLoanTermYears(term)}
+                          className={`flex-1 py-2 rounded-xl text-xs font-black transition-all cursor-pointer text-center ${
+                            loanTermYears === term
+                              ? 'bg-white text-slate-900 shadow-xs'
+                              : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700'
+                          }`}
+                        >
+                          {term} yr
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </div>
             </>
