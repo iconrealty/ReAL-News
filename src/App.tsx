@@ -872,18 +872,12 @@ export function App() {
                               })()}
                             </div>
 
-                            {/* Active Inventory, Demand & Price Metrics */}
-                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+                            {/* Active Inventory & Price Metrics */}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                               <div className="bg-slate-50/80 p-4 rounded-2xl border border-slate-200/70">
                                 <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">Active Inventory</div>
                                 <div className="text-2xl sm:text-3xl font-bold text-slate-900 pt-1">{marketData.currentActives} Homes</div>
                                 <div className="text-[11px] text-emerald-600 pt-1 font-bold">Active listings on market</div>
-                              </div>
-
-                              <div className="bg-slate-50/80 p-4 rounded-2xl border border-slate-200/70">
-                                <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">30-Day Demand</div>
-                                <div className="text-2xl sm:text-3xl font-bold text-slate-900 pt-1">{marketData.demand30Days} Pending</div>
-                                <div className="text-[11px] text-emerald-600 pt-1 font-bold">Recent pending escrows</div>
                               </div>
 
                               <div className="bg-slate-50/80 p-4 rounded-2xl border border-slate-200/70">
@@ -924,12 +918,20 @@ export function App() {
                                 <div className="text-[11px] text-emerald-600 pt-1 font-bold">Median Size: {soldData.medianSqFt.toLocaleString()} sq ft</div>
                               </div>
 
-                              <div className="bg-slate-50/90 rounded-2xl p-4 border border-slate-200/70">
-                                <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">Closed Sales</div>
-                                <div className="text-2xl sm:text-3xl font-bold text-slate-900 pt-1">{soldData.unitsSold2026} Units</div>
-                                <div className={`text-[11px] pt-1 font-bold ${yoyUnitsChange < 0 ? 'text-[#FA2D48]' : 'text-emerald-600'}`}>
-                                  {yoyUnitsChange >= 0 ? `+${yoyUnitsChange}` : yoyUnitsChange} vs Prior Year ({soldData.unitsSold2025})
+                              <div className="bg-slate-50/90 rounded-2xl p-4 border border-slate-200/70 flex flex-col justify-between">
+                                <div>
+                                  <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">Closed Sales</div>
+                                  <div className="text-2xl sm:text-3xl font-bold text-slate-900 pt-1">{soldData.unitsSold2026} Units</div>
+                                  <div className={`text-[11px] pt-1 font-bold ${yoyUnitsChange < 0 ? 'text-[#FA2D48]' : 'text-emerald-600'}`}>
+                                    {yoyUnitsChange >= 0 ? `+${yoyUnitsChange}` : yoyUnitsChange} vs Prior Year ({soldData.unitsSold2025})
+                                  </div>
                                 </div>
+                                {marketData && (
+                                  <div className="text-[11px] text-emerald-600 font-bold pt-1.5 mt-2 border-t border-slate-200/70 flex items-center justify-between">
+                                    <span>30-Day Demand:</span>
+                                    <span className="text-emerald-700 font-extrabold">{marketData.demand30Days} Pending Escrow</span>
+                                  </div>
+                                )}
                               </div>
                             </div>
 
