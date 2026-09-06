@@ -1,15 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { 
   ArrowUpRight, 
   ArrowDownRight, 
-  Calendar,
-  Info,
-  X,
-  ChevronRight
+  Info, 
+  X, 
+  ChevronRight,
+  Clock,
+  Tag
 } from 'lucide-react';
 import {
   OC_HOUSING_REPORT_METADATA,
-  OC_HOUSING_SUMMARY_CARDS
+  OC_HOUSING_SUMMARY_CARDS,
+  OC_SOLD_REPORT,
+  OC_MARKET_TIME_REPORT
 } from '../data/ocHousingReportData';
 import { CITIES } from '../data/mockNews';
 import { CityInfo } from '../types';
@@ -26,8 +29,39 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
   onShowToast
 }) => {
   const [showMarketTimeModal, setShowMarketTimeModal] = useState<boolean>(false);
+  const [showHistoricalMarketTimeModal, setShowHistoricalMarketTimeModal] = useState<boolean>(false);
 
   const meta = OC_HOUSING_REPORT_METADATA;
+
+  const currentCitySoldData = useMemo(() => {
+    const name = currentCity?.name?.toLowerCase().trim() || '';
+    if (name === 'orange county' || name === 'all of o.c.') return null;
+    const clean = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const cleanName = clean(name);
+    return OC_SOLD_REPORT.find(s => {
+      const cleanCity = clean(s.city);
+      return cleanCity === cleanName || cleanCity.includes(cleanName) || cleanName.includes(cleanCity);
+    });
+  }, [currentCity?.name]);
+
+  const currentCityMarketData = useMemo(() => {
+    const name = currentCity?.name?.toLowerCase().trim() || '';
+    if (name === 'orange county' || name === 'all of o.c.') return null;
+    const clean = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const cleanName = clean(name);
+    return OC_MARKET_TIME_REPORT.find(m => {
+      const cleanCity = clean(m.city);
+      return cleanCity === cleanName || cleanCity.includes(cleanName) || cleanName.includes(cleanCity);
+    });
+  }, [currentCity?.name]);
+
+  const getMarketCondition = (days: number) => {
+    if (days < 60) return { label: "Hot Seller's Market", bgClass: 'bg-[#FA2D48]', textClass: 'text-[#FA2D48]', badgeText: "Hot Seller's Market (< 60 Days)", accentText: 'text-[#FA2D48]' };
+    if (days <= 90) return { label: "Slight Seller's Market", bgClass: 'bg-amber-500', textClass: 'text-amber-600', badgeText: "Slight Seller's Market (60 - 90 Days)", accentText: 'text-amber-600' };
+    if (days <= 120) return { label: "Balanced Market", bgClass: 'bg-sky-600', textClass: 'text-sky-600', badgeText: "Balanced Market (90 - 120 Days)", accentText: 'text-sky-600' };
+    if (days <= 150) return { label: "Slight Buyer's Market", bgClass: 'bg-emerald-600', textClass: 'text-emerald-600', badgeText: "Slight Buyer's Market (120 - 150 Days)", accentText: 'text-emerald-600' };
+    return { label: "Buyer's Market", bgClass: 'bg-emerald-700', textClass: 'text-emerald-700', badgeText: "Buyer's Market (150+ Days)", accentText: 'text-emerald-700' };
+  };
 
   const getMarketSpeedBadge = (days: number) => {
     if (days < 60) return { label: "Hot Seller's", color: "bg-[#FA2D48] text-white border-transparent", buttonBg: "bg-[#FA2D48] hover:bg-[#d9233b]" };
@@ -42,32 +76,47 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
   return (
     <div className="max-w-6xl mx-auto space-y-6 pb-20 font-sans text-slate-900 antialiased">
       
-      {/* 1. REPORT HEADER BANNER */}
-      <div className="bg-white text-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-xs relative overflow-hidden">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      {/* Apple Style City Masthead Hero Banner with Steven Thomas Market Intelligence */}
+      <div className="relative rounded-3xl bg-white border border-slate-200/90 p-5 sm:p-7 shadow-xs space-y-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
           <div className="space-y-2">
-            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-slate-100 border border-slate-200 rounded-full text-[11px] font-bold text-slate-600">
-                <Calendar className="w-3 h-3 text-slate-500" />
-                Steven Thomas Report • {meta.reportDate}
+            {/* Byline: Steven Thomas in red, Reports On Housing & Report Date */}
+            <div className="flex items-center gap-2 flex-wrap text-xs">
+              <span className="text-xs sm:text-sm font-sans font-black tracking-wider text-[#FA2D48] uppercase">
+                Steven Thomas
               </span>
+              <span className="text-slate-300 font-bold hidden sm:inline">•</span>
+              <span className="font-bold text-slate-700 flex items-center gap-1 font-sans text-xs">
+                <span>Reports On Housing</span>
+              </span>
+              <span className="text-slate-300 font-bold">•</span>
+              <span className="font-bold text-slate-500 font-sans text-xs">
+                {OC_HOUSING_REPORT_METADATA.reportDate}
+              </span>
+              {currentCityMarketData && (
+                <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200 ml-auto sm:ml-0 font-sans">
+                  {currentCityMarketData.region}
+                </span>
+              )}
             </div>
 
-            <div className="flex items-center gap-3 flex-wrap">
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black font-sans tracking-tight text-slate-950 leading-tight">
-                Select City
-              </h1>
+            <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap">
+              <h2 className="text-xl sm:text-2xl lg:text-3xl font-black font-sans text-slate-950 tracking-tight whitespace-nowrap">
+                {currentCity.id === 'orange-county' ? 'Select City' : currentCity.name}
+              </h2>
 
               {/* Direct Dropdown City Selector */}
               {onSelectCity && (
                 <div className="relative">
                   <select
-                    value={currentCity?.id || 'orange-county'}
+                    id="steven-thomas-page-city-select"
+                    value={currentCity.id}
                     onChange={(e) => {
                       const val = e.target.value;
                       const matched = CITIES.find(c => c.id === val);
                       if (matched) {
                         onSelectCity(matched);
+                        if (onShowToast) onShowToast(`Selected ${matched.name}`);
                       }
                     }}
                     className="bg-[#F2F2F7] hover:bg-slate-200 border border-slate-300/80 rounded-xl pl-3 pr-7 py-1.5 sm:py-2 text-xs sm:text-sm font-bold text-slate-900 focus:outline-none focus:border-[#FA2D48] transition-all cursor-pointer appearance-none shadow-xs"
@@ -84,25 +133,205 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row md:flex-col items-start md:items-end gap-2 shrink-0">
+          <div className="flex items-center gap-2.5 flex-wrap">
             <button
               onClick={() => setShowMarketTimeModal(true)}
-              className={`group inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs sm:text-sm font-black ${countySpeed.buttonBg} text-white shadow-xs tracking-wide transition-all cursor-pointer hover:shadow-md hover:scale-[1.02] active:scale-[0.98]`}
+              className={`group inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-black ${countySpeed.buttonBg} text-white shadow-xs tracking-wide transition-all cursor-pointer hover:shadow-md hover:scale-[1.02] active:scale-[0.98]`}
               title="Click to view Expected Market Time ranges table"
             >
               <span>{meta.countywideMarketTime} Days • {countySpeed.label}</span>
               <Info className="w-3.5 h-3.5 text-white/90 group-hover:text-white transition-colors" />
             </button>
+
+            {currentCity.id !== 'orange-county' && onSelectCity && (
+              <button
+                onClick={() => {
+                  const ocCity = CITIES.find(c => c.id === 'orange-county') || CITIES[0];
+                  onSelectCity(ocCity);
+                  if (onShowToast) onShowToast('Reset to All Orange County');
+                }}
+                className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs transition-all cursor-pointer"
+              >
+                ← Countywide View
+              </button>
+            )}
           </div>
         </div>
+
+        {/* Dynamic Steven Thomas City Report Format — Displayed when a city is selected */}
+        {currentCity.id !== 'orange-county' && (currentCityMarketData || currentCitySoldData) && (() => {
+          const soldData = currentCitySoldData;
+          const marketData = currentCityMarketData;
+          const yoyUnitsChange = soldData ? soldData.unitsSold2026 - soldData.unitsSold2025 : 0;
+
+          return (
+            <div className="space-y-6 pt-2">
+              {/* 1. CURRENT ACTIVE INVENTORY & EXPECTED MARKET TIME */}
+              {marketData && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between flex-wrap gap-2">
+                    <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 font-sans flex items-center space-x-2">
+                      <Clock className="w-4 h-4 text-[#FA2D48]" />
+                      <span>Market Velocity & Expected Pace</span>
+                    </h3>
+                    <span className="text-[11px] font-bold text-slate-500">
+                      Steven Thomas Analysis ({OC_HOUSING_REPORT_METADATA.reportDate})
+                    </span>
+                  </div>
+
+                  {/* Primary Speed Gauges: Expected Market Time & Closed Days on Market (Same Weight) */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                    {/* Expected Market Time - Tap to open historical pace modal */}
+                    {(() => {
+                      const cond = getMarketCondition(marketData.marketTimeDays);
+                      return (
+                        <button
+                          type="button"
+                          onClick={() => setShowHistoricalMarketTimeModal(true)}
+                          className={`${cond.bgClass} p-4 sm:p-5 rounded-2xl sm:rounded-3xl flex flex-col justify-between shadow-xs space-y-2 text-left text-white transition-all cursor-pointer hover:opacity-95 active:scale-[0.99] group`}
+                          title="Click to view historical expected market time pace"
+                        >
+                          <div className="flex items-center justify-between w-full">
+                            <span className="text-xs font-black uppercase tracking-wider text-white/90 font-sans">
+                              Expected Market Time
+                            </span>
+                            <span className="text-[11px] font-bold text-white/90 group-hover:text-white flex items-center gap-1 bg-black/20 px-2.5 py-0.5 rounded-full transition-colors">
+                              <span>Pace History</span>
+                              <ChevronRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                            </span>
+                          </div>
+
+                          <div className="text-3xl sm:text-4xl font-black text-white tracking-tight font-sans">
+                            {marketData.marketTimeDays} Days
+                          </div>
+
+                          <div className="pt-1 flex items-center justify-between flex-wrap gap-2 w-full">
+                            <span className="bg-white text-slate-950 font-black text-xs px-2.5 py-1 rounded-lg inline-block shadow-xs font-sans">
+                              {cond.badgeText}
+                            </span>
+                            <span className="text-[11px] text-white/85 font-medium">
+                              Tap for history →
+                            </span>
+                          </div>
+                        </button>
+                      );
+                    })()}
+
+                    {/* Closed Days on Market (DOM) - Same Weight & Prominence */}
+                    {(() => {
+                      const closedDays = soldData ? soldData.medianDOM : 0;
+                      const closedCond = getMarketCondition(closedDays);
+                      return (
+                        <div className="bg-slate-900 p-4 sm:p-5 rounded-2xl sm:rounded-3xl flex flex-col justify-between shadow-xs space-y-2 text-left text-white">
+                          <div className="flex items-center justify-between w-full">
+                            <span className="text-xs font-black uppercase tracking-wider text-slate-300 font-sans">
+                              Closed Days on Market (DOM)
+                            </span>
+                            <span className="text-[11px] font-bold text-slate-300 bg-white/10 px-2.5 py-0.5 rounded-full">
+                              July Closed Escrows
+                            </span>
+                          </div>
+
+                          <div className="text-3xl sm:text-4xl font-black text-white tracking-tight font-sans">
+                            {closedDays > 0 ? `${closedDays} Days` : '—'}
+                          </div>
+
+                          <div className="pt-1 flex items-center justify-between flex-wrap gap-2 w-full">
+                            <span className="bg-emerald-500 text-white font-black text-xs px-2.5 py-1 rounded-lg inline-block shadow-xs font-sans">
+                              {closedDays > 0 ? closedCond.label : 'Closed Escrow Speed'}
+                            </span>
+                            <span className="text-[11px] text-slate-400 font-medium">
+                              Median List to Close
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })()}
+                  </div>
+
+                  {/* Active Inventory, Demand & Price Metrics */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+                    <div className="bg-slate-50/80 p-4 rounded-2xl border border-slate-200/70">
+                      <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">Active Inventory</div>
+                      <div className="text-2xl sm:text-3xl font-bold text-slate-900 pt-1">{marketData.currentActives} Homes</div>
+                      <div className="text-[11px] text-emerald-600 pt-1 font-bold">Active listings on market</div>
+                    </div>
+
+                    <div className="bg-slate-50/80 p-4 rounded-2xl border border-slate-200/70">
+                      <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">30-Day Demand</div>
+                      <div className="text-2xl sm:text-3xl font-bold text-slate-900 pt-1">{marketData.demand30Days} Pending</div>
+                      <div className="text-[11px] text-emerald-600 pt-1 font-bold">Recent pending escrows</div>
+                    </div>
+
+                    <div className="bg-slate-50/80 p-4 rounded-2xl border border-slate-200/70">
+                      <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">Median Active List Price</div>
+                      <div className="text-2xl sm:text-3xl font-bold text-slate-900 pt-1">{marketData.medianActiveListPrice}</div>
+                      <div className="text-[11px] text-emerald-600 pt-1 font-bold">Current active listings</div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* 2. JULY CLOSED SALES DATA */}
+              {soldData && (
+                <div className="space-y-3 pt-4 border-t border-slate-100">
+                  <div className="flex items-center justify-between flex-wrap gap-2">
+                    <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 font-sans flex items-center space-x-2">
+                      <Tag className="w-4 h-4 text-[#FA2D48]" />
+                      <span>July Closed Sales & Price Distribution</span>
+                    </h3>
+                  </div>
+
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                    <div className="bg-slate-50/90 rounded-2xl p-4 border border-slate-200/70">
+                      <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">Median Sales Price</div>
+                      <div className="text-2xl sm:text-3xl font-bold text-slate-900 pt-1">{soldData.medianSalesPrice}</div>
+                      <div className="text-[11px] text-emerald-600 pt-1 font-bold">List Price: {soldData.medianListPrice}</div>
+                    </div>
+
+                    <div className="bg-slate-50/90 rounded-2xl p-4 border border-slate-200/70">
+                      <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">Sales-to-List Ratio</div>
+                      <div className="text-2xl sm:text-3xl font-bold text-emerald-600 pt-1">{soldData.salesToListRatio}</div>
+                      <div className="text-[11px] text-emerald-600 pt-1 font-bold">Countywide Avg: {OC_HOUSING_REPORT_METADATA.salesToListRatio}</div>
+                    </div>
+
+                    <div className="bg-slate-50/90 rounded-2xl p-4 border border-slate-200/70">
+                      <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">Median Price / Sq. Ft.</div>
+                      <div className="text-2xl sm:text-3xl font-bold text-[#FA2D48] pt-1">{soldData.medianPricePerSqFt}</div>
+                      <div className="text-[11px] text-emerald-600 pt-1 font-bold">Median Size: {soldData.medianSqFt.toLocaleString()} sq ft</div>
+                    </div>
+
+                    <div className="bg-slate-50/90 rounded-2xl p-4 border border-slate-200/70">
+                      <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">Closed Sales</div>
+                      <div className="text-2xl sm:text-3xl font-bold text-slate-900 pt-1">{soldData.unitsSold2026} Units</div>
+                      <div className={`text-[11px] pt-1 font-bold ${yoyUnitsChange < 0 ? 'text-[#FA2D48]' : 'text-emerald-600'}`}>
+                        {yoyUnitsChange >= 0 ? `+${yoyUnitsChange}` : yoyUnitsChange} vs Prior Year ({soldData.unitsSold2025})
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="pt-1">
+                    <div className="bg-slate-50/70 rounded-2xl py-2.5 px-4 flex items-center justify-between text-xs border border-slate-200/60">
+                      <span className="font-bold text-black">Price Range (Low to High):</span>
+                      <span className="font-sans font-bold text-black">{soldData.lowPrice} - {soldData.highPrice}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })()}
       </div>
 
       {/* 2. HOUSING VITAL SIGNS CARDS WITH LAST YEAR COMPARISONS */}
       <div className="space-y-3">
-        <div className="flex items-center space-x-2 px-1">
+        <div className="flex items-center justify-between px-1">
           <h2 className="text-lg sm:text-xl font-black text-black tracking-tight">
-            Housing Vital Signs
+            Countywide Housing Vital Signs
           </h2>
+          <span className="text-xs font-bold text-slate-500">
+            Orange County Benchmark Data
+          </span>
         </div>
 
         {/* 6 Grid Cards with Comp from Last Year */}
@@ -251,6 +480,125 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
               <button
                 onClick={() => setShowMarketTimeModal(false)}
                 className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition-all cursor-pointer"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* HISTORICAL EXPECTED MARKET TIME MODAL */}
+      {showHistoricalMarketTimeModal && currentCityMarketData && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs transition-opacity animate-in fade-in"
+          onClick={() => setShowHistoricalMarketTimeModal(false)}
+        >
+          <div 
+            className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-7 max-w-lg w-full shadow-2xl space-y-5 relative animate-in zoom-in-95 duration-150 text-left font-sans"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="flex items-start justify-between gap-4 border-b border-slate-100 pb-4">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2 text-xs">
+                  <span className="font-black tracking-wider text-[#FA2D48] uppercase">
+                    Steven Thomas Analysis
+                  </span>
+                  <span className="text-slate-300">•</span>
+                  <span className="font-bold text-slate-500">
+                    {OC_HOUSING_REPORT_METADATA.reportDate}
+                  </span>
+                </div>
+                <h3 className="text-xl font-black text-slate-950 tracking-tight">
+                  {currentCity.name} Expected Market Time History
+                </h3>
+                <p className="text-xs text-slate-500 font-medium">
+                  Expected Market Time measures velocity — how fast active listings convert to pending escrows.
+                </p>
+              </div>
+              <button
+                onClick={() => setShowHistoricalMarketTimeModal(false)}
+                className="p-1.5 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
+                title="Close"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Current Pace Spotlight */}
+            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-between">
+              <div>
+                <div className="text-[10px] font-black uppercase tracking-wider text-slate-500">Current Velocity</div>
+                <div className="text-3xl font-black text-slate-950 mt-0.5 tracking-tight">
+                  {currentCityMarketData.marketTimeDays} Days
+                </div>
+              </div>
+              <span className={`px-3 py-1.5 rounded-xl text-xs font-black text-white shadow-xs ${getMarketCondition(currentCityMarketData.marketTimeDays).bgClass}`}>
+                {getMarketCondition(currentCityMarketData.marketTimeDays).label}
+              </span>
+            </div>
+
+            {/* Historical Trend Cards */}
+            <div className="space-y-2">
+              <div className="text-xs font-black text-slate-900 uppercase tracking-wider">
+                Historical Pace Comparison:
+              </div>
+              <div className="grid grid-cols-2 gap-2.5 text-left">
+                <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80 flex flex-col justify-between shadow-2xs">
+                  <div>
+                    <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">2 Weeks Ago</div>
+                    <div className="text-lg font-black text-slate-950 pt-0.5">{currentCityMarketData.marketTime2WeeksAgo} Days</div>
+                  </div>
+                  <div className={`text-xs font-black pt-1.5 border-t border-slate-200/60 mt-2 ${getMarketCondition(currentCityMarketData.marketTime2WeeksAgo).accentText}`}>
+                    {getMarketCondition(currentCityMarketData.marketTime2WeeksAgo).label}
+                  </div>
+                </div>
+
+                <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80 flex flex-col justify-between shadow-2xs">
+                  <div>
+                    <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">4 Weeks Ago</div>
+                    <div className="text-lg font-black text-slate-950 pt-0.5">{currentCityMarketData.marketTime4WeeksAgo} Days</div>
+                  </div>
+                  <div className={`text-xs font-black pt-1.5 border-t border-slate-200/60 mt-2 ${getMarketCondition(currentCityMarketData.marketTime4WeeksAgo).accentText}`}>
+                    {getMarketCondition(currentCityMarketData.marketTime4WeeksAgo).label}
+                  </div>
+                </div>
+
+                <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80 flex flex-col justify-between shadow-2xs">
+                  <div>
+                    <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">1 Year Ago</div>
+                    <div className="text-lg font-black text-slate-950 pt-0.5">{currentCityMarketData.marketTime1YearAgo} Days</div>
+                  </div>
+                  <div className={`text-xs font-black pt-1.5 border-t border-slate-200/60 mt-2 ${getMarketCondition(currentCityMarketData.marketTime1YearAgo).accentText}`}>
+                    {getMarketCondition(currentCityMarketData.marketTime1YearAgo).label}
+                  </div>
+                </div>
+
+                <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80 flex flex-col justify-between shadow-2xs">
+                  <div>
+                    <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">2 Years Ago</div>
+                    <div className="text-lg font-black text-slate-950 pt-0.5">
+                      {currentCityMarketData.marketTime2YearsAgo > 0 ? `${currentCityMarketData.marketTime2YearsAgo} Days` : '—'}
+                    </div>
+                  </div>
+                  <div className={`text-xs font-black pt-1.5 border-t border-slate-200/60 mt-2 ${getMarketCondition(currentCityMarketData.marketTime2YearsAgo).accentText}`}>
+                    {currentCityMarketData.marketTime2YearsAgo > 0 ? getMarketCondition(currentCityMarketData.marketTime2YearsAgo).label : 'N/A'}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Steven Thomas Speed Reference Key */}
+            <div className="p-3 bg-slate-50 rounded-xl border border-slate-200/60 text-[11px] text-slate-600 leading-relaxed">
+              <span className="font-bold text-slate-800">Speed Benchmark:</span> &lt;60 Days = Hot Seller's Market • 60–90 Days = Slight Seller's • 90–120 Days = Balanced Market • 120+ Days = Buyer's Market.
+            </div>
+
+            {/* Close Action */}
+            <div className="flex justify-end pt-1">
+              <button
+                onClick={() => setShowHistoricalMarketTimeModal(false)}
+                className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition-all cursor-pointer shadow-xs"
               >
                 Close
               </button>
