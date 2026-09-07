@@ -179,9 +179,8 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
               {marketData && (
                 <div className="space-y-4">
                   <div className="flex items-center justify-between flex-wrap gap-2">
-                    <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 font-sans flex items-center space-x-2">
-                      <Clock className="w-4 h-4 text-[#FA2D48]" />
-                      <span>Market Velocity & Expected Pace</span>
+                    <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 font-sans">
+                      Market Velocity & Expected Pace
                     </h3>
                     <span className="text-[11px] font-bold text-slate-500">
                       Steven Thomas Analysis ({OC_HOUSING_REPORT_METADATA.reportDate})
@@ -292,9 +291,8 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
               {soldData && (
                 <div className="space-y-3 pt-4 border-t border-slate-100">
                   <div className="flex items-center justify-between flex-wrap gap-2">
-                    <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 font-sans flex items-center space-x-2">
-                      <Tag className="w-4 h-4 text-[#FA2D48]" />
-                      <span>July Closed Sales & Price Distribution</span>
+                    <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 font-sans">
+                      July Closed Sales & Price Distribution
                     </h3>
                   </div>
 

@@ -6,17 +6,13 @@ import {
   TrendingDown, 
   Clock, 
   DollarSign, 
-  Calendar, 
   CheckCircle2, 
   Layers, 
   ArrowUpRight, 
   ArrowDownRight, 
-  Info, 
-  BarChart3, 
   Activity,
   Percent,
   Package,
-  FileSpreadsheet,
   BookOpen,
   FileText,
   Compass,
@@ -31,7 +27,6 @@ import {
   OC_FAST_ATTACHED_METRICS,
   OC_FAST_DETACHED_METRICS,
   OC_FAST_ALL_PROPERTIES_METRICS,
-  OC_FAST_HISTORICAL_TIMELINE,
   OCFastMetricItem
 } from '../data/ocFastReportData';
 
@@ -42,7 +37,7 @@ interface OCFastMarketReportProps {
   onShowToast?: (msg: string) => void;
 }
 
-type OCFastTab = 'indicators' | 'all-properties' | 'detached' | 'attached' | 'comparison' | 'history' | 'takeaways';
+type OCFastTab = 'indicators' | 'all-properties' | 'detached' | 'attached' | 'takeaways';
 
 export const OCFastMarketReport: React.FC<OCFastMarketReportProps> = ({
   ads = [],
@@ -51,7 +46,6 @@ export const OCFastMarketReport: React.FC<OCFastMarketReportProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState<OCFastTab>('indicators');
   const [propertyType, setPropertyType] = useState<'all' | 'detached' | 'attached'>('all');
-  const [hoveredPointIndex, setHoveredPointIndex] = useState<number | null>(null);
 
   const attachedData = OC_FAST_ATTACHED_METRICS;
   const detachedData = OC_FAST_DETACHED_METRICS;
@@ -190,43 +184,6 @@ export const OCFastMarketReport: React.FC<OCFastMarketReportProps> = ({
       </div>
     );
   };
-
-  // SVG Calculations for 14-Year Timeline Chart
-  const chartWidth = 760;
-  const chartHeight = 280;
-  const padLeft = 70;
-  const padRight = 30;
-  const padTop = 25;
-  const padBottom = 40;
-
-  const minPrice = 200000;
-  const maxPrice = 1600000;
-
-  const getX = (index: number) => {
-    const total = OC_FAST_HISTORICAL_TIMELINE.length - 1;
-    return padLeft + (index / total) * (chartWidth - padLeft - padRight);
-  };
-
-  const getY = (val: number) => {
-    const clamped = Math.max(minPrice, Math.min(maxPrice, val));
-    const ratio = (clamped - minPrice) / (maxPrice - minPrice);
-    return chartHeight - padBottom - ratio * (chartHeight - padTop - padBottom);
-  };
-
-  const detachedPoints = OC_FAST_HISTORICAL_TIMELINE.map((pt, i) => `${getX(i)},${getY(pt.detachedMedian)}`).join(' ');
-  const attachedPoints = OC_FAST_HISTORICAL_TIMELINE.map((pt, i) => `${getX(i)},${getY(pt.attachedMedian)}`).join(' ');
-
-  const detachedAreaPath = `M ${getX(0)},${getY(minPrice)} ` +
-    OC_FAST_HISTORICAL_TIMELINE.map((pt, i) => `L ${getX(i)},${getY(pt.detachedMedian)}`).join(' ') +
-    ` L ${getX(OC_FAST_HISTORICAL_TIMELINE.length - 1)},${getY(minPrice)} Z`;
-
-  const attachedAreaPath = `M ${getX(0)},${getY(minPrice)} ` +
-    OC_FAST_HISTORICAL_TIMELINE.map((pt, i) => `L ${getX(i)},${getY(pt.attachedMedian)}`).join(' ') +
-    ` L ${getX(OC_FAST_HISTORICAL_TIMELINE.length - 1)},${getY(minPrice)} Z`;
-
-  const currentHoveredPoint = hoveredPointIndex !== null 
-    ? OC_FAST_HISTORICAL_TIMELINE[hoveredPointIndex] 
-    : OC_FAST_HISTORICAL_TIMELINE[OC_FAST_HISTORICAL_TIMELINE.length - 1];
 
   return (
     <div className="space-y-6 sm:space-y-8 animate-fade-in font-sans">
@@ -403,57 +360,63 @@ export const OCFastMarketReport: React.FC<OCFastMarketReportProps> = ({
             </div>
           </div>
 
-          {/* Card 2: Months Supply of Inventory */}
-          <div className="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-xs hover:border-black hover:shadow-md transition-all flex flex-col justify-between space-y-3.5">
-            <div className="space-y-2.5">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-sans uppercase tracking-widest text-black font-black">Months of Supply</span>
-                {renderChangeBadge(supplyMetric.monthlyChange, supplyMetric.monthlyChangeNumeric, true)}
-              </div>
+          {/* Card 2: Months Supply of Inventory - Steven Thomas Market Speed Background */}
+          {(() => {
+            const mosVal = parseFloat(supplyMetric.july2026) || (propertyType === 'detached' ? 3.3 : propertyType === 'attached' ? 4.2 : 3.6);
+            
+            // Steven Thomas Market Speed Colors & Classifications:
+            // < 3.0 mos: Hot Seller's Market -> bg-[#FA2D48] (Red)
+            // 3.0 - 3.9 mos: Slight Seller's Market -> bg-amber-500 (Amber)
+            // 4.0 - 6.0 mos: Balanced Market -> bg-sky-600 (Sky Blue)
+            // > 6.0 mos: Buyer's Market -> bg-emerald-700 (Emerald Green)
+            let bgClass = "bg-amber-500 text-white";
+            let conditionName = "Slight Seller's Market";
 
-              <div className="text-3xl sm:text-4xl font-black text-slate-950 font-sans">
-                {supplyMetric.july2026}{' '}
-                <span className="text-sm font-bold text-slate-500">mos</span>
-              </div>
+            if (mosVal < 3.0) {
+              bgClass = "bg-[#FA2D48] text-white";
+              conditionName = "Hot Seller's Market";
+            } else if (mosVal < 4.0) {
+              bgClass = "bg-amber-500 text-white";
+              conditionName = "Slight Seller's Market";
+            } else if (mosVal <= 6.0) {
+              bgClass = "bg-sky-600 text-white";
+              conditionName = "Balanced Market";
+            } else {
+              bgClass = "bg-emerald-700 text-white";
+              conditionName = "Buyer's Market";
+            }
 
-              <div className="flex items-center space-x-1.5 text-xs text-slate-600">
-                <span className="text-slate-500 font-medium">July 2025:</span>
-                <span className="font-bold text-slate-900 font-mono">{supplyMetric.july2025} mos</span>
-              </div>
-            </div>
+            return (
+              <div className={`${bgClass} rounded-2xl p-5 shadow-xs hover:shadow-md transition-all flex flex-col justify-between space-y-3.5`}>
+                <div className="space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-sans uppercase tracking-widest text-white font-black">
+                      Months of Supply
+                    </span>
+                    <span className="text-xs font-bold text-white bg-white/20 border border-white/30 px-2.5 py-0.5 rounded-full backdrop-blur-xs">
+                      {supplyMetric.monthlyChange}
+                    </span>
+                  </div>
 
-            <div className="pt-2.5 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
-              <span className="text-black font-black text-[11px] uppercase tracking-wider">Market Condition:</span>
-              {(() => {
-                const mosVal = parseFloat(supplyMetric.july2026) || (propertyType === 'detached' ? 3.3 : propertyType === 'attached' ? 4.2 : 3.6);
-                let badgeClass = "bg-sky-600 text-white shadow-xs";
-                let conditionName = "Balanced Market";
+                  <div className="text-3xl sm:text-4xl font-black text-white font-sans tracking-tight">
+                    {supplyMetric.july2026}{' '}
+                    <span className="text-sm font-bold text-white/90">mos</span>
+                  </div>
 
-                if (mosVal < 3.0) {
-                  badgeClass = "bg-[#FA2D48] text-white shadow-xs";
-                  conditionName = "Hot Seller's";
-                } else if (mosVal < 4.0) {
-                  badgeClass = "bg-amber-500 text-white shadow-xs";
-                  conditionName = "Slight Seller's";
-                } else if (mosVal <= 6.0) {
-                  badgeClass = "bg-sky-600 text-white shadow-xs";
-                  conditionName = "Balanced Market";
-                } else if (mosVal <= 7.0) {
-                  badgeClass = "bg-emerald-600 text-white shadow-xs";
-                  conditionName = "Slight Buyer's";
-                } else {
-                  badgeClass = "bg-emerald-700 text-white shadow-xs";
-                  conditionName = "Buyer's Market";
-                }
+                  <div className="flex items-center space-x-1.5 text-xs text-white/90">
+                    <span className="text-white/80 font-medium">July 2025:</span>
+                    <span className="font-bold text-white font-mono">{supplyMetric.july2025} mos</span>
+                  </div>
+                </div>
 
-                return (
-                  <span className={`inline-flex items-center px-3 py-1 rounded-lg text-xs font-black tracking-wide ${badgeClass}`}>
+                <div className="pt-2.5 border-t border-white/20 flex items-center justify-between">
+                  <span className="bg-white text-slate-950 font-black text-xs px-2.5 py-1 rounded-lg inline-block shadow-xs font-sans">
                     {conditionName} ({supplyMetric.july2026} mos)
                   </span>
-                );
-              })()}
-            </div>
-          </div>
+                </div>
+              </div>
+            );
+          })()}
 
           {/* Card 3: % of Original List Price Received */}
           <div className="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-xs hover:border-black hover:shadow-md transition-all flex flex-col justify-between space-y-3.5">
@@ -510,7 +473,7 @@ export const OCFastMarketReport: React.FC<OCFastMarketReportProps> = ({
         </div>
       </div>
 
-      {/* Main Report Tabs Bar - Market Analysis, All Properties, Detached, Attached, etc. */}
+      {/* Main Report Tabs Bar - Market Analysis, All Properties, Detached, Attached, Summary */}
       <div className="bg-white border border-slate-200/90 rounded-2xl p-2 shadow-xs">
         <div className="flex items-center space-x-1 overflow-x-auto scrollbar-none">
           {[
@@ -518,8 +481,6 @@ export const OCFastMarketReport: React.FC<OCFastMarketReportProps> = ({
             { id: 'all-properties', label: 'All Properties', icon: <Layers className="w-4 h-4 mr-1.5" /> },
             { id: 'detached', label: 'Detached', icon: <Home className="w-4 h-4 mr-1.5" /> },
             { id: 'attached', label: 'Attached', icon: <Building2 className="w-4 h-4 mr-1.5" /> },
-            { id: 'comparison', label: 'Side-by-Side Table', icon: <FileSpreadsheet className="w-4 h-4 mr-1.5" /> },
-            { id: 'history', label: '14-Year Price History', icon: <BarChart3 className="w-4 h-4 mr-1.5" /> },
             { id: 'takeaways', label: 'Summary', icon: null },
           ].map((tab) => {
             const isActive = activeTab === tab.id;
@@ -604,7 +565,7 @@ export const OCFastMarketReport: React.FC<OCFastMarketReportProps> = ({
               <span>Explore Full Report Modules</span>
             </h3>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <button
                 onClick={() => { setActiveTab('all-properties'); setPropertyType('all'); }}
                 className="p-4 rounded-2xl bg-slate-50 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 transition-all text-left group cursor-pointer"
@@ -631,15 +592,6 @@ export const OCFastMarketReport: React.FC<OCFastMarketReportProps> = ({
                 <div className="text-sm font-black text-black mt-1">Attached Condominiums</div>
                 <p className="text-[11px] text-black font-medium mt-1">$767,500 Median / 4.2 Mos Supply</p>
               </button>
-
-              <button
-                onClick={() => setActiveTab('comparison')}
-                className="p-4 rounded-2xl bg-slate-50 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 transition-all text-left group cursor-pointer"
-              >
-                <span className="text-[10px] font-black uppercase tracking-wider text-black group-hover:text-[#FA2D48]">Comprehensive</span>
-                <div className="text-sm font-black text-black mt-1">Side-by-Side Comparison</div>
-                <p className="text-[11px] text-black font-medium mt-1">Full cross-tabulation table with YTD</p>
-              </button>
             </div>
           </div>
 
@@ -653,18 +605,7 @@ export const OCFastMarketReport: React.FC<OCFastMarketReportProps> = ({
           {/* Executive Section Header */}
           <div className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-7 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 text-[10px] font-black uppercase tracking-wider">
-                  Page 4: All Properties Combined
-                </span>
-                <span className="text-xs text-emerald-700 font-bold bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
-                  1,926 Closed Sales in July (-0.3%)
-                </span>
-                <span className="text-xs text-slate-600 font-bold bg-slate-100 px-2.5 py-0.5 rounded-full border border-slate-200">
-                  20,814 Rolling 12-Mo (+1.3%)
-                </span>
-              </div>
-              <h2 className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight pt-1.5">
+              <h2 className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight">
                 All Residential Properties (Single-Family & Condos)
               </h2>
             </div>
@@ -720,18 +661,7 @@ export const OCFastMarketReport: React.FC<OCFastMarketReportProps> = ({
           {/* Executive Section Header */}
           <div className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-7 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-black uppercase tracking-wider">
-                  Page 2: Single Family Residential
-                </span>
-                <span className="text-xs text-emerald-700 font-bold bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
-                  1,198 Closed Sales in July (+1.1%)
-                </span>
-                <span className="text-xs text-slate-600 font-bold bg-slate-100 px-2.5 py-0.5 rounded-full border border-slate-200">
-                  12,823 Rolling 12-Mo (+3.9%)
-                </span>
-              </div>
-              <h2 className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight pt-1.5">
+              <h2 className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight">
                 Detached Single-Family Market
               </h2>
             </div>
@@ -787,18 +717,7 @@ export const OCFastMarketReport: React.FC<OCFastMarketReportProps> = ({
           {/* Executive Section Header */}
           <div className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-7 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 text-[10px] font-black uppercase tracking-wider">
-                  Page 3: Condos & Townhomes
-                </span>
-                <span className="text-xs text-emerald-700 font-bold bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
-                  727 Closed Sales in July (-0.5%)
-                </span>
-                <span className="text-xs text-slate-600 font-bold bg-slate-100 px-2.5 py-0.5 rounded-full border border-slate-200">
-                  7,980 Rolling 12-Mo (+1.0%)
-                </span>
-              </div>
-              <h2 className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight pt-1.5">
+              <h2 className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight">
                 Attached Condominiums & Townhomes
               </h2>
             </div>
@@ -847,372 +766,7 @@ export const OCFastMarketReport: React.FC<OCFastMarketReportProps> = ({
         </div>
       )}
 
-      {/* TAB 5: SIDE-BY-SIDE COMPARISON TABLE */}
-      {activeTab === 'comparison' && (
-        <div className="space-y-6 animate-fade-in">
-          
-          <div className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-8 shadow-xs space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
-              <div>
-                <h2 className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight">
-                  Comprehensive Property Comparison Table
-                </h2>
-                <p className="text-xs sm:text-sm text-slate-600 font-medium">
-                  Detailed side-by-side performance of All Properties, Detached Single-Family, and Attached Condominiums for July 2026 and 12-Month Rolling Activity.
-                </p>
-              </div>
-            </div>
-
-            {/* ALL PROPERTIES COMBINED TABLE (PAGE 4) */}
-            <div className="space-y-3">
-              <div className="flex items-center space-x-2">
-                <Layers className="w-4 h-4 text-purple-600" />
-                <h3 className="text-base font-black text-slate-900">All Properties Combined (Page 4)</h3>
-              </div>
-              <div className="overflow-x-auto scrollbar-none rounded-2xl border border-slate-200">
-                <table className="w-full text-left text-xs border-collapse">
-                  <thead>
-                    <tr className="bg-slate-100/90 border-b border-slate-200 text-slate-700 font-bold uppercase tracking-wider">
-                      <th className="p-3.5 min-w-[200px]">Key Metrics</th>
-                      <th className="p-3.5 text-center bg-slate-200/60 font-black text-slate-800" colSpan={3}>
-                        July (Monthly)
-                      </th>
-                      <th className="p-3.5 text-center bg-purple-50 font-black text-purple-900 border-l border-slate-200" colSpan={3}>
-                        12-Month Rolling / YTD
-                      </th>
-                    </tr>
-                    <tr className="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold text-[11px]">
-                      <th className="p-2.5 pl-3.5">Metric Name</th>
-                      <th className="p-2.5 text-right font-bold">2025</th>
-                      <th className="p-2.5 text-right font-bold text-slate-900">2026 (Principal)</th>
-                      <th className="p-2.5 text-center font-bold text-slate-900">% Change</th>
-                      <th className="p-2.5 text-right font-bold border-l border-slate-200">Prior 12-Mo</th>
-                      <th className="p-2.5 text-right font-bold text-slate-900">12-Mo Rolling</th>
-                      <th className="p-2.5 text-center font-bold text-slate-900">% Change</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100">
-                    {allPropertiesData.map((row) => (
-                      <tr key={row.key} className="hover:bg-slate-50/80 transition-colors">
-                        <td className="p-3.5 font-bold text-slate-900">{row.label}</td>
-                        <td className="p-3.5 text-right font-mono text-slate-600">{row.july2025}</td>
-                        <td className="p-3.5 text-right font-mono text-slate-950 font-black text-sm">{row.july2026}</td>
-                        <td className="p-3.5 text-center">
-                          {renderChangeBadge(row.monthlyChange, row.monthlyChangeNumeric, row.key === 'dom')}
-                        </td>
-                        <td className="p-3.5 text-right font-mono text-slate-600 border-l border-slate-100">{row.rolling2025 || row.ytd2025 || '—'}</td>
-                        <td className="p-3.5 text-right font-mono text-slate-950 font-black text-sm">{row.rolling2026 || row.ytd2026 || '—'}</td>
-                        <td className="p-3.5 text-center">
-                          {row.rollingChange ? renderChangeBadge(row.rollingChange, row.rollingChangeNumeric, row.key === 'dom') : '—'}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            {/* DETACHED TABLE (PAGE 2) */}
-            <div className="space-y-3 pt-4 border-t border-slate-100">
-              <div className="flex items-center space-x-2">
-                <Home className="w-4 h-4 text-amber-600" />
-                <h3 className="text-base font-black text-slate-900">Detached Single-Family Homes (Page 2)</h3>
-              </div>
-              <div className="overflow-x-auto scrollbar-none rounded-2xl border border-slate-200">
-                <table className="w-full text-left text-xs border-collapse">
-                  <thead>
-                    <tr className="bg-slate-100/90 border-b border-slate-200 text-slate-700 font-bold uppercase tracking-wider">
-                      <th className="p-3.5 min-w-[200px]">Key Metrics</th>
-                      <th className="p-3.5 text-center bg-slate-200/60 font-black text-slate-800" colSpan={3}>
-                        July (Monthly)
-                      </th>
-                      <th className="p-3.5 text-center bg-amber-50 font-black text-amber-900 border-l border-slate-200" colSpan={3}>
-                        12-Month Rolling / YTD
-                      </th>
-                    </tr>
-                    <tr className="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold text-[11px]">
-                      <th className="p-2.5 pl-3.5">Metric Name</th>
-                      <th className="p-2.5 text-right font-bold">2025</th>
-                      <th className="p-2.5 text-right font-bold text-slate-900">2026 (Principal)</th>
-                      <th className="p-2.5 text-center font-bold text-slate-900">% Change</th>
-                      <th className="p-2.5 text-right font-bold border-l border-slate-200">Prior 12-Mo</th>
-                      <th className="p-2.5 text-right font-bold text-slate-900">12-Mo Rolling</th>
-                      <th className="p-2.5 text-center font-bold text-slate-900">% Change</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100">
-                    {detachedData.map((row) => (
-                      <tr key={row.key} className="hover:bg-slate-50/80 transition-colors">
-                        <td className="p-3.5 font-bold text-slate-900">{row.label}</td>
-                        <td className="p-3.5 text-right font-mono text-slate-600">{row.july2025}</td>
-                        <td className="p-3.5 text-right font-mono text-slate-950 font-black text-sm">{row.july2026}</td>
-                        <td className="p-3.5 text-center">
-                          {renderChangeBadge(row.monthlyChange, row.monthlyChangeNumeric, row.key === 'dom')}
-                        </td>
-                        <td className="p-3.5 text-right font-mono text-slate-600 border-l border-slate-100">{row.rolling2025 || row.ytd2025 || '—'}</td>
-                        <td className="p-3.5 text-right font-mono text-slate-950 font-black text-sm">{row.rolling2026 || row.ytd2026 || '—'}</td>
-                        <td className="p-3.5 text-center">
-                          {row.rollingChange ? renderChangeBadge(row.rollingChange, row.rollingChangeNumeric, row.key === 'dom') : '—'}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            {/* ATTACHED TABLE (PAGE 3) */}
-            <div className="space-y-3 pt-4 border-t border-slate-100">
-              <div className="flex items-center space-x-2">
-                <Building2 className="w-4 h-4 text-sky-600" />
-                <h3 className="text-base font-black text-slate-900">Attached Condominiums & Townhomes (Page 3)</h3>
-              </div>
-              <div className="overflow-x-auto scrollbar-none rounded-2xl border border-slate-200">
-                <table className="w-full text-left text-xs border-collapse">
-                  <thead>
-                    <tr className="bg-slate-100/90 border-b border-slate-200 text-slate-700 font-bold uppercase tracking-wider">
-                      <th className="p-3.5 min-w-[200px]">Key Metrics</th>
-                      <th className="p-3.5 text-center bg-slate-200/60 font-black text-slate-800" colSpan={3}>
-                        July (Monthly)
-                      </th>
-                      <th className="p-3.5 text-center bg-sky-50 font-black text-sky-900 border-l border-slate-200" colSpan={3}>
-                        12-Month Rolling / YTD
-                      </th>
-                    </tr>
-                    <tr className="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold text-[11px]">
-                      <th className="p-2.5 pl-3.5">Metric Name</th>
-                      <th className="p-2.5 text-right font-bold">2025</th>
-                      <th className="p-2.5 text-right font-bold text-slate-900">2026 (Principal)</th>
-                      <th className="p-2.5 text-center font-bold text-slate-900">% Change</th>
-                      <th className="p-2.5 text-right font-bold border-l border-slate-200">Prior 12-Mo</th>
-                      <th className="p-2.5 text-right font-bold text-slate-900">12-Mo Rolling</th>
-                      <th className="p-2.5 text-center font-bold text-slate-900">% Change</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100">
-                    {attachedData.map((row) => (
-                      <tr key={row.key} className="hover:bg-slate-50/80 transition-colors">
-                        <td className="p-3.5 font-bold text-slate-900">{row.label}</td>
-                        <td className="p-3.5 text-right font-mono text-slate-600">{row.july2025}</td>
-                        <td className="p-3.5 text-right font-mono text-slate-950 font-black text-sm">{row.july2026}</td>
-                        <td className="p-3.5 text-center">
-                          {renderChangeBadge(row.monthlyChange, row.monthlyChangeNumeric, row.key === 'dom')}
-                        </td>
-                        <td className="p-3.5 text-right font-mono text-slate-600 border-l border-slate-100">{row.rolling2025 || row.ytd2025 || '—'}</td>
-                        <td className="p-3.5 text-right font-mono text-slate-950 font-black text-sm">{row.rolling2026 || row.ytd2026 || '—'}</td>
-                        <td className="p-3.5 text-center">
-                          {row.rollingChange ? renderChangeBadge(row.rollingChange, row.rollingChangeNumeric, row.key === 'dom') : '—'}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      )}
-
-      {/* TAB 6: 14-YEAR PRICE HISTORY (2012–2026) */}
-      {activeTab === 'history' && (
-        <div className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-8 shadow-xs space-y-6 animate-fade-in">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
-            <div>
-              <div className="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 text-xs font-bold mb-1.5">
-                <BarChart3 className="w-3.5 h-3.5 text-[#FA2D48]" />
-                <span>Rolling 12-Month Calculation</span>
-              </div>
-              <h3 className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight">
-                Median Sales Price – 14 Year Historical Evolution
-              </h3>
-              <p className="text-xs sm:text-sm text-slate-600 font-medium mt-0.5">
-                Orange County Single-Family vs Condos Historical Trend (Feb 2012 through July 2026)
-              </p>
-            </div>
-
-            {/* Interactive Legend */}
-            <div className="flex items-center space-x-3 bg-slate-50 p-2.5 rounded-2xl border border-slate-200/70 text-xs font-bold">
-              <div className="flex items-center space-x-1.5">
-                <span className="w-3 h-3 rounded-full bg-amber-500"></span>
-                <span className="text-slate-800">Detached (SFH)</span>
-              </div>
-              <div className="flex items-center space-x-1.5">
-                <span className="w-3 h-3 rounded-full bg-[#FA2D48]"></span>
-                <span className="text-slate-800">Attached (Condos)</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Current Hovered / Scrubbed Point Callout */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-slate-50/90 p-4 rounded-2xl border border-slate-200/80">
-            <div className="flex items-center space-x-2">
-              <Calendar className="w-4 h-4 text-slate-500" />
-              <div>
-                <span className="text-[10px] uppercase font-bold text-slate-400 block">Selected Benchmark:</span>
-                <span className="text-sm font-black text-slate-900">{currentHoveredPoint.label}</span>
-              </div>
-            </div>
-
-            <div>
-              <span className="text-[10px] uppercase font-bold text-amber-700 block">Detached SFH Median:</span>
-              <span className="text-base sm:text-lg font-black text-slate-950">
-                ${currentHoveredPoint.detachedMedian.toLocaleString()}
-              </span>
-              <span className="text-[10px] text-emerald-600 font-bold ml-1.5">
-                (+{(((currentHoveredPoint.detachedMedian - 535000) / 535000) * 100).toFixed(0)}% since '12)
-              </span>
-            </div>
-
-            <div>
-              <span className="text-[10px] uppercase font-bold text-[#FA2D48] block">Attached Condo Median:</span>
-              <span className="text-base sm:text-lg font-black text-slate-950">
-                ${currentHoveredPoint.attachedMedian.toLocaleString()}
-              </span>
-              <span className="text-[10px] text-emerald-600 font-bold ml-1.5">
-                (+{(((currentHoveredPoint.attachedMedian - 270000) / 270000) * 100).toFixed(0)}% since '12)
-              </span>
-            </div>
-          </div>
-
-          {/* SVG Responsive Chart */}
-          <div className="relative overflow-x-auto scrollbar-none pt-2 pb-1">
-            <div className="min-w-[650px] w-full">
-              <svg
-                viewBox={`0 0 ${chartWidth} ${chartHeight}`}
-                className="w-full h-auto overflow-visible select-none"
-              >
-                <defs>
-                  <linearGradient id="detachedGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#f59e0b" stopOpacity="0.25" />
-                    <stop offset="100%" stopColor="#f59e0b" stopOpacity="0.0" />
-                  </linearGradient>
-                  <linearGradient id="attachedGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#FA2D48" stopOpacity="0.25" />
-                    <stop offset="100%" stopColor="#FA2D48" stopOpacity="0.0" />
-                  </linearGradient>
-                </defs>
-
-                {/* Horizontal Grid Lines */}
-                {[300000, 600000, 900000, 1200000, 1500000].map((level) => {
-                  const y = getY(level);
-                  return (
-                    <g key={level}>
-                      <line
-                        x1={padLeft}
-                        y1={y}
-                        x2={chartWidth - padRight}
-                        y2={y}
-                        stroke="#E2E8F0"
-                        strokeDasharray="4,4"
-                      />
-                      <text
-                        x={padLeft - 10}
-                        y={y + 4}
-                        textAnchor="end"
-                        fontSize="10"
-                        fontWeight="bold"
-                        fill="#64748B"
-                      >
-                        ${(level / 1000).toFixed(0)}k
-                      </text>
-                    </g>
-                  );
-                })}
-
-                {/* Area Fills */}
-                <path d={detachedAreaPath} fill="url(#detachedGradient)" />
-                <path d={attachedAreaPath} fill="url(#attachedGradient)" />
-
-                {/* Connecting Lines */}
-                <polyline
-                  fill="none"
-                  stroke="#d97706"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  points={detachedPoints}
-                />
-                <polyline
-                  fill="none"
-                  stroke="#FA2D48"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  points={attachedPoints}
-                />
-
-                {/* Data Points and Interactivity */}
-                {OC_FAST_HISTORICAL_TIMELINE.map((pt, i) => {
-                  const cx = getX(i);
-                  const cyDetached = getY(pt.detachedMedian);
-                  const cyAttached = getY(pt.attachedMedian);
-                  const isHovered = hoveredPointIndex === i;
-
-                  return (
-                    <g 
-                      key={pt.date} 
-                      className="cursor-pointer group"
-                      onMouseEnter={() => setHoveredPointIndex(i)}
-                    >
-                      {isHovered && (
-                        <line
-                          x1={cx}
-                          y1={padTop}
-                          x2={cx}
-                          y2={chartHeight - padBottom}
-                          stroke="#0F172A"
-                          strokeWidth="1.5"
-                          strokeDasharray="3,3"
-                        />
-                      )}
-
-                      <circle
-                        cx={cx}
-                        cy={cyDetached}
-                        r={isHovered ? 6 : 4}
-                        fill="#d97706"
-                        stroke="#FFFFFF"
-                        strokeWidth="2"
-                        className="transition-all"
-                      />
-
-                      <circle
-                        cx={cx}
-                        cy={cyAttached}
-                        r={isHovered ? 6 : 4}
-                        fill="#FA2D48"
-                        stroke="#FFFFFF"
-                        strokeWidth="2"
-                        className="transition-all"
-                      />
-
-                      {(i % 2 === 0 || i === OC_FAST_HISTORICAL_TIMELINE.length - 1) && (
-                        <text
-                          x={cx}
-                          y={chartHeight - padBottom + 18}
-                          textAnchor="middle"
-                          fontSize="10"
-                          fontWeight={isHovered ? "bold" : "normal"}
-                          fill={isHovered ? "#0F172A" : "#64748B"}
-                        >
-                          {pt.date}
-                        </text>
-                      )}
-                    </g>
-                  );
-                })}
-              </svg>
-            </div>
-          </div>
-
-          <p className="text-[11px] text-slate-500 italic">
-            Hover or tap any date point on the chart to inspect rolling 12-month median sales price evolution for both Detached single family and Attached condo homes from 2012 to 2026.
-          </p>
-        </div>
-      )}
-
-      {/* TAB 7: SUMMARY */}
+      {/* TAB 5: SUMMARY */}
       {activeTab === 'takeaways' && (
         <div className="space-y-4 animate-fade-in">
           <div>
@@ -1236,22 +790,6 @@ export const OCFastMarketReport: React.FC<OCFastMarketReportProps> = ({
         </div>
       )}
 
-      {/* Disclaimer & Citation Footer */}
-      <div className="bg-slate-100/80 rounded-2xl p-4 sm:p-5 border border-slate-200 text-xs text-slate-600 space-y-2">
-        <div className="flex items-start space-x-2">
-          <Info className="w-4 h-4 text-slate-500 shrink-0 mt-0.5" />
-          <div className="space-y-1">
-            <p className="font-semibold text-slate-800">
-              {OC_FAST_METADATA.disclaimer}
-            </p>
-            <p className="text-[11px] text-slate-500">
-              {OC_FAST_METADATA.copyright} Report provided by {OC_FAST_METADATA.providedBy}.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Bottom Ad Banner if Monetization Enabled */}
       {monetizationEnabled && ads && ads.length > 0 && (
         <div className="pt-2">
           <AdBannerRenderer

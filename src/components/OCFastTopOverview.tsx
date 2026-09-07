@@ -236,57 +236,63 @@ export const OCFastTopOverview: React.FC<OCFastTopOverviewProps> = ({
             </div>
           </div>
 
-          {/* Card 2: Months Supply of Inventory */}
-          <div className="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-xs hover:border-black hover:shadow-md transition-all flex flex-col justify-between space-y-3.5">
-            <div className="space-y-2.5">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-sans uppercase tracking-widest text-black font-black">Months of Supply</span>
-                {renderChangeBadge(supplyMetric.monthlyChange, supplyMetric.monthlyChangeNumeric, true)}
-              </div>
+          {/* Card 2: Months Supply of Inventory - Steven Thomas Market Speed Background */}
+          {(() => {
+            const mosVal = parseFloat(supplyMetric.july2026) || (propertyType === 'detached' ? 3.3 : propertyType === 'attached' ? 4.2 : 3.6);
+            
+            // Steven Thomas Market Speed Colors & Classifications:
+            // < 3.0 mos: Hot Seller's Market -> bg-[#FA2D48] (Red)
+            // 3.0 - 3.9 mos: Slight Seller's Market -> bg-amber-500 (Amber)
+            // 4.0 - 6.0 mos: Balanced Market -> bg-sky-600 (Sky Blue)
+            // > 6.0 mos: Buyer's Market -> bg-emerald-700 (Emerald Green)
+            let bgClass = "bg-amber-500 text-white";
+            let conditionName = "Slight Seller's Market";
 
-              <div className="text-3xl sm:text-4xl font-black text-slate-950 font-sans">
-                {supplyMetric.july2026}{' '}
-                <span className="text-sm font-bold text-slate-500">mos</span>
-              </div>
+            if (mosVal < 3.0) {
+              bgClass = "bg-[#FA2D48] text-white";
+              conditionName = "Hot Seller's Market";
+            } else if (mosVal < 4.0) {
+              bgClass = "bg-amber-500 text-white";
+              conditionName = "Slight Seller's Market";
+            } else if (mosVal <= 6.0) {
+              bgClass = "bg-sky-600 text-white";
+              conditionName = "Balanced Market";
+            } else {
+              bgClass = "bg-emerald-700 text-white";
+              conditionName = "Buyer's Market";
+            }
 
-              <div className="flex items-center space-x-1.5 text-xs text-slate-600">
-                <span className="text-slate-500 font-medium">July 2025:</span>
-                <span className="font-bold text-slate-900 font-mono">{supplyMetric.july2025} mos</span>
-              </div>
-            </div>
+            return (
+              <div className={`${bgClass} rounded-2xl p-5 shadow-xs hover:shadow-md transition-all flex flex-col justify-between space-y-3.5`}>
+                <div className="space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-sans uppercase tracking-widest text-white font-black">
+                      Months of Supply
+                    </span>
+                    <span className="text-xs font-bold text-white bg-white/20 border border-white/30 px-2.5 py-0.5 rounded-full backdrop-blur-xs">
+                      {supplyMetric.monthlyChange}
+                    </span>
+                  </div>
 
-            <div className="pt-2.5 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
-              <span className="text-black font-black text-[11px] uppercase tracking-wider">Market Condition:</span>
-              {(() => {
-                const mosVal = parseFloat(supplyMetric.july2026) || (propertyType === 'detached' ? 3.3 : propertyType === 'attached' ? 4.2 : 3.6);
-                let badgeClass = "bg-sky-600 text-white shadow-xs";
-                let conditionName = "Balanced Market";
+                  <div className="text-3xl sm:text-4xl font-black text-white font-sans tracking-tight">
+                    {supplyMetric.july2026}{' '}
+                    <span className="text-sm font-bold text-white/90">mos</span>
+                  </div>
 
-                if (mosVal < 3.0) {
-                  badgeClass = "bg-[#FA2D48] text-white shadow-xs";
-                  conditionName = "Hot Seller's";
-                } else if (mosVal < 4.0) {
-                  badgeClass = "bg-amber-500 text-white shadow-xs";
-                  conditionName = "Slight Seller's";
-                } else if (mosVal <= 6.0) {
-                  badgeClass = "bg-sky-600 text-white shadow-xs";
-                  conditionName = "Balanced Market";
-                } else if (mosVal <= 7.0) {
-                  badgeClass = "bg-emerald-600 text-white shadow-xs";
-                  conditionName = "Slight Buyer's";
-                } else {
-                  badgeClass = "bg-emerald-700 text-white shadow-xs";
-                  conditionName = "Buyer's Market";
-                }
+                  <div className="flex items-center space-x-1.5 text-xs text-white/90">
+                    <span className="text-white/80 font-medium">July 2025:</span>
+                    <span className="font-bold text-white font-mono">{supplyMetric.july2025} mos</span>
+                  </div>
+                </div>
 
-                return (
-                  <span className={`inline-flex items-center px-3 py-1 rounded-lg text-xs font-black tracking-wide ${badgeClass}`}>
+                <div className="pt-2.5 border-t border-white/20 flex items-center justify-between">
+                  <span className="bg-white text-slate-950 font-black text-xs px-2.5 py-1 rounded-lg inline-block shadow-xs font-sans">
                     {conditionName} ({supplyMetric.july2026} mos)
                   </span>
-                );
-              })()}
-            </div>
-          </div>
+                </div>
+              </div>
+            );
+          })()}
 
           {/* Card 3: % of Original List Price Received */}
           <div className="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-xs hover:border-black hover:shadow-md transition-all flex flex-col justify-between space-y-3.5">
