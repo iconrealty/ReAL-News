@@ -402,7 +402,7 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
           onClick={() => setShowMarketTimeModal(false)}
         >
           <div 
-            className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-7 max-w-lg w-full shadow-2xl space-y-5 relative animate-in zoom-in-95 duration-150 font-sans text-left"
+            className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-7 max-w-md w-full shadow-2xl space-y-5 relative animate-in zoom-in-95 duration-150 font-sans text-left"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
@@ -419,63 +419,28 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
               </button>
             </div>
 
-            {/* Ranges Table */}
-            <div className="overflow-hidden rounded-2xl border border-slate-200/90 bg-white">
-              <table className="w-full text-left text-xs border-collapse font-sans">
-                <thead>
-                  <tr className="bg-slate-50/90 border-b border-slate-200/80 text-slate-600 font-sans font-bold text-[11px] uppercase tracking-wider">
-                    <th className="py-3 px-4 font-sans">Speed (Days)</th>
-                    <th className="py-3 px-4 font-sans">Market Classification</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 font-sans">
-                  <tr className="hover:bg-slate-50/60 transition-colors">
-                    <td className="py-3.5 px-4 font-sans font-extrabold text-sm text-slate-900">&lt; 60 Days</td>
-                    <td className="py-3.5 px-4">
-                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold font-sans bg-[#FA2D48] text-white shadow-xs">
-                        Hot Seller's Market
-                      </span>
-                    </td>
-                  </tr>
-                  <tr className="hover:bg-slate-50/60 transition-colors">
-                    <td className="py-3.5 px-4 font-sans font-extrabold text-sm text-slate-900">60 – 89 Days</td>
-                    <td className="py-3.5 px-4">
-                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold font-sans bg-amber-500 text-white shadow-xs">
-                        Slight Seller's Market
-                      </span>
-                    </td>
-                  </tr>
-                  <tr className="bg-sky-50/70 hover:bg-sky-50/90 transition-colors">
-                    <td className="py-3.5 px-4 font-sans font-black text-sm text-sky-950 flex items-center gap-2">
-                      <span>90 – 119 Days</span>
-                      <span className="px-2 py-0.5 rounded-full bg-[#FA2D48] text-white text-[10px] font-sans font-black shadow-2xs">
-                        Current OC (99d)
-                      </span>
-                    </td>
-                    <td className="py-3.5 px-4">
-                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold font-sans bg-sky-600 text-white shadow-xs">
-                        Balanced Market
-                      </span>
-                    </td>
-                  </tr>
-                  <tr className="hover:bg-slate-50/60 transition-colors">
-                    <td className="py-3.5 px-4 font-sans font-extrabold text-sm text-slate-900">120 – 149 Days</td>
-                    <td className="py-3.5 px-4">
-                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold font-sans bg-emerald-600 text-white shadow-xs">
-                        Slight Buyer's Market
-                      </span>
-                    </td>
-                  </tr>
-                  <tr className="hover:bg-slate-50/60 transition-colors">
-                    <td className="py-3.5 px-4 font-sans font-extrabold text-sm text-slate-900">150+ Days</td>
-                    <td className="py-3.5 px-4">
-                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold font-sans bg-emerald-700 text-white shadow-xs">
-                        Buyer's Market
-                      </span>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+            {/* Single-Column Integrated Ranges List */}
+            <div className="overflow-hidden rounded-2xl border border-slate-200/90 bg-white divide-y divide-slate-100">
+              {[
+                { label: "Hot Seller's Market", days: "< 60 Days", bg: "bg-[#FA2D48]" },
+                { label: "Slight Seller's Market", days: "60 – 89 Days", bg: "bg-amber-500" },
+                { label: "Balanced Market", days: "90 – 119 Days", bg: "bg-sky-600" },
+                { label: "Slight Buyer's Market", days: "120 – 149 Days", bg: "bg-emerald-600" },
+                { label: "Buyer's Market", days: "150+ Days", bg: "bg-emerald-700" },
+              ].map((range) => (
+                <div
+                  key={range.label}
+                  className="py-3 px-4 flex items-center gap-3 hover:bg-slate-50/60 transition-colors"
+                >
+                  <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold text-white ${range.bg} shadow-xs shrink-0`}>
+                    {range.label}
+                  </span>
+                  <span className="text-slate-300 font-bold">•</span>
+                  <span className="text-sm font-extrabold text-slate-800">
+                    {range.days}
+                  </span>
+                </div>
+              ))}
             </div>
 
             {/* Close action */}
