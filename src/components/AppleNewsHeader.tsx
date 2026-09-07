@@ -74,8 +74,8 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
     { id: 'all', label: 'Top Stories' },
     { id: 'market-trends', label: 'Steven Thomas' },
     { id: 'mortgage-calculator', label: 'Mortgage Calculator' },
-    { id: 'real-estate', label: 'Orange County News' },
     { id: 'oc-fast', label: 'OC FastStats' },
+    { id: 'real-estate', label: 'Orange County News' },
     { id: 'team-news', label: 'Team News & Events' },
     { id: 'restaurants-bars', label: 'New Restaurants & Bars' },
   ];
