@@ -18,7 +18,7 @@ import { SavedArticlesDrawer } from './components/SavedArticlesDrawer';
 import { AdBannerRenderer } from './components/AdBannerRenderer';
 import { ManagerAdminModal } from './components/ManagerAdminModal';
 import { NewsManagerModal } from './components/NewsManagerModal';
-import { Sparkles, Building2, Utensils, Flame, Compass, ChevronRight, Users, MapPin, TrendingUp, Clock, Tag, BarChart3, Check, Newspaper, X } from 'lucide-react';
+import { Sparkles, Building2, Utensils, Flame, Compass, ChevronRight, Users, MapPin, TrendingUp, Clock, Tag, BarChart3, Check, Newspaper, X, Info } from 'lucide-react';
 
 // Helper function to check if an article is recent (within 15 days) and not deprecated
 export function isArticleRecent(art: NewsArticle, maxDays: number = 15): boolean {
@@ -136,6 +136,7 @@ export function App() {
   const [isMonetizationEnabled, setIsMonetizationEnabled] = useState<boolean>(false);
   const [cityReportTab, setCityReportTab] = useState<'velocity' | 'closed' | 'historical' | 'summary'>('velocity');
   const [showHistoricalMarketTimeModal, setShowHistoricalMarketTimeModal] = useState<boolean>(false);
+  const [showMarketTimeModal, setShowMarketTimeModal] = useState<boolean>(false);
 
   // Read cached rates from localStorage for instant mobile loading & offline resilience
   const getInitialRates = (): LiveMortgageRates => {
@@ -764,7 +765,17 @@ export function App() {
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2.5">
+                    <div className="flex items-center gap-2.5 flex-wrap">
+                      <button
+                        type="button"
+                        onClick={() => setShowMarketTimeModal(true)}
+                        className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-800 hover:text-[#FA2D48] font-bold text-xs transition-all cursor-pointer shadow-2xs"
+                        title="View Expected Market Time Ranges"
+                      >
+                        <Info className="w-3.5 h-3.5 text-[#FA2D48]" />
+                        <span>Expected Market Time Ranges</span>
+                      </button>
+
                       {currentCity.id !== 'orange-county' && (
                         <button
                           onClick={() => {
@@ -1220,6 +1231,67 @@ export function App() {
           </div>
         </div>
       </footer>
+
+      {/* EXPECTED MARKET TIME RANGES MODAL */}
+      {showMarketTimeModal && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs transition-opacity animate-in fade-in"
+          onClick={() => setShowMarketTimeModal(false)}
+        >
+          <div 
+            className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-7 max-w-md w-full shadow-2xl space-y-5 relative animate-in zoom-in-95 duration-150 font-sans text-left"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="flex items-center justify-between gap-4 border-b border-slate-100 pb-4">
+              <h3 className="text-xl sm:text-2xl font-black font-sans text-slate-950 tracking-tight">
+                Expected Market Time Ranges
+              </h3>
+              <button
+                onClick={() => setShowMarketTimeModal(false)}
+                className="p-2 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
+                title="Close"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Single-Column Integrated Ranges List */}
+            <div className="overflow-hidden rounded-2xl border border-slate-200/90 bg-white divide-y divide-slate-100">
+              {[
+                { label: "Hot Seller's Market", days: "< 60 Days", bg: "bg-[#FA2D48]" },
+                { label: "Slight Seller's Market", days: "60 – 89 Days", bg: "bg-amber-500" },
+                { label: "Balanced Market", days: "90 – 119 Days", bg: "bg-sky-600" },
+                { label: "Slight Buyer's Market", days: "120 – 149 Days", bg: "bg-emerald-600" },
+                { label: "Buyer's Market", days: "150+ Days", bg: "bg-emerald-700" },
+              ].map((range) => (
+                <div
+                  key={range.label}
+                  className="py-3 px-4 flex items-center gap-3 hover:bg-slate-50/60 transition-colors"
+                >
+                  <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold text-white ${range.bg} shadow-xs shrink-0`}>
+                    {range.label}
+                  </span>
+                  <span className="text-slate-300 font-bold">•</span>
+                  <span className="text-sm font-extrabold text-slate-800">
+                    {range.days}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            {/* Close action */}
+            <div className="flex justify-end pt-1">
+              <button
+                onClick={() => setShowMarketTimeModal(false)}
+                className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold font-sans transition-all cursor-pointer shadow-xs"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* HISTORICAL EXPECTED MARKET TIME MODAL */}
       {showHistoricalMarketTimeModal && currentCityMarketData && (

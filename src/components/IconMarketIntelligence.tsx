@@ -134,15 +134,22 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
           </div>
 
           <div className="flex items-center gap-2.5 flex-wrap">
+            <button
+              type="button"
+              onClick={() => setShowMarketTimeModal(true)}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-800 hover:text-[#FA2D48] font-bold text-xs transition-all cursor-pointer shadow-2xs"
+              title="View Expected Market Time Ranges"
+            >
+              <Info className="w-3.5 h-3.5 text-[#FA2D48]" />
+              <span>Expected Market Time Ranges</span>
+            </button>
+
             {currentCity.id === 'orange-county' && (
-              <button
-                onClick={() => setShowMarketTimeModal(true)}
-                className={`group inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-black ${countySpeed.buttonBg} text-white shadow-xs tracking-wide transition-all cursor-pointer hover:shadow-md hover:scale-[1.02] active:scale-[0.98]`}
-                title="Click to view Expected Market Time ranges table"
+              <span
+                className={`inline-flex items-center gap-2 px-3 py-2 rounded-xl text-xs sm:text-sm font-black ${countySpeed.buttonBg} text-white shadow-xs tracking-wide`}
               >
                 <span>{meta.countywideMarketTime} Days • {countySpeed.label}</span>
-                <Info className="w-3.5 h-3.5 text-white/90 group-hover:text-white transition-colors" />
-              </button>
+              </span>
             )}
 
             {currentCity.id !== 'orange-county' && onSelectCity && (
