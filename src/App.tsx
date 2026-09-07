@@ -883,6 +883,18 @@ export function App() {
                               })()}
                             </div>
 
+                            {/* Price Range Information (Directly below Expected Market Time & Days on Market) */}
+                            {soldData && soldData.lowPrice && soldData.highPrice && (
+                              <div className="bg-slate-50/90 rounded-2xl py-3 px-4 sm:px-5 flex items-center justify-between border border-slate-200/80 shadow-2xs">
+                                <span className="font-bold text-sm sm:text-base text-slate-900 font-sans">
+                                  Price Range:
+                                </span>
+                                <span className="font-sans font-black text-base sm:text-lg text-slate-950">
+                                  {soldData.lowPrice} – {soldData.highPrice}
+                                </span>
+                              </div>
+                            )}
+
                             {/* Active Inventory & Price Metrics */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                               <div className="bg-slate-50/80 p-4 rounded-2xl border border-slate-200/70">
@@ -943,13 +955,6 @@ export function App() {
                                     <span className="text-emerald-700 font-extrabold">{marketData.demand30Days} Pending Escrow</span>
                                   </div>
                                 )}
-                              </div>
-                            </div>
-
-                            <div className="pt-1">
-                              <div className="bg-slate-50/70 rounded-2xl py-2.5 px-4 flex items-center justify-between text-xs border border-slate-200/60">
-                                <span className="font-bold text-black">Price Range (Low to High):</span>
-                                <span className="font-sans font-bold text-black">{soldData.lowPrice} - {soldData.highPrice}</span>
                               </div>
                             </div>
                           </div>
