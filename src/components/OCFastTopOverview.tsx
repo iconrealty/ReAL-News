@@ -287,7 +287,7 @@ export const OCFastTopOverview: React.FC<OCFastTopOverviewProps> = ({
 
                 <div className="pt-2.5 border-t border-white/20 flex items-center justify-between">
                   <span className="bg-white text-slate-950 font-black text-xs px-2.5 py-1 rounded-lg inline-block shadow-xs font-sans">
-                    {conditionName} ({supplyMetric.july2026} mos)
+                    {conditionName}
                   </span>
                 </div>
               </div>
