@@ -198,10 +198,10 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
                     }
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                   }}
-                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+                  className={`px-4 py-2 rounded-full text-[13.5px] sm:text-sm font-bold tracking-tight transition-all whitespace-nowrap cursor-pointer ${
                     isActive
-                      ? 'bg-[#FA2D48] text-white shadow-xs'
-                      : 'bg-white text-slate-700 hover:bg-slate-100 hover:text-slate-950 border border-slate-200/80'
+                      ? 'bg-[#FA2D48] text-white shadow-xs font-extrabold'
+                      : 'bg-white text-slate-800 hover:bg-slate-100 hover:text-slate-950 border border-slate-200/90'
                   }`}
                 >
                   {cat.label}
