@@ -126,11 +126,6 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
                 setIsRatesModalOpen((prev) => !prev);
                 if (!isRatesModalOpen && onRefreshRates) onRefreshRates();
               }}
-              onTouchEnd={(e) => {
-                e.preventDefault();
-                setIsRatesModalOpen((prev) => !prev);
-                if (!isRatesModalOpen && onRefreshRates) onRefreshRates();
-              }}
               className="flex flex-col items-end text-right group cursor-pointer hover:opacity-80 transition-opacity shrink-0 px-1 select-none touch-manipulation min-h-[44px] justify-center"
               title="Mortgage News Daily Live Rates - Click to view 5 live rates"
             >
@@ -245,11 +240,6 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
                     type="button"
                     id="header-modal-sync-rates-btn"
                     onClick={(e) => {
-                      e.stopPropagation();
-                      onRefreshRates();
-                    }}
-                    onTouchEnd={(e) => {
-                      e.preventDefault();
                       e.stopPropagation();
                       onRefreshRates();
                     }}

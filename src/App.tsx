@@ -187,6 +187,9 @@ export function App() {
           } catch (e) {
             console.warn("Could not cache live rates in localStorage", e);
           }
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(new CustomEvent('live-rates-synced', { detail: freshData }));
+          }
         }
       })
       .catch(err => console.warn("Failed to sync live mortgage rates:", err));
@@ -634,9 +637,9 @@ export function App() {
       
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 bg-white text-slate-900 border border-slate-200 px-5 py-3 rounded-2xl shadow-xl flex items-center space-x-2 text-xs font-bold animate-bounce">
-          <Sparkles className="w-4 h-4 text-[#FA2D48]" />
-          <span>{toastMessage}</span>
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[99999] max-w-[90vw] bg-slate-900 text-white border border-slate-700 px-5 py-3 rounded-full shadow-2xl flex items-center space-x-2.5 text-xs font-bold pointer-events-none select-none animate-fadeIn">
+          <Sparkles className="w-4 h-4 text-[#FA2D48] shrink-0" />
+          <span className="truncate">{toastMessage}</span>
         </div>
       )}
 

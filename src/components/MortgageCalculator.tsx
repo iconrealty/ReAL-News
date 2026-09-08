@@ -873,12 +873,8 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                       type="button"
                       id="calc-sync-live-rates-btn"
                       onClick={handleDirectSyncRates}
-                      onTouchEnd={(e) => {
-                        e.preventDefault();
-                        handleDirectSyncRates();
-                      }}
                       disabled={isRefreshingRates || isLocalSyncing}
-                      className="min-h-[34px] sm:min-h-[36px] px-2.5 sm:px-3 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-800 text-[11px] font-bold flex items-center gap-1.5 transition-all cursor-pointer border border-slate-200 shadow-2xs touch-manipulation active:scale-95 disabled:opacity-50 select-none"
+                      className="min-h-[36px] px-3 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-800 text-[11px] font-bold flex items-center gap-1.5 transition-all cursor-pointer border border-slate-200 shadow-2xs touch-manipulation active:scale-95 disabled:opacity-50 select-none"
                       title="Sync latest live rates from Mortgage News Daily"
                     >
                       <RefreshCw className={`w-3.5 h-3.5 text-[#FA2D48] ${(isRefreshingRates || isLocalSyncing) ? 'animate-spin' : ''}`} />
@@ -1103,12 +1099,8 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                       type="button"
                       id="calc-sync-live-rates-btn-rev"
                       onClick={handleDirectSyncRates}
-                      onTouchEnd={(e) => {
-                        e.preventDefault();
-                        handleDirectSyncRates();
-                      }}
                       disabled={isRefreshingRates || isLocalSyncing}
-                      className="min-h-[34px] sm:min-h-[36px] px-2.5 sm:px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 active:bg-slate-600 text-slate-200 text-[11px] font-bold flex items-center gap-1.5 transition-all cursor-pointer border border-slate-700 shadow-2xs touch-manipulation active:scale-95 disabled:opacity-50 select-none"
+                      className="min-h-[36px] px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 active:bg-slate-600 text-slate-200 text-[11px] font-bold flex items-center gap-1.5 transition-all cursor-pointer border border-slate-700 shadow-2xs touch-manipulation active:scale-95 disabled:opacity-50 select-none"
                       title="Sync latest live rates from Mortgage News Daily"
                     >
                       <RefreshCw className={`w-3.5 h-3.5 text-[#FA2D48] ${(isRefreshingRates || isLocalSyncing) ? 'animate-spin' : ''}`} />

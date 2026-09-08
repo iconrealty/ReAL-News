@@ -752,10 +752,6 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
 
                       <button
                         onClick={handleManualRateRefresh}
-                        onTouchEnd={(e) => {
-                          e.preventDefault();
-                          handleManualRateRefresh();
-                        }}
                         disabled={localRefreshing || isRefreshingRates}
                         className="inline-flex items-center space-x-1 min-h-[36px] px-3 py-1 rounded-full bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-700 text-xs font-bold transition-all cursor-pointer disabled:opacity-50 touch-manipulation active:scale-95 select-none"
                         title="Sync latest live rates from Mortgage News Daily"
