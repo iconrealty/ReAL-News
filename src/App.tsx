@@ -168,7 +168,7 @@ export function App() {
   const [isRefreshingRates, setIsRefreshingRates] = useState(false);
 
   const fetchLiveRates = () => {
-    fetch(`/api/live-market-stats?t=${Date.now()}&device=mobile`, {
+    fetch(`/api/live-market-stats?t=${Date.now()}&device=mobile&_rnd=${Math.random()}`, {
       method: 'GET',
       cache: 'no-store',
       headers: {
@@ -180,9 +180,10 @@ export function App() {
       .then(res => res.json())
       .then(json => {
         if (json.success && json.data) {
-          setLiveRates(json.data);
+          const freshData = { ...json.data, asOfTimestamp: Date.now() };
+          setLiveRates(freshData);
           try {
-            localStorage.setItem('cached_live_mortgage_rates', JSON.stringify(json.data));
+            localStorage.setItem('cached_live_mortgage_rates', JSON.stringify(freshData));
           } catch (e) {
             console.warn("Could not cache live rates in localStorage", e);
           }
@@ -194,24 +195,51 @@ export function App() {
   const handleRefreshLiveRates = async () => {
     setIsRefreshingRates(true);
     try {
-      const res = await fetch(`/api/live-market-stats?force=true&t=${Date.now()}&device=mobile`, {
-        method: 'GET',
-        cache: 'no-store',
-        headers: {
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
-          'Pragma': 'no-cache',
-          'Expires': '0'
-        }
-      });
+      // 1. Try POST to /api/live-market-stats/sync - uncacheable on iOS Safari & mobile Chrome
+      let res: Response | null = null;
+      try {
+        res = await fetch(`/api/live-market-stats/sync?t=${Date.now()}&_rnd=${Math.random()}`, {
+          method: 'POST',
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0',
+            'Content-Type': 'application/json'
+          }
+        });
+      } catch (postErr) {
+        console.warn("POST sync fallback to GET:", postErr);
+      }
+
+      if (!res || !res.ok) {
+        // Fallback to GET with force=true
+        res = await fetch(`/api/live-market-stats?force=true&t=${Date.now()}&_rnd=${Math.random()}`, {
+          method: 'GET',
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+          }
+        });
+      }
+
       const json = await res.json();
       if (json.success && json.data) {
-        setLiveRates(json.data);
+        const freshData = { ...json.data, asOfTimestamp: Date.now() };
+        setLiveRates(freshData);
         try {
-          localStorage.setItem('cached_live_mortgage_rates', JSON.stringify(json.data));
+          localStorage.setItem('cached_live_mortgage_rates', JSON.stringify(freshData));
         } catch (e) {
           console.warn("Could not cache live rates in localStorage", e);
         }
-        showToast(`MND Live Rates updated: 30-Yr ${json.data.mortgage30Year} • 15-Yr ${json.data.mortgage15Year}`);
+
+        // Broadcast to all mounted components (e.g., MortgageCalculator) for immediate reactive UI update
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('live-rates-synced', { detail: freshData }));
+        }
+
+        showToast(`MND Live Rates synced: 30-Yr ${freshData.mortgage30Year} • 15-Yr ${freshData.mortgage15Year}`);
       } else {
         showToast('Rates verified with Mortgage News Daily.');
       }

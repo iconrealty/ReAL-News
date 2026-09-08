@@ -525,8 +525,8 @@ async function fetchLiveMndRates(forceRefresh = false): Promise<CachedLiveRates>
     };
 
     const [mndRes, histRes] = await Promise.all([
-      fetch("https://www.mortgagenewsdaily.com/mortgage-rates", { headers, signal: AbortSignal.timeout(6000) }),
-      fetch("https://www.mortgagenewsdaily.com/mortgage-rates/30-year-fixed", { headers, signal: AbortSignal.timeout(6000) }).catch(() => null)
+      fetch("https://www.mortgagenewsdaily.com/mortgage-rates", { headers, signal: AbortSignal.timeout(8000) }),
+      fetch("https://www.mortgagenewsdaily.com/mortgage-rates/30-year-fixed", { headers, signal: AbortSignal.timeout(8000) }).catch(() => null)
     ]);
     
     if (mndRes.ok) {
@@ -630,6 +630,9 @@ fetchLiveMndRates(true).catch(err => console.warn("[Startup Rates Prefetch] Init
 
 const app = express();
 const PORT = 3000;
+
+// Disable ETags completely to prevent 304 Not Modified caching on iOS Safari and mobile Chrome
+app.set('etag', false);
 
 app.use(express.json({ limit: '25mb' }));
 app.use(express.urlencoded({ limit: '25mb', extended: true }));
@@ -1745,17 +1748,19 @@ app.post("/api/admin/ads/reset", async (req, res) => {
   }
 });
 
-// Live Mortgage News Daily (MND) Real-Time Mortgage Rates Endpoint
-app.get("/api/live-market-stats", async (req, res) => {
+// Live Mortgage News Daily (MND) Real-Time Mortgage Rates Endpoint (Supports GET & POST for mobile cache-busting)
+app.all(["/api/live-market-stats", "/api/live-market-stats/sync"], async (req, res) => {
   try {
-    const force = req.query.force === 'true';
+    const force = req.query.force === 'true' || req.method === 'POST';
     const rateData = await fetchLiveMndRates(force);
     res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
     res.setHeader('Pragma', 'no-cache');
     res.setHeader('Expires', '0');
+    res.setHeader('Surrogate-Control', 'no-store');
     res.json({
       success: true,
-      data: rateData
+      data: rateData,
+      syncedAt: Date.now()
     });
   } catch (err: any) {
     res.status(500).json({ success: false, error: err?.message || "Failed to fetch live mortgage rates" });

@@ -126,7 +126,12 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
                 setIsRatesModalOpen((prev) => !prev);
                 if (!isRatesModalOpen && onRefreshRates) onRefreshRates();
               }}
-              className="flex flex-col items-end text-right group cursor-pointer hover:opacity-80 transition-opacity shrink-0 px-1 select-none"
+              onTouchEnd={(e) => {
+                e.preventDefault();
+                setIsRatesModalOpen((prev) => !prev);
+                if (!isRatesModalOpen && onRefreshRates) onRefreshRates();
+              }}
+              className="flex flex-col items-end text-right group cursor-pointer hover:opacity-80 transition-opacity shrink-0 px-1 select-none touch-manipulation min-h-[44px] justify-center"
               title="Mortgage News Daily Live Rates - Click to view 5 live rates"
             >
               <div className="flex items-center gap-1.5">
@@ -234,16 +239,26 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
               </div>
 
-              <div className="flex items-center gap-1 shrink-0">
+              <div className="flex items-center gap-1.5 shrink-0">
                 {onRefreshRates && (
                   <button
                     type="button"
-                    onClick={onRefreshRates}
+                    id="header-modal-sync-rates-btn"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onRefreshRates();
+                    }}
+                    onTouchEnd={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      onRefreshRates();
+                    }}
                     disabled={isRefreshingRates}
-                    className="p-2 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+                    className="min-h-[38px] px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-700 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer touch-manipulation active:scale-95 disabled:opacity-50 select-none"
                     title="Sync Latest Live Rates"
                   >
                     <RefreshCw className={`w-3.5 h-3.5 text-[#FA2D48] ${isRefreshingRates ? 'animate-spin' : ''}`} />
+                    <span>{isRefreshingRates ? 'Syncing...' : 'Sync Rates'}</span>
                   </button>
                 )}
                 <button
@@ -294,6 +309,9 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
                   onClick={() => {
                     setIsRatesModalOpen(false);
                     onSelectCategory('mortgage-calculator');
+                    if (typeof window !== 'undefined') {
+                      window.dispatchEvent(new CustomEvent('select-rate-program', { detail: r.label }));
+                    }
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                   }}
                   className="w-full py-3.5 px-3 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer flex items-center justify-between text-left group"

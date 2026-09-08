@@ -215,6 +215,16 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
   }, [propLiveRates]);
 
   React.useEffect(() => {
+    const handleSynced = (e: any) => {
+      if (e.detail) {
+        setLiveRates(e.detail);
+      }
+    };
+    window.addEventListener('live-rates-synced', handleSynced);
+    return () => window.removeEventListener('live-rates-synced', handleSynced);
+  }, []);
+
+  React.useEffect(() => {
     if (currentCityName) {
       const cName = currentCityName.trim().toLowerCase();
       if (cName === 'orange county' || cName === 'all orange county' || cName.includes('orange county')) {
@@ -742,11 +752,15 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
 
                       <button
                         onClick={handleManualRateRefresh}
+                        onTouchEnd={(e) => {
+                          e.preventDefault();
+                          handleManualRateRefresh();
+                        }}
                         disabled={localRefreshing || isRefreshingRates}
-                        className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-bold transition-all cursor-pointer disabled:opacity-50"
+                        className="inline-flex items-center space-x-1 min-h-[36px] px-3 py-1 rounded-full bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-700 text-xs font-bold transition-all cursor-pointer disabled:opacity-50 touch-manipulation active:scale-95 select-none"
                         title="Sync latest live rates from Mortgage News Daily"
                       >
-                        <RefreshCw className={`w-3 h-3 text-[#FA2D48] ${(localRefreshing || isRefreshingRates) ? 'animate-spin' : ''}`} />
+                        <RefreshCw className={`w-3.5 h-3.5 text-[#FA2D48] ${(localRefreshing || isRefreshingRates) ? 'animate-spin' : ''}`} />
                         <span>{(localRefreshing || isRefreshingRates) ? 'Syncing...' : 'Sync Live'}</span>
                       </button>
                     </div>

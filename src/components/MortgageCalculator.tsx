@@ -145,6 +145,92 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
 
   // Sync interest rate with live rates when propLiveRates updates initially or refreshes
   const hasUserEditedRate = React.useRef(false);
+  const [isLocalSyncing, setIsLocalSyncing] = useState(false);
+
+  // Direct uncacheable sync handler for immediate mobile and desktop updates
+  const handleDirectSyncRates = async () => {
+    setIsLocalSyncing(true);
+    hasUserEditedRate.current = false;
+    try {
+      if (onRefreshRates) {
+        onRefreshRates();
+      }
+      const res = await fetch(`/api/live-market-stats/sync?t=${Date.now()}&_rnd=${Math.random()}`, {
+        method: 'POST',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
+        }
+      });
+      const json = await res.json();
+      if (json.success && json.data) {
+        const liveVal = parseFloat(json.data.mortgage30Year?.replace('%', '') || '6.89');
+        if (!isNaN(liveVal)) {
+          if (selectedRateProgram === '15-Yr Fixed' && json.data.mortgage15Year) {
+            setInterestRate(parseFloat(json.data.mortgage15Year.replace('%', '')));
+          } else if (selectedRateProgram === '30-Yr Jumbo' && json.data.jumbo30Year) {
+            setInterestRate(parseFloat(json.data.jumbo30Year.replace('%', '')));
+          } else if (selectedRateProgram === '30-Yr FHA' && json.data.fha30Year) {
+            setInterestRate(parseFloat(json.data.fha30Year.replace('%', '')));
+          } else if (selectedRateProgram === '30-Yr VA' && json.data.va30Year) {
+            setInterestRate(parseFloat(json.data.va30Year.replace('%', '')));
+          } else {
+            setInterestRate(liveVal);
+            if (selectedRateProgram === 'custom') {
+              setSelectedRateProgram('30-Yr Fixed');
+            }
+          }
+        }
+      }
+    } catch (err) {
+      console.warn('Direct rate sync error in calculator:', err);
+    } finally {
+      setTimeout(() => setIsLocalSyncing(false), 500);
+    }
+  };
+
+  // Listen to global live-rates-synced event for instant cross-component updates on mobile
+  React.useEffect(() => {
+    const handleLiveRatesSynced = (e: any) => {
+      hasUserEditedRate.current = false;
+      const data = e.detail;
+      if (data) {
+        if (selectedRateProgram === '15-Yr Fixed' && data.mortgage15Year) {
+          setInterestRate(parseFloat(data.mortgage15Year.replace('%', '')));
+        } else if (selectedRateProgram === '30-Yr Jumbo' && data.jumbo30Year) {
+          setInterestRate(parseFloat(data.jumbo30Year.replace('%', '')));
+        } else if (selectedRateProgram === '30-Yr FHA' && data.fha30Year) {
+          setInterestRate(parseFloat(data.fha30Year.replace('%', '')));
+        } else if (selectedRateProgram === '30-Yr VA' && data.va30Year) {
+          setInterestRate(parseFloat(data.va30Year.replace('%', '')));
+        } else {
+          const r30 = parseFloat(data.mortgage30Year?.replace('%', '') || '6.89');
+          if (!isNaN(r30) && r30 > 0) {
+            setInterestRate(r30);
+            if (selectedRateProgram === 'custom') {
+              setSelectedRateProgram('30-Yr Fixed');
+            }
+          }
+        }
+      }
+    };
+    window.addEventListener('live-rates-synced', handleLiveRatesSynced);
+    return () => window.removeEventListener('live-rates-synced', handleLiveRatesSynced);
+  }, [selectedRateProgram]);
+
+  // Listen to programmatic rate program selection from rates modal
+  React.useEffect(() => {
+    const handleSelectProgramEvent = (e: any) => {
+      const prog = e.detail;
+      if (typeof prog === 'string') {
+        handleProgramSelect(prog);
+      }
+    };
+    window.addEventListener('select-rate-program', handleSelectProgramEvent);
+    return () => window.removeEventListener('select-rate-program', handleSelectProgramEvent);
+  }, [rateOptions]);
+
   React.useEffect(() => {
     if (!hasUserEditedRate.current) {
       const activeProg = rateOptions.find((r) => r.label === selectedRateProgram);
@@ -154,7 +240,7 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
         setInterestRate(mnd30Num);
       }
     }
-  }, [rateOptions, selectedRateProgram, mnd30Num]);
+  }, [rateOptions, selectedRateProgram, mnd30Num, propLiveRates?.asOfTimestamp, propLiveRates?.mortgage30Year]);
 
   // Optional Extra Costs Toggles (iPhone/Apple style green/grey toggle, set by default to inactive false)
   const [includeTaxes, setIncludeTaxes] = useState<boolean>(false);
@@ -774,14 +860,31 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
 
               {/* 3. Interest Rate & Loan Program */}
               <div className="space-y-3">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between gap-2 flex-wrap">
                   <label htmlFor="interest-rate-program-select" className="text-xs font-extrabold uppercase tracking-wider text-slate-700 block">
                     Interest Rate &amp; Program
                   </label>
-                  <span className="text-[10px] sm:text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200/60 flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                    Live Market Rates
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] sm:text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200/60 flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                      Live Market
+                    </span>
+                    <button
+                      type="button"
+                      id="calc-sync-live-rates-btn"
+                      onClick={handleDirectSyncRates}
+                      onTouchEnd={(e) => {
+                        e.preventDefault();
+                        handleDirectSyncRates();
+                      }}
+                      disabled={isRefreshingRates || isLocalSyncing}
+                      className="min-h-[34px] sm:min-h-[36px] px-2.5 sm:px-3 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-800 text-[11px] font-bold flex items-center gap-1.5 transition-all cursor-pointer border border-slate-200 shadow-2xs touch-manipulation active:scale-95 disabled:opacity-50 select-none"
+                      title="Sync latest live rates from Mortgage News Daily"
+                    >
+                      <RefreshCw className={`w-3.5 h-3.5 text-[#FA2D48] ${(isRefreshingRates || isLocalSyncing) ? 'animate-spin' : ''}`} />
+                      <span>{(isRefreshingRates || isLocalSyncing) ? 'Syncing...' : 'Sync Rates'}</span>
+                    </button>
+                  </div>
                 </div>
 
                 {/* Dropdown with live rate programs: 30-Yr Fixed (default), 15-Yr Fixed, 30-Yr Jumbo, 30-Yr FHA, 30-Yr VA */}
@@ -987,14 +1090,31 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
 
               {/* 4. Interest Rate & Loan Program */}
               <div className="space-y-3">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between gap-2 flex-wrap">
                   <label htmlFor="interest-rate-program-select-rev" className="text-xs font-extrabold uppercase tracking-wider text-slate-200 block">
                     Interest Rate &amp; Program
                   </label>
-                  <span className="text-[10px] sm:text-[11px] font-bold text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded-md border border-emerald-500/30 flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                    Live Market Rates
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] sm:text-[11px] font-bold text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded-md border border-emerald-500/30 flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                      Live Market
+                    </span>
+                    <button
+                      type="button"
+                      id="calc-sync-live-rates-btn-rev"
+                      onClick={handleDirectSyncRates}
+                      onTouchEnd={(e) => {
+                        e.preventDefault();
+                        handleDirectSyncRates();
+                      }}
+                      disabled={isRefreshingRates || isLocalSyncing}
+                      className="min-h-[34px] sm:min-h-[36px] px-2.5 sm:px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 active:bg-slate-600 text-slate-200 text-[11px] font-bold flex items-center gap-1.5 transition-all cursor-pointer border border-slate-700 shadow-2xs touch-manipulation active:scale-95 disabled:opacity-50 select-none"
+                      title="Sync latest live rates from Mortgage News Daily"
+                    >
+                      <RefreshCw className={`w-3.5 h-3.5 text-[#FA2D48] ${(isRefreshingRates || isLocalSyncing) ? 'animate-spin' : ''}`} />
+                      <span>{(isRefreshingRates || isLocalSyncing) ? 'Syncing...' : 'Sync Rates'}</span>
+                    </button>
+                  </div>
                 </div>
 
                 {/* Dropdown with live rate programs */}
