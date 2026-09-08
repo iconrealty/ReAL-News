@@ -35,8 +35,8 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
   onOpenSavedDrawer,
   onResetToMain,
   liveRates,
-  fredRate = '6.88%',
-  rate30Year7DaysAgo = '6.74%',
+  fredRate = '6.89%',
+  rate30Year7DaysAgo = '6.81%',
   rate30YearChange7Days,
   asOfDate,
   onOpenManager,
@@ -81,8 +81,8 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
   ];
 
   // Calculate 7-day prior comparison strictly from current rate vs 7-day prior rate
-  const currentNum = parseFloat((fredRate || '6.88%').replace(/[^0-9.]/g, '')) || 6.88;
-  const priorNum = parseFloat((rate30Year7DaysAgo || '6.74%').replace(/[^0-9.]/g, '')) || 6.74;
+  const currentNum = parseFloat((fredRate || '6.89%').replace(/[^0-9.]/g, '')) || 6.89;
+  const priorNum = parseFloat((rate30Year7DaysAgo || '6.81%').replace(/[^0-9.]/g, '')) || 6.81;
   const computedDiff = parseFloat((currentNum - priorNum).toFixed(2));
 
   const isUp = computedDiff > 0;
@@ -269,27 +269,38 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
                 {
                   id: '30-yr-fixed',
                   label: '30-Yr Fixed',
+                  tag: 'MND Daily Index',
                   rate: liveRates?.mortgage30Year || fredRate || '6.89%',
                 },
                 {
                   id: '15-yr-fixed',
                   label: '15-Yr Fixed',
+                  tag: 'MND Daily Index',
                   rate: liveRates?.mortgage15Year || '6.49%',
                 },
                 {
                   id: '30-yr-jumbo',
                   label: '30-Yr Jumbo',
+                  tag: 'MND Daily Index',
                   rate: liveRates?.jumbo30Year || '7.06%',
                 },
                 {
                   id: '30-yr-fha',
                   label: '30-Yr FHA',
+                  tag: 'MND Daily Index',
                   rate: liveRates?.fha30Year || '6.44%',
                 },
                 {
                   id: '30-yr-va',
                   label: '30-Yr VA',
+                  tag: 'MND Daily Index',
                   rate: liveRates?.va30Year || '6.46%',
+                },
+                {
+                  id: 'freddie-mac-pmms',
+                  label: 'Freddie Mac (PMMS)',
+                  tag: 'Weekly Survey',
+                  rate: liveRates?.freddieMac30Year || '6.71%',
                 },
               ].map((r) => (
                 <button
@@ -304,13 +315,18 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
                     }
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                   }}
-                  className="w-full py-3.5 px-3 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer flex items-center justify-between text-left group"
+                  className="w-full py-3 px-3 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer flex items-center justify-between text-left group"
                 >
-                  <span className="text-[15px] font-medium text-slate-800 group-hover:text-slate-950 tracking-tight font-sans">
-                    {r.label}
-                  </span>
+                  <div className="flex flex-col">
+                    <span className="text-[14.5px] font-semibold text-slate-800 group-hover:text-slate-950 tracking-tight font-sans">
+                      {r.label}
+                    </span>
+                    <span className="text-[10px] text-slate-400 font-medium">
+                      {r.tag}
+                    </span>
+                  </div>
 
-                  <span className="text-base font-semibold text-slate-900 group-hover:text-[#FA2D48] tracking-tight tabular-nums font-sans transition-colors">
+                  <span className="text-base font-bold text-slate-900 group-hover:text-[#FA2D48] tracking-tight tabular-nums font-sans transition-colors">
                     {r.rate}
                   </span>
                 </button>

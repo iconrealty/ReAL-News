@@ -35,25 +35,40 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
 
   const currentCitySoldData = useMemo(() => {
     const name = currentCity?.name?.toLowerCase().trim() || '';
-    if (name === 'orange county' || name === 'all of o.c.') return null;
+    if (name === 'orange county' || name === 'all of o.c.' || currentCity?.id === 'orange-county') {
+      return OC_SOLD_REPORT.find(s => s.city === 'All of O.C.') || null;
+    }
     const clean = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
     const cleanName = clean(name);
     return OC_SOLD_REPORT.find(s => {
       const cleanCity = clean(s.city);
       return cleanCity === cleanName || cleanCity.includes(cleanName) || cleanName.includes(cleanCity);
     });
-  }, [currentCity?.name]);
+  }, [currentCity?.name, currentCity?.id]);
 
   const currentCityMarketData = useMemo(() => {
     const name = currentCity?.name?.toLowerCase().trim() || '';
-    if (name === 'orange county' || name === 'all of o.c.') return null;
+    if (name === 'orange county' || name === 'all of o.c.' || currentCity?.id === 'orange-county') {
+      return {
+        city: "All of Orange County",
+        region: "Coastal" as const,
+        currentActives: meta.countywideActives,
+        demand30Days: meta.countywideDemand,
+        marketTimeDays: meta.countywideMarketTime,
+        marketTime2WeeksAgo: meta.countywideMarketTime2WksAgo,
+        marketTime4WeeksAgo: 101,
+        marketTime1YearAgo: meta.countywideMarketTimeLastYear,
+        marketTime2YearsAgo: 73,
+        medianActiveListPrice: "$1.3m",
+      };
+    }
     const clean = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
     const cleanName = clean(name);
     return OC_MARKET_TIME_REPORT.find(m => {
       const cleanCity = clean(m.city);
       return cleanCity === cleanName || cleanCity.includes(cleanName) || cleanName.includes(cleanCity);
     });
-  }, [currentCity?.name]);
+  }, [currentCity?.name, currentCity?.id, meta]);
 
   const getMarketCondition = (days: number) => {
     if (days < 60) return { label: "Hot Seller's Market", bgClass: 'bg-[#FA2D48]', textClass: 'text-[#FA2D48]', badgeText: "Hot Seller's Market (< 60 Days)", accentText: 'text-[#FA2D48]' };
@@ -236,7 +251,7 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                                 Days on Market
                               </span>
                               <span className="text-xs font-bold text-white bg-white/20 px-2.5 py-0.5 rounded-full backdrop-blur-xs shrink-0">
-                                July Closed
+                                Closed Escrows
                               </span>
                             </div>
                             <div className="text-xs sm:text-sm font-bold text-white tracking-normal">
@@ -287,12 +302,12 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                 </div>
               )}
 
-              {/* 2. JULY CLOSED SALES DATA */}
+              {/* 2. CLOSED SALES DATA (AUGUST REPORT) */}
               {soldData && (
                 <div className="space-y-3 pt-4 border-t border-slate-100">
                   <div className="flex items-center justify-between flex-wrap gap-2">
                     <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 font-sans">
-                      July Closed Sales & Price Distribution
+                      Closed Sales & Price Distribution (August Report)
                     </h3>
                   </div>
 
@@ -384,7 +399,7 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                     {card.currentStat}
                   </div>
                   <div className="text-xs font-bold font-sans text-emerald-600">
-                    {card.id === 'closed' ? `${card.unit} • 99.5% Sale-to-List Ratio` : card.unit}
+                    {card.id === 'closed' ? `${card.unit} • ${meta.salesToListRatio} Sale-to-List Ratio` : card.unit}
                   </div>
                 </div>
 

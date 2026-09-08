@@ -112,6 +112,7 @@ export interface LiveMortgageRates {
   jumbo30Year?: string;
   fha30Year?: string;
   va30Year?: string;
+  freddieMac30Year?: string;
   lastChecked?: string;
   sourceType: string;
   isRealLiveRate?: boolean;

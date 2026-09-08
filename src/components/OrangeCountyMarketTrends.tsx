@@ -158,12 +158,13 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
   const [liveRates, setLiveRates] = useState<LiveMortgageRates>(
     propLiveRates || { 
       source: 'Mortgage News Daily (MND Daily Index)',
-      mortgage30Year: '6.88%',
-      mortgage15Year: '6.48%',
-      jumbo30Year: '7.05%',
+      mortgage30Year: '6.89%',
+      mortgage15Year: '6.49%',
+      jumbo30Year: '7.06%',
       fha30Year: '6.44%',
       va30Year: '6.46%',
-      asOfDate: 'Daily Live Market',
+      freddieMac30Year: '6.71%',
+      asOfDate: 'MND Live (9/4/26)',
       sourceType: 'MORTGAGE_NEWS_DAILY',
       isRealLiveRate: true
     }
@@ -192,14 +193,29 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
     }
     setLocalRefreshing(true);
     try {
-      const res = await fetch(`/api/live-market-stats?force=true&t=${Date.now()}&device=mobile`, {
-        method: 'GET',
-        cache: 'no-store',
-        headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate', 'Pragma': 'no-cache' }
-      });
-      const json = await res.json();
-      if (json.success && json.data) {
-        setLiveRates(json.data);
+      let res = await fetch(`/api/live-market-stats/sync?t=${Date.now()}&_rnd=${Math.random()}`, {
+        method: 'POST',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0',
+          'Content-Type': 'application/json'
+        }
+      }).catch(() => null);
+
+      if (!res || !res.ok) {
+        res = await fetch(`/api/live-market-stats?force=true&t=${Date.now()}&device=mobile`, {
+          method: 'GET',
+          cache: 'no-store',
+          headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate', 'Pragma': 'no-cache' }
+        });
+      }
+
+      if (res && res.ok) {
+        const json = await res.json();
+        if (json.success && json.data) {
+          setLiveRates(json.data);
+        }
       }
     } catch (err) {
       console.warn("Failed to manually refresh live rates", err);
@@ -588,12 +604,12 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                 </button>
               </div>
 
-              {/* JULY CLOSED SALES DATA */}
+              {/* CLOSED SALES DATA (JULY 2026 RESALES) */}
               {soldData && (
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 font-sans">
-                      July Closed Sales Data
+                      July 2026 Closed Sales Data
                     </h3>
                   </div>
 
@@ -767,9 +783,9 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                         <span className="text-[9px] text-slate-400 font-bold">{liveRates?.asOfDate || 'Daily Live Market'}</span>
                       </div>
                       <div className="flex items-baseline space-x-2.5 pt-1">
-                        <span className="text-3xl sm:text-4xl font-black text-slate-900">{liveRates?.mortgage30Year || '6.88%'}</span>
+                        <span className="text-3xl sm:text-4xl font-black text-slate-900">{liveRates?.mortgage30Year || '6.89%'}</span>
                         <span className="text-xs font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md">
-                          15-Yr: {liveRates?.mortgage15Year || '6.48%'}
+                          15-Yr: {liveRates?.mortgage15Year || '6.49%'}
                         </span>
                       </div>
                       <div className="flex flex-wrap items-center gap-1.5 pt-2">
@@ -786,6 +802,11 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                         {liveRates?.va30Year && (
                           <span className="text-[10px] font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md">
                             VA: {liveRates.va30Year}
+                          </span>
+                        )}
+                        {liveRates?.freddieMac30Year && (
+                          <span className="text-[10px] font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md">
+                            Freddie Mac: {liveRates.freddieMac30Year}
                           </span>
                         )}
                       </div>
@@ -810,9 +831,9 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                   <p className="text-sm text-slate-700 font-normal mt-2 leading-snug">Across {OC_HOUSING_REPORT_METADATA.countywideActives.toLocaleString()} active listings in all 34 OC municipalities.</p>
                 </div>
                 <div className="bg-white border border-slate-200/90 rounded-3xl p-6 shadow-xs">
-                  <div className="text-xs font-sans uppercase tracking-widest text-black font-extrabold">August Report Closed Sales</div>
+                  <div className="text-xs font-sans uppercase tracking-widest text-black font-extrabold">July 2026 Closed Sales</div>
                   <div className="text-3xl font-black text-[#FA2D48] pt-1">1,994 Sales</div>
-                  <p className="text-sm text-slate-700 font-normal mt-2 leading-snug">+9% compared to prior year (1,828 sales). Average 99.9% sales-to-list ratio.</p>
+                  <p className="text-sm text-slate-700 font-normal mt-2 leading-snug">+9% compared to July 2025 (1,828 sales). Average 99.9% sales-to-list ratio.</p>
                 </div>
               </div>
 
@@ -1101,7 +1122,7 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                 <div className="bg-white border border-slate-200/90 rounded-3xl p-5 sm:p-6 shadow-xs flex flex-col justify-between">
                   <div className="text-xs font-sans uppercase tracking-widest text-black font-extrabold">Countywide Median $/Sq.Ft.</div>
                   <div className="text-3xl sm:text-4xl font-black text-[#FA2D48] pt-1">$717 <span className="text-sm font-bold text-slate-500">/ sq.ft.</span></div>
-                  <p className="text-xs text-slate-600 font-medium mt-2">Across 1,994 closed sales countywide (August 2026 report).</p>
+                  <p className="text-xs text-slate-600 font-medium mt-2">Across 1,994 closed sales countywide in July 2026 (Steven Thomas Page 12 Report).</p>
                 </div>
 
                 <div className="bg-white border border-slate-200/90 rounded-3xl p-5 sm:p-6 shadow-xs flex flex-col justify-between">
@@ -1133,7 +1154,7 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                   <div>
                     <h3 className="text-xl sm:text-2xl font-black text-slate-950">Orange County Price Per Sq. Ft. by City</h3>
                     <p className="text-xs sm:text-sm text-slate-600 font-medium mt-0.5">
-                      Verified closed sales statistics for all Orange County municipalities from the August 2026 report.
+                      Verified July 2026 closed sales statistics for all Orange County municipalities (Steven Thomas Page 12 Report).
                     </p>
                   </div>
 
@@ -1213,8 +1234,8 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                         <th className="p-3.5 text-right">Median List Price</th>
                         <th className="p-3.5 text-center">Sales / List %</th>
                         <th className="p-3.5 text-center">Median DOM</th>
-                        <th className="p-3.5 text-center">Aug 2026 Sales</th>
-                        <th className="p-3.5 text-center">Aug 2025 Sales</th>
+                        <th className="p-3.5 text-center">July 2026 Sales</th>
+                        <th className="p-3.5 text-center">July 2025 Sales</th>
                         <th className="p-3.5 text-right">Price Range (Low – High)</th>
                       </tr>
                     </thead>

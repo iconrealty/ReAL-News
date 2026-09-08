@@ -144,21 +144,26 @@ export function App() {
       const saved = localStorage.getItem('cached_live_mortgage_rates');
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (parsed && parsed.mortgage30Year) return parsed;
+        const isFresh = parsed && parsed.asOfTimestamp && (Date.now() - parsed.asOfTimestamp < 10 * 60 * 1000);
+        // Purge old stale cache (e.g. 6.88% from previous day)
+        if (parsed && parsed.mortgage30Year && parsed.mortgage30Year !== '6.88%' && isFresh) {
+          return parsed;
+        }
       }
     } catch (e) {
       console.warn("Could not read cached rates from localStorage", e);
     }
     return {
       source: 'Mortgage News Daily (MND Daily Index)',
-      asOfDate: 'Daily Live Market',
-      mortgage30Year: '6.88%',
-      mortgage15Year: '6.48%',
-      jumbo30Year: '7.05%',
+      asOfDate: 'MND Live (9/4/26)',
+      mortgage30Year: '6.89%',
+      mortgage15Year: '6.49%',
+      jumbo30Year: '7.06%',
       fha30Year: '6.44%',
       va30Year: '6.46%',
-      rate30Year7DaysAgo: '6.74%',
-      rate30YearChange7Days: 0.14,
+      freddieMac30Year: '6.71%',
+      rate30Year7DaysAgo: '6.81%',
+      rate30YearChange7Days: 0.08,
       sourceType: 'MORTGAGE_NEWS_DAILY',
       isRealLiveRate: true
     };
@@ -167,18 +172,33 @@ export function App() {
   const [liveRates, setLiveRates] = useState<LiveMortgageRates>(getInitialRates);
   const [isRefreshingRates, setIsRefreshingRates] = useState(false);
 
-  const fetchLiveRates = () => {
-    fetch(`/api/live-market-stats?t=${Date.now()}&device=mobile&_rnd=${Math.random()}`, {
-      method: 'GET',
-      cache: 'no-store',
-      headers: {
-        'Cache-Control': 'no-cache, no-store, must-revalidate',
-        'Pragma': 'no-cache',
-        'Expires': '0'
+  const fetchLiveRates = async () => {
+    try {
+      // Use POST first to completely bypass aggressive Mobile Safari GET cache
+      let res = await fetch(`/api/live-market-stats/sync?t=${Date.now()}&_rnd=${Math.random()}`, {
+        method: 'POST',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0',
+          'Content-Type': 'application/json'
+        }
+      }).catch(() => null);
+
+      if (!res || !res.ok) {
+        res = await fetch(`/api/live-market-stats?force=true&t=${Date.now()}&_rnd=${Math.random()}`, {
+          method: 'GET',
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+          }
+        });
       }
-    })
-      .then(res => res.json())
-      .then(json => {
+
+      if (res && res.ok) {
+        const json = await res.json();
         if (json.success && json.data) {
           const freshData = { ...json.data, asOfTimestamp: Date.now() };
           setLiveRates(freshData);
@@ -191,8 +211,10 @@ export function App() {
             window.dispatchEvent(new CustomEvent('live-rates-synced', { detail: freshData }));
           }
         }
-      })
-      .catch(err => console.warn("Failed to sync live mortgage rates:", err));
+      }
+    } catch (err) {
+      console.warn("Failed to sync live mortgage rates:", err);
+    }
   };
 
   const handleRefreshLiveRates = async () => {
@@ -891,7 +913,7 @@ export function App() {
                                           Days on Market
                                         </span>
                                         <span className="text-xs font-bold text-white bg-white/20 px-2.5 py-0.5 rounded-full backdrop-blur-xs shrink-0">
-                                          July Closed
+                                          Closed Escrows
                                         </span>
                                       </div>
                                       <div className="text-xs sm:text-sm font-bold text-white tracking-normal">
@@ -942,12 +964,12 @@ export function App() {
                           </div>
                         )}
 
-                        {/* 2. JULY CLOSED SALES DATA (Steven Thomas Page 12 Report) */}
+                        {/* 2. CLOSED SALES DATA (Steven Thomas Page 12 Report) */}
                         {soldData && (
                           <div className="space-y-3 pt-4 border-t border-slate-100">
                             <div className="flex items-center justify-between flex-wrap gap-2">
                               <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 font-sans">
-                                July Closed Sales & Price Distribution
+                                Closed Sales & Price Distribution (August Report)
                               </h3>
                             </div>
 
