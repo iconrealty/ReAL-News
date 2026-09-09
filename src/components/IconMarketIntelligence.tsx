@@ -246,13 +246,8 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                       return (
                         <div className="bg-blue-600 p-4 sm:p-5 rounded-2xl sm:rounded-3xl flex flex-col justify-between shadow-xs space-y-3 text-left text-white">
                           <div className="w-full space-y-1">
-                            <div className="flex items-center justify-between gap-2">
-                              <span className="text-xs sm:text-sm font-black uppercase tracking-wider text-white font-sans">
-                                Days on Market
-                              </span>
-                              <span className="text-xs font-bold text-white bg-white/20 px-2.5 py-0.5 rounded-full backdrop-blur-xs shrink-0">
-                                Closed Escrows
-                              </span>
+                            <div className="text-xs sm:text-sm font-black uppercase tracking-wider text-white font-sans">
+                              Days on Market
                             </div>
                             <div className="text-xs sm:text-sm font-bold text-white tracking-normal">
                               Time to Sell Once Properly Priced
@@ -265,7 +260,7 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
 
                           <div className="pt-1">
                             <span className="bg-white text-blue-950 font-black text-xs px-2.5 py-1 rounded-lg inline-block shadow-xs font-sans">
-                              Closed Escrows
+                              Time to Sell
                             </span>
                           </div>
                         </div>

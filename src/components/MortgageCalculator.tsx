@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { RefreshCw, ChevronDown } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { CityInfo, AdBanner, LiveMortgageRates } from '../types';
 import { AdBannerRenderer } from './AdBannerRenderer';
 
@@ -152,50 +152,6 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
 
   // Sync interest rate with live rates when propLiveRates updates initially or refreshes
   const hasUserEditedRate = React.useRef(false);
-  const [isLocalSyncing, setIsLocalSyncing] = useState(false);
-
-  // Direct uncacheable sync handler for immediate mobile and desktop updates
-  const handleDirectSyncRates = async () => {
-    setIsLocalSyncing(true);
-    hasUserEditedRate.current = false;
-    try {
-      if (onRefreshRates) {
-        onRefreshRates();
-      }
-      const res = await fetch(`/api/live-market-stats/sync?t=${Date.now()}&_rnd=${Math.random()}`, {
-        method: 'POST',
-        headers: {
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
-          'Pragma': 'no-cache',
-          'Expires': '0'
-        }
-      });
-      const json = await res.json();
-      if (json.success && json.data) {
-        const liveVal = parseFloat(json.data.mortgage30Year?.replace('%', '') || '6.89');
-        if (!isNaN(liveVal)) {
-          if (selectedRateProgram === '15-Yr Fixed' && json.data.mortgage15Year) {
-            setInterestRate(parseFloat(json.data.mortgage15Year.replace('%', '')));
-          } else if (selectedRateProgram === '30-Yr Jumbo' && json.data.jumbo30Year) {
-            setInterestRate(parseFloat(json.data.jumbo30Year.replace('%', '')));
-          } else if (selectedRateProgram === '30-Yr FHA' && json.data.fha30Year) {
-            setInterestRate(parseFloat(json.data.fha30Year.replace('%', '')));
-          } else if (selectedRateProgram === '30-Yr VA' && json.data.va30Year) {
-            setInterestRate(parseFloat(json.data.va30Year.replace('%', '')));
-          } else {
-            setInterestRate(liveVal);
-            if (selectedRateProgram === 'custom') {
-              setSelectedRateProgram('30-Yr Fixed');
-            }
-          }
-        }
-      }
-    } catch (err) {
-      console.warn('Direct rate sync error in calculator:', err);
-    } finally {
-      setTimeout(() => setIsLocalSyncing(false), 500);
-    }
-  };
 
   // Listen to global live-rates-synced event for instant cross-component updates on mobile
   React.useEffect(() => {
@@ -880,17 +836,6 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                       Live Market
                     </span>
-                    <button
-                      type="button"
-                      id="calc-sync-live-rates-btn"
-                      onClick={handleDirectSyncRates}
-                      disabled={isRefreshingRates || isLocalSyncing}
-                      className="min-h-[36px] px-3 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-800 text-[11px] font-bold flex items-center gap-1.5 transition-all cursor-pointer border border-slate-200 shadow-2xs touch-manipulation active:scale-95 disabled:opacity-50 select-none"
-                      title="Sync latest live rates from Mortgage News Daily"
-                    >
-                      <RefreshCw className={`w-3.5 h-3.5 text-[#FA2D48] ${(isRefreshingRates || isLocalSyncing) ? 'animate-spin' : ''}`} />
-                      <span>{(isRefreshingRates || isLocalSyncing) ? 'Syncing...' : 'Sync Rates'}</span>
-                    </button>
                   </div>
                 </div>
 
@@ -1106,17 +1051,6 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                       Live Market
                     </span>
-                    <button
-                      type="button"
-                      id="calc-sync-live-rates-btn-rev"
-                      onClick={handleDirectSyncRates}
-                      disabled={isRefreshingRates || isLocalSyncing}
-                      className="min-h-[36px] px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 active:bg-slate-600 text-slate-200 text-[11px] font-bold flex items-center gap-1.5 transition-all cursor-pointer border border-slate-700 shadow-2xs touch-manipulation active:scale-95 disabled:opacity-50 select-none"
-                      title="Sync latest live rates from Mortgage News Daily"
-                    >
-                      <RefreshCw className={`w-3.5 h-3.5 text-[#FA2D48] ${(isRefreshingRates || isLocalSyncing) ? 'animate-spin' : ''}`} />
-                      <span>{(isRefreshingRates || isLocalSyncing) ? 'Syncing...' : 'Sync Rates'}</span>
-                    </button>
                   </div>
                 </div>
 
