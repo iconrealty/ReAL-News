@@ -302,12 +302,12 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                 </div>
               )}
 
-              {/* 2. CLOSED SALES DATA (AUGUST REPORT) */}
+              {/* 2. CLOSED SALES DATA */}
               {soldData && (
                 <div className="space-y-3 pt-4 border-t border-slate-100">
                   <div className="flex items-center justify-between flex-wrap gap-2">
                     <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 font-sans">
-                      Closed Sales & Price Distribution (August Report)
+                      Closed Sales & Price Distribution ({OC_HOUSING_REPORT_METADATA.closedSalesPeriod})
                     </h3>
                   </div>
 

@@ -315,6 +315,19 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
     });
   }, [sqftSearchTerm, sqftSortBy, sqftSortDir]);
 
+  const { highestPpsqft, lowestPpsqft } = useMemo(() => {
+    const list = OC_SOLD_REPORT.filter(item => item.city !== 'All of O.C.');
+    const sorted = [...list].sort((a, b) => {
+      const aVal = parseInt(a.medianPricePerSqFt.replace(/[^0-9]/g, ''), 10) || 0;
+      const bVal = parseInt(b.medianPricePerSqFt.replace(/[^0-9]/g, ''), 10) || 0;
+      return bVal - aVal;
+    });
+    return {
+      highestPpsqft: sorted.slice(0, 3),
+      lowestPpsqft: [...sorted].reverse().slice(0, 3),
+    };
+  }, []);
+
   const formatCurrency = (val: number) => {
     return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(val);
   };
@@ -604,12 +617,12 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                 </button>
               </div>
 
-              {/* CLOSED SALES DATA (JULY 2026 RESALES) */}
+              {/* CLOSED SALES DATA */}
               {soldData && (
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 font-sans">
-                      July 2026 Closed Sales Data
+                      {OC_HOUSING_REPORT_METADATA.closedSalesPeriod} Closed Sales Data
                     </h3>
                   </div>
 
@@ -831,9 +844,9 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                   <p className="text-sm text-slate-700 font-normal mt-2 leading-snug">Across {OC_HOUSING_REPORT_METADATA.countywideActives.toLocaleString()} active listings in all 34 OC municipalities.</p>
                 </div>
                 <div className="bg-white border border-slate-200/90 rounded-3xl p-6 shadow-xs">
-                  <div className="text-xs font-sans uppercase tracking-widest text-black font-extrabold">July 2026 Closed Sales</div>
-                  <div className="text-3xl font-black text-[#FA2D48] pt-1">1,994 Sales</div>
-                  <p className="text-sm text-slate-700 font-normal mt-2 leading-snug">+9% compared to July 2025 (1,828 sales). Average 99.9% sales-to-list ratio.</p>
+                  <div className="text-xs font-sans uppercase tracking-widest text-black font-extrabold">{OC_HOUSING_REPORT_METADATA.closedSalesPeriod} Closed Sales</div>
+                  <div className="text-3xl font-black text-[#FA2D48] pt-1">{OC_HOUSING_REPORT_METADATA.closedSalesUnits.toLocaleString()} Sales</div>
+                  <p className="text-sm text-slate-700 font-normal mt-2 leading-snug">{OC_HOUSING_REPORT_METADATA.closedSalesYoYNote}</p>
                 </div>
               </div>
 
@@ -1121,30 +1134,40 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div className="bg-white border border-slate-200/90 rounded-3xl p-5 sm:p-6 shadow-xs flex flex-col justify-between">
                   <div className="text-xs font-sans uppercase tracking-widest text-black font-extrabold">Countywide Median $/Sq.Ft.</div>
-                  <div className="text-3xl sm:text-4xl font-black text-[#FA2D48] pt-1">$717 <span className="text-sm font-bold text-slate-500">/ sq.ft.</span></div>
-                  <p className="text-xs text-slate-600 font-medium mt-2">Across 1,994 closed sales countywide in July 2026 (Steven Thomas Page 12 Report).</p>
+                  <div className="text-3xl sm:text-4xl font-black text-[#FA2D48] pt-1">{OC_HOUSING_REPORT_METADATA.medianPricePerSqFt} <span className="text-sm font-bold text-slate-500">/ sq.ft.</span></div>
+                  <p className="text-xs text-slate-600 font-medium mt-2">Across {OC_HOUSING_REPORT_METADATA.closedSalesUnits.toLocaleString()} closed sales countywide in {OC_HOUSING_REPORT_METADATA.closedSalesPeriod} (Steven Thomas Page 12 Report).</p>
                 </div>
 
                 <div className="bg-white border border-slate-200/90 rounded-3xl p-5 sm:p-6 shadow-xs flex flex-col justify-between">
                   <div className="text-xs font-sans uppercase tracking-widest text-black font-extrabold">Highest $/Sq.Ft. Markets</div>
-                  <div className="text-2xl font-black text-slate-900 pt-1">Newport Coast</div>
+                  <div className="text-2xl font-black text-slate-900 pt-1">{highestPpsqft[0]?.city || 'Newport Coast'}</div>
                   <div className="flex flex-wrap items-center gap-1.5 pt-1 text-xs text-slate-600 font-medium">
-                    <span className="font-bold text-slate-900">$1,654</span> • CDM <span className="font-bold text-slate-900">$1,599</span> • Laguna <span className="font-bold text-slate-900">$1,518</span>
+                    {highestPpsqft.map((item, idx) => (
+                      <span key={item.city}>
+                        {idx > 0 && ' • '}
+                        {item.city.replace('Newport ', 'NP ').replace('Corona Del Mar', 'CDM')} <span className="font-bold text-slate-900">{item.medianPricePerSqFt}</span>
+                      </span>
+                    ))}
                   </div>
                 </div>
 
                 <div className="bg-white border border-slate-200/90 rounded-3xl p-5 sm:p-6 shadow-xs flex flex-col justify-between">
                   <div className="text-xs font-sans uppercase tracking-widest text-black font-extrabold">Most Accessible $/Sq.Ft.</div>
-                  <div className="text-2xl font-black text-slate-900 pt-1">Seal Beach</div>
+                  <div className="text-2xl font-black text-slate-900 pt-1">{lowestPpsqft[0]?.city || 'Seal Beach'}</div>
                   <div className="flex flex-wrap items-center gap-1.5 pt-1 text-xs text-slate-600 font-medium">
-                    <span className="font-bold text-slate-900">$377</span> • Laguna Woods <span className="font-bold text-slate-900">$434</span> • Coto <span className="font-bold text-slate-900">$517</span>
+                    {lowestPpsqft.map((item, idx) => (
+                      <span key={item.city}>
+                        {idx > 0 && ' • '}
+                        {item.city.replace('Coto De Caza', 'Coto')} <span className="font-bold text-slate-900">{item.medianPricePerSqFt}</span>
+                      </span>
+                    ))}
                   </div>
                 </div>
 
                 <div className="bg-white border border-slate-200/90 rounded-3xl p-5 sm:p-6 shadow-xs flex flex-col justify-between">
                   <div className="text-xs font-sans uppercase tracking-widest text-black font-extrabold">Median Living Size</div>
-                  <div className="text-3xl sm:text-4xl font-black text-slate-900 pt-1">1,753 <span className="text-sm font-bold text-slate-500">sq.ft.</span></div>
-                  <p className="text-xs text-slate-600 font-medium mt-2">Median Sales Price: $1,256,412 (99.9% sales-to-list ratio).</p>
+                  <div className="text-3xl sm:text-4xl font-black text-slate-900 pt-1">{OC_HOUSING_REPORT_METADATA.medianSqFt.toLocaleString()} <span className="text-sm font-bold text-slate-500">sq.ft.</span></div>
+                  <p className="text-xs text-slate-600 font-medium mt-2">Median Sales Price: {OC_HOUSING_REPORT_METADATA.medianSalesPrice} ({OC_HOUSING_REPORT_METADATA.salesToListRatio} sales-to-list ratio).</p>
                 </div>
               </div>
 
@@ -1154,7 +1177,7 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                   <div>
                     <h3 className="text-xl sm:text-2xl font-black text-slate-950">Orange County Price Per Sq. Ft. by City</h3>
                     <p className="text-xs sm:text-sm text-slate-600 font-medium mt-0.5">
-                      Verified July 2026 closed sales statistics for all Orange County municipalities (Steven Thomas Page 12 Report).
+                      Verified {OC_HOUSING_REPORT_METADATA.closedSalesPeriod} closed sales statistics for all Orange County municipalities (Steven Thomas Page 12 Report).
                     </p>
                   </div>
 
@@ -1234,8 +1257,8 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                         <th className="p-3.5 text-right">Median List Price</th>
                         <th className="p-3.5 text-center">Sales / List %</th>
                         <th className="p-3.5 text-center">Median DOM</th>
-                        <th className="p-3.5 text-center">July 2026 Sales</th>
-                        <th className="p-3.5 text-center">July 2025 Sales</th>
+                        <th className="p-3.5 text-center">{OC_HOUSING_REPORT_METADATA.closedSalesPeriod} Sales</th>
+                        <th className="p-3.5 text-center">{OC_HOUSING_REPORT_METADATA.closedSalesPriorYearPeriod} Sales</th>
                         <th className="p-3.5 text-right">Price Range (Low – High)</th>
                       </tr>
                     </thead>
@@ -1343,7 +1366,7 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                 </div>
 
                 <p className="text-[11px] text-slate-500 italic">
-                  * Price per square foot and sales metric data sourced from verified closed escrow sales across all Orange County submarkets for the August 2026 report period. Click any city to view localized market trends.
+                  * Price per square foot and sales metric data sourced from verified closed escrow sales across all Orange County submarkets for the {OC_HOUSING_REPORT_METADATA.reportDate} report ({OC_HOUSING_REPORT_METADATA.closedSalesPeriod} closed sales). Click any city to view localized market trends.
                 </p>
               </div>
             </div>

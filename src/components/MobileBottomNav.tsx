@@ -24,13 +24,13 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
   return (
     <div className="sm:hidden fixed bottom-5 left-4 right-4 z-50 max-w-sm mx-auto pointer-events-auto">
       <nav className="bg-white/95 backdrop-blur-2xl border border-slate-200/90 rounded-full shadow-2xl shadow-slate-900/15 py-2.5 px-6 flex items-center justify-around text-slate-900">
-        {/* Top Stories Tab (R. Logo) */}
+        {/* Home Tab (R. Logo) */}
         <button
           onClick={() => {
             onResetToMain();
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
-          title="Top Stories"
+          title="Home"
           className="flex items-center justify-center p-2 rounded-full min-w-[44px] min-h-[44px] active:scale-90 transition-transform cursor-pointer"
         >
           <span className="font-black font-sans tracking-tighter text-2xl leading-none text-slate-950 select-none">

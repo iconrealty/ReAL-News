@@ -381,7 +381,7 @@ export function App() {
     fetchMndNews();
     fetchLiveRates();
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    showToast('Feed refreshed & reset to Top Stories');
+    showToast('Feed refreshed & reset to Home');
   };
 
   // Sync bookmarks to localStorage
@@ -969,7 +969,7 @@ export function App() {
                           <div className="space-y-3 pt-4 border-t border-slate-100">
                             <div className="flex items-center justify-between flex-wrap gap-2">
                               <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 font-sans">
-                                Closed Sales & Price Distribution (August Report)
+                                Closed Sales & Price Distribution ({OC_HOUSING_REPORT_METADATA.closedSalesPeriod})
                               </h3>
                             </div>
 
@@ -1269,7 +1269,7 @@ export function App() {
             <button 
               onClick={handleResetToMain} 
               className="group font-black text-slate-900 group-hover:text-[#FA2D48] transition-colors font-sans tracking-tight text-base cursor-pointer inline-flex items-baseline"
-              title="Return to Main Top Stories Feed"
+              title="Return to Home Feed"
             >
               <span>ReaL</span>
               <span className="text-xl font-black leading-none pl-0.5">.</span>

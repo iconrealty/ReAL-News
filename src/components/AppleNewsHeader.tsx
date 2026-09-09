@@ -71,7 +71,7 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
   }).toUpperCase();
 
   const categories: { id: NewsCategory; label: string }[] = [
-    { id: 'all', label: 'Top Stories' },
+    { id: 'all', label: 'Home' },
     { id: 'market-trends', label: 'Steven Thomas' },
     { id: 'mortgage-calculator', label: 'Mortgage Calculator' },
     { id: 'oc-fast', label: 'OC FastStats' },
