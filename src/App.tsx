@@ -381,7 +381,6 @@ export function App() {
     fetchMndNews();
     fetchLiveRates();
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    showToast('Feed refreshed & reset to Home');
   };
 
   // Sync bookmarks to localStorage
