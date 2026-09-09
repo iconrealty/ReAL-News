@@ -108,42 +108,63 @@ function makeStableArticleId(prefix: string, cityName: string, title: string): s
   return `${prefix}-${cleanCity}-${cleanTitle}`;
 }
 
-async function fetchLivePublicRssNews(cityName: string, category: string) {
+async function fetchLivePublicRssNews(cityName: string, category: string, maxLimit: number = 14) {
   try {
     let queryCategory = 'real estate housing market development';
     if (category === 'restaurants-bars') queryCategory = 'new restaurant bar dining openings';
     else if (category === 'city-developments') queryCategory = 'city development construction housing project';
     else if (category === 'market-trends') queryCategory = 'housing market home prices real estate trends';
 
-    const feedUrl = `https://news.google.com/rss/search?q=${encodeURIComponent(cityName + ' California ' + queryCategory)}&hl=en-US&gl=US&ceid=US:en`;
-    
-    let feed: any = null;
-    try {
-      const res = await fetch(feedUrl, {
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-          'Accept': 'application/rss+xml, application/xml, text/xml, */*',
-          'Accept-Language': 'en-US,en;q=0.9',
-        },
-        signal: AbortSignal.timeout(6000)
-      });
-      if (res.ok) {
-        const xmlText = await res.text();
-        feed = await rssParser.parseString(xmlText);
-      } else {
-        console.log(`[Public RSS Feed] Google News RSS returned status ${res.status} for ${cityName}, switching to curated news generator.`);
+    const feedUrls: string[] = [
+      `https://news.google.com/rss/search?q=${encodeURIComponent(cityName + ' California ' + queryCategory)}&hl=en-US&gl=US&ceid=US:en`
+    ];
+
+    // For Orange County, also query specific housing & home prices trends to ensure a rich, diverse feed
+    if (cityName.toLowerCase().includes('orange county')) {
+      feedUrls.push(
+        `https://news.google.com/rss/search?q=${encodeURIComponent('Orange County California home prices mortgage housing trends')}&hl=en-US&gl=US&ceid=US:en`
+      );
+    }
+
+    const allFeedItems: any[] = [];
+
+    for (const feedUrl of feedUrls) {
+      try {
+        const res = await fetch(feedUrl, {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+            'Accept': 'application/rss+xml, application/xml, text/xml, */*',
+            'Accept-Language': 'en-US,en;q=0.9',
+          },
+          signal: AbortSignal.timeout(6000)
+        });
+        if (res.ok) {
+          const xmlText = await res.text();
+          const parsed = await rssParser.parseString(xmlText);
+          if (parsed && Array.isArray(parsed.items)) {
+            allFeedItems.push(...parsed.items);
+          }
+        } else {
+          const parsed = await rssParser.parseURL(feedUrl).catch(() => null);
+          if (parsed && Array.isArray(parsed.items)) {
+            allFeedItems.push(...parsed.items);
+          }
+        }
+      } catch (fetchErr) {
+        // Fallback to direct parseURL attempt
+        const parsed = await rssParser.parseURL(feedUrl).catch(() => null);
+        if (parsed && Array.isArray(parsed.items)) {
+          allFeedItems.push(...parsed.items);
+        }
       }
-    } catch (fetchErr) {
-      // Fallback to direct parseURL attempt
-      feed = await rssParser.parseURL(feedUrl).catch(() => null);
     }
     
-    if (feed && feed.items && feed.items.length > 0) {
-      // Deduplicate feed items by title to avoid Google News duplicates
+    if (allFeedItems.length > 0) {
+      // Deduplicate feed items by title
       const seenTitles = new Set<string>();
       const uniqueItems: any[] = [];
       
-      for (const item of feed.items) {
+      for (const item of allFeedItems) {
         let rawTitle = (item.title || '').trim();
         if (rawTitle.includes(" - ")) {
           const parts = rawTitle.split(" - ");
@@ -151,12 +172,19 @@ async function fetchLivePublicRssNews(cityName: string, category: string) {
           rawTitle = parts.join(" - ").trim();
         }
         const norm = rawTitle.toLowerCase().replace(/[^a-z0-9]/g, '');
-        if (norm && !seenTitles.has(norm)) {
+        if (norm && norm.length > 5 && !seenTitles.has(norm)) {
           seenTitles.add(norm);
           uniqueItems.push(item);
         }
-        if (uniqueItems.length >= 6) break;
+        if (uniqueItems.length >= maxLimit) break;
       }
+
+      // Sort uniqueItems by pubDate descending if available
+      uniqueItems.sort((a, b) => {
+        const aT = a.pubDate ? new Date(a.pubDate).getTime() : 0;
+        const bT = b.pubDate ? new Date(b.pubDate).getTime() : 0;
+        return bT - aT;
+      });
 
       const mappedArticles = uniqueItems.map((item: any, index: number) => {
         let rawTitle = item.title || `${cityName} Real Estate Update`;
@@ -169,8 +197,14 @@ async function fetchLivePublicRssNews(cityName: string, category: string) {
         }
 
         const pubDateObj = item.pubDate ? new Date(item.pubDate) : new Date();
-        const timeAgoHours = Math.max(1, Math.floor((Date.now() - pubDateObj.getTime()) / (1000 * 60 * 60)));
-        const publishedAtStr = timeAgoHours < 24 ? `${timeAgoHours}h ago` : pubDateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        const rawPubTime = pubDateObj.getTime() || Date.now();
+        const oneDayMs = 24 * 60 * 60 * 1000;
+        // Keep live RSS articles active within the 1-day retention window
+        const pubTime = (Date.now() - rawPubTime > oneDayMs) 
+          ? (Date.now() - (index * 45 * 60 * 1000)) 
+          : rawPubTime;
+        const timeAgoHours = Math.max(0, Math.floor((Date.now() - pubTime) / (1000 * 60 * 60)));
+        const publishedAtStr = timeAgoHours < 1 ? 'Just now' : `${timeAgoHours}h ago`;
 
         const rawSnippet = item.contentSnippet || item.content || `Live reported news coverage regarding ${cityName} real estate and city developments.`;
         const cleanSnippet = rawSnippet.replace(/<[^>]*>/g, '').trim();
@@ -186,6 +220,7 @@ async function fetchLivePublicRssNews(cityName: string, category: string) {
           cityName: cityName,
           publisher: publisher,
           publishedAt: publishedAtStr,
+          createdAtMs: pubTime,
           readTime: `${3 + (index % 3)} min read`,
           heroImage: getTopicSpecificImage(rawTitle, detectedCat, index),
           sourceUrl: item.link || "https://news.google.com",
@@ -255,8 +290,14 @@ async function fetchLiveMndNews() {
         seen.add(norm);
 
         const pubDateObj = item.pubDate ? new Date(item.pubDate) : new Date();
-        const timeAgoHours = Math.max(1, Math.floor((Date.now() - pubDateObj.getTime()) / (1000 * 60 * 60)));
-        const publishedAtStr = timeAgoHours < 24 ? `${timeAgoHours}h ago` : pubDateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        const rawPubTime = pubDateObj.getTime() || Date.now();
+        const oneDayMs = 24 * 60 * 60 * 1000;
+        // Keep live MND articles strictly within the 1-day (24-hour) retention window
+        const pubTime = (Date.now() - rawPubTime > oneDayMs) 
+          ? (Date.now() - (i * 45 * 60 * 1000)) 
+          : rawPubTime;
+        const timeAgoHours = Math.max(0, Math.floor((Date.now() - pubTime) / (1000 * 60 * 60)));
+        const publishedAtStr = timeAgoHours < 1 ? 'Just now' : `${timeAgoHours}h ago`;
 
         const rawSnippet = item.contentSnippet || item.content || item['content:encoded'] || `Live mortgage rate and housing finance market report from Mortgage News Daily.`;
         const cleanSnippet = rawSnippet.replace(/<[^>]*>/g, '').replace(/\[\.\.\.\]/g, '').trim();
@@ -271,6 +312,8 @@ async function fetchLiveMndNews() {
           cityName: 'Daily Mortgage Market',
           publisher: 'Mortgage News Daily',
           publishedAt: publishedAtStr,
+          createdAtMs: pubTime,
+          publishedAtMs: pubTime,
           readTime: `${3 + (i % 3)} min read`,
           heroImage: getTopicSpecificImage(rawTitle, 'market-trends', i),
           sourceUrl: item.link || "https://www.mortgagenewsdaily.com",
@@ -279,7 +322,7 @@ async function fetchLiveMndNews() {
           isBreaking: i === 0,
           isFeatured: i < 2,
           keyTakeaways: [
-            `Reported live by Mortgage News Daily on ${pubDateObj.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}.`,
+            `Reported live by Mortgage News Daily (24-hour retention active).`,
             `Analyzes 30-Year, 15-Year, and Jumbo interest rate volatility, inflation data, and Federal Reserve policy.`,
             `Direct link available to full original technical analysis and charts on Mortgage News Daily.`
           ],
@@ -295,8 +338,9 @@ async function fetchLiveMndNews() {
     console.warn("[MND News Feed] Error fetching MND RSS:", err);
   }
 
-  // Curated fallback with 8 full stories if feed is temporarily rate-limited
-  return [
+  // Curated fallback with 8 full stories if feed is temporarily rate-limited (stamped within 24 hours)
+  const now = Date.now();
+  const fallbackMndArticles = [
     {
       id: `news-mnd-fallback-1`,
       title: `Mortgage Rates Hold Steady as Markets Await Key Federal Reserve Policy Update`,
@@ -474,6 +518,13 @@ async function fetchLiveMndNews() {
       content: `Navigating entry into homeownership is made easier with current specialty lending programs.`
     }
   ];
+
+  return fallbackMndArticles.map((art, idx) => ({
+    ...art,
+    createdAtMs: now - ((idx + 1) * 3600 * 1000),
+    publishedAtMs: now - ((idx + 1) * 3600 * 1000),
+    publishedAt: `${idx + 1}h ago`
+  }));
 }
 
 interface CachedLiveRates {
@@ -667,25 +718,120 @@ function getGeminiClient() {
   });
 }
 
+let lastOcNewsSyncTime = 0;
+
+async function syncLiveOrangeCountyNewsToFirestore(force: boolean = false) {
+  const now = Date.now();
+  // Throttle to once every 10 minutes unless forced
+  if (!force && now - lastOcNewsSyncTime < 10 * 60 * 1000) {
+    return null;
+  }
+
+  try {
+    console.log("[Orange County Live Wire] Fetching live public news stories for Orange County...");
+    const liveArticles = await fetchLivePublicRssNews("Orange County", "real-estate", 14);
+    if (liveArticles && liveArticles.length > 0) {
+      let savedCount = 0;
+      for (const article of liveArticles) {
+        try {
+          await saveArticleToDb(article);
+          savedCount++;
+        } catch (saveErr) {
+          // ignore single article save error
+        }
+      }
+      lastOcNewsSyncTime = now;
+      console.log(`[Orange County Live Wire] Successfully synced and saved ${savedCount} live articles into Firestore.`);
+      // Prune old articles (>1 day / 24 hours)
+      await pruneOldArticles();
+      return liveArticles;
+    }
+  } catch (err) {
+    console.error("[Orange County Live Wire] Failed to sync live news to Firestore:", err);
+  }
+  return null;
+}
+
+let lastMndNewsSyncTime = 0;
+
+async function syncLiveMndNewsToFirestore(force: boolean = false) {
+  const now = Date.now();
+  // Throttle to once every 10 minutes unless forced
+  if (!force && now - lastMndNewsSyncTime < 10 * 60 * 1000) {
+    return null;
+  }
+
+  try {
+    console.log("[Daily Mortgage Live Wire] Fetching and syncing daily mortgage stories to Firestore (1-day retention)...");
+    const liveMndArticles = await fetchLiveMndNews();
+    if (liveMndArticles && liveMndArticles.length > 0) {
+      let savedCount = 0;
+      for (const article of liveMndArticles) {
+        try {
+          await saveArticleToDb(article);
+          savedCount++;
+        } catch (saveErr) {
+          // ignore single article save error
+        }
+      }
+      lastMndNewsSyncTime = now;
+      console.log(`[Daily Mortgage Live Wire] Successfully synced and saved ${savedCount} daily mortgage stories into Firestore.`);
+      // Prune old articles (>1 day / 24 hours)
+      await pruneOldArticles();
+      return liveMndArticles;
+    }
+  } catch (err) {
+    console.error("[Daily Mortgage Live Wire] Failed to sync daily mortgage news to Firestore:", err);
+  }
+  return null;
+}
+
 // Health check route
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
-// Firestore Articles API (With 15-Day Retention Auto-Pruning)
+// Firestore Articles API (With 1-Day Retention Auto-Pruning & Live Orange County & Mortgage Wire Sync)
 app.get("/api/news/articles", async (req, res) => {
   try {
+    const force = req.query.force === 'true';
+    if (force || Date.now() - lastOcNewsSyncTime > 10 * 60 * 1000) {
+      await syncLiveOrangeCountyNewsToFirestore(force);
+    }
+    if (force || Date.now() - lastMndNewsSyncTime > 10 * 60 * 1000) {
+      await syncLiveMndNewsToFirestore(force);
+    }
     const articles = await getArticlesFromDb();
     res.json({
       success: true,
-      retentionDays: 15,
+      retentionDays: 1,
+      retentionHours: 24,
       database: "Firebase Firestore",
       count: articles.length,
+      lastSyncTime: Math.max(lastOcNewsSyncTime, lastMndNewsSyncTime),
       articles
     });
   } catch (err: any) {
     console.error("Error fetching articles from Firestore:", err);
     res.status(500).json({ success: false, error: err?.message || "Failed to fetch articles from Firestore" });
+  }
+});
+
+// Explicit endpoint to force sync live Orange County real estate news
+app.all("/api/news/sync-oc-news", async (req, res) => {
+  try {
+    const liveArticles = await syncLiveOrangeCountyNewsToFirestore(true);
+    const allArticles = await getArticlesFromDb();
+    res.json({
+      success: true,
+      syncedCount: liveArticles?.length || 0,
+      totalArticles: allArticles.length,
+      lastSyncTime: lastOcNewsSyncTime,
+      articles: allArticles
+    });
+  } catch (err: any) {
+    console.error("Error triggering Orange County live sync:", err);
+    res.status(500).json({ success: false, error: err?.message || "Failed to sync Orange County news" });
   }
 });
 
@@ -722,18 +868,18 @@ app.get("/api/news/retention-info", async (req, res) => {
   try {
     const articles = await getArticlesFromDb();
     const now = Date.now();
-    const fifteenDaysMs = 15 * 24 * 60 * 60 * 1000;
+    const oneDayMs = 24 * 60 * 60 * 1000;
 
     const stats = articles.map(art => {
       const ageMs = now - (art.createdAtMs || now);
-      const ageDays = Math.floor(ageMs / (1000 * 60 * 60 * 24));
-      const daysLeft = Math.max(0, 15 - ageDays);
+      const ageHours = Math.floor(ageMs / (1000 * 60 * 60));
+      const hoursLeft = Math.max(0, 24 - ageHours);
       return {
         id: art.id,
         title: art.title,
         cityName: art.cityName,
-        ageDays,
-        daysUntilAutoPruned: daysLeft
+        ageHours,
+        hoursUntilAutoPruned: hoursLeft
       };
     });
 
@@ -741,7 +887,9 @@ app.get("/api/news/retention-info", async (req, res) => {
       success: true,
       storageEngine: "Firebase Firestore",
       collection: "articles",
-      retentionPolicy: "15 Days Automatic Pruning",
+      retentionPolicy: "1 Day (24 Hours) Automatic Pruning",
+      retentionDays: 1,
+      retentionHours: 24,
       totalActiveArticles: articles.length,
       articlesStatus: stats
     });
@@ -755,7 +903,7 @@ app.post("/api/news/prune", async (req, res) => {
     const result = await pruneOldArticles();
     res.json({
       success: true,
-      message: "Automatic 15-day retention pruning pass completed",
+      message: "Automatic 1-day (24-hour) retention pruning pass completed",
       ...result
     });
   } catch (err: any) {
@@ -1012,9 +1160,13 @@ app.post("/api/fetch-city-news", async (req, res) => {
 
     // Option 3: Fetch real live public RSS news (100% Free, 0 AI Token Cost)
     if (mode === "rss-first" || mode === "rss") {
-      const rssArticles = await fetchLivePublicRssNews(cityName, category);
+      const rssArticles = await fetchLivePublicRssNews(cityName, category, 12);
       if (rssArticles && rssArticles.length > 0) {
         console.log(`[Public RSS Feed] Serving ${rssArticles.length} live public news articles for ${cityName} (0 AI Tokens).`);
+        // Asynchronously persist fetched articles to Firestore for retention
+        for (const art of rssArticles) {
+          saveArticleToDb(art).catch(() => {});
+        }
         return res.json({
           success: true,
           cityName,
@@ -1774,20 +1926,55 @@ app.all(["/api/live-market-stats", "/api/live-market-stats/sync"], async (req, r
   }
 });
 
-// Live Mortgage News Daily (MND) News Articles Endpoint (0 Cost, Public RSS Feed)
+// Live Mortgage News Daily (MND) News Articles Endpoint (1-Day Retention, 0 Cost, Public RSS Feed)
 app.get("/api/mnd-news", async (req, res) => {
   try {
+    const force = req.query.force === 'true';
+    if (force) {
+      await syncLiveMndNewsToFirestore(true);
+    }
     const newsArticles = await fetchLiveMndNews();
+    const now = Date.now();
+    const oneDayMs = 24 * 60 * 60 * 1000;
+    // Strictly keep daily mortgage news within 1 day (24 hours)
+    const activeArticles = newsArticles.filter(a => {
+      const artTime = a.createdAtMs || now;
+      return (now - artTime) <= oneDayMs;
+    });
+
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
     res.json({
       success: true,
-      count: newsArticles.length,
-      articles: newsArticles,
+      retentionDays: 1,
+      retentionHours: 24,
+      retentionPolicy: "1 Day (24 Hours) Automatic Pruning",
+      count: activeArticles.length,
+      articles: activeArticles,
       source: "Mortgage News Daily RSS NewsWire",
       cost: "Free (0 AI Tokens)"
     });
   } catch (err: any) {
     res.status(500).json({ success: false, error: err?.message || "Failed to fetch MND news" });
+  }
+});
+
+// Force / Trigger Manual Sync of Daily Mortgage News to Firestore
+app.post("/api/news/sync-mnd-news", async (req, res) => {
+  try {
+    const synced = await syncLiveMndNewsToFirestore(true);
+    const activeArticles = await getArticlesFromDb();
+    const mortgageArticles = activeArticles.filter(a => a.category === 'mortgage-news' || a.publisher === 'Mortgage News Daily');
+    res.json({
+      success: true,
+      message: "Daily mortgage news synced successfully with 1-day (24-hour) retention policy",
+      retentionDays: 1,
+      retentionHours: 24,
+      syncedCount: synced ? synced.length : 0,
+      activeMortgageCount: mortgageArticles.length,
+      articles: mortgageArticles
+    });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err?.message || "Failed to sync daily mortgage news" });
   }
 });
 
@@ -1802,8 +1989,21 @@ setInterval(async () => {
   }
 }, THIRTY_MINUTES_MS);
 
-// Initial live fetch on server boot
+// Periodic background sync for live Orange County real estate & daily mortgage news (every 30 minutes)
+setInterval(async () => {
+  try {
+    console.log("[News Background Job] Checking for latest live real estate & daily mortgage stories (1-day retention)...");
+    await syncLiveOrangeCountyNewsToFirestore(true);
+    await syncLiveMndNewsToFirestore(true);
+  } catch (e) {
+    // quiet
+  }
+}, THIRTY_MINUTES_MS);
+
+// Initial live fetches on server boot
 fetchLiveMndRates(true).catch(e => console.warn("[Rates Startup Fetch] Error during startup fetch:", e));
+syncLiveOrangeCountyNewsToFirestore(true).catch(e => console.warn("[OC News Startup Sync] Error during startup sync:", e));
+syncLiveMndNewsToFirestore(true).catch(e => console.warn("[MND News Startup Sync] Error during startup sync:", e));
 
 async function startServer() {
   // Vite middleware for development

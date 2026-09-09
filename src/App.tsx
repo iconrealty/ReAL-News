@@ -18,10 +18,10 @@ import { SavedArticlesDrawer } from './components/SavedArticlesDrawer';
 import { AdBannerRenderer } from './components/AdBannerRenderer';
 import { ManagerAdminModal } from './components/ManagerAdminModal';
 import { NewsManagerModal } from './components/NewsManagerModal';
-import { Sparkles, Building2, Utensils, Flame, Compass, ChevronRight, Users, MapPin, TrendingUp, Clock, Tag, BarChart3, Check, Newspaper, X, Info } from 'lucide-react';
+import { Sparkles, Building2, Utensils, Flame, Compass, ChevronRight, Users, MapPin, TrendingUp, Clock, Tag, BarChart3, Check, Newspaper, X, Info, RefreshCw } from 'lucide-react';
 
-// Helper function to check if an article is recent (within 15 days) and not deprecated
-export function isArticleRecent(art: NewsArticle, maxDays: number = 15): boolean {
+// Helper function to check if an article is recent (within 1 day / 24 hours) and not deprecated
+export function isArticleRecent(art: NewsArticle, maxDays: number = 1): boolean {
   if (!art || !art.title) return false;
 
   // 1. Explicitly remove Condo Conundrum
@@ -45,20 +45,18 @@ export function isArticleRecent(art: NewsArticle, maxDays: number = 15): boolean
   const pub = (art.publishedAt || '').trim().toLowerCase();
   if (!pub) return true;
 
-  if (pub.includes('month') || pub.includes('year')) {
+  if (pub.includes('month') || pub.includes('year') || pub.includes('week')) {
     return false;
-  }
-
-  const weeksMatch = pub.match(/(\d+)\s*week/);
-  if (weeksMatch) {
-    const weeks = parseInt(weeksMatch[1], 10);
-    if (weeks * 7 > maxDays) return false;
   }
 
   const daysMatch = pub.match(/(\d+)\s*day/);
   if (daysMatch) {
     const days = parseInt(daysMatch[1], 10);
     if (days > maxDays) return false;
+  }
+
+  if (pub.includes('2 day') || pub.includes('3 day') || pub.includes('4 day') || pub.includes('5 day') || pub.includes('yesterday')) {
+    return false;
   }
 
   // Check parsed date if applicable
@@ -82,8 +80,8 @@ function deduplicateArticles(list: NewsArticle[]): NewsArticle[] {
   for (const art of list) {
     if (!art || !art.title) continue;
 
-    // Filter out articles older than 15 days or deprecated
-    if (!isArticleRecent(art, 15)) continue;
+    // Filter out articles older than 1 day or deprecated
+    if (!isArticleRecent(art, 1)) continue;
 
     // Check ID
     if (seenIds.has(art.id)) continue;
@@ -370,6 +368,8 @@ export function App() {
     }
   };
 
+  const [isRefreshingNews, setIsRefreshingNews] = useState<boolean>(false);
+
   const handleResetToMain = () => {
     setCurrentCity(CITIES[0]);
     setActiveCategory('all');
@@ -377,7 +377,7 @@ export function App() {
     setSelectedArticle(null);
     setIsCitySelectorOpen(false);
     setIsSavedDrawerOpen(false);
-    setArticles(INITIAL_ARTICLES);
+    fetchArticles(false);
     fetchMndNews();
     fetchLiveRates();
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -392,8 +392,10 @@ export function App() {
     }
   }, [bookmarkedIds]);
 
-  const fetchArticles = () => {
-    fetch(`/api/news/articles?t=${Date.now()}`)
+  const fetchArticles = (forceSync: boolean = false) => {
+    setIsRefreshingNews(true);
+    const endpoint = forceSync ? `/api/news/sync-oc-news` : `/api/news/articles?t=${Date.now()}`;
+    fetch(endpoint)
       .then(res => res.json())
       .then(data => {
         if (data.success && Array.isArray(data.articles) && data.articles.length > 0) {
@@ -404,11 +406,17 @@ export function App() {
       })
       .catch(err => {
         console.warn("Could not load articles from Firebase API, using local fallback", err);
+      })
+      .finally(() => {
+        setIsRefreshingNews(false);
       });
+
+    // Also sync daily mortgage news with 1-day retention
+    fetchMndNews(forceSync);
   };
 
-  const fetchMndNews = () => {
-    fetch(`/api/mnd-news?t=${Date.now()}`)
+  const fetchMndNews = (forceSync: boolean = false) => {
+    fetch(`/api/mnd-news?force=${forceSync}&t=${Date.now()}`)
       .then(res => res.json())
       .then(data => {
         if (data.success && Array.isArray(data.articles) && data.articles.length > 0) {
@@ -426,6 +434,19 @@ export function App() {
   useEffect(() => {
     fetchArticles();
     fetchMndNews();
+    // Proactively fetch live Orange County real estate news so the section is always populated with live articles
+    fetch('/api/fetch-city-news', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ cityName: 'Orange County', category: 'real-estate' })
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && Array.isArray(data.articles) && data.articles.length > 0) {
+          setArticles(prev => deduplicateArticles([...data.articles, ...prev]));
+        }
+      })
+      .catch(() => {});
   }, []);
 
   // Fetch live city news when city or category changes (only on local municipal pages, not on main page or special report tabs)
@@ -435,6 +456,7 @@ export function App() {
       return;
     }
     
+    setIsRefreshingNews(true);
     fetch('/api/fetch-city-news', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -450,6 +472,9 @@ export function App() {
       })
       .catch(err => {
         console.warn("Live city news fetch quiet error:", err);
+      })
+      .finally(() => {
+        setIsRefreshingNews(false);
       });
   }, [currentCity, activeCategory]);
 
@@ -550,7 +575,17 @@ export function App() {
       }
     }
 
-    return deduplicateArticles(finalFiltered);
+    // Sort to ensure the freshest published stories appear at the top
+    const sorted = [...finalFiltered].sort((a, b) => {
+      const aTime = (a as any).createdAtMs || 0;
+      const bTime = (b as any).createdAtMs || 0;
+      if (aTime !== bTime) return bTime - aTime;
+      if (a.isLivePublicRss && !b.isLivePublicRss) return -1;
+      if (!a.isLivePublicRss && b.isLivePublicRss) return 1;
+      return 0;
+    });
+
+    return deduplicateArticles(sorted);
   }, [articles, currentCity, activeCategory, searchQuery]);
 
   // Featured Hero Article
@@ -1022,6 +1057,12 @@ export function App() {
                     <span className="text-[11px] font-mono font-black tracking-widest text-[#FA2D48] uppercase">
                       Orange County Local Coverage
                     </span>
+                    {activeCategory === 'real-estate' && (
+                      <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200/80 text-[10px] font-bold text-emerald-700">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                        Live Wire Active
+                      </span>
+                    )}
                   </div>
                   <h2 className="text-2xl sm:text-3xl font-black font-sans text-slate-950 tracking-tight">
                     {activeCategory === 'real-estate' ? 'Orange County News' :
@@ -1029,8 +1070,20 @@ export function App() {
                   </h2>
                 </div>
 
-                {/* City Filter on Internal News Pages */}
+                {/* City Filter & Live Sync on Internal News Pages */}
                 <div className="flex items-center gap-2">
+                  {activeCategory === 'real-estate' && (
+                    <button
+                      onClick={() => fetchArticles(true)}
+                      disabled={isRefreshingNews}
+                      className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900 font-bold text-xs transition-all cursor-pointer shadow-xs disabled:opacity-60"
+                      title="Sync live Orange County news headlines"
+                    >
+                      <RefreshCw className={`w-3.5 h-3.5 ${isRefreshingNews ? 'animate-spin text-[#FA2D48]' : 'text-slate-500'}`} />
+                      <span className="hidden sm:inline">{isRefreshingNews ? 'Syncing...' : 'Sync Live'}</span>
+                    </button>
+                  )}
+
                   <div className="relative">
                     <select
                       value={currentCity.id}

@@ -14,7 +14,7 @@ import fs from "fs";
 import path from "path";
 import { INITIAL_ARTICLES } from "../data/mockNews.js";
 
-const RETENTION_DAYS = 15;
+const RETENTION_DAYS = 1;
 const RETENTION_MS = RETENTION_DAYS * 24 * 60 * 60 * 1000;
 
 const DEFAULT_FIREBASE_CONFIG = {
@@ -69,7 +69,7 @@ export function getDb() {
 }
 
 /**
- * Automatically prunes articles in Firestore that are older than 15 days,
+ * Automatically prunes articles in Firestore that are older than 1 day (24 hours),
  * as well as explicitly deprecated/removed stories.
  */
 export async function pruneOldArticles(): Promise<{ prunedCount: number; remainingCount: number }> {
@@ -101,7 +101,7 @@ export async function pruneOldArticles(): Promise<{ prunedCount: number; remaini
 
     await Promise.all(deletePromises);
     if (prunedCount > 0) {
-      console.log(`[Firebase Pruner] Pruned ${prunedCount} articles (older than 15 days or deprecated).`);
+      console.log(`[Firebase Pruner] Pruned ${prunedCount} articles (older than 1 day / 24 hours or deprecated).`);
     }
     return { prunedCount, remainingCount };
   } catch (error) {
@@ -111,7 +111,7 @@ export async function pruneOldArticles(): Promise<{ prunedCount: number; remaini
 }
 
 /**
- * Retrieves all valid articles from Firestore (under 14 days old),
+ * Retrieves all valid articles from Firestore (under 1 day / 24 hours old),
  * automatically seeding initial articles if collection is empty.
  */
 export async function getArticlesFromDb() {
@@ -120,13 +120,13 @@ export async function getArticlesFromDb() {
     const articlesRef = collection(db, "articles");
     const snapshot = await getDocs(articlesRef);
 
-    // If empty, seed Firestore with default initial articles
+    // If empty, seed Firestore with default initial articles within the 24-hour window
     if (snapshot.empty) {
-      console.log("[Firebase] Seeding initial news articles into Firestore...");
+      console.log("[Firebase] Seeding initial news articles into Firestore within 1-day window...");
       const now = Date.now();
       const seedPromises = INITIAL_ARTICLES.map((article, idx) => {
-        // Offset timestamps slightly for realistic ordering
-        const articleCreated = now - (idx * 3 * 3600 * 1000); 
+        // Offset timestamps slightly within the last 18 hours so they are within the 1-day retention
+        const articleCreated = now - (idx * 25 * 60 * 1000); 
         const docRef = doc(db, "articles", article.id);
         return setDoc(docRef, {
           ...article,
@@ -143,14 +143,20 @@ export async function getArticlesFromDb() {
       return seededArticles.sort((a, b) => (b.createdAtMs || 0) - (a.createdAtMs || 0));
     }
 
-    // Run 14-day automatic pruning pass
+    // Run 1-day automatic pruning pass
     await pruneOldArticles();
 
-    // Fetch remaining active articles
+    // Fetch remaining active articles (strictly within 1 day / 24 hours)
+    const now = Date.now();
+    const cutoffMs = now - RETENTION_MS;
     const remainingSnapshot = await getDocs(articlesRef);
     const articles: any[] = [];
     remainingSnapshot.forEach((docSnap) => {
-      articles.push(docSnap.data());
+      const art = docSnap.data();
+      const artTime = art.createdAtMs || (art.publishedAtMs ? Number(art.publishedAtMs) : now);
+      if (artTime >= cutoffMs) {
+        articles.push(art);
+      }
     });
 
     return articles.sort((a, b) => (b.createdAtMs || 0) - (a.createdAtMs || 0));

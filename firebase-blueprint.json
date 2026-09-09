@@ -20,6 +20,7 @@
         "sourceCitation": { "type": "string" },
         "isBreaking": { "type": "boolean" },
         "isFeatured": { "type": "boolean" },
+        "isLivePublicRss": { "type": "boolean" },
         "keyTakeaways": { "type": "array", "items": { "type": "string" } },
         "content": { "type": "string" }
       },
