@@ -31,6 +31,7 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
   const [showMarketTimeModal, setShowMarketTimeModal] = useState<boolean>(false);
   const [showHistoricalMarketTimeModal, setShowHistoricalMarketTimeModal] = useState<boolean>(false);
   const [activeDirectionTab, setActiveDirectionTab] = useState<string>('speed');
+  const [selectedTakeawayCard, setSelectedTakeawayCard] = useState<typeof OC_HOUSING_SUMMARY_CARDS[0] | null>(null);
 
   const meta = OC_HOUSING_REPORT_METADATA;
 
@@ -346,9 +347,18 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
               Market Direction
             </h2>
           </div>
-          <span className="text-xs font-bold text-slate-500">
-            Orange County Benchmark Data
-          </span>
+          <div className="flex items-center gap-2.5">
+            <button
+              type="button"
+              onClick={() => setShowMarketTimeModal(true)}
+              className="text-[11px] font-bold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200/60 px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
+            >
+              Speed Scale Reference
+            </button>
+            <span className="text-xs font-bold text-slate-500">
+              Orange County Benchmark Data
+            </span>
+          </div>
         </div>
 
         {/* 4 Tabs / Cards: 1st Expected Market Time, 2nd Buyer Demand, 3rd Active Inventory, 4th Closed Sales */}
@@ -370,11 +380,14 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                 <button
                   type="button"
                   key={card.id}
-                  onClick={() => setActiveDirectionTab(card.id)}
+                  onClick={() => {
+                    setActiveDirectionTab(card.id);
+                    setSelectedTakeawayCard(card);
+                  }}
                   className={`w-full text-left ${speedCondition.bgClass} text-white rounded-2xl p-5 shadow-xs flex flex-col justify-between space-y-3 relative transition-all cursor-pointer hover:opacity-95 active:scale-[0.99] ${
                     isSelected ? 'ring-3 ring-white/60 shadow-md scale-[1.01]' : 'opacity-95'
                   }`}
-                  title="Click to view Expected Market Time analysis"
+                  title="Click to view Expected Market Time takeaways"
                 >
                   {/* Card Top Label */}
                   <div className="flex items-center justify-between">
@@ -418,13 +431,16 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
               <button
                 type="button"
                 key={card.id}
-                onClick={() => setActiveDirectionTab(card.id)}
+                onClick={() => {
+                  setActiveDirectionTab(card.id);
+                  setSelectedTakeawayCard(card);
+                }}
                 className={`w-full text-left bg-white rounded-2xl p-5 border shadow-2xs flex flex-col justify-between space-y-3 relative transition-all cursor-pointer hover:border-slate-300 active:scale-[0.99] ${
                   isSelected
                     ? 'border-[#FA2D48]/60 ring-2 ring-[#FA2D48]/30 shadow-xs'
                     : 'border-slate-200/90'
                 }`}
-                title={`Click to view ${card.title} analysis`}
+                title={`Click to view ${card.title} takeaways`}
               >
                 {/* Card Top Label & 2-Week Trend */}
                 <div className="flex items-center justify-between">
@@ -469,53 +485,59 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
             );
           })}
         </div>
-
-        {/* Selected Signal Detail & Steven Thomas Analysis */}
-        {(() => {
-          const activeCard = OC_HOUSING_SUMMARY_CARDS.find((c) => c.id === activeDirectionTab) || OC_HOUSING_SUMMARY_CARDS[0];
-          if (!activeCard) return null;
-
-          return (
-            <div className="bg-slate-50/80 rounded-2xl p-4 sm:p-5 border border-slate-200/80 space-y-3">
-              <div className="flex items-center justify-between flex-wrap gap-2">
-                <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-[#FA2D48]"></span>
-                  <h4 className="text-sm font-black text-slate-900 font-sans tracking-tight">
-                    {activeCard.id === 'closed' ? `${activeCard.title} Closed Sales` : activeCard.title} Analysis & Key Takeaways
-                  </h4>
-                </div>
-                <div className="flex items-center gap-2">
-                  {activeCard.id === 'speed' && (
-                    <button
-                      type="button"
-                      onClick={() => setShowMarketTimeModal(true)}
-                      className="text-[11px] font-bold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200/60 px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
-                    >
-                      View Speed Ranges Scale
-                    </button>
-                  )}
-                  <span className="text-[11px] font-bold text-slate-500">
-                    Steven Thomas Reports On Housing
-                  </span>
-                </div>
-              </div>
-
-              <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-sans font-medium">
-                {activeCard.summary}
-              </p>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 border-t border-slate-200/60">
-                {activeCard.keyTakeaways.map((takeaway, idx) => (
-                  <div key={idx} className="flex items-start gap-2 text-xs text-slate-800 font-medium">
-                    <span className="text-[#FA2D48] font-black text-sm leading-none">•</span>
-                    <span>{takeaway}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          );
-        })()}
       </div>
+
+      {/* MINIMALISTIC TAKEAWAYS MODAL */}
+      {selectedTakeawayCard && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/50 backdrop-blur-xs transition-opacity animate-in fade-in"
+          onClick={() => setSelectedTakeawayCard(null)}
+        >
+          <div 
+            className="bg-white border border-slate-200/90 rounded-2xl sm:rounded-3xl p-5 sm:p-6 max-w-md w-full shadow-2xl space-y-4 relative animate-in zoom-in-95 duration-150 font-sans text-left"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="flex items-center justify-between gap-3 border-b border-slate-100 pb-3">
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#FA2D48]"></span>
+                <h3 className="text-base sm:text-lg font-black text-slate-950 tracking-tight">
+                  {selectedTakeawayCard.id === 'closed' ? `${selectedTakeawayCard.title} Closed Sales` : selectedTakeawayCard.title} Takeaways
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedTakeawayCard(null)}
+                className="p-1.5 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
+                title="Close"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Takeaways Only */}
+            <div className="space-y-3 py-1">
+              {selectedTakeawayCard.keyTakeaways.map((takeaway, idx) => (
+                <div key={idx} className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-800 font-medium leading-relaxed">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#FA2D48] mt-2 shrink-0"></span>
+                  <span>{takeaway}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Minimal Close Button */}
+            <div className="flex justify-end pt-2 border-t border-slate-100">
+              <button
+                type="button"
+                onClick={() => setSelectedTakeawayCard(null)}
+                className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold font-sans transition-all cursor-pointer shadow-xs"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* MARKET TIME RANGES QUICK REFERENCE MODAL */}
       {showMarketTimeModal && (
