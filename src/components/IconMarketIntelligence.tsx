@@ -12,7 +12,9 @@ import {
   OC_HOUSING_REPORT_METADATA,
   OC_HOUSING_SUMMARY_CARDS,
   OC_SOLD_REPORT,
-  OC_MARKET_TIME_REPORT
+  OC_MARKET_TIME_REPORT,
+  STEVEN_THOMAS_MARKET_DIRECTION,
+  STEVEN_THOMAS_DIRECTION_MATRIX
 } from '../data/ocHousingReportData';
 import { CITIES } from '../data/mockNews';
 import { CityInfo } from '../types';
@@ -30,6 +32,7 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
 }) => {
   const [showMarketTimeModal, setShowMarketTimeModal] = useState<boolean>(false);
   const [showHistoricalMarketTimeModal, setShowHistoricalMarketTimeModal] = useState<boolean>(false);
+  const [showMarketDirectionModal, setShowMarketDirectionModal] = useState<boolean>(false);
   const [activeDirectionTab, setActiveDirectionTab] = useState<string>('speed');
   const [selectedTakeawayCard, setSelectedTakeawayCard] = useState<typeof OC_HOUSING_SUMMARY_CARDS[0] | null>(null);
 
@@ -342,11 +345,30 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
         })()}
       </div>
 
-      {/* 2. MARKET DIRECTION TABS / CARDS */}
+      {/* 2. MARKET SPEED TABS / CARDS */}
       <div className="space-y-3 sm:space-y-4">
+        {/* Market Speed Compact Pill / Tab based ONLY on Steven Thomas Report */}
+        <div className="px-1">
+          <button
+            type="button"
+            id="steven-thomas-market-speed-pill"
+            onClick={() => setShowMarketDirectionModal(true)}
+            className="inline-flex items-center gap-2.5 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full bg-slate-900 hover:bg-slate-800 text-white shadow-xs transition-all cursor-pointer font-sans group active:scale-[0.98]"
+            title="Click to view Market Speed Matrix"
+          >
+            <span className="w-2 h-2 rounded-full bg-[#FA2D48] animate-pulse shrink-0"></span>
+            <span className="text-xs sm:text-sm font-black text-white tracking-wide">
+              {STEVEN_THOMAS_MARKET_DIRECTION.fullText}
+            </span>
+            <span className="text-[10px] font-bold text-slate-400 group-hover:text-white uppercase tracking-wider pl-0.5 transition-colors">
+              Table ↗
+            </span>
+          </button>
+        </div>
+
         <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1.5 px-1">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black font-sans tracking-tighter text-[#FA2D48] leading-none">
-            Market Direction
+            Market Speed
           </h2>
           <span className="text-xs sm:text-sm font-semibold text-slate-500 hidden sm:inline">
             Click a card to explore takeaways
@@ -671,6 +693,119 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
               <button
                 onClick={() => setShowHistoricalMarketTimeModal(false)}
                 className="w-full sm:w-auto px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold font-sans transition-all cursor-pointer shadow-xs"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MINIMALISTIC MARKET DIRECTION DETERMINATION MATRIX MODAL */}
+      {showMarketDirectionModal && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/45 backdrop-blur-xs transition-opacity animate-in fade-in"
+          onClick={() => setShowMarketDirectionModal(false)}
+        >
+          <div 
+            className="bg-white border border-slate-200/90 rounded-2xl sm:rounded-3xl p-5 sm:p-6 max-w-xl w-full shadow-2xl space-y-4 relative animate-in zoom-in-95 duration-150 font-sans text-left"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Clean, Simple Header */}
+            <div className="flex items-center justify-between gap-3 border-b border-slate-100 pb-3">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-[#FA2D48]"></span>
+                <h3 className="text-base sm:text-lg font-black text-slate-950 tracking-tight font-sans">
+                  Market Speed Matrix
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowMarketDirectionModal(false)}
+                className="p-1.5 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
+                title="Close"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* 8-Combination Table */}
+            <div className="overflow-x-auto rounded-xl border border-slate-200">
+              <table className="w-full text-left text-xs font-sans border-collapse">
+                <thead>
+                  <tr className="bg-slate-50 border-b border-slate-200 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                    <th className="py-2.5 px-3 w-8 text-center">#</th>
+                    <th className="py-2.5 px-3">Demand</th>
+                    <th className="py-2.5 px-3">Supply</th>
+                    <th className="py-2.5 px-3">Expected Market Time</th>
+                    <th className="py-2.5 px-3">Market Speed</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 text-slate-800">
+                  {STEVEN_THOMAS_DIRECTION_MATRIX.map((row) => {
+                    const isMatched = STEVEN_THOMAS_MARKET_DIRECTION.matchedRowId === row.id;
+
+                    return (
+                      <tr 
+                        key={row.id}
+                        className={`transition-colors ${
+                          isMatched 
+                            ? 'bg-rose-50/70 font-bold text-slate-950 border-l-3 border-l-[#FA2D48]' 
+                            : 'hover:bg-slate-50/60'
+                        }`}
+                      >
+                        <td className="py-2.5 px-3 text-center text-slate-400 font-mono text-[11px]">
+                          {row.id}
+                        </td>
+                        <td className="py-2.5 px-3">
+                          <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-bold font-mono ${
+                            row.demand === 'UP' ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'
+                          }`}>
+                            {row.demand}
+                          </span>
+                        </td>
+                        <td className="py-2.5 px-3">
+                          <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-bold font-mono ${
+                            row.supply === 'UP' ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'
+                          }`}>
+                            {row.supply}
+                          </span>
+                        </td>
+                        <td className="py-2.5 px-3">
+                          <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-bold font-mono ${
+                            row.emt === 'UP' ? 'bg-amber-50 text-amber-700' : 'bg-sky-50 text-sky-700'
+                          }`}>
+                            {row.emt}
+                          </span>
+                        </td>
+                        <td className="py-2.5 px-3">
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span className={`text-xs ${
+                              isMatched ? 'font-black text-[#FA2D48]' : 'font-semibold text-slate-800'
+                            }`}>
+                              {row.result}
+                            </span>
+                            {isMatched && (
+                              <span className="text-[9px] font-black uppercase tracking-wider bg-[#FA2D48] text-white px-1.5 py-0.5 rounded-full">
+                                Active
+                              </span>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Minimalist speed footnote & close button */}
+            <div className="flex items-center justify-between flex-wrap gap-2 pt-1 text-[11px] text-slate-500 font-sans">
+              <span>EMT DOWN = FASTER • EMT UP = SLOWER</span>
+              <button
+                type="button"
+                onClick={() => setShowMarketDirectionModal(false)}
+                className="px-4 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold font-sans transition-all cursor-pointer shadow-xs ml-auto"
               >
                 Close
               </button>

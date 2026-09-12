@@ -269,6 +269,110 @@ export const OC_HOUSING_REPORT_METADATA = {
 };
 
 // =============================================================================
+// STEVEN THOMAS MARKET SPEED EVALUATION (8-COMBINATION MATRIX)
+// Evaluates Demand, Supply (Active Inventory), and Expected Market Time (EMT)
+// comparing current reporting period against previous reporting period.
+// =============================================================================
+export interface StevenThomasMatrixRow {
+  id: number;
+  demand: 'UP' | 'DOWN';
+  supply: 'UP' | 'DOWN';
+  emt: 'UP' | 'DOWN';
+  direction: 'STRONG' | 'IMPROVING' | 'WEAKENING' | 'WEAK';
+  speed: 'FASTER' | 'SLOWER';
+  result: string;
+}
+
+export const STEVEN_THOMAS_DIRECTION_MATRIX: StevenThomasMatrixRow[] = [
+  { id: 1, demand: 'DOWN', supply: 'DOWN', emt: 'DOWN', direction: 'IMPROVING', speed: 'FASTER', result: 'IMPROVING / FASTER' },
+  { id: 2, demand: 'UP', supply: 'UP', emt: 'UP', direction: 'WEAKENING', speed: 'SLOWER', result: 'WEAKENING / SLOWER' },
+  { id: 3, demand: 'UP', supply: 'DOWN', emt: 'UP', direction: 'WEAKENING', speed: 'SLOWER', result: 'WEAKENING / SLOWER' },
+  { id: 4, demand: 'DOWN', supply: 'UP', emt: 'DOWN', direction: 'IMPROVING', speed: 'FASTER', result: 'IMPROVING / FASTER' },
+  { id: 5, demand: 'UP', supply: 'DOWN', emt: 'DOWN', direction: 'STRONG', speed: 'FASTER', result: 'STRONG / FASTER' },
+  { id: 6, demand: 'DOWN', supply: 'UP', emt: 'UP', direction: 'WEAK', speed: 'SLOWER', result: 'WEAK / SLOWER' },
+  { id: 7, demand: 'UP', supply: 'UP', emt: 'DOWN', direction: 'IMPROVING', speed: 'FASTER', result: 'IMPROVING / FASTER' },
+  { id: 8, demand: 'DOWN', supply: 'DOWN', emt: 'UP', direction: 'WEAKENING', speed: 'SLOWER', result: 'WEAKENING / SLOWER' },
+];
+
+export function evaluateStevenThomasMarketDirection(
+  demandCurrent: number,
+  demandPrevious: number,
+  supplyCurrent: number,
+  supplyPrevious: number,
+  emtCurrent: number,
+  emtPrevious: number
+) {
+  const demandTrend = demandCurrent > demandPrevious ? 'UP' : demandCurrent < demandPrevious ? 'DOWN' : 'EQUAL';
+  const supplyTrend = supplyCurrent > supplyPrevious ? 'UP' : supplyCurrent < supplyPrevious ? 'DOWN' : 'EQUAL';
+  const emtTrend = emtCurrent > emtPrevious ? 'UP' : emtCurrent < emtPrevious ? 'DOWN' : 'EQUAL';
+
+  // If any indicator is EQUAL/unchanged, direction is not clearly established by the 8 combinations:
+  if (demandTrend === 'EQUAL' || supplyTrend === 'EQUAL' || emtTrend === 'EQUAL') {
+    return {
+      direction: 'BALANCED' as const,
+      speed: null,
+      fullText: 'MARKET SPEED: BALANCED',
+      demandTrend,
+      supplyTrend,
+      emtTrend,
+      matchedRowId: null
+    };
+  }
+
+  // 1: DOWN, DOWN, DOWN -> IMPROVING / FASTER
+  if (demandTrend === 'DOWN' && supplyTrend === 'DOWN' && emtTrend === 'DOWN') {
+    return { direction: 'IMPROVING' as const, speed: 'FASTER' as const, fullText: 'MARKET SPEED: IMPROVING • FASTER', demandTrend, supplyTrend, emtTrend, matchedRowId: 1 };
+  }
+  // 2: UP, UP, UP -> WEAKENING / SLOWER
+  if (demandTrend === 'UP' && supplyTrend === 'UP' && emtTrend === 'UP') {
+    return { direction: 'WEAKENING' as const, speed: 'SLOWER' as const, fullText: 'MARKET SPEED: WEAKENING • SLOWER', demandTrend, supplyTrend, emtTrend, matchedRowId: 2 };
+  }
+  // 3: UP, DOWN, UP -> WEAKENING / SLOWER
+  if (demandTrend === 'UP' && supplyTrend === 'DOWN' && emtTrend === 'UP') {
+    return { direction: 'WEAKENING' as const, speed: 'SLOWER' as const, fullText: 'MARKET SPEED: WEAKENING • SLOWER', demandTrend, supplyTrend, emtTrend, matchedRowId: 3 };
+  }
+  // 4: DOWN, UP, DOWN -> IMPROVING / FASTER
+  if (demandTrend === 'DOWN' && supplyTrend === 'UP' && emtTrend === 'DOWN') {
+    return { direction: 'IMPROVING' as const, speed: 'FASTER' as const, fullText: 'MARKET SPEED: IMPROVING • FASTER', demandTrend, supplyTrend, emtTrend, matchedRowId: 4 };
+  }
+  // 5: UP, DOWN, DOWN -> STRONG / FASTER
+  if (demandTrend === 'UP' && supplyTrend === 'DOWN' && emtTrend === 'DOWN') {
+    return { direction: 'STRONG' as const, speed: 'FASTER' as const, fullText: 'MARKET SPEED: STRONG • FASTER', demandTrend, supplyTrend, emtTrend, matchedRowId: 5 };
+  }
+  // 6: DOWN, UP, UP -> WEAK / SLOWER
+  if (demandTrend === 'DOWN' && supplyTrend === 'UP' && emtTrend === 'UP') {
+    return { direction: 'WEAK' as const, speed: 'SLOWER' as const, fullText: 'MARKET SPEED: WEAK • SLOWER', demandTrend, supplyTrend, emtTrend, matchedRowId: 6 };
+  }
+  // 7: UP, UP, DOWN -> IMPROVING / FASTER
+  if (demandTrend === 'UP' && supplyTrend === 'UP' && emtTrend === 'DOWN') {
+    return { direction: 'IMPROVING' as const, speed: 'FASTER' as const, fullText: 'MARKET SPEED: IMPROVING • FASTER', demandTrend, supplyTrend, emtTrend, matchedRowId: 7 };
+  }
+  // 8: DOWN, DOWN, UP -> WEAKENING / SLOWER
+  if (demandTrend === 'DOWN' && supplyTrend === 'DOWN' && emtTrend === 'UP') {
+    return { direction: 'WEAKENING' as const, speed: 'SLOWER' as const, fullText: 'MARKET SPEED: WEAKENING • SLOWER', demandTrend, supplyTrend, emtTrend, matchedRowId: 8 };
+  }
+
+  return {
+    direction: 'BALANCED' as const,
+    speed: null,
+    fullText: 'MARKET SPEED: BALANCED',
+    demandTrend,
+    supplyTrend,
+    emtTrend,
+    matchedRowId: null
+  };
+}
+
+export const STEVEN_THOMAS_MARKET_DIRECTION = evaluateStevenThomasMarketDirection(
+  cfg.demand,
+  cfg.demandTwoWeeksAgo,
+  cfg.actives,
+  cfg.activesTwoWeeksAgo,
+  cfg.marketTime,
+  cfg.marketTimeTwoWeeksAgo
+);
+
+// =============================================================================
 // 3. EXECUTIVE SUMMARY CARDS (Automatically Derived from Config)
 // =============================================================================
 export const OC_HOUSING_SUMMARY_CARDS: OCSummaryCardData[] = [
