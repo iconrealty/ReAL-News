@@ -3,6 +3,7 @@ import {
   getFirestore, 
   collection, 
   getDocs, 
+  getDoc,
   setDoc, 
   doc, 
   deleteDoc, 
@@ -200,5 +201,42 @@ export async function deleteArticleFromDb(id: string) {
   } catch (error) {
     console.error(`[Firebase] Error deleting article ${id} from Firestore:`, error);
     throw error;
+  }
+}
+
+/**
+ * Retrieves the latest live mortgage rates from Firestore settings.
+ */
+export async function getLiveRatesFromDb(): Promise<any | null> {
+  try {
+    const db = getDb();
+    const docRef = doc(db, "settings", "live_mortgage_rates");
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      return docSnap.data();
+    }
+  } catch (error) {
+    console.warn("[Firebase Rates] Could not read live rates from Firestore:", error);
+  }
+  return null;
+}
+
+/**
+ * Persists the latest live mortgage rates into Firestore settings.
+ */
+export async function saveLiveRatesToDb(rates: any): Promise<boolean> {
+  try {
+    const db = getDb();
+    const docRef = doc(db, "settings", "live_mortgage_rates");
+    await setDoc(docRef, {
+      ...rates,
+      id: "live_mortgage_rates",
+      updatedAt: new Date().toISOString()
+    }, { merge: true });
+    console.log("[Firebase Rates] Live mortgage rates successfully persisted to Firestore settings.");
+    return true;
+  } catch (error) {
+    console.warn("[Firebase Rates] Could not persist live rates to Firestore:", error);
+    return false;
   }
 }

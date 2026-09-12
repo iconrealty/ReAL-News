@@ -235,22 +235,34 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
               </div>
 
               <div className="flex items-center gap-1.5 shrink-0">
-                {onRefreshRates && (
-                  <button
-                    type="button"
-                    id="header-modal-sync-rates-btn"
-                    onClick={(e) => {
-                      e.stopPropagation();
+                <button
+                  type="button"
+                  id="header-modal-sync-rates-btn"
+                  onClick={async (e) => {
+                    e.stopPropagation();
+                    if (onRefreshRates) {
                       onRefreshRates();
-                    }}
-                    disabled={isRefreshingRates}
-                    className="min-h-[38px] px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-700 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer touch-manipulation active:scale-95 disabled:opacity-50 select-none"
-                    title="Sync Latest Live Rates"
-                  >
-                    <RefreshCw className={`w-3.5 h-3.5 text-[#FA2D48] ${isRefreshingRates ? 'animate-spin' : ''}`} />
-                    <span>{isRefreshingRates ? 'Syncing...' : 'Sync Rates'}</span>
-                  </button>
-                )}
+                    } else {
+                      try {
+                        const res = await fetch(`/api/live-market-stats?force=true&t=${Date.now()}&_rnd=${Math.random()}`, { cache: 'no-store' });
+                        if (res.ok) {
+                          const json = await res.json();
+                          if (json.data && typeof window !== 'undefined') {
+                            window.dispatchEvent(new CustomEvent('live-rates-synced', { detail: json.data }));
+                          }
+                        }
+                      } catch (err) {
+                        console.warn("Direct modal sync fallback note:", err);
+                      }
+                    }
+                  }}
+                  disabled={isRefreshingRates}
+                  className="min-h-[38px] px-3.5 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-700 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer touch-manipulation active:scale-95 disabled:opacity-50 select-none shadow-xs"
+                  title="Sync Latest Live Rates"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 text-[#FA2D48] ${isRefreshingRates ? 'animate-spin' : ''}`} />
+                  <span>{isRefreshingRates ? 'Syncing...' : 'Sync Rates'}</span>
+                </button>
                 <button
                   type="button"
                   id="close-mnd-header-rates-modal-btn"

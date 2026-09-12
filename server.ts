@@ -3,7 +3,14 @@ import path from "path";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI, Type } from "@google/genai";
 import Parser from "rss-parser";
-import { getArticlesFromDb, saveArticleToDb, deleteArticleFromDb, pruneOldArticles } from "./src/lib/firebaseDb.js";
+import { 
+  getArticlesFromDb, 
+  saveArticleToDb, 
+  deleteArticleFromDb, 
+  pruneOldArticles,
+  getLiveRatesFromDb,
+  saveLiveRatesToDb
+} from "./src/lib/firebaseDb.js";
 import { 
   getAdsFromDb, 
   saveAdToDb, 
@@ -546,15 +553,15 @@ interface CachedLiveRates {
 
 let cachedLiveRates: CachedLiveRates = {
   source: "Mortgage News Daily (MND Daily Index)",
-  asOfDate: "MND Live (9/4/26)",
-  mortgage30Year: "6.89%",
-  mortgage15Year: "6.49%",
-  jumbo30Year: "7.06%",
-  fha30Year: "6.44%",
-  va30Year: "6.46%",
-  freddieMac30Year: "6.71%",
-  rate30Year7DaysAgo: "6.81%",
-  rate30YearChange7Days: 0.08,
+  asOfDate: "MND Live (9/11/26)",
+  mortgage30Year: "7.12%",
+  mortgage15Year: "6.65%",
+  jumbo30Year: "7.25%",
+  fha30Year: "6.68%",
+  va30Year: "6.70%",
+  freddieMac30Year: "6.76%",
+  rate30Year7DaysAgo: "6.89%",
+  rate30YearChange7Days: 0.23,
   asOfTimestamp: 0, // 0 forces immediate live fetch on first request or startup
   lastChecked: new Date().toISOString(),
   sourceType: "MORTGAGE_NEWS_DAILY",
@@ -564,6 +571,21 @@ let cachedLiveRates: CachedLiveRates = {
 async function fetchLiveMndRates(forceRefresh = false): Promise<CachedLiveRates> {
   const now = Date.now();
   const CACHE_TTL_MS = 60 * 1000; // 60 seconds cache for high accuracy across devices
+
+  // Check if we can hydrate from Firestore if first run
+  if (cachedLiveRates.asOfTimestamp === 0) {
+    try {
+      const dbRates = await getLiveRatesFromDb();
+      if (dbRates && dbRates.mortgage30Year) {
+        cachedLiveRates = {
+          ...cachedLiveRates,
+          ...dbRates
+        };
+      }
+    } catch (e) {
+      console.warn("[MND Rates] Initial DB read note:", e);
+    }
+  }
 
   if (!forceRefresh && cachedLiveRates && (now - cachedLiveRates.asOfTimestamp < CACHE_TTL_MS) && cachedLiveRates.asOfTimestamp > 0) {
     return cachedLiveRates;
@@ -601,14 +623,14 @@ async function fetchLiveMndRates(forceRefresh = false): Promise<CachedLiveRates>
 
       // Extract Freddie Mac survey rate from table
       const freddieTableMatch = html.match(/<th[^>]*>[\s\S]*?Freddie Mac[\s\S]*?<\/th>[\s\S]*?<td class=["']rate["']>([\d.]+)%?<\/td>/i);
-      const rFreddie = freddieTableMatch ? `${freddieTableMatch[1]}%` : "6.71%";
+      const rFreddie = freddieTableMatch ? `${freddieTableMatch[1]}%` : "6.76%";
 
       // Extract date from table header
       const dateMatch = html.match(/<th class=[\"\\']rate-product[\"\\'][^>]*>[\s\S]*?<div class=[\"\\']pull-right text-muted[\"\\'][^>]*>([^<]+)<\/div>/i);
-      const asOfStr = dateMatch ? `MND Live (${dateMatch[1].trim()})` : "MND Live (9/4/26)";
+      const asOfStr = dateMatch ? `MND Live (${dateMatch[1].trim()})` : "MND Live (9/11/26)";
 
-      const r30Num = r30 ? parseFloat(r30.replace('%', '')) : 6.89;
-      let dynamicPrior7DayNum = 6.81; // Reliable baseline fallback
+      const r30Num = r30 ? parseFloat(r30.replace('%', '')) : 7.12;
+      let dynamicPrior7DayNum = 6.89; // Reliable baseline fallback
 
       // Extract dynamic historical 30-year rate from MND daily survey history
       if (histRes && histRes.ok) {
@@ -654,12 +676,12 @@ async function fetchLiveMndRates(forceRefresh = false): Promise<CachedLiveRates>
       cachedLiveRates = {
         source: "Mortgage News Daily (MND Daily Index)",
         asOfDate: asOfStr,
-        mortgage30Year: r30 || cachedLiveRates.mortgage30Year || "6.89%",
-        mortgage15Year: r15 || cachedLiveRates.mortgage15Year || "6.49%",
-        jumbo30Year: rJumbo || cachedLiveRates.jumbo30Year || "7.06%",
-        fha30Year: rFha || cachedLiveRates.fha30Year || "6.44%",
-        va30Year: rVa || cachedLiveRates.va30Year || "6.46%",
-        freddieMac30Year: rFreddie || cachedLiveRates.freddieMac30Year || "6.71%",
+        mortgage30Year: r30 || cachedLiveRates.mortgage30Year || "7.12%",
+        mortgage15Year: r15 || cachedLiveRates.mortgage15Year || "6.65%",
+        jumbo30Year: rJumbo || cachedLiveRates.jumbo30Year || "7.25%",
+        fha30Year: rFha || cachedLiveRates.fha30Year || "6.68%",
+        va30Year: rVa || cachedLiveRates.va30Year || "6.70%",
+        freddieMac30Year: rFreddie || cachedLiveRates.freddieMac30Year || "6.76%",
         rate30Year7DaysAgo: `${dynamicPrior7DayNum}%`,
         rate30YearChange7Days: change7Days,
         asOfTimestamp: now,
@@ -668,10 +690,30 @@ async function fetchLiveMndRates(forceRefresh = false): Promise<CachedLiveRates>
         isRealLiveRate: true
       };
       console.log(`[MND Live Rates] Dynamic update: Current 30-Yr=${cachedLiveRates.mortgage30Year}, 7-Day Prior=${cachedLiveRates.rate30Year7DaysAgo}, 7-Day Delta=${cachedLiveRates.rate30YearChange7Days}`);
+
+      // Persist to Firestore so all mobile apps and container instances share the true live rate
+      saveLiveRatesToDb(cachedLiveRates).catch(err => console.warn("[Firebase Rates] Auto-save note:", err));
+
       return cachedLiveRates;
     }
   } catch (mndErr: any) {
     console.warn(`[MND Rates Fetch] Fetch note: ${mndErr?.message || mndErr}`);
+  }
+
+  // If MND scrape timed out or errored, try restoring from Firestore backup
+  try {
+    const dbRates = await getLiveRatesFromDb();
+    if (dbRates && dbRates.mortgage30Year) {
+      cachedLiveRates = {
+        ...cachedLiveRates,
+        ...dbRates,
+        asOfTimestamp: now,
+        lastChecked: new Date().toISOString()
+      };
+      return cachedLiveRates;
+    }
+  } catch (dbErr) {
+    console.warn("[MND Rates] Firestore fallback read note:", dbErr);
   }
 
   cachedLiveRates = {
@@ -691,6 +733,18 @@ const PORT = 3000;
 
 // Disable ETags completely to prevent 304 Not Modified caching on iOS Safari and mobile Chrome
 app.set('etag', false);
+
+// Global CORS & Cache-Busting headers for all mobile browsers, PWAs, and embedded iframes
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, Cache-Control, Pragma, Expires, X-Requested-With, Accept, Origin");
+  res.setHeader("Access-Control-Max-Age", "86400");
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(204);
+  }
+  next();
+});
 
 app.use(express.json({ limit: '25mb' }));
 app.use(express.urlencoded({ limit: '25mb', extended: true }));
@@ -2015,8 +2069,19 @@ async function startServer() {
     app.use(vite.middlewares);
   } else {
     const distPath = path.join(process.cwd(), 'dist');
-    app.use(express.static(distPath));
+    app.use(express.static(distPath, {
+      setHeaders: (res, filePath) => {
+        if (filePath.endsWith('.html')) {
+          res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate, max-age=0');
+          res.setHeader('Pragma', 'no-cache');
+          res.setHeader('Expires', '0');
+        }
+      }
+    }));
     app.get('*', (req, res) => {
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate, max-age=0');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
       res.sendFile(path.join(distPath, 'index.html'));
     });
   }

@@ -158,13 +158,13 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
   const [liveRates, setLiveRates] = useState<LiveMortgageRates>(
     propLiveRates || { 
       source: 'Mortgage News Daily (MND Daily Index)',
-      mortgage30Year: '6.89%',
-      mortgage15Year: '6.49%',
-      jumbo30Year: '7.06%',
-      fha30Year: '6.44%',
-      va30Year: '6.46%',
-      freddieMac30Year: '6.71%',
-      asOfDate: 'MND Live (9/4/26)',
+      mortgage30Year: '7.12%',
+      mortgage15Year: '6.65%',
+      jumbo30Year: '7.25%',
+      fha30Year: '6.68%',
+      va30Year: '6.70%',
+      freddieMac30Year: '6.76%',
+      asOfDate: 'MND Live (9/11/26)',
       sourceType: 'MORTGAGE_NEWS_DAILY',
       isRealLiveRate: true
     }
@@ -193,28 +193,25 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
     }
     setLocalRefreshing(true);
     try {
-      let res = await fetch(`/api/live-market-stats/sync?t=${Date.now()}&_rnd=${Math.random()}`, {
-        method: 'POST',
-        headers: {
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
-          'Pragma': 'no-cache',
-          'Expires': '0',
-          'Content-Type': 'application/json'
-        }
+      let res = await fetch(`/api/live-market-stats?force=true&t=${Date.now()}&_rnd=${Math.random()}`, {
+        method: 'GET',
+        cache: 'no-store'
       }).catch(() => null);
 
       if (!res || !res.ok) {
-        res = await fetch(`/api/live-market-stats?force=true&t=${Date.now()}&device=mobile`, {
+        res = await fetch(`/api/live-market-stats/sync?force=true&t=${Date.now()}`, {
           method: 'GET',
-          cache: 'no-store',
-          headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate', 'Pragma': 'no-cache' }
-        });
+          cache: 'no-store'
+        }).catch(() => null);
       }
 
       if (res && res.ok) {
         const json = await res.json();
         if (json.success && json.data) {
           setLiveRates(json.data);
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(new CustomEvent('live-rates-synced', { detail: json.data }));
+          }
         }
       }
     } catch (err) {
@@ -260,10 +257,9 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
 
   React.useEffect(() => {
     if (!propLiveRates) {
-      fetch(`/api/live-market-stats?t=${Date.now()}&device=mobile`, {
+      fetch(`/api/live-market-stats?force=true&t=${Date.now()}&device=mobile`, {
         method: 'GET',
-        cache: 'no-store',
-        headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate', 'Pragma': 'no-cache' }
+        cache: 'no-store'
       })
         .then(res => res.json())
         .then(json => {
