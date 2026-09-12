@@ -212,25 +212,25 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                       <button
                         type="button"
                         onClick={() => setShowHistoricalMarketTimeModal(true)}
-                        className="relative flex items-center h-11 sm:h-12 w-full overflow-hidden rounded-full bg-slate-950 hover:bg-slate-900 border border-slate-800 text-white shadow-md transition-all cursor-pointer font-sans group active:scale-[0.99] px-3.5 sm:px-4 select-none"
+                        className="relative flex items-center h-11 sm:h-12 w-full overflow-hidden rounded-full bg-slate-950 hover:bg-slate-900 border border-slate-800 text-white shadow-md transition-all cursor-pointer font-sans group active:scale-[0.99] px-2.5 sm:px-4 select-none"
                         title={`Click to view ${currentCity.name} Historical Speed & Pace`}
                       >
-                        {/* Fixed Left Live Badge with City Name */}
-                        <div className="flex items-center gap-2 pr-3 border-r border-slate-800 shrink-0 z-10 bg-slate-950 group-hover:bg-slate-900 transition-colors">
-                          <span className="relative flex h-2.5 w-2.5 shrink-0">
+                        {/* Fixed Left Live Badge (City Name Removed for maximum mobile ticker visibility) */}
+                        <div className="flex items-center gap-1.5 sm:gap-2 pr-2 sm:pr-3 border-r border-slate-800 shrink-0 z-10 bg-slate-950 group-hover:bg-slate-900 transition-colors">
+                          <span className="relative flex h-2 w-2 sm:h-2.5 sm:w-2.5 shrink-0">
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FA2D48] opacity-75"></span>
-                            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#FA2D48]"></span>
+                            <span className="relative inline-flex rounded-full h-2 w-2 sm:h-2.5 sm:w-2.5 bg-[#FA2D48]"></span>
                           </span>
-                          <span className="text-[11px] sm:text-xs font-black uppercase tracking-wider text-white shrink-0">
-                            {currentCity.name} SPEED
+                          <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-white shrink-0">
+                            LIVE
                           </span>
                         </div>
 
                         {/* Running City Equation Scrolling Slower to the Left */}
-                        <div className="relative overflow-hidden flex-1 mx-3">
+                        <div className="relative overflow-hidden flex-1 mx-1.5 sm:mx-3">
                           <div className="animate-ticker flex items-center group-hover:[animation-play-state:paused]">
                             {/* 1st copy */}
-                            <div className="flex items-center gap-5 text-xs sm:text-[13px] font-bold tracking-wide uppercase text-white/90 shrink-0 pr-5">
+                            <div className="flex items-center gap-3.5 sm:gap-5 text-[11px] sm:text-[13px] font-bold tracking-wide uppercase text-white/90 shrink-0 pr-4 sm:pr-5">
                               <span className="font-black text-white">
                                 MARKET SPEED: <span className={speedColor}>{speedLabel}</span> • {cond.badgeText}
                               </span>
@@ -240,10 +240,10 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                               <span className="text-slate-300">SUPPLY: <span className="text-slate-200 font-extrabold">{marketData.currentActives}</span></span>
                               <span className="text-[#FA2D48]">●</span>
                               <span className="text-slate-300">EMT: <span className="text-sky-300 font-extrabold">{marketData.marketTimeDays} DAYS ({deltaText})</span></span>
-                              <span className="text-[#FA2D48] font-black text-sm sm:text-base">=</span>
+                              <span className="text-[#FA2D48] font-black text-xs sm:text-sm">=</span>
                             </div>
                             {/* 2nd identical copy for seamless loop */}
-                            <div className="flex items-center gap-5 text-xs sm:text-[13px] font-bold tracking-wide uppercase text-white/90 shrink-0 pr-5" aria-hidden="true">
+                            <div className="flex items-center gap-3.5 sm:gap-5 text-[11px] sm:text-[13px] font-bold tracking-wide uppercase text-white/90 shrink-0 pr-4 sm:pr-5" aria-hidden="true">
                               <span className="font-black text-white">
                                 MARKET SPEED: <span className={speedColor}>{speedLabel}</span> • {cond.badgeText}
                               </span>
@@ -253,14 +253,14 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                               <span className="text-slate-300">SUPPLY: <span className="text-slate-200 font-extrabold">{marketData.currentActives}</span></span>
                               <span className="text-[#FA2D48]">●</span>
                               <span className="text-slate-300">EMT: <span className="text-sky-300 font-extrabold">{marketData.marketTimeDays} DAYS ({deltaText})</span></span>
-                              <span className="text-[#FA2D48] font-black text-sm sm:text-base">=</span>
+                              <span className="text-[#FA2D48] font-black text-xs sm:text-sm">=</span>
                             </div>
                           </div>
                         </div>
 
                         {/* Fixed Right Action */}
-                        <div className="pl-3 border-l border-slate-800 shrink-0 z-10 bg-slate-950 group-hover:bg-slate-900 transition-colors flex items-center gap-1">
-                          <span className="text-[11px] sm:text-xs font-black text-slate-300 group-hover:text-white uppercase tracking-wider transition-colors">
+                        <div className="pl-2 sm:pl-3 border-l border-slate-800 shrink-0 z-10 bg-slate-950 group-hover:bg-slate-900 transition-colors flex items-center gap-1">
+                          <span className="text-[10px] sm:text-xs font-black text-slate-300 group-hover:text-white uppercase tracking-wider transition-colors hidden sm:inline">
                             Pace
                           </span>
                           <span className="text-xs font-black text-[#FA2D48]">↗</span>
@@ -448,25 +448,25 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
             type="button"
             id="steven-thomas-market-speed-pill"
             onClick={() => setShowMarketDirectionModal(true)}
-            className="relative flex items-center h-11 sm:h-12 w-full max-w-2xl overflow-hidden rounded-full bg-slate-950 hover:bg-slate-900 border border-slate-800 text-white shadow-md transition-all cursor-pointer font-sans group active:scale-[0.99] px-3.5 sm:px-4 select-none"
+            className="relative flex items-center h-11 sm:h-12 w-full max-w-2xl overflow-hidden rounded-full bg-slate-950 hover:bg-slate-900 border border-slate-800 text-white shadow-md transition-all cursor-pointer font-sans group active:scale-[0.99] px-2.5 sm:px-4 select-none"
             title="Click to view Market Speed Matrix"
           >
             {/* Fixed Left Live Beacon */}
-            <div className="flex items-center gap-2 pr-3 border-r border-slate-800 shrink-0 z-10 bg-slate-950 group-hover:bg-slate-900 transition-colors">
-              <span className="relative flex h-2.5 w-2.5 shrink-0">
+            <div className="flex items-center gap-1.5 sm:gap-2 pr-2 sm:pr-3 border-r border-slate-800 shrink-0 z-10 bg-slate-950 group-hover:bg-slate-900 transition-colors">
+              <span className="relative flex h-2 w-2 sm:h-2.5 sm:w-2.5 shrink-0">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FA2D48] opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#FA2D48]"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 sm:h-2.5 sm:w-2.5 bg-[#FA2D48]"></span>
               </span>
-              <span className="text-[11px] sm:text-xs font-black uppercase tracking-wider text-white shrink-0">
+              <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-white shrink-0">
                 LIVE
               </span>
             </div>
 
             {/* Running Text Streaming Slower to the Left (Stock / Live Feed Style) */}
-            <div className="relative overflow-hidden flex-1 mx-3">
+            <div className="relative overflow-hidden flex-1 mx-1.5 sm:mx-3">
               <div className="animate-ticker flex items-center group-hover:[animation-play-state:paused]">
                 {/* 1st copy */}
-                <div className="flex items-center gap-5 text-xs sm:text-[13px] font-bold tracking-wide uppercase text-white/90 shrink-0 pr-5">
+                <div className="flex items-center gap-3.5 sm:gap-5 text-[11px] sm:text-[13px] font-bold tracking-wide uppercase text-white/90 shrink-0 pr-4 sm:pr-5">
                   <span className="font-black text-white">{STEVEN_THOMAS_MARKET_DIRECTION.fullText}</span>
                   <span className="text-[#FA2D48]">●</span>
                   <span className="text-slate-300">DEMAND: <span className="text-emerald-400 font-extrabold">{STEVEN_THOMAS_MARKET_DIRECTION.demandTrend}</span></span>
@@ -474,10 +474,10 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                   <span className="text-slate-300">SUPPLY: <span className="text-emerald-400 font-extrabold">{STEVEN_THOMAS_MARKET_DIRECTION.supplyTrend}</span></span>
                   <span className="text-[#FA2D48]">●</span>
                   <span className="text-slate-300">EMT: <span className="text-sky-300 font-extrabold">{STEVEN_THOMAS_MARKET_DIRECTION.speed}</span></span>
-                  <span className="text-[#FA2D48] font-black text-sm sm:text-base">=</span>
+                  <span className="text-[#FA2D48] font-black text-xs sm:text-sm">=</span>
                 </div>
                 {/* 2nd identical copy for seamless infinite loop */}
-                <div className="flex items-center gap-5 text-xs sm:text-[13px] font-bold tracking-wide uppercase text-white/90 shrink-0 pr-5" aria-hidden="true">
+                <div className="flex items-center gap-3.5 sm:gap-5 text-[11px] sm:text-[13px] font-bold tracking-wide uppercase text-white/90 shrink-0 pr-4 sm:pr-5" aria-hidden="true">
                   <span className="font-black text-white">{STEVEN_THOMAS_MARKET_DIRECTION.fullText}</span>
                   <span className="text-[#FA2D48]">●</span>
                   <span className="text-slate-300">DEMAND: <span className="text-emerald-400 font-extrabold">{STEVEN_THOMAS_MARKET_DIRECTION.demandTrend}</span></span>
@@ -485,14 +485,14 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                   <span className="text-slate-300">SUPPLY: <span className="text-emerald-400 font-extrabold">{STEVEN_THOMAS_MARKET_DIRECTION.supplyTrend}</span></span>
                   <span className="text-[#FA2D48]">●</span>
                   <span className="text-slate-300">EMT: <span className="text-sky-300 font-extrabold">{STEVEN_THOMAS_MARKET_DIRECTION.speed}</span></span>
-                  <span className="text-[#FA2D48] font-black text-sm sm:text-base">=</span>
+                  <span className="text-[#FA2D48] font-black text-xs sm:text-sm">=</span>
                 </div>
               </div>
             </div>
 
             {/* Fixed Right Action */}
-            <div className="pl-3 border-l border-slate-800 shrink-0 z-10 bg-slate-950 group-hover:bg-slate-900 transition-colors flex items-center gap-1">
-              <span className="text-[11px] sm:text-xs font-black text-slate-300 group-hover:text-white uppercase tracking-wider transition-colors">
+            <div className="pl-2 sm:pl-3 border-l border-slate-800 shrink-0 z-10 bg-slate-950 group-hover:bg-slate-900 transition-colors flex items-center gap-1">
+              <span className="text-[10px] sm:text-xs font-black text-slate-300 group-hover:text-white uppercase tracking-wider transition-colors hidden sm:inline">
                 Table
               </span>
               <span className="text-xs font-black text-[#FA2D48]">↗</span>
