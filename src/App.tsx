@@ -1334,56 +1334,61 @@ export function App() {
       {/* EXPECTED MARKET TIME RANGES MODAL */}
       {showMarketTimeModal && (
         <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs transition-opacity animate-in fade-in"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/40 backdrop-blur-xs transition-opacity animate-in fade-in"
           onClick={() => setShowMarketTimeModal(false)}
         >
           <div 
-            className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-7 max-w-md w-full shadow-2xl space-y-5 relative animate-in zoom-in-95 duration-150 font-sans text-left"
+            className="bg-white border border-slate-200/90 rounded-2xl p-5 sm:p-6 max-w-md w-full shadow-xl space-y-4 relative animate-in zoom-in-95 duration-150 font-sans text-left"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
-            <div className="flex items-center justify-between gap-4 border-b border-slate-100 pb-4">
-              <h3 className="text-xl sm:text-2xl font-black font-sans text-slate-950 tracking-tight">
+            <div className="flex items-center justify-between gap-4 border-b border-slate-100 pb-3">
+              <h3 className="text-base sm:text-lg font-bold text-slate-950 tracking-tight font-sans">
                 Expected Market Time Ranges
               </h3>
               <button
+                type="button"
                 onClick={() => setShowMarketTimeModal(false)}
-                className="p-2 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
+                className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
                 title="Close"
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
 
-            {/* Single-Column Integrated Ranges List */}
-            <div className="overflow-hidden rounded-2xl border border-slate-200/90 bg-white divide-y divide-slate-100">
+            {/* Minimalist Ranges Table */}
+            <div className="rounded-xl border border-slate-200 overflow-hidden divide-y divide-slate-100 bg-white">
+              <div className="flex items-center justify-between px-4 py-2.5 bg-slate-50/80 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+                <span>Market Condition</span>
+                <span>Duration</span>
+              </div>
               {[
-                { label: "Hot Seller's Market", days: "< 60 Days", bg: "bg-[#FA2D48]" },
-                { label: "Slight Seller's Market", days: "60 – 89 Days", bg: "bg-amber-500" },
-                { label: "Balanced Market", days: "90 – 119 Days", bg: "bg-sky-600" },
-                { label: "Slight Buyer's Market", days: "120 – 149 Days", bg: "bg-emerald-600" },
-                { label: "Buyer's Market", days: "150+ Days", bg: "bg-emerald-700" },
+                { label: "Hot Seller's Market", days: "Under 60 Days" },
+                { label: "Slight Seller's Market", days: "60 – 89 Days" },
+                { label: "Balanced Market", days: "90 – 119 Days" },
+                { label: "Slight Buyer's Market", days: "120 – 149 Days" },
+                { label: "Buyer's Market", days: "150+ Days" },
               ].map((range) => (
                 <div
                   key={range.label}
-                  className="py-3 px-4 flex items-center gap-3 hover:bg-slate-50/60 transition-colors"
+                  className="flex items-center justify-between px-4 py-3 text-sm hover:bg-slate-50/50 transition-colors"
                 >
-                  <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold text-white ${range.bg} shadow-xs shrink-0`}>
+                  <span className="text-slate-900 font-medium font-sans">
                     {range.label}
                   </span>
-                  <span className="text-slate-300 font-bold">•</span>
-                  <span className="text-sm font-extrabold text-slate-800">
+                  <span className="text-black font-bold font-sans text-sm tabular-nums">
                     {range.days}
                   </span>
                 </div>
               ))}
             </div>
 
-            {/* Close action */}
+            {/* Minimal Close Action */}
             <div className="flex justify-end pt-1">
               <button
+                type="button"
                 onClick={() => setShowMarketTimeModal(false)}
-                className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold font-sans transition-all cursor-pointer shadow-xs"
+                className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-semibold font-sans transition-all cursor-pointer shadow-xs"
               >
                 Close
               </button>
