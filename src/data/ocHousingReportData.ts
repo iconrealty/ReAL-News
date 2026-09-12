@@ -273,23 +273,23 @@ export const OC_HOUSING_REPORT_METADATA = {
 // =============================================================================
 export const OC_HOUSING_SUMMARY_CARDS: OCSummaryCardData[] = [
   {
-    id: "inventory",
-    title: "Active Inventory",
-    shortTitle: "Inventory",
-    currentStat: `${cfg.actives.toLocaleString()} Homes`,
-    currentValue: cfg.actives,
-    unit: "Active Listings",
-    trend2Weeks: `${inventoryDelta2Wks > 0 ? '+' : ''}${inventoryDelta2Wks.toLocaleString()} homes (${inventoryPct2Wks > 0 ? '+' : ''}${inventoryPct2Wks}%) in 2 wks`,
-    isTrendPositive: inventoryDelta2Wks <= 0,
-    compLastYear: `${cfg.activesLastYear.toLocaleString()} homes (${inventoryPctYoY > 0 ? '+' : ''}${inventoryPctYoY}% YoY / ${Math.abs(inventoryDeltaYoY)} ${inventoryDeltaYoY >= 0 ? 'more' : 'fewer'})`,
-    summary: `The active listing inventory stood at ${cfg.actives.toLocaleString()} homes (${inventoryDelta2Wks > 0 ? '+' : ''}${inventoryDelta2Wks} homes in the past two weeks). Last year, inventory stood at ${cfg.activesLastYear.toLocaleString()} listings (${inventoryPctYoY > 0 ? '+' : ''}${inventoryPctYoY}% YoY).`,
+    id: "speed",
+    title: "Expected Market Time",
+    shortTitle: "Market Speed",
+    currentStat: `${cfg.marketTime} Days`,
+    currentValue: cfg.marketTime,
+    unit: "Days to Sell",
+    trend2Weeks: `${marketTimeDelta2Wks > 0 ? '+' : ''}${marketTimeDelta2Wks} day${Math.abs(marketTimeDelta2Wks) === 1 ? '' : 's'} (from ${cfg.marketTimeTwoWeeksAgo}d)`,
+    isTrendPositive: marketTimeDelta2Wks <= 0,
+    compLastYear: `${cfg.marketTimeLastYear} days (${marketTimeDeltaYoY === 0 ? 'identical pace' : marketTimeDeltaYoY < 0 ? `${Math.abs(marketTimeDeltaYoY)}d faster` : `${marketTimeDeltaYoY}d slower`})`,
+    summary: `Expected Market Time stands at ${cfg.marketTime} days (${marketTimeDelta2Wks < 0 ? `${Math.abs(marketTimeDelta2Wks)} day improvement` : marketTimeDelta2Wks > 0 ? `${marketTimeDelta2Wks} day increase` : 'unchanged'} from ${cfg.marketTimeTwoWeeksAgo} days two weeks ago). The market remains in balanced/slight seller territory.`,
     keyTakeaways: [
-      `Active inventory is at ${cfg.actives.toLocaleString()} homes (${inventoryDelta2Wks > 0 ? '+' : ''}${inventoryDelta2Wks} in 2 weeks).`,
-      `Compared to last year's ${cfg.activesLastYear.toLocaleString()} homes (${inventoryPctYoY > 0 ? '+' : ''}${inventoryPctYoY}% YoY).`,
-      `Pre-COVID 3-year average was ${cfg.preCovidActivesAverage.toLocaleString()} homes.`,
-      `${cfg.ytdNewListings.toLocaleString()} homes placed on the market YTD.`
+      `Countywide market speed is at ${cfg.marketTime} days (from ${cfg.marketTimeTwoWeeksAgo}d 2 weeks ago).`,
+      `Attached Condos/Townhomes: ${cfg.attached.marketTime} days (vs ${cfg.attached.marketTimeTwoWeeksAgo}d 2 wks ago; ${cfg.attached.marketTimeLastYear}d last year).`,
+      `Detached Single-Family: ${cfg.detached.marketTime} days (vs ${cfg.detached.marketTimeTwoWeeksAgo}d 2 wks ago; ${cfg.detached.marketTimeLastYear}d last year).`,
+      `Detached single-family homes continue to trade faster than attached properties.`
     ],
-    category: "supply"
+    category: "speed"
   },
   {
     id: "demand",
@@ -311,50 +311,31 @@ export const OC_HOUSING_SUMMARY_CARDS: OCSummaryCardData[] = [
     category: "demand"
   },
   {
-    id: "speed",
-    title: "Expected Market Time",
-    shortTitle: "Market Speed",
-    currentStat: `${cfg.marketTime} Days`,
-    currentValue: cfg.marketTime,
-    unit: "Days to Sell",
-    trend2Weeks: `${marketTimeDelta2Wks > 0 ? '+' : ''}${marketTimeDelta2Wks} day${Math.abs(marketTimeDelta2Wks) === 1 ? '' : 's'} (${marketTimeDelta2Wks < 0 ? 'down' : marketTimeDelta2Wks > 0 ? 'up' : 'flat'} from ${cfg.marketTimeTwoWeeksAgo}d)`,
-    isTrendPositive: marketTimeDelta2Wks <= 0,
-    compLastYear: `${cfg.marketTimeLastYear} days (${marketTimeDeltaYoY === 0 ? 'identical pace' : marketTimeDeltaYoY < 0 ? `${Math.abs(marketTimeDeltaYoY)}d faster` : `${marketTimeDeltaYoY}d slower`})`,
-    summary: `Expected Market Time stands at ${cfg.marketTime} days (${marketTimeDelta2Wks < 0 ? `${Math.abs(marketTimeDelta2Wks)} day improvement` : marketTimeDelta2Wks > 0 ? `${marketTimeDelta2Wks} day increase` : 'unchanged'} from ${cfg.marketTimeTwoWeeksAgo} days two weeks ago). The market remains in balanced territory.`,
+    id: "inventory",
+    title: "Active Inventory",
+    shortTitle: "Inventory",
+    currentStat: `${cfg.actives.toLocaleString()} Homes`,
+    currentValue: cfg.actives,
+    unit: "Active Listings",
+    trend2Weeks: `${inventoryDelta2Wks > 0 ? '+' : ''}${inventoryDelta2Wks.toLocaleString()} homes (${inventoryPct2Wks > 0 ? '+' : ''}${inventoryPct2Wks}%) in 2 wks`,
+    isTrendPositive: inventoryDelta2Wks <= 0,
+    compLastYear: `${cfg.activesLastYear.toLocaleString()} homes (${inventoryPctYoY > 0 ? '+' : ''}${inventoryPctYoY}% YoY / ${Math.abs(inventoryDeltaYoY)} ${inventoryDeltaYoY >= 0 ? 'more' : 'fewer'})`,
+    summary: `The active listing inventory stood at ${cfg.actives.toLocaleString()} homes (${inventoryDelta2Wks > 0 ? '+' : ''}${inventoryDelta2Wks} homes in the past two weeks). Last year, inventory stood at ${cfg.activesLastYear.toLocaleString()} listings (${inventoryPctYoY > 0 ? '+' : ''}${inventoryPctYoY}% YoY).`,
     keyTakeaways: [
-      `Countywide market speed is at ${cfg.marketTime} days (down from ${cfg.marketTimeTwoWeeksAgo}d 2 weeks ago).`,
-      `Attached Condos/Townhomes: ${cfg.attached.marketTime} days (vs ${cfg.attached.marketTimeTwoWeeksAgo}d 2 wks ago; ${cfg.attached.marketTimeLastYear}d last year).`,
-      `Detached Single-Family: ${cfg.detached.marketTime} days (vs ${cfg.detached.marketTimeTwoWeeksAgo}d 2 wks ago; ${cfg.detached.marketTimeLastYear}d last year).`,
-      `Detached single-family homes continue to trade faster than attached properties.`
+      `Active inventory is at ${cfg.actives.toLocaleString()} homes (${inventoryDelta2Wks > 0 ? '+' : ''}${inventoryDelta2Wks} in 2 weeks).`,
+      `Compared to last year's ${cfg.activesLastYear.toLocaleString()} homes (${inventoryPctYoY > 0 ? '+' : ''}${inventoryPctYoY}% YoY).`,
+      `Pre-COVID 3-year average was ${cfg.preCovidActivesAverage.toLocaleString()} homes.`,
+      `${cfg.ytdNewListings.toLocaleString()} homes placed on the market YTD.`
     ],
-    category: "speed"
-  },
-  {
-    id: "luxury",
-    title: "Luxury Market ($2.5M+)",
-    shortTitle: "Luxury ($2.5M+)",
-    currentStat: `${cfg.luxury.marketTime} Days`,
-    currentValue: cfg.luxury.marketTime,
-    unit: "Days to Sell",
-    trend2Weeks: `${luxuryMarketTimeDelta2Wks > 0 ? '+' : ''}${luxuryMarketTimeDelta2Wks} days (${luxuryMarketTimeDelta2Wks < 0 ? 'improved' : 'slower'} from ${cfg.luxury.marketTimeTwoWeeksAgo}d)`,
-    isTrendPositive: luxuryMarketTimeDelta2Wks <= 0,
-    compLastYear: `${cfg.luxury.marketTimeLastYear} days (substantially slower last year)`,
-    summary: `Luxury inventory above $2.5M stands at ${cfg.luxury.actives.toLocaleString()} homes, with luxury demand at ${cfg.luxury.demand.toLocaleString()} pending escrows (${luxuryDemandDelta2Wks > 0 ? `+${luxuryDemandPct2Wks}%` : `${luxuryDemandPct2Wks}%`}). Expected Market Time is ${cfg.luxury.marketTime} days.`,
-    keyTakeaways: [
-      `Luxury Expected Market Time is at ${cfg.luxury.marketTime} days (${luxuryMarketTimeDelta2Wks < 0 ? `improved ${Math.abs(luxuryMarketTimeDelta2Wks)}d` : `${luxuryMarketTimeDelta2Wks}d`} vs 2 wks ago).`,
-      `Luxury demand: ${cfg.luxury.demand} pending sales; luxury supply: ${cfg.luxury.actives} active listings.`,
-      `Comparison to last year's ${cfg.luxury.marketTimeLastYear} days shows significantly stronger velocity in 2026.`,
-      `High-end demand remains well-capitalized across premier coastal enclaves.`
-    ],
-    category: "luxury"
+    category: "supply"
   },
   {
     id: "closed",
-    title: `${cfg.closedSales.period} Closed Sales`,
+    title: cfg.closedSales.period,
     shortTitle: "Closed Sales",
     currentStat: `${cfg.closedSales.unitsSold.toLocaleString()} Sales`,
     currentValue: cfg.closedSales.unitsSold,
-    unit: `${cfg.closedSales.period} Closed Sales`,
+    unit: `${cfg.closedSales.salesToListRatio} Sale-to-List Ratio`,
     trend2Weeks: closedSalesDeltaYoY === 0 ? `Level vs ${cfg.closedSales.priorYearPeriod}` : `${closedSalesDeltaYoY > 0 ? `+${closedSalesPctYoY}%` : `${closedSalesPctYoY}%`} vs ${cfg.closedSales.priorYearPeriod}`,
     isTrendPositive: closedSalesDeltaYoY >= 0,
     compLastYear: `${cfg.closedSales.unitsSoldPriorYear.toLocaleString()} sales in ${cfg.closedSales.priorYearPeriod} (${closedSalesDeltaYoY >= 0 ? `+${closedSalesDeltaYoY}` : closedSalesDeltaYoY} sales)`,
@@ -366,25 +347,6 @@ export const OC_HOUSING_SUMMARY_CARDS: OCSummaryCardData[] = [
       `Median Days on Market: ${cfg.closedSales.medianDOM} days.`
     ],
     category: "sales"
-  },
-  {
-    id: "distressed",
-    title: "Distressed Homes",
-    shortTitle: "Distressed",
-    currentStat: `${cfg.distressed.actives} Homes (${cfg.distressed.listingsPct})`,
-    currentValue: cfg.distressed.actives,
-    unit: "Active Listings",
-    trend2Weeks: `${cfg.distressed.actives - cfg.distressed.activesTwoWeeksAgo >= 0 ? '+' : ''}${cfg.distressed.actives - cfg.distressed.activesTwoWeeksAgo} homes (from ${cfg.distressed.activesTwoWeeksAgo})`,
-    isTrendPositive: cfg.distressed.actives <= 15,
-    compLastYear: `${cfg.distressed.lastYearActives} distressed homes (historically low)`,
-    summary: `Short sales and foreclosures combined comprised only ${cfg.distressed.listingsPct} of all active listings and ${cfg.distressed.demandPct} of demand. There are currently only ${cfg.distressed.foreclosures} foreclosures and ${cfg.distressed.shortSales} short sales available in the entire county, bringing the total of distressed homes to ${cfg.distressed.actives}.`,
-    keyTakeaways: [
-      `Total distressed active inventory: ${cfg.distressed.actives} homes (${cfg.distressed.foreclosures} foreclosures, ${cfg.distressed.shortSales} short sales).`,
-      `Comprises only ${cfg.distressed.listingsPct} of all active listings in Orange County.`,
-      `Accounts for only ${cfg.distressed.demandPct} of 30-day buyer demand.`,
-      `Virtually identical to last year (${cfg.distressed.lastYearActives} homes); foreclosure levels remain near statistical zero.`
-    ],
-    category: "distressed"
   }
 ];
 

@@ -941,23 +941,19 @@ export function App() {
                                 const closedDays = soldData ? soldData.medianDOM : 0;
                                 return (
                                   <div className="bg-blue-600 p-4 sm:p-5 rounded-2xl sm:rounded-3xl flex flex-col justify-between shadow-xs space-y-3 text-left text-white">
-                                    <div className="w-full space-y-1">
+                                    <div className="w-full">
                                       <div className="text-xs sm:text-sm font-black uppercase tracking-wider text-white font-sans">
                                         Days on Market
                                       </div>
-                                      <div className="text-xs sm:text-sm font-bold text-white tracking-normal">
+                                    </div>
+
+                                    <div className="space-y-1">
+                                      <div className="text-xs sm:text-sm font-bold text-white/90 tracking-normal">
                                         Time to Sell Once Properly Priced
                                       </div>
-                                    </div>
-
-                                    <div className="text-3xl sm:text-4xl font-black text-white tracking-tight font-sans">
-                                      {closedDays > 0 ? `${closedDays} Days` : '—'}
-                                    </div>
-
-                                    <div className="pt-1">
-                                      <span className="bg-white text-blue-950 font-black text-xs px-2.5 py-1 rounded-lg inline-block shadow-xs font-sans">
-                                        Time to Sell
-                                      </span>
+                                      <div className="text-3xl sm:text-4xl font-black text-white tracking-tight font-sans">
+                                        {closedDays > 0 ? `${closedDays} Days` : '—'}
+                                      </div>
                                     </div>
                                   </div>
                                 );

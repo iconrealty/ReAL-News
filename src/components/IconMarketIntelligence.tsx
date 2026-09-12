@@ -30,6 +30,7 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
 }) => {
   const [showMarketTimeModal, setShowMarketTimeModal] = useState<boolean>(false);
   const [showHistoricalMarketTimeModal, setShowHistoricalMarketTimeModal] = useState<boolean>(false);
+  const [activeDirectionTab, setActiveDirectionTab] = useState<string>('speed');
 
   const meta = OC_HOUSING_REPORT_METADATA;
 
@@ -159,14 +160,6 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
               <span>Expected Market Time Ranges</span>
             </button>
 
-            {currentCity.id === 'orange-county' && (
-              <span
-                className={`inline-flex items-center gap-2 px-3 py-2 rounded-xl text-xs sm:text-sm font-black ${countySpeed.buttonBg} text-white shadow-xs tracking-wide`}
-              >
-                <span>{meta.countywideMarketTime} Days • {countySpeed.label}</span>
-              </span>
-            )}
-
             {currentCity.id !== 'orange-county' && onSelectCity && (
               <button
                 onClick={() => {
@@ -245,23 +238,19 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                       const closedDays = soldData ? soldData.medianDOM : 0;
                       return (
                         <div className="bg-blue-600 p-4 sm:p-5 rounded-2xl sm:rounded-3xl flex flex-col justify-between shadow-xs space-y-3 text-left text-white">
-                          <div className="w-full space-y-1">
+                          <div className="w-full">
                             <div className="text-xs sm:text-sm font-black uppercase tracking-wider text-white font-sans">
                               Days on Market
                             </div>
-                            <div className="text-xs sm:text-sm font-bold text-white tracking-normal">
+                          </div>
+
+                          <div className="space-y-1">
+                            <div className="text-xs sm:text-sm font-bold text-white/90 tracking-normal">
                               Time to Sell Once Properly Priced
                             </div>
-                          </div>
-
-                          <div className="text-3xl sm:text-4xl font-black text-white tracking-tight font-sans">
-                            {closedDays > 0 ? `${closedDays} Days` : '—'}
-                          </div>
-
-                          <div className="pt-1">
-                            <span className="bg-white text-blue-950 font-black text-xs px-2.5 py-1 rounded-lg inline-block shadow-xs font-sans">
-                              Time to Sell
-                            </span>
+                            <div className="text-3xl sm:text-4xl font-black text-white tracking-tight font-sans">
+                              {closedDays > 0 ? `${closedDays} Days` : '—'}
+                            </div>
                           </div>
                         </div>
                       );
@@ -348,31 +337,98 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
         })()}
       </div>
 
-      {/* 2. HOUSING VITAL SIGNS CARDS WITH LAST YEAR COMPARISONS */}
-      <div className="space-y-3">
+      {/* 2. MARKET DIRECTION TABS / CARDS */}
+      <div className="space-y-4">
         <div className="flex items-center justify-between px-1">
-          <h2 className="text-lg sm:text-xl font-black text-black tracking-tight">
-            Countywide Housing Vital Signs
-          </h2>
+          <div className="flex items-center gap-2">
+            <div className="w-2.5 h-6 bg-[#FA2D48] rounded-full"></div>
+            <h2 className="text-lg sm:text-xl font-black text-black tracking-tight">
+              Market Direction
+            </h2>
+          </div>
           <span className="text-xs font-bold text-slate-500">
             Orange County Benchmark Data
           </span>
         </div>
 
-        {/* 6 Grid Cards with Comp from Last Year */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+        {/* 4 Tabs / Cards: 1st Expected Market Time, 2nd Buyer Demand, 3rd Active Inventory, 4th Closed Sales */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           {OC_HOUSING_SUMMARY_CARDS.map((card) => {
+            const isSpeed = card.id === 'speed';
+            const isSelected = activeDirectionTab === card.id;
+
+            const speedDays = currentCity.id !== 'orange-county' && currentCityMarketData
+              ? currentCityMarketData.marketTimeDays
+              : meta.countywideMarketTime;
+            const speedCondition = getMarketCondition(speedDays);
+
             const trendLabel = card.trend2Weeks.split(' in ')[0];
             const isNegative = trendLabel.trim().startsWith('-');
 
+            if (isSpeed) {
+              return (
+                <button
+                  type="button"
+                  key={card.id}
+                  onClick={() => setActiveDirectionTab(card.id)}
+                  className={`w-full text-left ${speedCondition.bgClass} text-white rounded-2xl p-5 shadow-xs flex flex-col justify-between space-y-3 relative transition-all cursor-pointer hover:opacity-95 active:scale-[0.99] ${
+                    isSelected ? 'ring-3 ring-white/60 shadow-md scale-[1.01]' : 'opacity-95'
+                  }`}
+                  title="Click to view Expected Market Time analysis"
+                >
+                  {/* Card Top Label */}
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-extrabold text-white tracking-tight font-sans flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
+                      {card.title}
+                    </span>
+                  </div>
+
+                  {/* Card Main Stat */}
+                  <div className="space-y-1 my-1">
+                    <div className="text-xs font-bold text-white/90 font-sans tracking-wide">
+                      {trendLabel}
+                    </div>
+                    <div className="text-3xl sm:text-4xl font-black font-sans text-white tracking-tight">
+                      {speedDays} Days
+                    </div>
+                    <div className="pt-0.5">
+                      <span className="bg-white text-slate-950 font-black text-xs px-2.5 py-0.5 rounded-md inline-block shadow-2xs font-sans">
+                        {speedCondition.badgeText}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Comparison: Last Year */}
+                  <div className="pt-3 border-t border-white/25 space-y-1 text-xs font-sans text-white/95">
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium text-white/80">
+                        Last Year Comp:
+                      </span>
+                      <span className="font-bold text-white">
+                        {card.compLastYear}
+                      </span>
+                    </div>
+                  </div>
+                </button>
+              );
+            }
+
             return (
-              <div
+              <button
+                type="button"
                 key={card.id}
-                className="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-2xs flex flex-col justify-between space-y-3 relative transition-all"
+                onClick={() => setActiveDirectionTab(card.id)}
+                className={`w-full text-left bg-white rounded-2xl p-5 border shadow-2xs flex flex-col justify-between space-y-3 relative transition-all cursor-pointer hover:border-slate-300 active:scale-[0.99] ${
+                  isSelected
+                    ? 'border-[#FA2D48]/60 ring-2 ring-[#FA2D48]/30 shadow-xs'
+                    : 'border-slate-200/90'
+                }`}
+                title={`Click to view ${card.title} analysis`}
               >
                 {/* Card Top Label & 2-Week Trend */}
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-extrabold text-[#FA2D48] tracking-tight font-sans">
+                  <span className="text-sm font-extrabold text-[#FA2D48] tracking-tight font-sans flex items-center gap-1.5">
                     {card.title}
                   </span>
 
@@ -394,12 +450,12 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                     {card.currentStat}
                   </div>
                   <div className="text-xs font-bold font-sans text-emerald-600">
-                    {card.id === 'closed' ? `${card.unit} • ${meta.salesToListRatio} Sale-to-List Ratio` : card.unit}
+                    {card.unit}
                   </div>
                 </div>
 
                 {/* Comparison: Last Year */}
-                <div className="pt-3 border-t border-slate-100 space-y-1.5 text-xs font-sans">
+                <div className="pt-3 border-t border-slate-100 space-y-1 text-xs font-sans">
                   <div className="flex items-center justify-between">
                     <span className="font-medium text-slate-500">
                       Last Year Comp:
@@ -409,10 +465,56 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                     </span>
                   </div>
                 </div>
-              </div>
+              </button>
             );
           })}
         </div>
+
+        {/* Selected Signal Detail & Steven Thomas Analysis */}
+        {(() => {
+          const activeCard = OC_HOUSING_SUMMARY_CARDS.find((c) => c.id === activeDirectionTab) || OC_HOUSING_SUMMARY_CARDS[0];
+          if (!activeCard) return null;
+
+          return (
+            <div className="bg-slate-50/80 rounded-2xl p-4 sm:p-5 border border-slate-200/80 space-y-3">
+              <div className="flex items-center justify-between flex-wrap gap-2">
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-[#FA2D48]"></span>
+                  <h4 className="text-sm font-black text-slate-900 font-sans tracking-tight">
+                    {activeCard.id === 'closed' ? `${activeCard.title} Closed Sales` : activeCard.title} Analysis & Key Takeaways
+                  </h4>
+                </div>
+                <div className="flex items-center gap-2">
+                  {activeCard.id === 'speed' && (
+                    <button
+                      type="button"
+                      onClick={() => setShowMarketTimeModal(true)}
+                      className="text-[11px] font-bold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200/60 px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
+                    >
+                      View Speed Ranges Scale
+                    </button>
+                  )}
+                  <span className="text-[11px] font-bold text-slate-500">
+                    Steven Thomas Reports On Housing
+                  </span>
+                </div>
+              </div>
+
+              <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-sans font-medium">
+                {activeCard.summary}
+              </p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 border-t border-slate-200/60">
+                {activeCard.keyTakeaways.map((takeaway, idx) => (
+                  <div key={idx} className="flex items-start gap-2 text-xs text-slate-800 font-medium">
+                    <span className="text-[#FA2D48] font-black text-sm leading-none">•</span>
+                    <span>{takeaway}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })()}
       </div>
 
       {/* MARKET TIME RANGES QUICK REFERENCE MODAL */}
