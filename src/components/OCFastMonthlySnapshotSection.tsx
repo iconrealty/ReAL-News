@@ -16,7 +16,7 @@ interface OCFastMonthlySnapshotSectionProps {
 export const OCFastMonthlySnapshotSection: React.FC<OCFastMonthlySnapshotSectionProps> = ({
   propertyType,
   onPropertyTypeChange,
-  title = "Monthly Snapshot",
+  title = "Market Activity",
   showTabsSubtitle = true,
 }) => {
   const attachedData = OC_FAST_ATTACHED_METRICS;

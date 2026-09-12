@@ -42,7 +42,7 @@ export const OC_FAST_METADATA = {
 export const OC_FAST_PAGE_1_DATA = {
   title: "Monthly Indicators",
   period: "July 2026",
-  snapshotTitle: "Monthly Snapshot",
+  snapshotTitle: "Market Activity",
   snapshotSubtitle: "July 2026 Monthly Key Indicator Changes",
   snapshot: [
     {

@@ -52,7 +52,7 @@ export const OCFastTopOverview: React.FC<OCFastTopOverviewProps> = ({
       <OCFastMonthlySnapshotSection
         propertyType={propertyType}
         onPropertyTypeChange={setPropertyType}
-        title="Monthly Snapshot"
+        title="Market Activity"
         showTabsSubtitle={true}
       />
     </section>

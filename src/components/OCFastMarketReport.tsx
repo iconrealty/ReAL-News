@@ -213,7 +213,7 @@ export const OCFastMarketReport: React.FC<OCFastMarketReportProps> = ({
       <OCFastMonthlySnapshotSection
         propertyType={propertyType}
         onPropertyTypeChange={handlePropertyTypeChange}
-        title="Monthly Snapshot"
+        title="Market Activity"
         showTabsSubtitle={true}
       />
 

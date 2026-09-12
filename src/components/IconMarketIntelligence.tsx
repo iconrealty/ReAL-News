@@ -343,14 +343,14 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
       </div>
 
       {/* 2. MARKET DIRECTION TABS / CARDS */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between px-1">
-          <div className="flex items-center gap-2">
-            <div className="w-2.5 h-6 bg-[#FA2D48] rounded-full"></div>
-            <h2 className="text-lg sm:text-xl font-black text-black tracking-tight">
-              Market Direction
-            </h2>
-          </div>
+      <div className="space-y-3 sm:space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1.5 px-1">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black font-sans tracking-tighter text-[#FA2D48] leading-none">
+            Market Direction
+          </h2>
+          <span className="text-xs sm:text-sm font-semibold text-slate-500 hidden sm:inline">
+            Click a card to explore takeaways
+          </span>
         </div>
 
         {/* 4 Tabs / Cards: 1st Expected Market Time, 2nd Buyer Demand, 3rd Active Inventory, 4th Closed Sales */}
