@@ -347,18 +347,6 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
               Market Direction
             </h2>
           </div>
-          <div className="flex items-center gap-2.5">
-            <button
-              type="button"
-              onClick={() => setShowMarketTimeModal(true)}
-              className="text-[11px] font-bold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200/60 px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
-            >
-              Speed Scale Reference
-            </button>
-            <span className="text-xs font-bold text-slate-500">
-              Orange County Benchmark Data
-            </span>
-          </div>
         </div>
 
         {/* 4 Tabs / Cards: 1st Expected Market Time, 2nd Buyer Demand, 3rd Active Inventory, 4th Closed Sales */}
