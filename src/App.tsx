@@ -2,7 +2,13 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { CityInfo, NewsCategory, NewsArticle, AdBanner, LiveMortgageRates } from './types';
 import { CITIES, INITIAL_ARTICLES } from './data/mockNews';
 import { INITIAL_ADS } from './data/mockAds';
-import { OC_HOUSING_REPORT_METADATA, OC_SOLD_REPORT, OC_MARKET_TIME_REPORT } from './data/ocHousingReportData';
+import { 
+  OC_HOUSING_REPORT_METADATA, 
+  OC_SOLD_REPORT, 
+  OC_MARKET_TIME_REPORT,
+  STEVEN_THOMAS_MARKET_DIRECTION,
+  STEVEN_THOMAS_DIRECTION_MATRIX
+} from './data/ocHousingReportData';
 import { AppleNewsHeader } from './components/AppleNewsHeader';
 import { MobileBottomNav } from './components/MobileBottomNav';
 import { CitySelectorModal } from './components/CitySelectorModal';
@@ -135,6 +141,7 @@ export function App() {
   const [cityReportTab, setCityReportTab] = useState<'velocity' | 'closed' | 'historical' | 'summary'>('velocity');
   const [showHistoricalMarketTimeModal, setShowHistoricalMarketTimeModal] = useState<boolean>(false);
   const [showMarketTimeModal, setShowMarketTimeModal] = useState<boolean>(false);
+  const [showMarketDirectionModal, setShowMarketDirectionModal] = useState<boolean>(false);
 
   // Read cached rates from localStorage for instant mobile loading & offline resilience
   const getInitialRates = (): LiveMortgageRates => {
@@ -870,6 +877,90 @@ export function App() {
 
                     return (
                       <div className="space-y-6 pt-2">
+                        {/* Dynamic City-Specific Market Speed Live Ticker */}
+                        {marketData && (() => {
+                          const emtDelta = marketData.marketTimeDays - marketData.marketTime2WeeksAgo;
+                          const isFaster = emtDelta < 0;
+                          const isSlower = emtDelta > 0;
+                          const speedLabel = isFaster ? 'FASTER' : isSlower ? 'SLOWER' : 'STEADY';
+                          const speedColor = isFaster ? 'text-emerald-400' : isSlower ? 'text-[#FA2D48]' : 'text-slate-300';
+                          const cond = getMarketCondition(marketData.marketTimeDays);
+
+                          return (
+                            <button
+                              type="button"
+                              onClick={() => setShowHistoricalMarketTimeModal(true)}
+                              className="relative flex items-center h-11 sm:h-12 w-full overflow-hidden rounded-full bg-slate-950 hover:bg-slate-900 border border-slate-800 text-white shadow-md transition-all cursor-pointer font-sans group active:scale-[0.99] px-2.5 sm:px-4 select-none mb-4"
+                              title={`Click to view ${currentCity.name} Historical Speed & Pace`}
+                            >
+                              {/* Fixed Left Live Badge */}
+                              <div className="flex items-center gap-1.5 sm:gap-2 pr-2 sm:pr-3 border-r border-slate-800 shrink-0 z-10 bg-slate-950 group-hover:bg-slate-900 transition-colors">
+                                <span className="relative flex h-2 w-2 sm:h-2.5 sm:w-2.5 shrink-0">
+                                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FA2D48] opacity-75"></span>
+                                  <span className="relative inline-flex rounded-full h-2 w-2 sm:h-2.5 sm:w-2.5 bg-[#FA2D48]"></span>
+                                </span>
+                                <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-white shrink-0">
+                                  LIVE
+                                </span>
+                              </div>
+
+                              {/* Running City Equation */}
+                              <div className="relative overflow-hidden flex-1 mx-1.5 sm:mx-3">
+                                <div className="animate-ticker flex items-center group-hover:[animation-play-state:paused]">
+                                  {/* 1st copy */}
+                                  <div className="flex items-center gap-3.5 sm:gap-5 text-[11px] sm:text-[13px] font-bold tracking-wide uppercase text-white/90 shrink-0 pr-4 sm:pr-5">
+                                    <span className="font-black text-white">
+                                      MARKET SPEED: <span className={speedColor}>{speedLabel}</span> • {cond.badgeText}
+                                    </span>
+                                    <span className="text-[#FA2D48]">●</span>
+                                    <span className="text-slate-300">DEMAND: <span className="text-emerald-400 font-extrabold">{marketData.demand30Days}</span></span>
+                                    <span className="text-[#FA2D48]">●</span>
+                                    <span className="text-slate-300">SUPPLY: <span className="text-slate-200 font-extrabold">{marketData.currentActives}</span></span>
+                                    <span className="text-[#FA2D48]">●</span>
+                                    <span className="text-slate-300">
+                                      EMT: <span className="text-white font-extrabold">{marketData.marketTimeDays} DAYS</span>
+                                      {emtDelta !== 0 && (
+                                        <span className={`ml-1.5 font-black inline-flex items-center ${isFaster ? 'text-emerald-400' : 'text-[#FA2D48]'}`}>
+                                          {isFaster ? '↓' : '↑'}{Math.abs(emtDelta)}d
+                                        </span>
+                                      )}
+                                    </span>
+                                    <span className="text-[#FA2D48] font-black text-xs sm:text-sm">=</span>
+                                  </div>
+                                  {/* 2nd identical copy */}
+                                  <div className="flex items-center gap-3.5 sm:gap-5 text-[11px] sm:text-[13px] font-bold tracking-wide uppercase text-white/90 shrink-0 pr-4 sm:pr-5" aria-hidden="true">
+                                    <span className="font-black text-white">
+                                      MARKET SPEED: <span className={speedColor}>{speedLabel}</span> • {cond.badgeText}
+                                    </span>
+                                    <span className="text-[#FA2D48]">●</span>
+                                    <span className="text-slate-300">DEMAND: <span className="text-emerald-400 font-extrabold">{marketData.demand30Days}</span></span>
+                                    <span className="text-[#FA2D48]">●</span>
+                                    <span className="text-slate-300">SUPPLY: <span className="text-slate-200 font-extrabold">{marketData.currentActives}</span></span>
+                                    <span className="text-[#FA2D48]">●</span>
+                                    <span className="text-slate-300">
+                                      EMT: <span className="text-white font-extrabold">{marketData.marketTimeDays} DAYS</span>
+                                      {emtDelta !== 0 && (
+                                        <span className={`ml-1.5 font-black inline-flex items-center ${isFaster ? 'text-emerald-400' : 'text-[#FA2D48]'}`}>
+                                          {isFaster ? '↓' : '↑'}{Math.abs(emtDelta)}d
+                                        </span>
+                                      )}
+                                    </span>
+                                    <span className="text-[#FA2D48] font-black text-xs sm:text-sm">=</span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Fixed Right Action */}
+                              <div className="pl-2 sm:pl-3 border-l border-slate-800 shrink-0 z-10 bg-slate-950 group-hover:bg-slate-900 transition-colors flex items-center gap-1">
+                                <span className="text-[10px] sm:text-xs font-black text-slate-300 group-hover:text-white uppercase tracking-wider transition-colors hidden sm:inline">
+                                  Pace
+                                </span>
+                                <span className="text-xs font-black text-[#FA2D48]">↗</span>
+                              </div>
+                            </button>
+                          );
+                        })()}
+
                         {/* 1. CURRENT ACTIVE INVENTORY & EXPECTED MARKET TIME (Steven Thomas Page 10 Report) */}
                         {marketData && (
                           <div className="space-y-4">
@@ -1022,6 +1113,64 @@ export function App() {
                       </div>
                     );
                   })()}
+                </div>
+
+                {/* Live Steven Thomas Orange County Live Tab right below the Steven Thomas tab/card */}
+                <div className="flex justify-center sm:justify-start pt-1">
+                  <button
+                    type="button"
+                    id="main-steven-thomas-market-speed-pill"
+                    onClick={() => setShowMarketDirectionModal(true)}
+                    className="relative flex items-center h-11 sm:h-12 w-full max-w-2xl overflow-hidden rounded-full bg-slate-950 hover:bg-slate-900 border border-slate-800 text-white shadow-md transition-all cursor-pointer font-sans group active:scale-[0.99] px-2.5 sm:px-4 select-none"
+                    title="Click to view Market Speed Matrix"
+                  >
+                    {/* Fixed Left Live Beacon */}
+                    <div className="flex items-center gap-1.5 sm:gap-2 pr-2 sm:pr-3 border-r border-slate-800 shrink-0 z-10 bg-slate-950 group-hover:bg-slate-900 transition-colors">
+                      <span className="relative flex h-2 w-2 sm:h-2.5 sm:w-2.5 shrink-0">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FA2D48] opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 sm:h-2.5 sm:w-2.5 bg-[#FA2D48]"></span>
+                      </span>
+                      <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-white shrink-0">
+                        LIVE
+                      </span>
+                    </div>
+
+                    {/* Running Text Streaming Slower to the Left (Stock / Live Feed Style) */}
+                    <div className="relative overflow-hidden flex-1 mx-1.5 sm:mx-3">
+                      <div className="animate-ticker flex items-center group-hover:[animation-play-state:paused]">
+                        {/* 1st copy */}
+                        <div className="flex items-center gap-3.5 sm:gap-5 text-[11px] sm:text-[13px] font-bold tracking-wide uppercase text-white/90 shrink-0 pr-4 sm:pr-5">
+                          <span className="font-black text-white">{STEVEN_THOMAS_MARKET_DIRECTION.fullText}</span>
+                          <span className="text-[#FA2D48]">●</span>
+                          <span className="text-slate-300">DEMAND: <span className="text-emerald-400 font-extrabold">{STEVEN_THOMAS_MARKET_DIRECTION.demandTrend}</span></span>
+                          <span className="text-[#FA2D48]">●</span>
+                          <span className="text-slate-300">SUPPLY: <span className="text-emerald-400 font-extrabold">{STEVEN_THOMAS_MARKET_DIRECTION.supplyTrend}</span></span>
+                          <span className="text-[#FA2D48]">●</span>
+                          <span className="text-slate-300">EMT: <span className="text-emerald-400 font-extrabold">{STEVEN_THOMAS_MARKET_DIRECTION.speed}</span></span>
+                          <span className="text-[#FA2D48] font-black text-xs sm:text-sm">=</span>
+                        </div>
+                        {/* 2nd identical copy for seamless infinite loop */}
+                        <div className="flex items-center gap-3.5 sm:gap-5 text-[11px] sm:text-[13px] font-bold tracking-wide uppercase text-white/90 shrink-0 pr-4 sm:pr-5" aria-hidden="true">
+                          <span className="font-black text-white">{STEVEN_THOMAS_MARKET_DIRECTION.fullText}</span>
+                          <span className="text-[#FA2D48]">●</span>
+                          <span className="text-slate-300">DEMAND: <span className="text-emerald-400 font-extrabold">{STEVEN_THOMAS_MARKET_DIRECTION.demandTrend}</span></span>
+                          <span className="text-[#FA2D48]">●</span>
+                          <span className="text-slate-300">SUPPLY: <span className="text-emerald-400 font-extrabold">{STEVEN_THOMAS_MARKET_DIRECTION.supplyTrend}</span></span>
+                          <span className="text-[#FA2D48]">●</span>
+                          <span className="text-slate-300">EMT: <span className="text-emerald-400 font-extrabold">{STEVEN_THOMAS_MARKET_DIRECTION.speed}</span></span>
+                          <span className="text-[#FA2D48] font-black text-xs sm:text-sm">=</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Fixed Right Action */}
+                    <div className="pl-2 sm:pl-3 border-l border-slate-800 shrink-0 z-10 bg-slate-950 group-hover:bg-slate-900 transition-colors flex items-center gap-1">
+                      <span className="text-[10px] sm:text-xs font-black text-slate-300 group-hover:text-white uppercase tracking-wider transition-colors hidden sm:inline">
+                        Table
+                      </span>
+                      <span className="text-xs font-black text-[#FA2D48]">↗</span>
+                    </div>
+                  </button>
                 </div>
 
                 {/* Main Page Top Market Overview: Days on Market, Months of Supply, % Orig List Price, Price/SqFt */}
@@ -1455,6 +1604,119 @@ export function App() {
               <button
                 onClick={() => setShowHistoricalMarketTimeModal(false)}
                 className="w-full sm:w-auto px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold font-sans transition-all cursor-pointer shadow-xs"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MINIMALISTIC MARKET DIRECTION DETERMINATION MATRIX MODAL */}
+      {showMarketDirectionModal && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/45 backdrop-blur-xs transition-opacity animate-in fade-in"
+          onClick={() => setShowMarketDirectionModal(false)}
+        >
+          <div 
+            className="bg-white border border-slate-200/90 rounded-2xl sm:rounded-3xl p-5 sm:p-6 max-w-xl w-full shadow-2xl space-y-4 relative animate-in zoom-in-95 duration-150 font-sans text-left"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Clean, Simple Header */}
+            <div className="flex items-center justify-between gap-3 border-b border-slate-100 pb-3">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-[#FA2D48]"></span>
+                <h3 className="text-base sm:text-lg font-black text-slate-950 tracking-tight font-sans">
+                  Market Speed Matrix
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowMarketDirectionModal(false)}
+                className="p-1.5 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
+                title="Close"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* 8-Combination Table */}
+            <div className="overflow-x-auto rounded-xl border border-slate-200">
+              <table className="w-full text-left text-xs font-sans border-collapse">
+                <thead>
+                  <tr className="bg-slate-50 border-b border-slate-200 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                    <th className="py-2.5 px-3 w-8 text-center">#</th>
+                    <th className="py-2.5 px-3">Demand</th>
+                    <th className="py-2.5 px-3">Supply</th>
+                    <th className="py-2.5 px-3">Expected Market Time</th>
+                    <th className="py-2.5 px-3">Market Speed</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 text-slate-800">
+                  {STEVEN_THOMAS_DIRECTION_MATRIX.map((row) => {
+                    const isMatched = STEVEN_THOMAS_MARKET_DIRECTION.matchedRowId === row.id;
+
+                    return (
+                      <tr 
+                        key={row.id}
+                        className={`transition-colors ${
+                          isMatched 
+                            ? 'bg-rose-50/70 font-bold text-slate-950 border-l-3 border-l-[#FA2D48]' 
+                            : 'hover:bg-slate-50/60'
+                        }`}
+                      >
+                        <td className="py-2.5 px-3 text-center text-slate-400 font-mono text-[11px]">
+                          {row.id}
+                        </td>
+                        <td className="py-2.5 px-3">
+                          <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-bold font-mono ${
+                            row.demand === 'UP' ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'
+                          }`}>
+                            {row.demand}
+                          </span>
+                        </td>
+                        <td className="py-2.5 px-3">
+                          <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-bold font-mono ${
+                            row.supply === 'UP' ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'
+                          }`}>
+                            {row.supply}
+                          </span>
+                        </td>
+                        <td className="py-2.5 px-3">
+                          <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-bold font-mono ${
+                            row.emt === 'UP' ? 'bg-amber-50 text-amber-700' : 'bg-sky-50 text-sky-700'
+                          }`}>
+                            {row.emt}
+                          </span>
+                        </td>
+                        <td className="py-2.5 px-3">
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span className={`text-xs ${
+                              isMatched ? 'font-black text-[#FA2D48]' : 'font-semibold text-slate-800'
+                            }`}>
+                              {row.result}
+                            </span>
+                            {isMatched && (
+                              <span className="text-[9px] font-black uppercase tracking-wider bg-[#FA2D48] text-white px-1.5 py-0.5 rounded-full">
+                                Active
+                              </span>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Minimalist speed footnote & close button */}
+            <div className="flex items-center justify-between flex-wrap gap-2 pt-1 text-[11px] text-slate-500 font-sans">
+              <span>EMT DOWN = FASTER • EMT UP = SLOWER</span>
+              <button
+                type="button"
+                onClick={() => setShowMarketDirectionModal(false)}
+                className="px-4 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold font-sans transition-all cursor-pointer shadow-xs ml-auto"
               >
                 Close
               </button>
