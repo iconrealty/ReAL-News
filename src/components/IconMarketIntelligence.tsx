@@ -194,6 +194,81 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
               {/* 1. CURRENT ACTIVE INVENTORY & EXPECTED MARKET TIME */}
               {marketData && (
                 <div className="space-y-4">
+                  {/* Dynamic City-Specific Market Speed Live Ticker */}
+                  {(() => {
+                    const emtDelta = marketData.marketTimeDays - marketData.marketTime2WeeksAgo;
+                    const isFaster = emtDelta < 0;
+                    const isSlower = emtDelta > 0;
+                    const speedLabel = isFaster ? 'FASTER' : isSlower ? 'SLOWER' : 'STEADY';
+                    const speedColor = isFaster ? 'text-emerald-400' : isSlower ? 'text-[#FA2D48]' : 'text-sky-300';
+                    const deltaText = emtDelta === 0 
+                      ? 'Steady (0d)' 
+                      : isFaster 
+                        ? `${Math.abs(emtDelta)}d Faster` 
+                        : `+${emtDelta}d Slower`;
+                    const cond = getMarketCondition(marketData.marketTimeDays);
+
+                    return (
+                      <button
+                        type="button"
+                        onClick={() => setShowHistoricalMarketTimeModal(true)}
+                        className="relative flex items-center h-11 sm:h-12 w-full overflow-hidden rounded-full bg-slate-950 hover:bg-slate-900 border border-slate-800 text-white shadow-md transition-all cursor-pointer font-sans group active:scale-[0.99] px-3.5 sm:px-4 select-none"
+                        title={`Click to view ${currentCity.name} Historical Speed & Pace`}
+                      >
+                        {/* Fixed Left Live Badge with City Name */}
+                        <div className="flex items-center gap-2 pr-3 border-r border-slate-800 shrink-0 z-10 bg-slate-950 group-hover:bg-slate-900 transition-colors">
+                          <span className="relative flex h-2.5 w-2.5 shrink-0">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FA2D48] opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#FA2D48]"></span>
+                          </span>
+                          <span className="text-[11px] sm:text-xs font-black uppercase tracking-wider text-white shrink-0">
+                            {currentCity.name} SPEED
+                          </span>
+                        </div>
+
+                        {/* Running City Equation Scrolling Slower to the Left */}
+                        <div className="relative overflow-hidden flex-1 mx-3">
+                          <div className="animate-ticker flex items-center group-hover:[animation-play-state:paused]">
+                            {/* 1st copy */}
+                            <div className="flex items-center gap-5 text-xs sm:text-[13px] font-bold tracking-wide uppercase text-white/90 shrink-0 pr-5">
+                              <span className="font-black text-white">
+                                MARKET SPEED: <span className={speedColor}>{speedLabel}</span> • {cond.badgeText}
+                              </span>
+                              <span className="text-[#FA2D48]">●</span>
+                              <span className="text-slate-300">DEMAND: <span className="text-emerald-400 font-extrabold">{marketData.demand30Days}</span></span>
+                              <span className="text-[#FA2D48]">●</span>
+                              <span className="text-slate-300">SUPPLY: <span className="text-slate-200 font-extrabold">{marketData.currentActives}</span></span>
+                              <span className="text-[#FA2D48]">●</span>
+                              <span className="text-slate-300">EMT: <span className="text-sky-300 font-extrabold">{marketData.marketTimeDays} DAYS ({deltaText})</span></span>
+                              <span className="text-[#FA2D48] font-black text-sm sm:text-base">=</span>
+                            </div>
+                            {/* 2nd identical copy for seamless loop */}
+                            <div className="flex items-center gap-5 text-xs sm:text-[13px] font-bold tracking-wide uppercase text-white/90 shrink-0 pr-5" aria-hidden="true">
+                              <span className="font-black text-white">
+                                MARKET SPEED: <span className={speedColor}>{speedLabel}</span> • {cond.badgeText}
+                              </span>
+                              <span className="text-[#FA2D48]">●</span>
+                              <span className="text-slate-300">DEMAND: <span className="text-emerald-400 font-extrabold">{marketData.demand30Days}</span></span>
+                              <span className="text-[#FA2D48]">●</span>
+                              <span className="text-slate-300">SUPPLY: <span className="text-slate-200 font-extrabold">{marketData.currentActives}</span></span>
+                              <span className="text-[#FA2D48]">●</span>
+                              <span className="text-slate-300">EMT: <span className="text-sky-300 font-extrabold">{marketData.marketTimeDays} DAYS ({deltaText})</span></span>
+                              <span className="text-[#FA2D48] font-black text-sm sm:text-base">=</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Fixed Right Action */}
+                        <div className="pl-3 border-l border-slate-800 shrink-0 z-10 bg-slate-950 group-hover:bg-slate-900 transition-colors flex items-center gap-1">
+                          <span className="text-[11px] sm:text-xs font-black text-slate-300 group-hover:text-white uppercase tracking-wider transition-colors">
+                            Pace
+                          </span>
+                          <span className="text-xs font-black text-[#FA2D48]">↗</span>
+                        </div>
+                      </button>
+                    );
+                  })()}
+
                   <div className="flex items-center justify-between flex-wrap gap-2">
                     <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 font-sans">
                       Market Velocity & Expected Pace
@@ -208,6 +283,15 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                     {/* Expected Market Time - Tap to open historical pace modal */}
                     {(() => {
                       const cond = getMarketCondition(marketData.marketTimeDays);
+                      const emtDelta = marketData.marketTimeDays - marketData.marketTime2WeeksAgo;
+                      const isFaster = emtDelta < 0;
+                      const isSlower = emtDelta > 0;
+                      const deltaText = emtDelta === 0 
+                        ? 'Steady' 
+                        : isFaster 
+                          ? `${Math.abs(emtDelta)}d Faster` 
+                          : `+${emtDelta}d Slower`;
+
                       return (
                         <button
                           type="button"
@@ -224,8 +308,19 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                             </div>
                           </div>
 
-                          <div className="text-3xl sm:text-4xl font-black text-white tracking-tight font-sans">
-                            {marketData.marketTimeDays} Days
+                          <div className="flex items-baseline gap-2.5 flex-wrap">
+                            <div className="text-3xl sm:text-4xl font-black text-white tracking-tight font-sans">
+                              {marketData.marketTimeDays} Days
+                            </div>
+                            <span className={`text-[11px] sm:text-xs font-black px-2.5 py-0.5 rounded-full ${
+                              isFaster 
+                                ? 'bg-emerald-500/30 text-emerald-100 border border-emerald-400/40' 
+                                : isSlower 
+                                  ? 'bg-rose-500/30 text-rose-100 border border-rose-400/40' 
+                                  : 'bg-white/20 text-white border border-white/30'
+                            }`}>
+                              {deltaText}
+                            </span>
                           </div>
 
                           <div className="pt-1 flex items-center justify-between flex-wrap gap-2 w-full">
@@ -347,22 +442,61 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
 
       {/* 2. MARKET SPEED TABS / CARDS */}
       <div className="space-y-3 sm:space-y-4">
-        {/* Market Speed Compact Pill / Tab based ONLY on Steven Thomas Report */}
+        {/* Market Speed Live Stock-Style Ticker Tab based on Steven Thomas Report */}
         <div className="px-1">
           <button
             type="button"
             id="steven-thomas-market-speed-pill"
             onClick={() => setShowMarketDirectionModal(true)}
-            className="inline-flex items-center gap-2.5 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full bg-slate-900 hover:bg-slate-800 text-white shadow-xs transition-all cursor-pointer font-sans group active:scale-[0.98]"
+            className="relative flex items-center h-11 sm:h-12 w-full max-w-2xl overflow-hidden rounded-full bg-slate-950 hover:bg-slate-900 border border-slate-800 text-white shadow-md transition-all cursor-pointer font-sans group active:scale-[0.99] px-3.5 sm:px-4 select-none"
             title="Click to view Market Speed Matrix"
           >
-            <span className="w-2 h-2 rounded-full bg-[#FA2D48] animate-pulse shrink-0"></span>
-            <span className="text-xs sm:text-sm font-black text-white tracking-wide">
-              {STEVEN_THOMAS_MARKET_DIRECTION.fullText}
-            </span>
-            <span className="text-[10px] font-bold text-slate-400 group-hover:text-white uppercase tracking-wider pl-0.5 transition-colors">
-              Table ↗
-            </span>
+            {/* Fixed Left Live Beacon */}
+            <div className="flex items-center gap-2 pr-3 border-r border-slate-800 shrink-0 z-10 bg-slate-950 group-hover:bg-slate-900 transition-colors">
+              <span className="relative flex h-2.5 w-2.5 shrink-0">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FA2D48] opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#FA2D48]"></span>
+              </span>
+              <span className="text-[11px] sm:text-xs font-black uppercase tracking-wider text-white shrink-0">
+                LIVE
+              </span>
+            </div>
+
+            {/* Running Text Streaming Slower to the Left (Stock / Live Feed Style) */}
+            <div className="relative overflow-hidden flex-1 mx-3">
+              <div className="animate-ticker flex items-center group-hover:[animation-play-state:paused]">
+                {/* 1st copy */}
+                <div className="flex items-center gap-5 text-xs sm:text-[13px] font-bold tracking-wide uppercase text-white/90 shrink-0 pr-5">
+                  <span className="font-black text-white">{STEVEN_THOMAS_MARKET_DIRECTION.fullText}</span>
+                  <span className="text-[#FA2D48]">●</span>
+                  <span className="text-slate-300">DEMAND: <span className="text-emerald-400 font-extrabold">{STEVEN_THOMAS_MARKET_DIRECTION.demandTrend}</span></span>
+                  <span className="text-[#FA2D48]">●</span>
+                  <span className="text-slate-300">SUPPLY: <span className="text-emerald-400 font-extrabold">{STEVEN_THOMAS_MARKET_DIRECTION.supplyTrend}</span></span>
+                  <span className="text-[#FA2D48]">●</span>
+                  <span className="text-slate-300">EMT: <span className="text-sky-300 font-extrabold">{STEVEN_THOMAS_MARKET_DIRECTION.speed}</span></span>
+                  <span className="text-[#FA2D48] font-black text-sm sm:text-base">=</span>
+                </div>
+                {/* 2nd identical copy for seamless infinite loop */}
+                <div className="flex items-center gap-5 text-xs sm:text-[13px] font-bold tracking-wide uppercase text-white/90 shrink-0 pr-5" aria-hidden="true">
+                  <span className="font-black text-white">{STEVEN_THOMAS_MARKET_DIRECTION.fullText}</span>
+                  <span className="text-[#FA2D48]">●</span>
+                  <span className="text-slate-300">DEMAND: <span className="text-emerald-400 font-extrabold">{STEVEN_THOMAS_MARKET_DIRECTION.demandTrend}</span></span>
+                  <span className="text-[#FA2D48]">●</span>
+                  <span className="text-slate-300">SUPPLY: <span className="text-emerald-400 font-extrabold">{STEVEN_THOMAS_MARKET_DIRECTION.supplyTrend}</span></span>
+                  <span className="text-[#FA2D48]">●</span>
+                  <span className="text-slate-300">EMT: <span className="text-sky-300 font-extrabold">{STEVEN_THOMAS_MARKET_DIRECTION.speed}</span></span>
+                  <span className="text-[#FA2D48] font-black text-sm sm:text-base">=</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Fixed Right Action */}
+            <div className="pl-3 border-l border-slate-800 shrink-0 z-10 bg-slate-950 group-hover:bg-slate-900 transition-colors flex items-center gap-1">
+              <span className="text-[11px] sm:text-xs font-black text-slate-300 group-hover:text-white uppercase tracking-wider transition-colors">
+                Table
+              </span>
+              <span className="text-xs font-black text-[#FA2D48]">↗</span>
+            </div>
           </button>
         </div>
 
