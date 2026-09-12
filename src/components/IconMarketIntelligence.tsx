@@ -200,12 +200,7 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                     const isFaster = emtDelta < 0;
                     const isSlower = emtDelta > 0;
                     const speedLabel = isFaster ? 'FASTER' : isSlower ? 'SLOWER' : 'STEADY';
-                    const speedColor = isFaster ? 'text-emerald-400' : isSlower ? 'text-[#FA2D48]' : 'text-sky-300';
-                    const deltaText = emtDelta === 0 
-                      ? 'Steady (0d)' 
-                      : isFaster 
-                        ? `${Math.abs(emtDelta)}d Faster` 
-                        : `+${emtDelta}d Slower`;
+                    const speedColor = isFaster ? 'text-emerald-400' : isSlower ? 'text-[#FA2D48]' : 'text-slate-300';
                     const cond = getMarketCondition(marketData.marketTimeDays);
 
                     return (
@@ -239,7 +234,14 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                               <span className="text-[#FA2D48]">●</span>
                               <span className="text-slate-300">SUPPLY: <span className="text-slate-200 font-extrabold">{marketData.currentActives}</span></span>
                               <span className="text-[#FA2D48]">●</span>
-                              <span className="text-slate-300">EMT: <span className="text-sky-300 font-extrabold">{marketData.marketTimeDays} DAYS ({deltaText})</span></span>
+                              <span className="text-slate-300">
+                                EMT: <span className="text-white font-extrabold">{marketData.marketTimeDays} DAYS</span>
+                                {emtDelta !== 0 && (
+                                  <span className={`ml-1.5 font-black inline-flex items-center ${isFaster ? 'text-emerald-400' : 'text-[#FA2D48]'}`}>
+                                    {isFaster ? '↓' : '↑'}{Math.abs(emtDelta)}d
+                                  </span>
+                                )}
+                              </span>
                               <span className="text-[#FA2D48] font-black text-xs sm:text-sm">=</span>
                             </div>
                             {/* 2nd identical copy for seamless loop */}
@@ -252,7 +254,14 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                               <span className="text-[#FA2D48]">●</span>
                               <span className="text-slate-300">SUPPLY: <span className="text-slate-200 font-extrabold">{marketData.currentActives}</span></span>
                               <span className="text-[#FA2D48]">●</span>
-                              <span className="text-slate-300">EMT: <span className="text-sky-300 font-extrabold">{marketData.marketTimeDays} DAYS ({deltaText})</span></span>
+                              <span className="text-slate-300">
+                                EMT: <span className="text-white font-extrabold">{marketData.marketTimeDays} DAYS</span>
+                                {emtDelta !== 0 && (
+                                  <span className={`ml-1.5 font-black inline-flex items-center ${isFaster ? 'text-emerald-400' : 'text-[#FA2D48]'}`}>
+                                    {isFaster ? '↓' : '↑'}{Math.abs(emtDelta)}d
+                                  </span>
+                                )}
+                              </span>
                               <span className="text-[#FA2D48] font-black text-xs sm:text-sm">=</span>
                             </div>
                           </div>
@@ -312,15 +321,21 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                             <div className="text-3xl sm:text-4xl font-black text-white tracking-tight font-sans">
                               {marketData.marketTimeDays} Days
                             </div>
-                            <span className={`text-[11px] sm:text-xs font-black px-2.5 py-0.5 rounded-full ${
-                              isFaster 
-                                ? 'bg-emerald-500/30 text-emerald-100 border border-emerald-400/40' 
-                                : isSlower 
-                                  ? 'bg-rose-500/30 text-rose-100 border border-rose-400/40' 
-                                  : 'bg-white/20 text-white border border-white/30'
-                            }`}>
-                              {deltaText}
-                            </span>
+                            {emtDelta !== 0 ? (
+                              <span className={`text-[11px] sm:text-xs font-black px-2.5 py-0.5 rounded-full inline-flex items-center gap-1 ${
+                                isFaster 
+                                  ? 'bg-emerald-500/30 text-emerald-100 border border-emerald-400/40' 
+                                  : 'bg-rose-500/30 text-rose-100 border border-rose-400/40'
+                              }`}>
+                                <span className="font-extrabold">{isFaster ? '↓' : '↑'}</span>
+                                <span>{Math.abs(emtDelta)} Days</span>
+                              </span>
+                            ) : (
+                              <span className="text-[11px] sm:text-xs font-black px-2.5 py-0.5 rounded-full inline-flex items-center gap-1 bg-white/20 text-white border border-white/30">
+                                <span>—</span>
+                                <span>Level</span>
+                              </span>
+                            )}
                           </div>
 
                           <div className="pt-1 flex items-center justify-between flex-wrap gap-2 w-full">
@@ -473,7 +488,7 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                   <span className="text-[#FA2D48]">●</span>
                   <span className="text-slate-300">SUPPLY: <span className="text-emerald-400 font-extrabold">{STEVEN_THOMAS_MARKET_DIRECTION.supplyTrend}</span></span>
                   <span className="text-[#FA2D48]">●</span>
-                  <span className="text-slate-300">EMT: <span className="text-sky-300 font-extrabold">{STEVEN_THOMAS_MARKET_DIRECTION.speed}</span></span>
+                  <span className="text-slate-300">EMT: <span className="text-emerald-400 font-extrabold">{STEVEN_THOMAS_MARKET_DIRECTION.speed}</span></span>
                   <span className="text-[#FA2D48] font-black text-xs sm:text-sm">=</span>
                 </div>
                 {/* 2nd identical copy for seamless infinite loop */}
@@ -484,7 +499,7 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                   <span className="text-[#FA2D48]">●</span>
                   <span className="text-slate-300">SUPPLY: <span className="text-emerald-400 font-extrabold">{STEVEN_THOMAS_MARKET_DIRECTION.supplyTrend}</span></span>
                   <span className="text-[#FA2D48]">●</span>
-                  <span className="text-slate-300">EMT: <span className="text-sky-300 font-extrabold">{STEVEN_THOMAS_MARKET_DIRECTION.speed}</span></span>
+                  <span className="text-slate-300">EMT: <span className="text-emerald-400 font-extrabold">{STEVEN_THOMAS_MARKET_DIRECTION.speed}</span></span>
                   <span className="text-[#FA2D48] font-black text-xs sm:text-sm">=</span>
                 </div>
               </div>

@@ -19,7 +19,7 @@
 }
 
 @keyframes ticker {
-  0% {
+  0%, 14.28% {
     transform: translate3d(0, 0, 0);
   }
   100% {
@@ -30,6 +30,6 @@
 .animate-ticker {
   display: flex;
   width: max-content;
-  animation: ticker 26s linear infinite;
+  animation: ticker 28s linear infinite;
   will-change: transform;
 }
