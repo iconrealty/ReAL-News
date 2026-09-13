@@ -37,9 +37,12 @@ export function getMarketCondition(days: number) {
       label: "N/A",
       tag: "Data Pending",
       badgeText: "Historical N/A",
+      capitalLabel: "DATA PENDING",
       bgClass: "bg-slate-700 text-white font-bold",
       cardBg: "bg-slate-50 border-slate-200 text-slate-700",
       accentText: "text-slate-600",
+      tickerTextClass: "text-slate-400",
+      tickerBadgeClass: "bg-slate-800 text-slate-300 border-slate-700",
       chipBg: "bg-slate-200 text-slate-700 border-slate-300",
       dotColor: "bg-slate-400",
       description: "Data not available for this benchmark period."
@@ -50,9 +53,12 @@ export function getMarketCondition(days: number) {
       label: "Hot Seller's",
       tag: "< 60 Days",
       badgeText: "Hot Seller's Market (< 60 Days)",
+      capitalLabel: "HOT SELLER'S MARKET",
       bgClass: "bg-[#FA2D48] text-white font-bold",
       cardBg: "bg-rose-50/80 border-rose-200 text-rose-950",
       accentText: "text-[#FA2D48]",
+      tickerTextClass: "text-rose-400",
+      tickerBadgeClass: "bg-rose-500/20 text-rose-300 border-rose-500/50",
       chipBg: "bg-rose-100 text-[#FA2D48] border-rose-300",
       dotColor: "bg-[#FA2D48]",
       description: "Sellers hold full pricing leverage with rapid inventory absorption."
@@ -62,9 +68,12 @@ export function getMarketCondition(days: number) {
       label: "Slight Seller's",
       tag: "60–89 Days",
       badgeText: "Slight Seller's Market (60–89 Days)",
+      capitalLabel: "SLIGHT SELLER'S MARKET",
       bgClass: "bg-amber-500 text-white font-bold",
       cardBg: "bg-amber-50/80 border-amber-200 text-amber-950",
       accentText: "text-amber-600",
+      tickerTextClass: "text-amber-400",
+      tickerBadgeClass: "bg-amber-500/20 text-amber-300 border-amber-500/50",
       chipBg: "bg-amber-100 text-amber-800 border-amber-300",
       dotColor: "bg-amber-500",
       description: "Slight seller advantage with steady, active sales velocity."
@@ -74,24 +83,45 @@ export function getMarketCondition(days: number) {
       label: "Balanced Market",
       tag: "90–119 Days",
       badgeText: "Balanced Market (90–119 Days)",
+      capitalLabel: "BALANCED MARKET",
       bgClass: "bg-sky-600 text-white font-bold",
       cardBg: "bg-sky-50/80 border-sky-200 text-sky-950",
       accentText: "text-sky-600",
+      tickerTextClass: "text-sky-400",
+      tickerBadgeClass: "bg-sky-500/20 text-sky-300 border-sky-500/50",
       chipBg: "bg-sky-100 text-sky-800 border-sky-300",
       dotColor: "bg-sky-500",
       description: "Equilibrium between buyers and sellers with stable pricing."
     };
+  } else if (days < 150) {
+    return {
+      label: "Slight Buyer's",
+      tag: "120–149 Days",
+      badgeText: "Slight Buyer's Market (120–149 Days)",
+      capitalLabel: "SLIGHT BUYER'S MARKET",
+      bgClass: "bg-emerald-600 text-white font-bold",
+      cardBg: "bg-emerald-50/80 border-emerald-200 text-emerald-950",
+      accentText: "text-emerald-600",
+      tickerTextClass: "text-emerald-400",
+      tickerBadgeClass: "bg-emerald-500/20 text-emerald-300 border-emerald-500/50",
+      chipBg: "bg-emerald-100 text-emerald-800 border-emerald-300",
+      dotColor: "bg-emerald-500",
+      description: "Buyers gain negotiating room as market times lengthen."
+    };
   } else {
     return {
       label: "Buyer's Market",
-      tag: "120+ Days",
-      badgeText: "Buyer's Market (120+ Days)",
+      tag: "150+ Days",
+      badgeText: "Buyer's Market (150+ Days)",
+      capitalLabel: "BUYER'S MARKET",
       bgClass: "bg-emerald-700 text-white font-bold",
       cardBg: "bg-emerald-50/80 border-emerald-200 text-emerald-950",
       accentText: "text-emerald-700",
+      tickerTextClass: "text-teal-300",
+      tickerBadgeClass: "bg-teal-500/20 text-teal-300 border-teal-500/50",
       chipBg: "bg-emerald-100 text-emerald-800 border-emerald-300",
       dotColor: "bg-emerald-600",
-      description: "Buyers hold negotiating leverage with accumulating listings."
+      description: "Buyers hold deep negotiating leverage with accumulating listings."
     };
   }
 }
