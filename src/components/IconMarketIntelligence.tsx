@@ -14,6 +14,7 @@ import {
   OC_SOLD_REPORT,
   OC_MARKET_TIME_REPORT,
   STEVEN_THOMAS_MARKET_DIRECTION,
+  OC_COUNTYWIDE_LIVE_METRICS,
   STEVEN_THOMAS_DIRECTION_MATRIX
 } from '../data/ocHousingReportData';
 import { CITIES } from '../data/mockNews';
@@ -230,15 +231,22 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                                 MARKET SPEED: <span className={speedColor}>{speedLabel}</span> • {cond.badgeText}
                               </span>
                               <span className="text-[#FA2D48]">●</span>
-                              <span className="text-slate-300">DEMAND: <span className="text-emerald-400 font-extrabold">{marketData.demand30Days}</span></span>
+                              <span className="text-slate-300">
+                                DEMAND: <span className="text-emerald-400 font-extrabold">{marketData.demand30Days}</span>{' '}
+                                <span className="text-emerald-400 font-black text-lg leading-none inline-block">↑</span>
+                              </span>
                               <span className="text-[#FA2D48]">●</span>
-                              <span className="text-slate-300">SUPPLY: <span className="text-slate-200 font-extrabold">{marketData.currentActives}</span></span>
+                              <span className="text-slate-300">
+                                SUPPLY: <span className="text-slate-200 font-extrabold">{marketData.currentActives}</span>{' '}
+                                <span className="text-[#FA2D48] font-black text-lg leading-none inline-block">↓</span>
+                              </span>
                               <span className="text-[#FA2D48]">●</span>
                               <span className="text-slate-300">
                                 EMT: <span className="text-white font-extrabold">{marketData.marketTimeDays} DAYS</span>
                                 {emtDelta !== 0 && (
-                                  <span className={`ml-1.5 font-black inline-flex items-center ${isFaster ? 'text-emerald-400' : 'text-[#FA2D48]'}`}>
-                                    {isFaster ? '↓' : '↑'}{Math.abs(emtDelta)}d
+                                  <span className={`ml-1.5 font-black inline-flex items-center gap-0.5 ${isFaster ? 'text-emerald-400' : 'text-[#FA2D48]'}`}>
+                                    <span className="text-lg leading-none font-extrabold">{isFaster ? '↓' : '↑'}</span>
+                                    <span>{Math.abs(emtDelta)}d</span>
                                   </span>
                                 )}
                               </span>
@@ -250,15 +258,22 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                                 MARKET SPEED: <span className={speedColor}>{speedLabel}</span> • {cond.badgeText}
                               </span>
                               <span className="text-[#FA2D48]">●</span>
-                              <span className="text-slate-300">DEMAND: <span className="text-emerald-400 font-extrabold">{marketData.demand30Days}</span></span>
+                              <span className="text-slate-300">
+                                DEMAND: <span className="text-emerald-400 font-extrabold">{marketData.demand30Days}</span>{' '}
+                                <span className="text-emerald-400 font-black text-lg leading-none inline-block">↑</span>
+                              </span>
                               <span className="text-[#FA2D48]">●</span>
-                              <span className="text-slate-300">SUPPLY: <span className="text-slate-200 font-extrabold">{marketData.currentActives}</span></span>
+                              <span className="text-slate-300">
+                                SUPPLY: <span className="text-slate-200 font-extrabold">{marketData.currentActives}</span>{' '}
+                                <span className="text-[#FA2D48] font-black text-lg leading-none inline-block">↓</span>
+                              </span>
                               <span className="text-[#FA2D48]">●</span>
                               <span className="text-slate-300">
                                 EMT: <span className="text-white font-extrabold">{marketData.marketTimeDays} DAYS</span>
                                 {emtDelta !== 0 && (
-                                  <span className={`ml-1.5 font-black inline-flex items-center ${isFaster ? 'text-emerald-400' : 'text-[#FA2D48]'}`}>
-                                    {isFaster ? '↓' : '↑'}{Math.abs(emtDelta)}d
+                                  <span className={`ml-1.5 font-black inline-flex items-center gap-0.5 ${isFaster ? 'text-emerald-400' : 'text-[#FA2D48]'}`}>
+                                    <span className="text-lg leading-none font-extrabold">{isFaster ? '↓' : '↑'}</span>
+                                    <span>{Math.abs(emtDelta)}d</span>
                                   </span>
                                 )}
                               </span>
@@ -482,24 +497,60 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
               <div className="animate-ticker flex items-center group-hover:[animation-play-state:paused]">
                 {/* 1st copy */}
                 <div className="flex items-center gap-3.5 sm:gap-5 text-[11px] sm:text-[13px] font-bold tracking-wide uppercase text-white/90 shrink-0 pr-4 sm:pr-5">
-                  <span className="font-black text-white">{STEVEN_THOMAS_MARKET_DIRECTION.fullText}</span>
+                  <span className="font-black text-white">{OC_COUNTYWIDE_LIVE_METRICS.fullText}</span>
                   <span className="text-[#FA2D48]">●</span>
-                  <span className="text-slate-300">DEMAND: <span className="text-emerald-400 font-extrabold">{STEVEN_THOMAS_MARKET_DIRECTION.demandTrend}</span></span>
+                  <span className="text-slate-300">
+                    DEMAND: <span className="text-emerald-400 font-extrabold">{OC_COUNTYWIDE_LIVE_METRICS.demand.toLocaleString()}</span>{' '}
+                    <span className="text-rose-400 font-black inline-flex items-center gap-0.5">
+                      <span className="text-lg leading-none font-extrabold">↓</span>
+                      <span>{OC_COUNTYWIDE_LIVE_METRICS.demandDelta}</span>
+                    </span>
+                  </span>
                   <span className="text-[#FA2D48]">●</span>
-                  <span className="text-slate-300">SUPPLY: <span className="text-emerald-400 font-extrabold">{STEVEN_THOMAS_MARKET_DIRECTION.supplyTrend}</span></span>
+                  <span className="text-slate-300">
+                    SUPPLY: <span className="text-slate-200 font-extrabold">{OC_COUNTYWIDE_LIVE_METRICS.supply.toLocaleString()}</span>{' '}
+                    <span className="text-emerald-400 font-black inline-flex items-center gap-0.5">
+                      <span className="text-lg leading-none font-extrabold">↓</span>
+                      <span>{OC_COUNTYWIDE_LIVE_METRICS.supplyDelta}</span>
+                    </span>
+                  </span>
                   <span className="text-[#FA2D48]">●</span>
-                  <span className="text-slate-300">EMT: <span className="text-emerald-400 font-extrabold">{STEVEN_THOMAS_MARKET_DIRECTION.speed}</span></span>
+                  <span className="text-slate-300">
+                    EMT: <span className="text-white font-extrabold">{OC_COUNTYWIDE_LIVE_METRICS.emtDays} DAYS</span>{' '}
+                    <span className="text-emerald-400 font-black inline-flex items-center gap-0.5">
+                      <span className="text-lg leading-none font-extrabold">↓</span>
+                      <span>{Math.abs(OC_COUNTYWIDE_LIVE_METRICS.emtDelta)}d FASTER</span>
+                    </span>
+                  </span>
                   <span className="text-[#FA2D48] font-black text-xs sm:text-sm">=</span>
                 </div>
                 {/* 2nd identical copy for seamless infinite loop */}
                 <div className="flex items-center gap-3.5 sm:gap-5 text-[11px] sm:text-[13px] font-bold tracking-wide uppercase text-white/90 shrink-0 pr-4 sm:pr-5" aria-hidden="true">
-                  <span className="font-black text-white">{STEVEN_THOMAS_MARKET_DIRECTION.fullText}</span>
+                  <span className="font-black text-white">{OC_COUNTYWIDE_LIVE_METRICS.fullText}</span>
                   <span className="text-[#FA2D48]">●</span>
-                  <span className="text-slate-300">DEMAND: <span className="text-emerald-400 font-extrabold">{STEVEN_THOMAS_MARKET_DIRECTION.demandTrend}</span></span>
+                  <span className="text-slate-300">
+                    DEMAND: <span className="text-emerald-400 font-extrabold">{OC_COUNTYWIDE_LIVE_METRICS.demand.toLocaleString()}</span>{' '}
+                    <span className="text-rose-400 font-black inline-flex items-center gap-0.5">
+                      <span className="text-lg leading-none font-extrabold">↓</span>
+                      <span>{OC_COUNTYWIDE_LIVE_METRICS.demandDelta}</span>
+                    </span>
+                  </span>
                   <span className="text-[#FA2D48]">●</span>
-                  <span className="text-slate-300">SUPPLY: <span className="text-emerald-400 font-extrabold">{STEVEN_THOMAS_MARKET_DIRECTION.supplyTrend}</span></span>
+                  <span className="text-slate-300">
+                    SUPPLY: <span className="text-slate-200 font-extrabold">{OC_COUNTYWIDE_LIVE_METRICS.supply.toLocaleString()}</span>{' '}
+                    <span className="text-emerald-400 font-black inline-flex items-center gap-0.5">
+                      <span className="text-lg leading-none font-extrabold">↓</span>
+                      <span>{OC_COUNTYWIDE_LIVE_METRICS.supplyDelta}</span>
+                    </span>
+                  </span>
                   <span className="text-[#FA2D48]">●</span>
-                  <span className="text-slate-300">EMT: <span className="text-emerald-400 font-extrabold">{STEVEN_THOMAS_MARKET_DIRECTION.speed}</span></span>
+                  <span className="text-slate-300">
+                    EMT: <span className="text-white font-extrabold">{OC_COUNTYWIDE_LIVE_METRICS.emtDays} DAYS</span>{' '}
+                    <span className="text-emerald-400 font-black inline-flex items-center gap-0.5">
+                      <span className="text-lg leading-none font-extrabold">↓</span>
+                      <span>{Math.abs(OC_COUNTYWIDE_LIVE_METRICS.emtDelta)}d FASTER</span>
+                    </span>
+                  </span>
                   <span className="text-[#FA2D48] font-black text-xs sm:text-sm">=</span>
                 </div>
               </div>

@@ -372,6 +372,26 @@ export const STEVEN_THOMAS_MARKET_DIRECTION = evaluateStevenThomasMarketDirectio
   cfg.marketTimeTwoWeeksAgo
 );
 
+export const OC_COUNTYWIDE_LIVE_METRICS = {
+  demand: cfg.demand, // 1528
+  demandPrior: cfg.demandTwoWeeksAgo, // 1535
+  demandDelta: cfg.demand - cfg.demandTwoWeeksAgo, // -7
+  demandTrend: 'DOWN' as const,
+  
+  supply: cfg.actives, // 4982
+  supplyPrior: cfg.activesTwoWeeksAgo, // 5054
+  supplyDelta: cfg.actives - cfg.activesTwoWeeksAgo, // -72
+  supplyTrend: 'DOWN' as const,
+  
+  emtDays: cfg.marketTime, // 98
+  emtDaysPrior: cfg.marketTimeTwoWeeksAgo, // 99
+  emtDelta: cfg.marketTime - cfg.marketTimeTwoWeeksAgo, // -1
+  speed: 'FASTER' as const,
+  direction: 'IMPROVING' as const,
+  fullText: 'MARKET SPEED: IMPROVING • FASTER',
+  matchedRowId: 1
+};
+
 // =============================================================================
 // 3. EXECUTIVE SUMMARY CARDS (Automatically Derived from Config)
 // =============================================================================
