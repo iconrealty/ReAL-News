@@ -222,12 +222,21 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
     }
   };
 
-  const handleManualRateRefresh = async () => {
-    if (onRefreshRates) {
-      onRefreshRates();
-      return;
+  const handleManualRateRefresh = async (e?: React.SyntheticEvent) => {
+    if (e) {
+      e.stopPropagation();
     }
+    if (localRefreshing || isRefreshingRates) return;
+
     setLocalRefreshing(true);
+    if (onRefreshRates) {
+      try {
+        onRefreshRates();
+      } catch (err) {
+        console.warn("Parent onRefreshRates note:", err);
+      }
+    }
+
     try {
       let res = await fetch(`/api/live-market-stats?force=true&t=${Date.now()}&_rnd=${Math.random()}`, {
         method: 'GET',
@@ -236,7 +245,7 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
 
       if (!res || !res.ok) {
         res = await fetch(`/api/live-market-stats/sync?force=true&t=${Date.now()}`, {
-          method: 'GET',
+          method: 'POST',
           cache: 'no-store'
         }).catch(() => null);
       }
@@ -244,16 +253,22 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
       if (res && res.ok) {
         const json = await res.json();
         if (json.success && json.data) {
-          setLiveRates(json.data);
+          const freshData = { ...json.data, asOfTimestamp: Date.now() };
+          setLiveRates(freshData);
+          try {
+            localStorage.setItem('cached_live_mortgage_rates', JSON.stringify(freshData));
+          } catch (e) {
+            console.warn("Could not cache live rates in localStorage", e);
+          }
           if (typeof window !== 'undefined') {
-            window.dispatchEvent(new CustomEvent('live-rates-synced', { detail: json.data }));
+            window.dispatchEvent(new CustomEvent('live-rates-synced', { detail: freshData }));
           }
         }
       }
     } catch (err) {
       console.warn("Failed to manually refresh live rates", err);
     } finally {
-      setTimeout(() => setLocalRefreshing(false), 600);
+      setTimeout(() => setLocalRefreshing(false), 500);
     }
   };
 
@@ -813,8 +828,9 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
 
                       <button
                         onClick={handleManualRateRefresh}
+                        onTouchEnd={handleManualRateRefresh}
                         disabled={localRefreshing || isRefreshingRates}
-                        className="inline-flex items-center space-x-1 min-h-[36px] px-3 py-1 rounded-full bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-700 text-xs font-bold transition-all cursor-pointer disabled:opacity-50 touch-manipulation active:scale-95 select-none"
+                        className="inline-flex items-center space-x-1 min-h-[36px] px-3 py-1 rounded-full bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-700 text-xs font-bold transition-all cursor-pointer disabled:opacity-50 touch-manipulation active:scale-95 select-none shadow-2xs"
                         title="Sync latest live rates from Mortgage News Daily"
                       >
                         <RefreshCw className={`w-3.5 h-3.5 text-[#FA2D48] ${(localRefreshing || isRefreshingRates) ? 'animate-spin' : ''}`} />
@@ -828,9 +844,9 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                         <span className="text-[9px] text-slate-400 font-bold">{liveRates?.asOfDate || 'Daily Live Market'}</span>
                       </div>
                       <div className="flex items-baseline space-x-2.5 pt-1">
-                        <span className="text-3xl sm:text-4xl font-black text-slate-900">{liveRates?.mortgage30Year || '6.89%'}</span>
+                        <span className="text-3xl sm:text-4xl font-black text-slate-900">{liveRates?.mortgage30Year || '7.17%'}</span>
                         <span className="text-xs font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md">
-                          15-Yr: {liveRates?.mortgage15Year || '6.49%'}
+                          15-Yr: {liveRates?.mortgage15Year || '6.70%'}
                         </span>
                       </div>
                       <div className="flex flex-wrap items-center gap-1.5 pt-2">

@@ -151,8 +151,8 @@ export function App() {
       if (saved) {
         const parsed = JSON.parse(saved);
         const isFresh = parsed && parsed.asOfTimestamp && (Date.now() - parsed.asOfTimestamp < 5 * 60 * 1000);
-        // Purge old stale cache (e.g. 6.89% or 6.88% from previous days)
-        if (parsed && parsed.mortgage30Year && parsed.mortgage30Year !== '6.88%' && parsed.mortgage30Year !== '6.89%' && isFresh) {
+        // Purge old stale cache (e.g. 6.89%, 6.88%, or 7.12% from previous days)
+        if (parsed && parsed.mortgage30Year && parsed.mortgage30Year !== '6.88%' && parsed.mortgage30Year !== '6.89%' && parsed.mortgage30Year !== '7.12%' && isFresh) {
           return parsed;
         }
       }
@@ -161,15 +161,15 @@ export function App() {
     }
     return {
       source: 'Mortgage News Daily (MND Daily Index)',
-      asOfDate: 'MND Live (9/11/26)',
-      mortgage30Year: '7.12%',
-      mortgage15Year: '6.65%',
-      jumbo30Year: '7.25%',
-      fha30Year: '6.68%',
-      va30Year: '6.70%',
+      asOfDate: 'MND Live (9/14/26)',
+      mortgage30Year: '7.17%',
+      mortgage15Year: '6.70%',
+      jumbo30Year: '7.28%',
+      fha30Year: '6.75%',
+      va30Year: '6.77%',
       freddieMac30Year: '6.76%',
       rate30Year7DaysAgo: '6.89%',
-      rate30YearChange7Days: 0.23,
+      rate30YearChange7Days: 0.28,
       sourceType: 'MORTGAGE_NEWS_DAILY',
       isRealLiveRate: true
     };
@@ -918,10 +918,6 @@ export function App() {
                                       MARKET SPEED: <span className={speedColor}>{speedLabel}</span>
                                     </span>
                                     <span className="text-[#FA2D48]">●</span>
-                                    <span className={`font-black uppercase tracking-wider ${cond.tickerTextClass}`}>
-                                      STATUS: ({cond.tagNumbers} DAYS)
-                                    </span>
-                                    <span className="text-[#FA2D48]">●</span>
                                     <span className="text-slate-300">
                                       DEMAND: <span className="text-emerald-400 font-extrabold">{marketData.demand30Days}</span>{' '}
                                       <span className="text-emerald-400 font-black text-lg leading-none inline-block">↑</span>
@@ -951,10 +947,6 @@ export function App() {
                                     <span className="text-[#FA2D48]">●</span>
                                     <span className="font-black text-white">
                                       MARKET SPEED: <span className={speedColor}>{speedLabel}</span>
-                                    </span>
-                                    <span className="text-[#FA2D48]">●</span>
-                                    <span className={`font-black uppercase tracking-wider ${cond.tickerTextClass}`}>
-                                      STATUS: ({cond.tagNumbers} DAYS)
                                     </span>
                                     <span className="text-[#FA2D48]">●</span>
                                     <span className="text-slate-300">
@@ -1188,10 +1180,6 @@ export function App() {
                                 MARKET SPEED: <span className={countySpeedColor}>{countySpeedLabel}</span>
                               </span>
                               <span className="text-[#FA2D48]">●</span>
-                              <span className={`font-black uppercase tracking-wider ${countywideCond.tickerTextClass}`}>
-                                STATUS: ({countywideCond.tagNumbers} DAYS)
-                              </span>
-                              <span className="text-[#FA2D48]">●</span>
                               <span className="text-slate-300">
                                 DEMAND: <span className="text-emerald-400 font-extrabold">{OC_COUNTYWIDE_LIVE_METRICS.demand.toLocaleString()}</span>{' '}
                                 <span className="text-rose-400 font-black inline-flex items-center gap-0.5">
@@ -1225,10 +1213,6 @@ export function App() {
                               <span className="text-[#FA2D48]">●</span>
                               <span className="font-black text-white">
                                 MARKET SPEED: <span className={countySpeedColor}>{countySpeedLabel}</span>
-                              </span>
-                              <span className="text-[#FA2D48]">●</span>
-                              <span className={`font-black uppercase tracking-wider ${countywideCond.tickerTextClass}`}>
-                                STATUS: ({countywideCond.tagNumbers} DAYS)
                               </span>
                               <span className="text-[#FA2D48]">●</span>
                               <span className="text-slate-300">

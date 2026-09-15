@@ -553,15 +553,15 @@ interface CachedLiveRates {
 
 let cachedLiveRates: CachedLiveRates = {
   source: "Mortgage News Daily (MND Daily Index)",
-  asOfDate: "MND Live (9/11/26)",
-  mortgage30Year: "7.12%",
-  mortgage15Year: "6.65%",
-  jumbo30Year: "7.25%",
-  fha30Year: "6.68%",
-  va30Year: "6.70%",
+  asOfDate: "MND Live (9/14/26)",
+  mortgage30Year: "7.17%",
+  mortgage15Year: "6.70%",
+  jumbo30Year: "7.28%",
+  fha30Year: "6.75%",
+  va30Year: "6.77%",
   freddieMac30Year: "6.76%",
   rate30Year7DaysAgo: "6.89%",
-  rate30YearChange7Days: 0.23,
+  rate30YearChange7Days: 0.28,
   asOfTimestamp: 0, // 0 forces immediate live fetch on first request or startup
   lastChecked: new Date().toISOString(),
   sourceType: "MORTGAGE_NEWS_DAILY",
@@ -627,9 +627,9 @@ async function fetchLiveMndRates(forceRefresh = false): Promise<CachedLiveRates>
 
       // Extract date from table header
       const dateMatch = html.match(/<th class=[\"\\']rate-product[\"\\'][^>]*>[\s\S]*?<div class=[\"\\']pull-right text-muted[\"\\'][^>]*>([^<]+)<\/div>/i);
-      const asOfStr = dateMatch ? `MND Live (${dateMatch[1].trim()})` : "MND Live (9/11/26)";
+      const asOfStr = dateMatch ? `MND Live (${dateMatch[1].trim()})` : "MND Live (9/14/26)";
 
-      const r30Num = r30 ? parseFloat(r30.replace('%', '')) : 7.12;
+      const r30Num = r30 ? parseFloat(r30.replace('%', '')) : 7.17;
       let dynamicPrior7DayNum = 6.89; // Reliable baseline fallback
 
       // Extract dynamic historical 30-year rate from MND daily survey history

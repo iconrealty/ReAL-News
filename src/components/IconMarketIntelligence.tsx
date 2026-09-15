@@ -228,10 +228,6 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                                 MARKET SPEED: <span className={speedColor}>{speedLabel}</span>
                               </span>
                               <span className="text-[#FA2D48]">●</span>
-                              <span className={`font-black uppercase tracking-wider ${cond.tickerTextClass}`}>
-                                STATUS: ({cond.tagNumbers} DAYS)
-                              </span>
-                              <span className="text-[#FA2D48]">●</span>
                               <span className="text-slate-300">
                                 DEMAND: <span className="text-emerald-400 font-extrabold">{marketData.demand30Days}</span>{' '}
                                 <span className="text-emerald-400 font-black text-lg leading-none inline-block">↑</span>
@@ -261,10 +257,6 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                               <span className="text-[#FA2D48]">●</span>
                               <span className="font-black text-white">
                                 MARKET SPEED: <span className={speedColor}>{speedLabel}</span>
-                              </span>
-                              <span className="text-[#FA2D48]">●</span>
-                              <span className={`font-black uppercase tracking-wider ${cond.tickerTextClass}`}>
-                                STATUS: ({cond.tagNumbers} DAYS)
                               </span>
                               <span className="text-[#FA2D48]">●</span>
                               <span className="text-slate-300">
@@ -523,10 +515,6 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                         MARKET SPEED: <span className={countySpeedColor}>{countySpeedLabel}</span>
                       </span>
                       <span className="text-[#FA2D48]">●</span>
-                      <span className={`font-black uppercase tracking-wider ${countyCond.tickerTextClass}`}>
-                        STATUS: ({countyCond.tagNumbers} DAYS)
-                      </span>
-                      <span className="text-[#FA2D48]">●</span>
                       <span className="text-slate-300">
                         DEMAND: <span className="text-emerald-400 font-extrabold">{OC_COUNTYWIDE_LIVE_METRICS.demand.toLocaleString()}</span>{' '}
                         <span className="text-rose-400 font-black inline-flex items-center gap-0.5">
@@ -560,10 +548,6 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                       <span className="text-[#FA2D48]">●</span>
                       <span className="font-black text-white">
                         MARKET SPEED: <span className={countySpeedColor}>{countySpeedLabel}</span>
-                      </span>
-                      <span className="text-[#FA2D48]">●</span>
-                      <span className={`font-black uppercase tracking-wider ${countyCond.tickerTextClass}`}>
-                        STATUS: ({countyCond.tagNumbers} DAYS)
                       </span>
                       <span className="text-[#FA2D48]">●</span>
                       <span className="text-slate-300">

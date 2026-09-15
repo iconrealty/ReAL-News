@@ -35,10 +35,10 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
   onOpenSavedDrawer,
   onResetToMain,
   liveRates,
-  fredRate = '6.89%',
-  rate30Year7DaysAgo = '6.81%',
-  rate30YearChange7Days,
-  asOfDate,
+  fredRate = '7.17%',
+  rate30Year7DaysAgo = '6.89%',
+  rate30YearChange7Days = 0.28,
+  asOfDate = 'MND Live (9/14/26)',
   onOpenManager,
   onOpenNewsManager,
   isMonetizationEnabled = false,
@@ -46,6 +46,97 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
   isRefreshingRates = false,
 }) => {
   const [isRatesModalOpen, setIsRatesModalOpen] = useState(false);
+  const [currentLiveRates, setCurrentLiveRates] = useState<LiveMortgageRates | null>(() => {
+    if (liveRates) return liveRates;
+    try {
+      const saved = localStorage.getItem('cached_live_mortgage_rates');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && parsed.mortgage30Year && parsed.mortgage30Year !== '6.88%' && parsed.mortgage30Year !== '6.89%') {
+          return parsed;
+        }
+      }
+    } catch (e) {}
+    return null;
+  });
+  const [isLocalSyncing, setIsLocalSyncing] = useState(false);
+  const [syncSuccess, setSyncSuccess] = useState(false);
+
+  // Synchronize when prop liveRates changes
+  useEffect(() => {
+    if (liveRates) {
+      setCurrentLiveRates(liveRates);
+    }
+  }, [liveRates]);
+
+  // Listen to global live-rates-synced event from ANY component/background fetch
+  useEffect(() => {
+    const handleSyncedEvent = (e: any) => {
+      if (e.detail) {
+        setCurrentLiveRates(e.detail);
+      }
+    };
+    window.addEventListener('live-rates-synced', handleSyncedEvent);
+    return () => window.removeEventListener('live-rates-synced', handleSyncedEvent);
+  }, []);
+
+  // Direct touch-responsive rate synchronization
+  const handleDirectSync = async (e?: React.SyntheticEvent) => {
+    if (e) {
+      e.stopPropagation();
+    }
+    if (isLocalSyncing || isRefreshingRates) return;
+
+    setIsLocalSyncing(true);
+    setSyncSuccess(false);
+
+    // 1. Notify parent handler if provided
+    if (onRefreshRates) {
+      try {
+        onRefreshRates();
+      } catch (err) {
+        console.warn("Parent onRefreshRates note:", err);
+      }
+    }
+
+    // 2. Perform direct fresh fetch to ensure mobile UI updates without depending solely on parent re-render
+    try {
+      const cacheBustUrl = `/api/live-market-stats?force=true&t=${Date.now()}&_rnd=${Math.random()}`;
+      let res: Response | null = await fetch(cacheBustUrl, {
+        method: 'GET',
+        cache: 'no-store'
+      }).catch(() => null);
+
+      if (!res || !res.ok) {
+        res = await fetch(`/api/live-market-stats/sync?force=true&t=${Date.now()}`, {
+          method: 'POST',
+          cache: 'no-store'
+        }).catch(() => null);
+      }
+
+      if (res && res.ok) {
+        const json = await res.json();
+        if (json.success && json.data) {
+          const freshData = { ...json.data, asOfTimestamp: Date.now() };
+          setCurrentLiveRates(freshData);
+          try {
+            localStorage.setItem('cached_live_mortgage_rates', JSON.stringify(freshData));
+          } catch (e) {
+            console.warn("Could not cache live rates in localStorage", e);
+          }
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(new CustomEvent('live-rates-synced', { detail: freshData }));
+          }
+          setSyncSuccess(true);
+          setTimeout(() => setSyncSuccess(false), 3000);
+        }
+      }
+    } catch (err) {
+      console.warn("Direct modal sync note:", err);
+    } finally {
+      setTimeout(() => setIsLocalSyncing(false), 500);
+    }
+  };
 
   // Escape key listener to close modal and prevent body scroll
   useEffect(() => {
@@ -81,9 +172,15 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
   ];
 
   // Calculate 7-day prior comparison strictly from current rate vs 7-day prior rate
-  const currentNum = parseFloat((fredRate || '6.89%').replace(/[^0-9.]/g, '')) || 6.89;
-  const priorNum = parseFloat((rate30Year7DaysAgo || '6.81%').replace(/[^0-9.]/g, '')) || 6.81;
-  const computedDiff = parseFloat((currentNum - priorNum).toFixed(2));
+  const active30YrRate = currentLiveRates?.mortgage30Year || fredRate || '7.17%';
+  const activePriorRate = currentLiveRates?.rate30Year7DaysAgo || rate30Year7DaysAgo || '6.89%';
+  const activeAsOfDate = currentLiveRates?.asOfDate || asOfDate || 'MND Live (9/14/26)';
+
+  const currentNum = parseFloat(active30YrRate.replace(/[^0-9.]/g, '')) || 7.17;
+  const priorNum = parseFloat(activePriorRate.replace(/[^0-9.]/g, '')) || 6.89;
+  const computedDiff = currentLiveRates?.rate30YearChange7Days !== undefined
+    ? currentLiveRates.rate30YearChange7Days
+    : parseFloat((currentNum - priorNum).toFixed(2));
 
   const isUp = computedDiff > 0;
   const isDown = computedDiff < 0;
@@ -124,7 +221,9 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
             <button
               onClick={() => {
                 setIsRatesModalOpen((prev) => !prev);
-                if (!isRatesModalOpen && onRefreshRates) onRefreshRates();
+                if (!isRatesModalOpen) {
+                  handleDirectSync();
+                }
               }}
               className="flex flex-col items-end text-right group cursor-pointer hover:opacity-80 transition-opacity shrink-0 px-1 select-none touch-manipulation min-h-[44px] justify-center"
               title="Mortgage News Daily Live Rates - Click to view 5 live rates"
@@ -134,7 +233,7 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
                   <span>MND Live 30-Yr</span>
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                 </span>
-                {isRefreshingRates ? (
+                {(isLocalSyncing || isRefreshingRates) ? (
                   <RefreshCw className="w-2.5 h-2.5 text-[#FA2D48] animate-spin inline" />
                 ) : isUp ? (
                   <span className="inline-flex items-center text-[10px] font-black text-emerald-600">
@@ -156,13 +255,13 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
 
               <div className="flex items-center justify-end gap-1.5 pt-0.5">
                 <span className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-950 font-sans tracking-tight leading-none group-hover:text-[#FA2D48] transition-colors">
-                  {fredRate}
+                  {active30YrRate}
                 </span>
               </div>
 
               <div className="flex items-center justify-end gap-1 text-[9px] font-semibold text-slate-500 pt-0.5">
                 <span>7d prior:</span>
-                <span className="font-bold text-slate-700">{rate30Year7DaysAgo}</span>
+                <span className="font-bold text-slate-700">{activePriorRate}</span>
               </div>
             </button>
 
@@ -226,93 +325,93 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100 shrink-0">
-              <div className="flex items-center gap-2">
-                <h3 className="text-xl font-semibold text-slate-900 tracking-tight font-sans">
-                  Daily Rates
-                </h3>
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              </div>
+            <div className="flex flex-col gap-1 pb-3 border-b border-slate-100 shrink-0">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <h3 className="text-xl font-semibold text-slate-900 tracking-tight font-sans">
+                    Daily Rates
+                  </h3>
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                </div>
 
-              <div className="flex items-center gap-1.5 shrink-0">
-                <button
-                  type="button"
-                  id="header-modal-sync-rates-btn"
-                  onClick={async (e) => {
-                    e.stopPropagation();
-                    if (onRefreshRates) {
-                      onRefreshRates();
-                    } else {
-                      try {
-                        const res = await fetch(`/api/live-market-stats?force=true&t=${Date.now()}&_rnd=${Math.random()}`, { cache: 'no-store' });
-                        if (res.ok) {
-                          const json = await res.json();
-                          if (json.data && typeof window !== 'undefined') {
-                            window.dispatchEvent(new CustomEvent('live-rates-synced', { detail: json.data }));
-                          }
-                        }
-                      } catch (err) {
-                        console.warn("Direct modal sync fallback note:", err);
-                      }
-                    }
-                  }}
-                  disabled={isRefreshingRates}
-                  className="min-h-[38px] px-3.5 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-700 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer touch-manipulation active:scale-95 disabled:opacity-50 select-none shadow-xs"
-                  title="Sync Latest Live Rates"
-                >
-                  <RefreshCw className={`w-3.5 h-3.5 text-[#FA2D48] ${isRefreshingRates ? 'animate-spin' : ''}`} />
-                  <span>{isRefreshingRates ? 'Syncing...' : 'Sync Rates'}</span>
-                </button>
-                <button
-                  type="button"
-                  id="close-mnd-header-rates-modal-btn"
-                  onClick={() => setIsRatesModalOpen(false)}
-                  className="p-2 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
-                  title="Close modal"
-                >
-                  <X className="w-4 h-4" />
-                </button>
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <button
+                    type="button"
+                    id="header-modal-sync-rates-btn"
+                    onClick={handleDirectSync}
+                    onTouchEnd={handleDirectSync}
+                    disabled={isLocalSyncing || isRefreshingRates}
+                    className="min-h-[38px] px-3.5 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-700 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer touch-manipulation active:scale-95 disabled:opacity-50 select-none shadow-xs"
+                    title="Sync Latest Live Rates"
+                  >
+                    <RefreshCw className={`w-3.5 h-3.5 text-[#FA2D48] ${(isLocalSyncing || isRefreshingRates) ? 'animate-spin' : ''}`} />
+                    <span>
+                      {(isLocalSyncing || isRefreshingRates)
+                        ? 'Syncing...'
+                        : syncSuccess
+                        ? '✓ Synced'
+                        : 'Sync Rates'}
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    id="close-mnd-header-rates-modal-btn"
+                    onClick={() => setIsRatesModalOpen(false)}
+                    className="p-2 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+                    title="Close modal"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+              <div className="flex items-center gap-1.5 text-[11px] text-slate-500 font-medium">
+                <span>Mortgage News Daily</span>
+                <span>•</span>
+                <span className="font-semibold text-slate-700">{activeAsOfDate}</span>
+                {syncSuccess && (
+                  <span className="text-emerald-600 font-bold ml-1 animate-pulse">✓ Synced Just Now</span>
+                )}
               </div>
             </div>
 
-            {/* 5 Live Rates List - Apple / Tesla Minimalist Typography */}
+            {/* 6 Live Rates List - Apple / Tesla Minimalist Typography */}
             <div className="divide-y divide-slate-100 overflow-y-auto flex-1 py-1">
               {[
                 {
                   id: '30-yr-fixed',
                   label: '30-Yr Fixed',
                   tag: 'MND Daily Index',
-                  rate: liveRates?.mortgage30Year || fredRate || '6.89%',
+                  rate: currentLiveRates?.mortgage30Year || fredRate || '7.17%',
                 },
                 {
                   id: '15-yr-fixed',
                   label: '15-Yr Fixed',
                   tag: 'MND Daily Index',
-                  rate: liveRates?.mortgage15Year || '6.49%',
+                  rate: currentLiveRates?.mortgage15Year || '6.70%',
                 },
                 {
                   id: '30-yr-jumbo',
                   label: '30-Yr Jumbo',
                   tag: 'MND Daily Index',
-                  rate: liveRates?.jumbo30Year || '7.06%',
+                  rate: currentLiveRates?.jumbo30Year || '7.28%',
                 },
                 {
                   id: '30-yr-fha',
                   label: '30-Yr FHA',
                   tag: 'MND Daily Index',
-                  rate: liveRates?.fha30Year || '6.44%',
+                  rate: currentLiveRates?.fha30Year || '6.75%',
                 },
                 {
                   id: '30-yr-va',
                   label: '30-Yr VA',
                   tag: 'MND Daily Index',
-                  rate: liveRates?.va30Year || '6.46%',
+                  rate: currentLiveRates?.va30Year || '6.77%',
                 },
                 {
                   id: 'freddie-mac-pmms',
                   label: 'Freddie Mac (PMMS)',
                   tag: 'Weekly Survey',
-                  rate: liveRates?.freddieMac30Year || '6.71%',
+                  rate: currentLiveRates?.freddieMac30Year || '6.76%',
                 },
               ].map((r) => (
                 <button
