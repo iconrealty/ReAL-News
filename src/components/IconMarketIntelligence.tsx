@@ -19,6 +19,7 @@ import {
 } from '../data/ocHousingReportData';
 import { CITIES } from '../data/mockNews';
 import { CityInfo } from '../types';
+import { getMarketCondition } from './OrangeCountyMarketTrends';
 
 interface IconMarketIntelligenceProps {
   currentCity?: CityInfo;
@@ -79,14 +80,6 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
   const speedDays = currentCity.id !== 'orange-county' && currentCityMarketData
     ? currentCityMarketData.marketTimeDays
     : meta.countywideMarketTime;
-
-  const getMarketCondition = (days: number) => {
-    if (days < 60) return { label: "Hot Seller's Market", bgClass: 'bg-[#FA2D48]', textClass: 'text-[#FA2D48]', badgeText: "Hot Seller's Market (< 60 Days)", accentText: 'text-[#FA2D48]' };
-    if (days <= 90) return { label: "Slight Seller's Market", bgClass: 'bg-amber-500', textClass: 'text-amber-600', badgeText: "Slight Seller's Market (60 - 90 Days)", accentText: 'text-amber-600' };
-    if (days <= 120) return { label: "Balanced Market", bgClass: 'bg-sky-600', textClass: 'text-sky-600', badgeText: "Balanced Market (90 - 120 Days)", accentText: 'text-sky-600' };
-    if (days <= 150) return { label: "Slight Buyer's Market", bgClass: 'bg-emerald-600', textClass: 'text-emerald-600', badgeText: "Slight Buyer's Market (120 - 150 Days)", accentText: 'text-emerald-600' };
-    return { label: "Buyer's Market", bgClass: 'bg-emerald-700', textClass: 'text-emerald-700', badgeText: "Buyer's Market (150+ Days)", accentText: 'text-emerald-700' };
-  };
 
   const getMarketSpeedBadge = (days: number) => {
     if (days < 60) return { label: "Hot Seller's", color: "bg-[#FA2D48] text-white border-transparent", buttonBg: "bg-[#FA2D48] hover:bg-[#d9233b]" };
@@ -227,8 +220,16 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                           <div className="animate-ticker flex items-center group-hover:[animation-play-state:paused]">
                             {/* 1st copy */}
                             <div className="flex items-center gap-3.5 sm:gap-5 text-[11px] sm:text-[13px] font-bold tracking-wide uppercase text-white/90 shrink-0 pr-4 sm:pr-5">
+                              <span className={`font-black uppercase tracking-wider px-2 py-0.5 rounded-full border ${cond.tickerBadgeClass}`}>
+                                {cond.capitalLabel}
+                              </span>
+                              <span className="text-[#FA2D48]">●</span>
                               <span className="font-black text-white">
-                                MARKET SPEED: <span className={speedColor}>{speedLabel}</span> • {cond.badgeText}
+                                MARKET SPEED: <span className={speedColor}>{speedLabel}</span>
+                              </span>
+                              <span className="text-[#FA2D48]">●</span>
+                              <span className={`font-black uppercase tracking-wider ${cond.tickerTextClass}`}>
+                                STATUS: ({cond.tagNumbers} DAYS)
                               </span>
                               <span className="text-[#FA2D48]">●</span>
                               <span className="text-slate-300">
@@ -254,8 +255,16 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                             </div>
                             {/* 2nd identical copy for seamless loop */}
                             <div className="flex items-center gap-3.5 sm:gap-5 text-[11px] sm:text-[13px] font-bold tracking-wide uppercase text-white/90 shrink-0 pr-4 sm:pr-5" aria-hidden="true">
+                              <span className={`font-black uppercase tracking-wider px-2 py-0.5 rounded-full border ${cond.tickerBadgeClass}`}>
+                                {cond.capitalLabel}
+                              </span>
+                              <span className="text-[#FA2D48]">●</span>
                               <span className="font-black text-white">
-                                MARKET SPEED: <span className={speedColor}>{speedLabel}</span> • {cond.badgeText}
+                                MARKET SPEED: <span className={speedColor}>{speedLabel}</span>
+                              </span>
+                              <span className="text-[#FA2D48]">●</span>
+                              <span className={`font-black uppercase tracking-wider ${cond.tickerTextClass}`}>
+                                STATUS: ({cond.tagNumbers} DAYS)
                               </span>
                               <span className="text-[#FA2D48]">●</span>
                               <span className="text-slate-300">
@@ -494,66 +503,97 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
 
             {/* Running Text Streaming Slower to the Left (Stock / Live Feed Style) */}
             <div className="relative overflow-hidden flex-1 mx-1.5 sm:mx-3">
-              <div className="animate-ticker flex items-center group-hover:[animation-play-state:paused]">
-                {/* 1st copy */}
-                <div className="flex items-center gap-3.5 sm:gap-5 text-[11px] sm:text-[13px] font-bold tracking-wide uppercase text-white/90 shrink-0 pr-4 sm:pr-5">
-                  <span className="font-black text-white">{OC_COUNTYWIDE_LIVE_METRICS.fullText}</span>
-                  <span className="text-[#FA2D48]">●</span>
-                  <span className="text-slate-300">
-                    DEMAND: <span className="text-emerald-400 font-extrabold">{OC_COUNTYWIDE_LIVE_METRICS.demand.toLocaleString()}</span>{' '}
-                    <span className="text-rose-400 font-black inline-flex items-center gap-0.5">
-                      <span className="text-lg leading-none font-extrabold">↓</span>
-                      <span>{OC_COUNTYWIDE_LIVE_METRICS.demandDelta}</span>
-                    </span>
-                  </span>
-                  <span className="text-[#FA2D48]">●</span>
-                  <span className="text-slate-300">
-                    SUPPLY: <span className="text-slate-200 font-extrabold">{OC_COUNTYWIDE_LIVE_METRICS.supply.toLocaleString()}</span>{' '}
-                    <span className="text-emerald-400 font-black inline-flex items-center gap-0.5">
-                      <span className="text-lg leading-none font-extrabold">↓</span>
-                      <span>{OC_COUNTYWIDE_LIVE_METRICS.supplyDelta}</span>
-                    </span>
-                  </span>
-                  <span className="text-[#FA2D48]">●</span>
-                  <span className="text-slate-300">
-                    EMT: <span className="text-white font-extrabold">{OC_COUNTYWIDE_LIVE_METRICS.emtDays} DAYS</span>{' '}
-                    <span className="text-emerald-400 font-black inline-flex items-center gap-0.5">
-                      <span className="text-lg leading-none font-extrabold">↓</span>
-                      <span>{Math.abs(OC_COUNTYWIDE_LIVE_METRICS.emtDelta)}d FASTER</span>
-                    </span>
-                  </span>
-                  <span className="text-[#FA2D48] font-black text-xs sm:text-sm">=</span>
-                </div>
-                {/* 2nd identical copy for seamless infinite loop */}
-                <div className="flex items-center gap-3.5 sm:gap-5 text-[11px] sm:text-[13px] font-bold tracking-wide uppercase text-white/90 shrink-0 pr-4 sm:pr-5" aria-hidden="true">
-                  <span className="font-black text-white">{OC_COUNTYWIDE_LIVE_METRICS.fullText}</span>
-                  <span className="text-[#FA2D48]">●</span>
-                  <span className="text-slate-300">
-                    DEMAND: <span className="text-emerald-400 font-extrabold">{OC_COUNTYWIDE_LIVE_METRICS.demand.toLocaleString()}</span>{' '}
-                    <span className="text-rose-400 font-black inline-flex items-center gap-0.5">
-                      <span className="text-lg leading-none font-extrabold">↓</span>
-                      <span>{OC_COUNTYWIDE_LIVE_METRICS.demandDelta}</span>
-                    </span>
-                  </span>
-                  <span className="text-[#FA2D48]">●</span>
-                  <span className="text-slate-300">
-                    SUPPLY: <span className="text-slate-200 font-extrabold">{OC_COUNTYWIDE_LIVE_METRICS.supply.toLocaleString()}</span>{' '}
-                    <span className="text-emerald-400 font-black inline-flex items-center gap-0.5">
-                      <span className="text-lg leading-none font-extrabold">↓</span>
-                      <span>{OC_COUNTYWIDE_LIVE_METRICS.supplyDelta}</span>
-                    </span>
-                  </span>
-                  <span className="text-[#FA2D48]">●</span>
-                  <span className="text-slate-300">
-                    EMT: <span className="text-white font-extrabold">{OC_COUNTYWIDE_LIVE_METRICS.emtDays} DAYS</span>{' '}
-                    <span className="text-emerald-400 font-black inline-flex items-center gap-0.5">
-                      <span className="text-lg leading-none font-extrabold">↓</span>
-                      <span>{Math.abs(OC_COUNTYWIDE_LIVE_METRICS.emtDelta)}d FASTER</span>
-                    </span>
-                  </span>
-                  <span className="text-[#FA2D48] font-black text-xs sm:text-sm">=</span>
-                </div>
-              </div>
+              {(() => {
+                const countyCond = getMarketCondition(OC_COUNTYWIDE_LIVE_METRICS.emtDays);
+                const countyEmtDelta = OC_COUNTYWIDE_LIVE_METRICS.emtDelta;
+                const isCountyFaster = countyEmtDelta < 0;
+                const isCountySlower = countyEmtDelta > 0;
+                const countySpeedLabel = isCountyFaster ? 'FASTER' : isCountySlower ? 'SLOWER' : 'STEADY';
+                const countySpeedColor = isCountyFaster ? 'text-emerald-400' : isCountySlower ? 'text-[#FA2D48]' : 'text-slate-300';
+
+                return (
+                  <div className="animate-ticker flex items-center group-hover:[animation-play-state:paused]">
+                    {/* 1st copy */}
+                    <div className="flex items-center gap-3.5 sm:gap-5 text-[11px] sm:text-[13px] font-bold tracking-wide uppercase text-white/90 shrink-0 pr-4 sm:pr-5">
+                      <span className={`font-black uppercase tracking-wider px-2 py-0.5 rounded-full border ${countyCond.tickerBadgeClass}`}>
+                        {countyCond.capitalLabel}
+                      </span>
+                      <span className="text-[#FA2D48]">●</span>
+                      <span className="font-black text-white">
+                        MARKET SPEED: <span className={countySpeedColor}>{countySpeedLabel}</span>
+                      </span>
+                      <span className="text-[#FA2D48]">●</span>
+                      <span className={`font-black uppercase tracking-wider ${countyCond.tickerTextClass}`}>
+                        STATUS: ({countyCond.tagNumbers} DAYS)
+                      </span>
+                      <span className="text-[#FA2D48]">●</span>
+                      <span className="text-slate-300">
+                        DEMAND: <span className="text-emerald-400 font-extrabold">{OC_COUNTYWIDE_LIVE_METRICS.demand.toLocaleString()}</span>{' '}
+                        <span className="text-rose-400 font-black inline-flex items-center gap-0.5">
+                          <span className="text-lg leading-none font-extrabold">↓</span>
+                          <span>{OC_COUNTYWIDE_LIVE_METRICS.demandDelta}</span>
+                        </span>
+                      </span>
+                      <span className="text-[#FA2D48]">●</span>
+                      <span className="text-slate-300">
+                        SUPPLY: <span className="text-slate-200 font-extrabold">{OC_COUNTYWIDE_LIVE_METRICS.supply.toLocaleString()}</span>{' '}
+                        <span className="text-emerald-400 font-black inline-flex items-center gap-0.5">
+                          <span className="text-lg leading-none font-extrabold">↓</span>
+                          <span>{OC_COUNTYWIDE_LIVE_METRICS.supplyDelta}</span>
+                        </span>
+                      </span>
+                      <span className="text-[#FA2D48]">●</span>
+                      <span className="text-slate-300">
+                        EMT: <span className="text-white font-extrabold">{OC_COUNTYWIDE_LIVE_METRICS.emtDays} DAYS</span>{' '}
+                        <span className="text-emerald-400 font-black inline-flex items-center gap-0.5">
+                          <span className="text-lg leading-none font-extrabold">↓</span>
+                          <span>{Math.abs(OC_COUNTYWIDE_LIVE_METRICS.emtDelta)}d FASTER</span>
+                        </span>
+                      </span>
+                      <span className="text-[#FA2D48] font-black text-xs sm:text-sm">=</span>
+                    </div>
+                    {/* 2nd identical copy for seamless infinite loop */}
+                    <div className="flex items-center gap-3.5 sm:gap-5 text-[11px] sm:text-[13px] font-bold tracking-wide uppercase text-white/90 shrink-0 pr-4 sm:pr-5" aria-hidden="true">
+                      <span className={`font-black uppercase tracking-wider px-2 py-0.5 rounded-full border ${countyCond.tickerBadgeClass}`}>
+                        {countyCond.capitalLabel}
+                      </span>
+                      <span className="text-[#FA2D48]">●</span>
+                      <span className="font-black text-white">
+                        MARKET SPEED: <span className={countySpeedColor}>{countySpeedLabel}</span>
+                      </span>
+                      <span className="text-[#FA2D48]">●</span>
+                      <span className={`font-black uppercase tracking-wider ${countyCond.tickerTextClass}`}>
+                        STATUS: ({countyCond.tagNumbers} DAYS)
+                      </span>
+                      <span className="text-[#FA2D48]">●</span>
+                      <span className="text-slate-300">
+                        DEMAND: <span className="text-emerald-400 font-extrabold">{OC_COUNTYWIDE_LIVE_METRICS.demand.toLocaleString()}</span>{' '}
+                        <span className="text-rose-400 font-black inline-flex items-center gap-0.5">
+                          <span className="text-lg leading-none font-extrabold">↓</span>
+                          <span>{OC_COUNTYWIDE_LIVE_METRICS.demandDelta}</span>
+                        </span>
+                      </span>
+                      <span className="text-[#FA2D48]">●</span>
+                      <span className="text-slate-300">
+                        SUPPLY: <span className="text-slate-200 font-extrabold">{OC_COUNTYWIDE_LIVE_METRICS.supply.toLocaleString()}</span>{' '}
+                        <span className="text-emerald-400 font-black inline-flex items-center gap-0.5">
+                          <span className="text-lg leading-none font-extrabold">↓</span>
+                          <span>{OC_COUNTYWIDE_LIVE_METRICS.supplyDelta}</span>
+                        </span>
+                      </span>
+                      <span className="text-[#FA2D48]">●</span>
+                      <span className="text-slate-300">
+                        EMT: <span className="text-white font-extrabold">{OC_COUNTYWIDE_LIVE_METRICS.emtDays} DAYS</span>{' '}
+                        <span className="text-emerald-400 font-black inline-flex items-center gap-0.5">
+                          <span className="text-lg leading-none font-extrabold">↓</span>
+                          <span>{Math.abs(OC_COUNTYWIDE_LIVE_METRICS.emtDelta)}d FASTER</span>
+                        </span>
+                      </span>
+                      <span className="text-[#FA2D48] font-black text-xs sm:text-sm">=</span>
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
 
             {/* Fixed Right Action */}

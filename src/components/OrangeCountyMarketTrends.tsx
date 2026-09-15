@@ -36,6 +36,7 @@ export function getMarketCondition(days: number) {
     return {
       label: "N/A",
       tag: "Data Pending",
+      tagNumbers: "N/A",
       badgeText: "Historical N/A",
       capitalLabel: "DATA PENDING",
       bgClass: "bg-slate-700 text-white font-bold",
@@ -52,6 +53,7 @@ export function getMarketCondition(days: number) {
     return {
       label: "Hot Seller's",
       tag: "< 60 Days",
+      tagNumbers: "< 60",
       badgeText: "Hot Seller's Market (< 60 Days)",
       capitalLabel: "HOT SELLER'S MARKET",
       bgClass: "bg-[#FA2D48] text-white font-bold",
@@ -67,6 +69,7 @@ export function getMarketCondition(days: number) {
     return {
       label: "Slight Seller's",
       tag: "60–89 Days",
+      tagNumbers: "60–89",
       badgeText: "Slight Seller's Market (60–89 Days)",
       capitalLabel: "SLIGHT SELLER'S MARKET",
       bgClass: "bg-amber-500 text-white font-bold",
@@ -82,6 +85,7 @@ export function getMarketCondition(days: number) {
     return {
       label: "Balanced Market",
       tag: "90–119 Days",
+      tagNumbers: "90–119",
       badgeText: "Balanced Market (90–119 Days)",
       capitalLabel: "BALANCED MARKET",
       bgClass: "bg-sky-600 text-white font-bold",
@@ -97,6 +101,7 @@ export function getMarketCondition(days: number) {
     return {
       label: "Slight Buyer's",
       tag: "120–149 Days",
+      tagNumbers: "120–149",
       badgeText: "Slight Buyer's Market (120–149 Days)",
       capitalLabel: "SLIGHT BUYER'S MARKET",
       bgClass: "bg-emerald-600 text-white font-bold",
@@ -112,6 +117,7 @@ export function getMarketCondition(days: number) {
     return {
       label: "Buyer's Market",
       tag: "150+ Days",
+      tagNumbers: "150+",
       badgeText: "Buyer's Market (150+ Days)",
       capitalLabel: "BUYER'S MARKET",
       bgClass: "bg-emerald-700 text-white font-bold",

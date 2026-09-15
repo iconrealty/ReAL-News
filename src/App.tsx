@@ -919,7 +919,7 @@ export function App() {
                                     </span>
                                     <span className="text-[#FA2D48]">●</span>
                                     <span className={`font-black uppercase tracking-wider ${cond.tickerTextClass}`}>
-                                      STATUS: {cond.capitalLabel} ({cond.tag})
+                                      STATUS: ({cond.tagNumbers} DAYS)
                                     </span>
                                     <span className="text-[#FA2D48]">●</span>
                                     <span className="text-slate-300">
@@ -954,7 +954,7 @@ export function App() {
                                     </span>
                                     <span className="text-[#FA2D48]">●</span>
                                     <span className={`font-black uppercase tracking-wider ${cond.tickerTextClass}`}>
-                                      STATUS: {cond.capitalLabel} ({cond.tag})
+                                      STATUS: ({cond.tagNumbers} DAYS)
                                     </span>
                                     <span className="text-[#FA2D48]">●</span>
                                     <span className="text-slate-300">
@@ -1149,6 +1149,12 @@ export function App() {
                 {/* Live Steven Thomas Orange County Live Tab right below the Steven Thomas tab/card */}
                 {(() => {
                   const countywideCond = getMarketCondition(OC_COUNTYWIDE_LIVE_METRICS.emtDays);
+                  const countywideEmtDelta = OC_COUNTYWIDE_LIVE_METRICS.emtDelta;
+                  const isCountyFaster = countywideEmtDelta < 0;
+                  const isCountySlower = countywideEmtDelta > 0;
+                  const countySpeedLabel = isCountyFaster ? 'FASTER' : isCountySlower ? 'SLOWER' : 'STEADY';
+                  const countySpeedColor = isCountyFaster ? 'text-emerald-400' : isCountySlower ? 'text-[#FA2D48]' : 'text-slate-300';
+
                   return (
                     <div className="flex justify-center sm:justify-start pt-1">
                       <button
@@ -1178,10 +1184,12 @@ export function App() {
                                 {countywideCond.capitalLabel}
                               </span>
                               <span className="text-[#FA2D48]">●</span>
-                              <span className="font-black text-white">{OC_COUNTYWIDE_LIVE_METRICS.fullText}</span>
+                              <span className="font-black text-white">
+                                MARKET SPEED: <span className={countySpeedColor}>{countySpeedLabel}</span>
+                              </span>
                               <span className="text-[#FA2D48]">●</span>
                               <span className={`font-black uppercase tracking-wider ${countywideCond.tickerTextClass}`}>
-                                STATUS: {countywideCond.capitalLabel} ({countywideCond.tag})
+                                STATUS: ({countywideCond.tagNumbers} DAYS)
                               </span>
                               <span className="text-[#FA2D48]">●</span>
                               <span className="text-slate-300">
@@ -1215,10 +1223,12 @@ export function App() {
                                 {countywideCond.capitalLabel}
                               </span>
                               <span className="text-[#FA2D48]">●</span>
-                              <span className="font-black text-white">{OC_COUNTYWIDE_LIVE_METRICS.fullText}</span>
+                              <span className="font-black text-white">
+                                MARKET SPEED: <span className={countySpeedColor}>{countySpeedLabel}</span>
+                              </span>
                               <span className="text-[#FA2D48]">●</span>
                               <span className={`font-black uppercase tracking-wider ${countywideCond.tickerTextClass}`}>
-                                STATUS: {countywideCond.capitalLabel} ({countywideCond.tag})
+                                STATUS: ({countywideCond.tagNumbers} DAYS)
                               </span>
                               <span className="text-[#FA2D48]">●</span>
                               <span className="text-slate-300">

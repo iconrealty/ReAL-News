@@ -33,3 +33,11 @@
   animation: ticker 28s linear infinite;
   will-change: transform;
 }
+
+/* Pause live ticker animation on hover over button, container, or ticker */
+.animate-ticker:hover,
+.group:hover .animate-ticker,
+button:hover .animate-ticker {
+  animation-play-state: paused !important;
+}
+
