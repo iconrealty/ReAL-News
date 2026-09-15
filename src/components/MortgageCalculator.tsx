@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { ChevronDown, RefreshCw } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { CityInfo, AdBanner, LiveMortgageRates } from '../types';
 import { AdBannerRenderer } from './AdBannerRenderer';
 
@@ -904,29 +904,9 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
 
               {/* 3. Interest Rate & Loan Program */}
               <div className="space-y-3">
-                <div className="flex items-center justify-between gap-2 flex-wrap">
-                  <label htmlFor="interest-rate-program-select" className="text-xs font-extrabold uppercase tracking-wider text-slate-700 block">
-                    Interest Rate &amp; Program
-                  </label>
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] sm:text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200/60 flex items-center gap-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                      Live Market
-                    </span>
-                    <button
-                      type="button"
-                      id="mortgage-calc-sync-rates-btn"
-                      onClick={handleCalcSyncRates}
-                      onTouchEnd={handleCalcSyncRates}
-                      disabled={isCalcSyncing || isRefreshingRates}
-                      className="text-[10px] sm:text-[11px] font-bold text-slate-700 hover:text-slate-950 bg-slate-100 hover:bg-slate-200 active:bg-slate-300 px-2.5 py-1 rounded-md border border-slate-200 flex items-center gap-1.5 transition-all cursor-pointer touch-manipulation active:scale-95 disabled:opacity-60 shadow-2xs"
-                      title="Sync live interest rates from Mortgage News Daily"
-                    >
-                      <RefreshCw className={`w-3 h-3 text-[#FA2D48] ${(isCalcSyncing || isRefreshingRates) ? 'animate-spin' : ''}`} />
-                      <span>{(isCalcSyncing || isRefreshingRates) ? 'Syncing...' : calcSyncSuccess ? '✓ Synced' : 'Sync Rates'}</span>
-                    </button>
-                  </div>
-                </div>
+                <label htmlFor="interest-rate-program-select" className="text-xs font-extrabold uppercase tracking-wider text-slate-700 block">
+                  Interest Rate &amp; Program
+                </label>
 
                 {/* Dropdown with live rate programs: 30-Yr Fixed (default), 15-Yr Fixed, 30-Yr Jumbo, 30-Yr FHA, 30-Yr VA, Freddie Mac */}
                 <div className="relative">
@@ -1132,17 +1112,9 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
 
               {/* 4. Interest Rate & Loan Program */}
               <div className="space-y-3">
-                <div className="flex items-center justify-between gap-2 flex-wrap">
-                  <label htmlFor="interest-rate-program-select-rev" className="text-xs font-extrabold uppercase tracking-wider text-slate-200 block">
-                    Interest Rate &amp; Program
-                  </label>
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] sm:text-[11px] font-bold text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded-md border border-emerald-500/30 flex items-center gap-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                      Live Market
-                    </span>
-                  </div>
-                </div>
+                <label htmlFor="interest-rate-program-select-rev" className="text-xs font-extrabold uppercase tracking-wider text-slate-200 block">
+                  Interest Rate &amp; Program
+                </label>
 
                 {/* Dropdown with live rate programs */}
                 <div className="relative">
