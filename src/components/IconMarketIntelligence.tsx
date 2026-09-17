@@ -13,13 +13,12 @@ import {
   OC_HOUSING_SUMMARY_CARDS,
   OC_SOLD_REPORT,
   OC_MARKET_TIME_REPORT,
-  STEVEN_THOMAS_MARKET_DIRECTION,
-  OC_COUNTYWIDE_LIVE_METRICS,
-  STEVEN_THOMAS_DIRECTION_MATRIX
+  OC_COUNTYWIDE_LIVE_METRICS
 } from '../data/ocHousingReportData';
 import { CITIES } from '../data/mockNews';
 import { CityInfo } from '../types';
 import { getMarketCondition } from './OrangeCountyMarketTrends';
+import { MarketSpeedStatusModal } from './MarketSpeedStatusModal';
 
 interface IconMarketIntelligenceProps {
   currentCity?: CityInfo;
@@ -480,7 +479,7 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
             id="steven-thomas-market-speed-pill"
             onClick={() => setShowMarketDirectionModal(true)}
             className="relative flex items-center h-11 sm:h-12 w-full max-w-2xl overflow-hidden rounded-full bg-slate-950 hover:bg-slate-900 border border-slate-800 text-white shadow-md transition-all cursor-pointer font-sans group active:scale-[0.99] px-2.5 sm:px-4 select-none"
-            title="Click to view Market Speed Matrix"
+            title="Click to view Market Speed &amp; Status"
           >
             {/* Fixed Left Live Beacon */}
             <div className="flex items-center gap-1.5 sm:gap-2 pr-2 sm:pr-3 border-r border-slate-800 shrink-0 z-10 bg-slate-950 group-hover:bg-slate-900 transition-colors">
@@ -925,118 +924,18 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
         </div>
       )}
 
-      {/* MINIMALISTIC MARKET DIRECTION DETERMINATION MATRIX MODAL */}
-      {showMarketDirectionModal && (
-        <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/45 backdrop-blur-xs transition-opacity animate-in fade-in"
-          onClick={() => setShowMarketDirectionModal(false)}
-        >
-          <div 
-            className="bg-white border border-slate-200/90 rounded-2xl sm:rounded-3xl p-5 sm:p-6 max-w-xl w-full shadow-2xl space-y-4 relative animate-in zoom-in-95 duration-150 font-sans text-left"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Clean, Simple Header */}
-            <div className="flex items-center justify-between gap-3 border-b border-slate-100 pb-3">
-              <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-[#FA2D48]"></span>
-                <h3 className="text-base sm:text-lg font-black text-slate-950 tracking-tight font-sans">
-                  Market Speed Matrix
-                </h3>
-              </div>
-              <button
-                type="button"
-                onClick={() => setShowMarketDirectionModal(false)}
-                className="p-1.5 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
-                title="Close"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            {/* 8-Combination Table */}
-            <div className="overflow-x-auto rounded-xl border border-slate-200">
-              <table className="w-full text-left text-xs font-sans border-collapse">
-                <thead>
-                  <tr className="bg-slate-50 border-b border-slate-200 text-[11px] font-bold uppercase tracking-wider text-slate-500">
-                    <th className="py-2.5 px-3 w-8 text-center">#</th>
-                    <th className="py-2.5 px-3">Demand</th>
-                    <th className="py-2.5 px-3">Supply</th>
-                    <th className="py-2.5 px-3">Expected Market Time</th>
-                    <th className="py-2.5 px-3">Market Speed</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 text-slate-800">
-                  {STEVEN_THOMAS_DIRECTION_MATRIX.map((row) => {
-                    const isMatched = STEVEN_THOMAS_MARKET_DIRECTION.matchedRowId === row.id;
-
-                    return (
-                      <tr 
-                        key={row.id}
-                        className={`transition-colors ${
-                          isMatched 
-                            ? 'bg-rose-50/70 font-bold text-slate-950 border-l-3 border-l-[#FA2D48]' 
-                            : 'hover:bg-slate-50/60'
-                        }`}
-                      >
-                        <td className="py-2.5 px-3 text-center text-slate-400 font-mono text-[11px]">
-                          {row.id}
-                        </td>
-                        <td className="py-2.5 px-3">
-                          <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-bold font-mono ${
-                            row.demand === 'UP' ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'
-                          }`}>
-                            {row.demand}
-                          </span>
-                        </td>
-                        <td className="py-2.5 px-3">
-                          <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-bold font-mono ${
-                            row.supply === 'UP' ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'
-                          }`}>
-                            {row.supply}
-                          </span>
-                        </td>
-                        <td className="py-2.5 px-3">
-                          <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-bold font-mono ${
-                            row.emt === 'UP' ? 'bg-amber-50 text-amber-700' : 'bg-sky-50 text-sky-700'
-                          }`}>
-                            {row.emt}
-                          </span>
-                        </td>
-                        <td className="py-2.5 px-3">
-                          <div className="flex items-center gap-1.5 flex-wrap">
-                            <span className={`text-xs ${
-                              isMatched ? 'font-black text-[#FA2D48]' : 'font-semibold text-slate-800'
-                            }`}>
-                              {row.result}
-                            </span>
-                            {isMatched && (
-                              <span className="text-[9px] font-black uppercase tracking-wider bg-[#FA2D48] text-white px-1.5 py-0.5 rounded-full">
-                                Active
-                              </span>
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Minimalist speed footnote & close button */}
-            <div className="flex items-center justify-between flex-wrap gap-2 pt-1 text-[11px] text-slate-500 font-sans">
-              <span>EMT DOWN = FASTER • EMT UP = SLOWER</span>
-              <button
-                type="button"
-                onClick={() => setShowMarketDirectionModal(false)}
-                className="px-4 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold font-sans transition-all cursor-pointer shadow-xs ml-auto"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* MINIMALIST MARKET STATUS & SPEED MODAL */}
+      <MarketSpeedStatusModal
+        isOpen={showMarketDirectionModal}
+        onClose={() => setShowMarketDirectionModal(false)}
+        locationName="Orange County"
+        emtDays={OC_COUNTYWIDE_LIVE_METRICS.emtDays}
+        demand={OC_COUNTYWIDE_LIVE_METRICS.demand}
+        supply={OC_COUNTYWIDE_LIVE_METRICS.supply}
+        demandDelta={OC_COUNTYWIDE_LIVE_METRICS.demandDelta}
+        supplyDelta={OC_COUNTYWIDE_LIVE_METRICS.supplyDelta}
+        emtDelta={OC_COUNTYWIDE_LIVE_METRICS.emtDelta}
+      />
 
     </div>
   );
