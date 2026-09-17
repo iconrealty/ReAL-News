@@ -226,26 +226,26 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
     if (e) {
       e.stopPropagation();
     }
-    if (localRefreshing || isRefreshingRates) return;
+    if (localRefreshing) return;
 
     setLocalRefreshing(true);
-    if (onRefreshRates) {
-      try {
-        onRefreshRates();
-      } catch (err) {
-        console.warn("Parent onRefreshRates note:", err);
-      }
-    }
 
     try {
-      let res = await fetch(`/api/live-market-stats?force=true&t=${Date.now()}&_rnd=${Math.random()}`, {
-        method: 'GET',
+      const now = Date.now();
+      // POST prevents mobile browser caching
+      let res = await fetch(`/api/live-market-stats/sync?force=true&t=${now}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache'
+        },
         cache: 'no-store'
       }).catch(() => null);
 
       if (!res || !res.ok) {
-        res = await fetch(`/api/live-market-stats/sync?force=true&t=${Date.now()}`, {
-          method: 'POST',
+        res = await fetch(`/api/live-market-stats?force=true&t=${now}&_rnd=${Math.random()}`, {
+          method: 'GET',
           cache: 'no-store'
         }).catch(() => null);
       }
@@ -263,12 +263,17 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
           if (typeof window !== 'undefined') {
             window.dispatchEvent(new CustomEvent('live-rates-synced', { detail: freshData }));
           }
+          if (onRefreshRates) {
+            try {
+              onRefreshRates();
+            } catch (err) {}
+          }
         }
       }
     } catch (err) {
       console.warn("Failed to manually refresh live rates", err);
     } finally {
-      setTimeout(() => setLocalRefreshing(false), 500);
+      setTimeout(() => setLocalRefreshing(false), 400);
     }
   };
 
@@ -828,9 +833,8 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
 
                       <button
                         onClick={handleManualRateRefresh}
-                        onTouchEnd={handleManualRateRefresh}
                         disabled={localRefreshing || isRefreshingRates}
-                        className="inline-flex items-center space-x-1 min-h-[36px] px-3 py-1 rounded-full bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-700 text-xs font-bold transition-all cursor-pointer disabled:opacity-50 touch-manipulation active:scale-95 select-none shadow-2xs"
+                        className="inline-flex items-center space-x-1 min-h-[44px] px-3.5 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-700 text-xs font-bold transition-all cursor-pointer disabled:opacity-50 touch-manipulation active:scale-95 select-none shadow-2xs"
                         title="Sync latest live rates from Mortgage News Daily"
                       >
                         <RefreshCw className={`w-3.5 h-3.5 text-[#FA2D48] ${(localRefreshing || isRefreshingRates) ? 'animate-spin' : ''}`} />
@@ -844,9 +848,9 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                         <span className="text-[9px] text-slate-400 font-bold">{liveRates?.asOfDate || 'Daily Live Market'}</span>
                       </div>
                       <div className="flex items-baseline space-x-2.5 pt-1">
-                        <span className="text-3xl sm:text-4xl font-black text-slate-900">{liveRates?.mortgage30Year || '7.17%'}</span>
+                        <span className="text-3xl sm:text-4xl font-black text-slate-900">{liveRates?.mortgage30Year || '7.24%'}</span>
                         <span className="text-xs font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md">
-                          15-Yr: {liveRates?.mortgage15Year || '6.70%'}
+                          15-Yr: {liveRates?.mortgage15Year || '6.84%'}
                         </span>
                       </div>
                       <div className="flex flex-wrap items-center gap-1.5 pt-2">

@@ -35,10 +35,10 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
   onOpenSavedDrawer,
   onResetToMain,
   liveRates,
-  fredRate = '7.17%',
-  rate30Year7DaysAgo = '6.89%',
-  rate30YearChange7Days = 0.28,
-  asOfDate = 'MND Live (9/14/26)',
+  fredRate = '7.24%',
+  rate30Year7DaysAgo = '6.97%',
+  rate30YearChange7Days = 0.27,
+  asOfDate = 'MND Live (9/16/26)',
   onOpenManager,
   onOpenNewsManager,
   isMonetizationEnabled = false,
@@ -52,7 +52,7 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
       const saved = localStorage.getItem('cached_live_mortgage_rates');
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (parsed && parsed.mortgage30Year && parsed.mortgage30Year !== '6.88%' && parsed.mortgage30Year !== '6.89%') {
+        if (parsed && parsed.mortgage30Year) {
           return parsed;
         }
       }
@@ -80,36 +80,32 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
     return () => window.removeEventListener('live-rates-synced', handleSyncedEvent);
   }, []);
 
-  // Direct touch-responsive rate synchronization
+  // Direct mobile/desktop rate synchronization with POST cache-immunity
   const handleDirectSync = async (e?: React.SyntheticEvent) => {
     if (e) {
       e.stopPropagation();
     }
-    if (isLocalSyncing || isRefreshingRates) return;
+    if (isLocalSyncing) return;
 
     setIsLocalSyncing(true);
     setSyncSuccess(false);
 
-    // 1. Notify parent handler if provided
-    if (onRefreshRates) {
-      try {
-        onRefreshRates();
-      } catch (err) {
-        console.warn("Parent onRefreshRates note:", err);
-      }
-    }
-
-    // 2. Perform direct fresh fetch to ensure mobile UI updates without depending solely on parent re-render
     try {
-      const cacheBustUrl = `/api/live-market-stats?force=true&t=${Date.now()}&_rnd=${Math.random()}`;
-      let res: Response | null = await fetch(cacheBustUrl, {
-        method: 'GET',
+      const now = Date.now();
+      // POST prevents mobile browser caching
+      let res: Response | null = await fetch(`/api/live-market-stats/sync?force=true&t=${now}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache'
+        },
         cache: 'no-store'
       }).catch(() => null);
 
       if (!res || !res.ok) {
-        res = await fetch(`/api/live-market-stats/sync?force=true&t=${Date.now()}`, {
-          method: 'POST',
+        res = await fetch(`/api/live-market-stats?force=true&t=${now}&_rnd=${Math.random()}`, {
+          method: 'GET',
           cache: 'no-store'
         }).catch(() => null);
       }
@@ -127,6 +123,11 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
           if (typeof window !== 'undefined') {
             window.dispatchEvent(new CustomEvent('live-rates-synced', { detail: freshData }));
           }
+          if (onRefreshRates) {
+            try {
+              onRefreshRates();
+            } catch (err) {}
+          }
           setSyncSuccess(true);
           setTimeout(() => setSyncSuccess(false), 3000);
         }
@@ -134,7 +135,7 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
     } catch (err) {
       console.warn("Direct modal sync note:", err);
     } finally {
-      setTimeout(() => setIsLocalSyncing(false), 500);
+      setTimeout(() => setIsLocalSyncing(false), 400);
     }
   };
 
@@ -172,12 +173,12 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
   ];
 
   // Calculate 7-day prior comparison strictly from current rate vs 7-day prior rate
-  const active30YrRate = currentLiveRates?.mortgage30Year || fredRate || '7.17%';
-  const activePriorRate = currentLiveRates?.rate30Year7DaysAgo || rate30Year7DaysAgo || '6.89%';
-  const activeAsOfDate = currentLiveRates?.asOfDate || asOfDate || 'MND Live (9/14/26)';
+  const active30YrRate = currentLiveRates?.mortgage30Year || fredRate || '7.24%';
+  const activePriorRate = currentLiveRates?.rate30Year7DaysAgo || rate30Year7DaysAgo || '6.97%';
+  const activeAsOfDate = currentLiveRates?.asOfDate || asOfDate || 'MND Live (9/16/26)';
 
-  const currentNum = parseFloat(active30YrRate.replace(/[^0-9.]/g, '')) || 7.17;
-  const priorNum = parseFloat(activePriorRate.replace(/[^0-9.]/g, '')) || 6.89;
+  const currentNum = parseFloat(active30YrRate.replace(/[^0-9.]/g, '')) || 7.24;
+  const priorNum = parseFloat(activePriorRate.replace(/[^0-9.]/g, '')) || 6.97;
   const computedDiff = currentLiveRates?.rate30YearChange7Days !== undefined
     ? currentLiveRates.rate30YearChange7Days
     : parseFloat((currentNum - priorNum).toFixed(2));
@@ -339,9 +340,8 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
                     type="button"
                     id="header-modal-sync-rates-btn"
                     onClick={handleDirectSync}
-                    onTouchEnd={handleDirectSync}
                     disabled={isLocalSyncing || isRefreshingRates}
-                    className="min-h-[38px] px-3.5 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-700 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer touch-manipulation active:scale-95 disabled:opacity-50 select-none shadow-xs"
+                    className="min-h-[44px] px-3.5 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-700 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer touch-manipulation active:scale-95 disabled:opacity-50 select-none shadow-xs"
                     title="Sync Latest Live Rates"
                   >
                     <RefreshCw className={`w-3.5 h-3.5 text-[#FA2D48] ${(isLocalSyncing || isRefreshingRates) ? 'animate-spin' : ''}`} />
@@ -381,31 +381,31 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
                   id: '30-yr-fixed',
                   label: '30-Yr Fixed',
                   tag: 'MND Daily Index',
-                  rate: currentLiveRates?.mortgage30Year || fredRate || '7.17%',
+                  rate: currentLiveRates?.mortgage30Year || fredRate || '7.24%',
                 },
                 {
                   id: '15-yr-fixed',
                   label: '15-Yr Fixed',
                   tag: 'MND Daily Index',
-                  rate: currentLiveRates?.mortgage15Year || '6.70%',
+                  rate: currentLiveRates?.mortgage15Year || '6.84%',
                 },
                 {
                   id: '30-yr-jumbo',
                   label: '30-Yr Jumbo',
                   tag: 'MND Daily Index',
-                  rate: currentLiveRates?.jumbo30Year || '7.28%',
+                  rate: currentLiveRates?.jumbo30Year || '7.40%',
                 },
                 {
                   id: '30-yr-fha',
                   label: '30-Yr FHA',
                   tag: 'MND Daily Index',
-                  rate: currentLiveRates?.fha30Year || '6.75%',
+                  rate: currentLiveRates?.fha30Year || '6.82%',
                 },
                 {
                   id: '30-yr-va',
                   label: '30-Yr VA',
                   tag: 'MND Daily Index',
-                  rate: currentLiveRates?.va30Year || '6.77%',
+                  rate: currentLiveRates?.va30Year || '6.84%',
                 },
                 {
                   id: 'freddie-mac-pmms',

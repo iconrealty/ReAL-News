@@ -553,22 +553,34 @@ interface CachedLiveRates {
 
 let cachedLiveRates: CachedLiveRates = {
   source: "Mortgage News Daily (MND Daily Index)",
-  asOfDate: "MND Live (9/14/26)",
-  mortgage30Year: "7.17%",
-  mortgage15Year: "6.70%",
-  jumbo30Year: "7.28%",
-  fha30Year: "6.75%",
-  va30Year: "6.77%",
+  asOfDate: "MND Live (9/16/26)",
+  mortgage30Year: "7.24%",
+  mortgage15Year: "6.84%",
+  jumbo30Year: "7.40%",
+  fha30Year: "6.82%",
+  va30Year: "6.84%",
   freddieMac30Year: "6.76%",
-  rate30Year7DaysAgo: "6.89%",
-  rate30YearChange7Days: 0.28,
+  rate30Year7DaysAgo: "6.97%",
+  rate30YearChange7Days: 0.27,
   asOfTimestamp: 0, // 0 forces immediate live fetch on first request or startup
   lastChecked: new Date().toISOString(),
   sourceType: "MORTGAGE_NEWS_DAILY",
   isRealLiveRate: true
 };
 
+let inFlightMndFetch: Promise<CachedLiveRates> | null = null;
+
 async function fetchLiveMndRates(forceRefresh = false): Promise<CachedLiveRates> {
+  if (inFlightMndFetch) {
+    return inFlightMndFetch;
+  }
+  inFlightMndFetch = executeFetchLiveMndRates(forceRefresh).finally(() => {
+    inFlightMndFetch = null;
+  });
+  return inFlightMndFetch;
+}
+
+async function executeFetchLiveMndRates(forceRefresh = false): Promise<CachedLiveRates> {
   const now = Date.now();
   const CACHE_TTL_MS = 60 * 1000; // 60 seconds cache for high accuracy across devices
 
@@ -607,12 +619,25 @@ async function fetchLiveMndRates(forceRefresh = false): Promise<CachedLiveRates>
     if (mndRes.ok) {
       const html = await mndRes.text();
 
-      // Precision table cell extraction for Mortgage News Daily rate products
+      // Precision table & card cell extraction for Mortgage News Daily rate products
       function extractProductRate(productName: string): string | null {
         const escaped = productName.replace(".", "\\.");
+        // Check top rate cards: <div class="...rate-product...">...30 Yr. Fixed...<div class="rate"> 7.24%
+        const cardReg = new RegExp('(?:rate-product|rate-product-name)[^>]*>[\\s\\S]*?' + escaped + '[\\s\\S]*?<div class=[\"\\\']rate[\"\\\'][^>]*>\\s*([\\d\\.]+)%?\\s*<\\/div>', 'i');
+        const cardMatch = html.match(cardReg);
+        if (cardMatch) return `${cardMatch[1]}%`;
+
+        // Check standard table rows:
         const reg = new RegExp("<td class=[\"\\']rate-product[\"\\'][^>]*>[\\s\\S]*?" + escaped + "[\\s\\S]*?<\\/td>[\\s\\S]*?<td class=[\"\\']rate[\"\\'][^>]*>([\\d\\.]+)%?<\\/td>", "i");
         const m = html.match(reg);
-        return m ? `${m[1]}%` : null;
+        if (m) return `${m[1]}%`;
+
+        // Generic fallback within 250 characters
+        const genericReg = new RegExp(escaped + '[\\s\\S]{1,250}?(?:class=[\"\\\']rate[\"\\\'][^>]*>|rate">)\\s*([\\d\\.]+)%', 'i');
+        const genMatch = html.match(genericReg);
+        if (genMatch) return `${genMatch[1]}%`;
+
+        return null;
       }
 
       const r30 = extractProductRate("30 Yr. Fixed");
@@ -625,9 +650,10 @@ async function fetchLiveMndRates(forceRefresh = false): Promise<CachedLiveRates>
       const freddieTableMatch = html.match(/<th[^>]*>[\s\S]*?Freddie Mac[\s\S]*?<\/th>[\s\S]*?<td class=["']rate["']>([\d.]+)%?<\/td>/i);
       const rFreddie = freddieTableMatch ? `${freddieTableMatch[1]}%` : "6.76%";
 
-      // Extract date from table header
-      const dateMatch = html.match(/<th class=[\"\\']rate-product[\"\\'][^>]*>[\s\S]*?<div class=[\"\\']pull-right text-muted[\"\\'][^>]*>([^<]+)<\/div>/i);
-      const asOfStr = dateMatch ? `MND Live (${dateMatch[1].trim()})` : "MND Live (9/14/26)";
+      // Extract date from table header or pull-right badge
+      const dateMatch = html.match(/(?:rate-header|rate-product|pull-right text-muted|as-of-date)[^>]*>([^<]*(?:[0-9]{1,2}\/[0-9]{1,2}|Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[^<]*)<\/div>/i)
+        || html.match(/<th class=[\"\\']rate-product[\"\\'][^>]*>[\s\S]*?<div class=[\"\\']pull-right text-muted[\"\\'][^>]*>([^<]+)<\/div>/i);
+      const asOfStr = dateMatch ? `MND Live (${dateMatch[1].trim()})` : "MND Live (9/16/26)";
 
       const r30Num = r30 ? parseFloat(r30.replace('%', '')) : 7.17;
       let dynamicPrior7DayNum = 6.89; // Reliable baseline fallback
@@ -2032,8 +2058,8 @@ app.post("/api/news/sync-mnd-news", async (req, res) => {
   }
 });
 
-// Periodic background check for updated daily MND rates (every 30 minutes)
-const THIRTY_MINUTES_MS = 30 * 60 * 1000;
+// Periodic background check for updated daily MND rates (every 5 minutes to capture MND updates every 2-3 hours)
+const FIVE_MINUTES_MS = 5 * 60 * 1000;
 setInterval(async () => {
   try {
     console.log("[Rates Background Job] Checking for latest daily MND index updates...");
@@ -2041,9 +2067,10 @@ setInterval(async () => {
   } catch (e) {
     // quiet
   }
-}, THIRTY_MINUTES_MS);
+}, FIVE_MINUTES_MS);
 
 // Periodic background sync for live Orange County real estate & daily mortgage news (every 30 minutes)
+const THIRTY_MINUTES_MS = 30 * 60 * 1000;
 setInterval(async () => {
   try {
     console.log("[News Background Job] Checking for latest live real estate & daily mortgage stories (1-day retention)...");

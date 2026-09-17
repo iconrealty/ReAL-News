@@ -59,33 +59,33 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
 }) => {
   // MND Daily rates
   const mnd30Num = useMemo(() => {
-    if (!propLiveRates?.mortgage30Year) return 7.17;
+    if (!propLiveRates?.mortgage30Year) return 7.24;
     const val = parseFloat(propLiveRates.mortgage30Year.replace('%', ''));
-    return isNaN(val) ? 7.17 : val;
+    return isNaN(val) ? 7.24 : val;
   }, [propLiveRates?.mortgage30Year]);
 
   const mnd15Num = useMemo(() => {
-    if (!propLiveRates?.mortgage15Year) return 6.70;
+    if (!propLiveRates?.mortgage15Year) return 6.84;
     const val = parseFloat(propLiveRates.mortgage15Year.replace('%', ''));
-    return isNaN(val) ? 6.70 : val;
+    return isNaN(val) ? 6.84 : val;
   }, [propLiveRates?.mortgage15Year]);
 
   const mndJumboNum = useMemo(() => {
-    if (!propLiveRates?.jumbo30Year) return 7.28;
+    if (!propLiveRates?.jumbo30Year) return 7.40;
     const val = parseFloat(propLiveRates.jumbo30Year.replace('%', ''));
-    return isNaN(val) ? 7.28 : val;
+    return isNaN(val) ? 7.40 : val;
   }, [propLiveRates?.jumbo30Year]);
 
   const mndFhaNum = useMemo(() => {
-    if (!propLiveRates?.fha30Year) return 6.75;
+    if (!propLiveRates?.fha30Year) return 6.82;
     const val = parseFloat(propLiveRates.fha30Year.replace('%', ''));
-    return isNaN(val) ? 6.75 : val;
+    return isNaN(val) ? 6.82 : val;
   }, [propLiveRates?.fha30Year]);
 
   const mndVaNum = useMemo(() => {
-    if (!propLiveRates?.va30Year) return 6.77;
+    if (!propLiveRates?.va30Year) return 6.84;
     const val = parseFloat(propLiveRates.va30Year.replace('%', ''));
-    return isNaN(val) ? 6.77 : val;
+    return isNaN(val) ? 6.84 : val;
   }, [propLiveRates?.va30Year]);
 
   const mndFreddieNum = useMemo(() => {
@@ -162,29 +162,27 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
     if (e) {
       e.stopPropagation();
     }
-    if (isCalcSyncing || isRefreshingRates) return;
+    if (isCalcSyncing) return;
 
     setIsCalcSyncing(true);
     setCalcSyncSuccess(false);
 
-    if (onRefreshRates) {
-      try {
-        onRefreshRates();
-      } catch (err) {
-        console.warn("Parent onRefreshRates note:", err);
-      }
-    }
-
     try {
-      const cacheBustUrl = `/api/live-market-stats?force=true&t=${Date.now()}&_rnd=${Math.random()}`;
-      let res: Response | null = await fetch(cacheBustUrl, {
-        method: 'GET',
+      const now = Date.now();
+      // POST prevents mobile browser caching
+      let res: Response | null = await fetch(`/api/live-market-stats/sync?force=true&t=${now}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache'
+        },
         cache: 'no-store'
       }).catch(() => null);
 
       if (!res || !res.ok) {
-        res = await fetch(`/api/live-market-stats/sync?force=true&t=${Date.now()}`, {
-          method: 'POST',
+        res = await fetch(`/api/live-market-stats?force=true&t=${now}&_rnd=${Math.random()}`, {
+          method: 'GET',
           cache: 'no-store'
         }).catch(() => null);
       }
@@ -203,11 +201,11 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
           }
           hasUserEditedRate.current = false;
           
-          const r30 = parseFloat(freshData.mortgage30Year?.replace('%', '') || '7.17');
-          const r15 = parseFloat(freshData.mortgage15Year?.replace('%', '') || '6.70');
-          const rJumbo = parseFloat(freshData.jumbo30Year?.replace('%', '') || '7.28');
-          const rFha = parseFloat(freshData.fha30Year?.replace('%', '') || '6.75');
-          const rVa = parseFloat(freshData.va30Year?.replace('%', '') || '6.77');
+          const r30 = parseFloat(freshData.mortgage30Year?.replace('%', '') || '7.24');
+          const r15 = parseFloat(freshData.mortgage15Year?.replace('%', '') || '6.84');
+          const rJumbo = parseFloat(freshData.jumbo30Year?.replace('%', '') || '7.40');
+          const rFha = parseFloat(freshData.fha30Year?.replace('%', '') || '6.82');
+          const rVa = parseFloat(freshData.va30Year?.replace('%', '') || '6.84');
           const rFreddie = parseFloat(freshData.freddieMac30Year?.replace('%', '') || '6.76');
 
           if (selectedRateProgram === '15-Yr Fixed') setInterestRate(r15);
@@ -217,6 +215,12 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
           else if (selectedRateProgram === 'Freddie Mac (PMMS)' || selectedRateProgram === 'Freddie Mac 30-Yr') setInterestRate(rFreddie);
           else setInterestRate(r30);
 
+          if (onRefreshRates) {
+            try {
+              onRefreshRates();
+            } catch (err) {}
+          }
+
           setCalcSyncSuccess(true);
           setTimeout(() => setCalcSyncSuccess(false), 3000);
         }
@@ -224,7 +228,7 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
     } catch (err) {
       console.warn("Calc rate sync note:", err);
     } finally {
-      setTimeout(() => setIsCalcSyncing(false), 500);
+      setTimeout(() => setIsCalcSyncing(false), 400);
     }
   };
 
@@ -245,7 +249,7 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
         } else if ((selectedRateProgram === 'Freddie Mac 30-Yr' || selectedRateProgram === 'Freddie Mac (PMMS)') && data.freddieMac30Year) {
           setInterestRate(parseFloat(data.freddieMac30Year.replace('%', '')));
         } else if (selectedRateProgram === '30-Yr Fixed' || selectedRateProgram === 'custom') {
-          const r30 = parseFloat(data.mortgage30Year?.replace('%', '') || '7.17');
+          const r30 = parseFloat(data.mortgage30Year?.replace('%', '') || '7.24');
           if (!isNaN(r30) && r30 > 0) {
             setInterestRate(r30);
             if (selectedRateProgram === 'custom') {
