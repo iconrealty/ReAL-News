@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, RefreshCw } from 'lucide-react';
 import { CityInfo, AdBanner, LiveMortgageRates } from '../types';
 import { AdBannerRenderer } from './AdBannerRenderer';
 
@@ -59,40 +59,34 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
 }) => {
   // MND Daily rates
   const mnd30Num = useMemo(() => {
-    if (!propLiveRates?.mortgage30Year) return 7.24;
+    if (!propLiveRates?.mortgage30Year) return 7.19;
     const val = parseFloat(propLiveRates.mortgage30Year.replace('%', ''));
-    return isNaN(val) ? 7.24 : val;
+    return isNaN(val) ? 7.19 : val;
   }, [propLiveRates?.mortgage30Year]);
 
   const mnd15Num = useMemo(() => {
-    if (!propLiveRates?.mortgage15Year) return 6.84;
+    if (!propLiveRates?.mortgage15Year) return 6.81;
     const val = parseFloat(propLiveRates.mortgage15Year.replace('%', ''));
-    return isNaN(val) ? 6.84 : val;
+    return isNaN(val) ? 6.81 : val;
   }, [propLiveRates?.mortgage15Year]);
 
   const mndJumboNum = useMemo(() => {
-    if (!propLiveRates?.jumbo30Year) return 7.40;
+    if (!propLiveRates?.jumbo30Year) return 7.35;
     const val = parseFloat(propLiveRates.jumbo30Year.replace('%', ''));
-    return isNaN(val) ? 7.40 : val;
+    return isNaN(val) ? 7.35 : val;
   }, [propLiveRates?.jumbo30Year]);
 
   const mndFhaNum = useMemo(() => {
-    if (!propLiveRates?.fha30Year) return 6.82;
+    if (!propLiveRates?.fha30Year) return 6.81;
     const val = parseFloat(propLiveRates.fha30Year.replace('%', ''));
-    return isNaN(val) ? 6.82 : val;
+    return isNaN(val) ? 6.81 : val;
   }, [propLiveRates?.fha30Year]);
 
   const mndVaNum = useMemo(() => {
-    if (!propLiveRates?.va30Year) return 6.84;
+    if (!propLiveRates?.va30Year) return 6.83;
     const val = parseFloat(propLiveRates.va30Year.replace('%', ''));
-    return isNaN(val) ? 6.84 : val;
+    return isNaN(val) ? 6.83 : val;
   }, [propLiveRates?.va30Year]);
-
-  const mndFreddieNum = useMemo(() => {
-    if (!propLiveRates?.freddieMac30Year) return 6.76;
-    const val = parseFloat(propLiveRates.freddieMac30Year.replace('%', ''));
-    return isNaN(val) ? 6.76 : val;
-  }, [propLiveRates?.freddieMac30Year]);
 
   const rateOptions = useMemo(() => [
     { label: '30-Yr Fixed', rate: mnd30Num, term: 30 },
@@ -100,9 +94,7 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
     { label: '30-Yr Jumbo', rate: mndJumboNum, term: 30 },
     { label: '30-Yr FHA', rate: mndFhaNum, term: 30 },
     { label: '30-Yr VA', rate: mndVaNum, term: 30 },
-    { label: 'Freddie Mac (PMMS)', rate: mndFreddieNum, term: 30 },
-    { label: 'Freddie Mac 30-Yr', rate: mndFreddieNum, term: 30 },
-  ], [mnd30Num, mnd15Num, mndJumboNum, mndFhaNum, mndVaNum, mndFreddieNum]);
+  ], [mnd30Num, mnd15Num, mndJumboNum, mndFhaNum, mndVaNum]);
 
   // Core Loan Inputs
   const [calcMode, setCalcMode] = useState<'standard' | 'reverse'>('standard');
@@ -118,17 +110,23 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
   const [calcSyncSuccess, setCalcSyncSuccess] = useState<boolean>(false);
 
   const handleProgramSelect = (programLabel: string) => {
-    const targetLabel = (programLabel === 'Freddie Mac 30-Yr') ? 'Freddie Mac (PMMS)' : programLabel;
+    let targetLabel = programLabel;
+    if (programLabel.toLowerCase().includes('freddie')) {
+      targetLabel = '30-Yr Fixed';
+    }
     setSelectedRateProgram(targetLabel);
     if (targetLabel === 'custom') {
       hasUserEditedRate.current = true;
       return;
     }
-    const found = rateOptions.find((r) => r.label === targetLabel || (targetLabel === 'Freddie Mac (PMMS)' && r.label === 'Freddie Mac 30-Yr'));
+    hasUserEditedRate.current = false;
+    const found = rateOptions.find((r) => r.label === targetLabel);
     if (found) {
-      hasUserEditedRate.current = false;
       setInterestRate(found.rate);
       setLoanTermYears(found.term);
+    } else if (mnd30Num > 0) {
+      setInterestRate(mnd30Num);
+      setLoanTermYears(30);
     }
   };
 
@@ -156,6 +154,18 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
 
   // Sync interest rate with live rates when propLiveRates updates initially or refreshes
   const hasUserEditedRate = React.useRef(false);
+
+  // Check for pending rate program navigation on mount
+  React.useEffect(() => {
+    try {
+      const pending = sessionStorage.getItem('pending_rate_program') || localStorage.getItem('pending_rate_program');
+      if (pending) {
+        sessionStorage.removeItem('pending_rate_program');
+        localStorage.removeItem('pending_rate_program');
+        handleProgramSelect(pending);
+      }
+    } catch (e) {}
+  }, []);
 
   // Direct sync handler for Mortgage Calculator
   const handleCalcSyncRates = async (e?: React.SyntheticEvent) => {
@@ -201,19 +211,22 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
           }
           hasUserEditedRate.current = false;
           
-          const r30 = parseFloat(freshData.mortgage30Year?.replace('%', '') || '7.24');
-          const r15 = parseFloat(freshData.mortgage15Year?.replace('%', '') || '6.84');
-          const rJumbo = parseFloat(freshData.jumbo30Year?.replace('%', '') || '7.40');
-          const rFha = parseFloat(freshData.fha30Year?.replace('%', '') || '6.82');
-          const rVa = parseFloat(freshData.va30Year?.replace('%', '') || '6.84');
-          const rFreddie = parseFloat(freshData.freddieMac30Year?.replace('%', '') || '6.76');
+          const r30 = parseFloat(freshData.mortgage30Year?.replace('%', '') || '7.19');
+          const r15 = parseFloat(freshData.mortgage15Year?.replace('%', '') || '6.81');
+          const rJumbo = parseFloat(freshData.jumbo30Year?.replace('%', '') || '7.35');
+          const rFha = parseFloat(freshData.fha30Year?.replace('%', '') || '6.81');
+          const rVa = parseFloat(freshData.va30Year?.replace('%', '') || '6.83');
 
           if (selectedRateProgram === '15-Yr Fixed') setInterestRate(r15);
           else if (selectedRateProgram === '30-Yr Jumbo') setInterestRate(rJumbo);
           else if (selectedRateProgram === '30-Yr FHA') setInterestRate(rFha);
           else if (selectedRateProgram === '30-Yr VA') setInterestRate(rVa);
-          else if (selectedRateProgram === 'Freddie Mac (PMMS)' || selectedRateProgram === 'Freddie Mac 30-Yr') setInterestRate(rFreddie);
-          else setInterestRate(r30);
+          else {
+            setInterestRate(r30);
+            if (selectedRateProgram === 'custom') {
+              setSelectedRateProgram('30-Yr Fixed');
+            }
+          }
 
           if (onRefreshRates) {
             try {
@@ -237,23 +250,25 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
     const handleLiveRatesSynced = (e: any) => {
       const data = e.detail;
       if (data) {
-        hasUserEditedRate.current = false;
         if (selectedRateProgram === '15-Yr Fixed' && data.mortgage15Year) {
-          setInterestRate(parseFloat(data.mortgage15Year.replace('%', '')));
+          const r = parseFloat(data.mortgage15Year.replace('%', ''));
+          if (!isNaN(r)) setInterestRate(r);
         } else if (selectedRateProgram === '30-Yr Jumbo' && data.jumbo30Year) {
-          setInterestRate(parseFloat(data.jumbo30Year.replace('%', '')));
+          const r = parseFloat(data.jumbo30Year.replace('%', ''));
+          if (!isNaN(r)) setInterestRate(r);
         } else if (selectedRateProgram === '30-Yr FHA' && data.fha30Year) {
-          setInterestRate(parseFloat(data.fha30Year.replace('%', '')));
+          const r = parseFloat(data.fha30Year.replace('%', ''));
+          if (!isNaN(r)) setInterestRate(r);
         } else if (selectedRateProgram === '30-Yr VA' && data.va30Year) {
-          setInterestRate(parseFloat(data.va30Year.replace('%', '')));
-        } else if ((selectedRateProgram === 'Freddie Mac 30-Yr' || selectedRateProgram === 'Freddie Mac (PMMS)') && data.freddieMac30Year) {
-          setInterestRate(parseFloat(data.freddieMac30Year.replace('%', '')));
+          const r = parseFloat(data.va30Year.replace('%', ''));
+          if (!isNaN(r)) setInterestRate(r);
         } else if (selectedRateProgram === '30-Yr Fixed' || selectedRateProgram === 'custom') {
-          const r30 = parseFloat(data.mortgage30Year?.replace('%', '') || '7.24');
+          const r30 = parseFloat(data.mortgage30Year?.replace('%', '') || '7.19');
           if (!isNaN(r30) && r30 > 0) {
             setInterestRate(r30);
             if (selectedRateProgram === 'custom') {
               setSelectedRateProgram('30-Yr Fixed');
+              hasUserEditedRate.current = false;
             }
           }
         }
@@ -275,16 +290,13 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
     return () => window.removeEventListener('select-rate-program', handleSelectProgramEvent);
   }, [rateOptions]);
 
+  // Keep interestRate synchronized with selected live program whenever live rates refresh
   React.useEffect(() => {
-    // If interest rate was left at previous cached default (e.g. 6.88% or 6.89%), unblock user edit flag to sync to latest
-    if ((interestRate === 6.88 || interestRate === 6.89 || interestRate === 7.12) && mnd30Num !== interestRate) {
-      hasUserEditedRate.current = false;
-    }
-    if (!hasUserEditedRate.current) {
-      const activeProg = rateOptions.find((r) => r.label === selectedRateProgram || (selectedRateProgram === 'Freddie Mac (PMMS)' && r.label === 'Freddie Mac 30-Yr'));
+    if (selectedRateProgram !== 'custom') {
+      const activeProg = rateOptions.find((r) => r.label === selectedRateProgram);
       if (activeProg && activeProg.rate > 0) {
         setInterestRate(activeProg.rate);
-      } else if (mnd30Num > 0 && selectedRateProgram !== 'custom') {
+      } else if (mnd30Num > 0) {
         setInterestRate(mnd30Num);
       }
     }
@@ -908,11 +920,24 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
 
               {/* 3. Interest Rate & Loan Program */}
               <div className="space-y-3">
-                <label htmlFor="interest-rate-program-select" className="text-xs font-extrabold uppercase tracking-wider text-slate-700 block">
-                  Interest Rate &amp; Program
-                </label>
+                <div className="flex items-center justify-between">
+                  <label htmlFor="interest-rate-program-select" className="text-xs font-extrabold uppercase tracking-wider text-slate-700 block">
+                    Interest Rate &amp; Program
+                  </label>
+                  <button
+                    type="button"
+                    id="calc-sync-rates-btn"
+                    onClick={handleCalcSyncRates}
+                    disabled={isCalcSyncing}
+                    className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 transition-all cursor-pointer active:scale-95 shadow-xs"
+                    title="Sync with live Mortgage News Daily rates"
+                  >
+                    <RefreshCw className={`w-3 h-3 ${isCalcSyncing ? 'animate-spin text-[#FA2D48]' : ''}`} />
+                    <span>{calcSyncSuccess ? '✓ Synced' : isCalcSyncing ? 'Syncing...' : 'Sync Live'}</span>
+                  </button>
+                </div>
 
-                {/* Dropdown with live rate programs: 30-Yr Fixed (default), 15-Yr Fixed, 30-Yr Jumbo, 30-Yr FHA, 30-Yr VA, Freddie Mac */}
+                {/* Dropdown with live rate programs: 30-Yr Fixed (default), 15-Yr Fixed, 30-Yr Jumbo, 30-Yr FHA, 30-Yr VA */}
                 <div className="relative">
                   <select
                     id="interest-rate-program-select"
@@ -925,7 +950,6 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                     <option value="30-Yr Jumbo">30-Yr Jumbo — {mndJumboNum}% (Live)</option>
                     <option value="30-Yr FHA">30-Yr FHA — {mndFhaNum}% (Live)</option>
                     <option value="30-Yr VA">30-Yr VA — {mndVaNum}% (Live)</option>
-                    <option value="Freddie Mac (PMMS)">Freddie Mac (PMMS) — {mndFreddieNum}% (Live)</option>
                     <option value="custom">Custom Rate ({interestRate !== '' ? `${interestRate}%` : 'Manual'})</option>
                   </select>
                   <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3.5 sm:right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
@@ -934,10 +958,21 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                 {/* Custom Rate Input (Compact Pill) + Loan Term Quick Selector */}
                 <div className="flex flex-wrap items-end justify-between gap-3 pt-0.5">
                   <div className="space-y-1.5 shrink-0">
-                    <label htmlFor="interest-rate-input" className="text-[11px] font-extrabold uppercase tracking-wider text-slate-500 block">
-                      Custom Rate (%)
-                    </label>
-                    <div className="relative flex items-center w-24 sm:w-28">
+                    <div className="flex items-center justify-between gap-2">
+                      <label htmlFor="interest-rate-input" className="text-[11px] font-extrabold uppercase tracking-wider text-slate-500 block">
+                        Custom Rate (%)
+                      </label>
+                      {selectedRateProgram === 'custom' && (
+                        <button
+                          type="button"
+                          onClick={() => handleProgramSelect('30-Yr Fixed')}
+                          className="text-[10px] font-bold text-[#FA2D48] hover:underline cursor-pointer"
+                        >
+                          Reset to 30-Yr ({mnd30Num}%)
+                        </button>
+                      )}
+                    </div>
+                    <div className="relative flex items-center w-28 sm:w-32">
                       <input
                         id="interest-rate-input"
                         type="number"
@@ -947,7 +982,7 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                         step="0.01"
                         min="0"
                         max="25"
-                        placeholder="6.89"
+                        placeholder="7.19"
                       />
                       <span className="absolute right-2 text-slate-400 font-bold text-xs pointer-events-none">%</span>
                     </div>
@@ -1116,9 +1151,22 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
 
               {/* 4. Interest Rate & Loan Program */}
               <div className="space-y-3">
-                <label htmlFor="interest-rate-program-select-rev" className="text-xs font-extrabold uppercase tracking-wider text-slate-200 block">
-                  Interest Rate &amp; Program
-                </label>
+                <div className="flex items-center justify-between">
+                  <label htmlFor="interest-rate-program-select-rev" className="text-xs font-extrabold uppercase tracking-wider text-slate-200 block">
+                    Interest Rate &amp; Program
+                  </label>
+                  <button
+                    type="button"
+                    id="calc-sync-rates-btn-rev"
+                    onClick={handleCalcSyncRates}
+                    disabled={isCalcSyncing}
+                    className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 transition-all cursor-pointer active:scale-95 shadow-xs"
+                    title="Sync with live Mortgage News Daily rates"
+                  >
+                    <RefreshCw className={`w-3 h-3 ${isCalcSyncing ? 'animate-spin text-[#FA2D48]' : ''}`} />
+                    <span>{calcSyncSuccess ? '✓ Synced' : isCalcSyncing ? 'Syncing...' : 'Sync Live'}</span>
+                  </button>
+                </div>
 
                 {/* Dropdown with live rate programs */}
                 <div className="relative">
@@ -1141,10 +1189,21 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                 {/* Custom Rate Input (Compact Pill) + Loan Term Quick Selector */}
                 <div className="flex flex-wrap items-end justify-between gap-3 pt-0.5">
                   <div className="space-y-1.5 shrink-0">
-                    <label htmlFor="interest-rate-input-rev" className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 block">
-                      Custom Rate (%)
-                    </label>
-                    <div className="relative flex items-center w-24 sm:w-28">
+                    <div className="flex items-center justify-between gap-2">
+                      <label htmlFor="interest-rate-input-rev" className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 block">
+                        Custom Rate (%)
+                      </label>
+                      {selectedRateProgram === 'custom' && (
+                        <button
+                          type="button"
+                          onClick={() => handleProgramSelect('30-Yr Fixed')}
+                          className="text-[10px] font-bold text-[#FA2D48] hover:underline cursor-pointer"
+                        >
+                          Reset to 30-Yr ({mnd30Num}%)
+                        </button>
+                      )}
+                    </div>
+                    <div className="relative flex items-center w-28 sm:w-32">
                       <input
                         id="interest-rate-input-rev"
                         type="number"
@@ -1154,7 +1213,7 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                         step="0.01"
                         min="0"
                         max="25"
-                        placeholder="6.89"
+                        placeholder="7.19"
                       />
                       <span className="absolute right-2 text-slate-400 font-bold text-xs pointer-events-none">%</span>
                     </div>

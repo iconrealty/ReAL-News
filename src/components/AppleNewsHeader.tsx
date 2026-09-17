@@ -35,10 +35,10 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
   onOpenSavedDrawer,
   onResetToMain,
   liveRates,
-  fredRate = '7.24%',
+  fredRate = '7.19%',
   rate30Year7DaysAgo = '6.97%',
-  rate30YearChange7Days = 0.27,
-  asOfDate = 'MND Live (9/16/26)',
+  rate30YearChange7Days = 0.22,
+  asOfDate = 'MND Live (9/17/26)',
   onOpenManager,
   onOpenNewsManager,
   isMonetizationEnabled = false,
@@ -173,11 +173,11 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
   ];
 
   // Calculate 7-day prior comparison strictly from current rate vs 7-day prior rate
-  const active30YrRate = currentLiveRates?.mortgage30Year || fredRate || '7.24%';
+  const active30YrRate = currentLiveRates?.mortgage30Year || fredRate || '7.19%';
   const activePriorRate = currentLiveRates?.rate30Year7DaysAgo || rate30Year7DaysAgo || '6.97%';
-  const activeAsOfDate = currentLiveRates?.asOfDate || asOfDate || 'MND Live (9/16/26)';
+  const activeAsOfDate = currentLiveRates?.asOfDate || asOfDate || 'MND Live (9/17/26)';
 
-  const currentNum = parseFloat(active30YrRate.replace(/[^0-9.]/g, '')) || 7.24;
+  const currentNum = parseFloat(active30YrRate.replace(/[^0-9.]/g, '')) || 7.19;
   const priorNum = parseFloat(activePriorRate.replace(/[^0-9.]/g, '')) || 6.97;
   const computedDiff = currentLiveRates?.rate30YearChange7Days !== undefined
     ? currentLiveRates.rate30YearChange7Days
@@ -381,37 +381,31 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
                   id: '30-yr-fixed',
                   label: '30-Yr Fixed',
                   tag: 'MND Daily Index',
-                  rate: currentLiveRates?.mortgage30Year || fredRate || '7.24%',
+                  rate: currentLiveRates?.mortgage30Year || fredRate || '7.19%',
                 },
                 {
                   id: '15-yr-fixed',
                   label: '15-Yr Fixed',
                   tag: 'MND Daily Index',
-                  rate: currentLiveRates?.mortgage15Year || '6.84%',
+                  rate: currentLiveRates?.mortgage15Year || '6.81%',
                 },
                 {
                   id: '30-yr-jumbo',
                   label: '30-Yr Jumbo',
                   tag: 'MND Daily Index',
-                  rate: currentLiveRates?.jumbo30Year || '7.40%',
+                  rate: currentLiveRates?.jumbo30Year || '7.35%',
                 },
                 {
                   id: '30-yr-fha',
                   label: '30-Yr FHA',
                   tag: 'MND Daily Index',
-                  rate: currentLiveRates?.fha30Year || '6.82%',
+                  rate: currentLiveRates?.fha30Year || '6.81%',
                 },
                 {
                   id: '30-yr-va',
                   label: '30-Yr VA',
                   tag: 'MND Daily Index',
-                  rate: currentLiveRates?.va30Year || '6.84%',
-                },
-                {
-                  id: 'freddie-mac-pmms',
-                  label: 'Freddie Mac (PMMS)',
-                  tag: 'Weekly Survey',
-                  rate: currentLiveRates?.freddieMac30Year || '6.76%',
+                  rate: currentLiveRates?.va30Year || '6.83%',
                 },
               ].map((r) => (
                 <button
@@ -420,9 +414,16 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
                   id={`mnd-header-rate-${r.id}`}
                   onClick={() => {
                     setIsRatesModalOpen(false);
+                    try {
+                      sessionStorage.setItem('pending_rate_program', r.label);
+                      localStorage.setItem('pending_rate_program', r.label);
+                    } catch (e) {}
                     onSelectCategory('mortgage-calculator');
                     if (typeof window !== 'undefined') {
                       window.dispatchEvent(new CustomEvent('select-rate-program', { detail: r.label }));
+                      setTimeout(() => {
+                        window.dispatchEvent(new CustomEvent('select-rate-program', { detail: r.label }));
+                      }, 100);
                     }
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                   }}

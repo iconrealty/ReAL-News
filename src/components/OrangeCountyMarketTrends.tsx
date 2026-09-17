@@ -194,13 +194,12 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
   const [liveRates, setLiveRates] = useState<LiveMortgageRates>(
     propLiveRates || { 
       source: 'Mortgage News Daily (MND Daily Index)',
-      mortgage30Year: '7.12%',
-      mortgage15Year: '6.65%',
-      jumbo30Year: '7.25%',
-      fha30Year: '6.68%',
-      va30Year: '6.70%',
-      freddieMac30Year: '6.76%',
-      asOfDate: 'MND Live (9/11/26)',
+      mortgage30Year: '7.19%',
+      mortgage15Year: '6.81%',
+      jumbo30Year: '7.35%',
+      fha30Year: '6.81%',
+      va30Year: '6.83%',
+      asOfDate: 'MND Live (9/17/26)',
       sourceType: 'MORTGAGE_NEWS_DAILY',
       isRealLiveRate: true
     }
@@ -848,9 +847,9 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                         <span className="text-[9px] text-slate-400 font-bold">{liveRates?.asOfDate || 'Daily Live Market'}</span>
                       </div>
                       <div className="flex items-baseline space-x-2.5 pt-1">
-                        <span className="text-3xl sm:text-4xl font-black text-slate-900">{liveRates?.mortgage30Year || '7.24%'}</span>
+                        <span className="text-3xl sm:text-4xl font-black text-slate-900">{liveRates?.mortgage30Year || '7.19%'}</span>
                         <span className="text-xs font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md">
-                          15-Yr: {liveRates?.mortgage15Year || '6.84%'}
+                          15-Yr: {liveRates?.mortgage15Year || '6.81%'}
                         </span>
                       </div>
                       <div className="flex flex-wrap items-center gap-1.5 pt-2">
@@ -867,11 +866,6 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                         {liveRates?.va30Year && (
                           <span className="text-[10px] font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md">
                             VA: {liveRates.va30Year}
-                          </span>
-                        )}
-                        {liveRates?.freddieMac30Year && (
-                          <span className="text-[10px] font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md">
-                            Freddie Mac: {liveRates.freddieMac30Year}
                           </span>
                         )}
                       </div>

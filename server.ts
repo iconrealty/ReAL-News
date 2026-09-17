@@ -553,15 +553,14 @@ interface CachedLiveRates {
 
 let cachedLiveRates: CachedLiveRates = {
   source: "Mortgage News Daily (MND Daily Index)",
-  asOfDate: "MND Live (9/16/26)",
-  mortgage30Year: "7.24%",
-  mortgage15Year: "6.84%",
-  jumbo30Year: "7.40%",
-  fha30Year: "6.82%",
-  va30Year: "6.84%",
-  freddieMac30Year: "6.76%",
+  asOfDate: "MND Live (9/17/26)",
+  mortgage30Year: "7.19%",
+  mortgage15Year: "6.81%",
+  jumbo30Year: "7.35%",
+  fha30Year: "6.81%",
+  va30Year: "6.83%",
   rate30Year7DaysAgo: "6.97%",
-  rate30YearChange7Days: 0.27,
+  rate30YearChange7Days: 0.22,
   asOfTimestamp: 0, // 0 forces immediate live fetch on first request or startup
   lastChecked: new Date().toISOString(),
   sourceType: "MORTGAGE_NEWS_DAILY",
@@ -571,7 +570,7 @@ let cachedLiveRates: CachedLiveRates = {
 let inFlightMndFetch: Promise<CachedLiveRates> | null = null;
 
 async function fetchLiveMndRates(forceRefresh = false): Promise<CachedLiveRates> {
-  if (inFlightMndFetch) {
+  if (inFlightMndFetch && !forceRefresh) {
     return inFlightMndFetch;
   }
   inFlightMndFetch = executeFetchLiveMndRates(forceRefresh).finally(() => {
@@ -622,6 +621,11 @@ async function executeFetchLiveMndRates(forceRefresh = false): Promise<CachedLiv
       // Precision table & card cell extraction for Mortgage News Daily rate products
       function extractProductRate(productName: string): string | null {
         const escaped = productName.replace(".", "\\.");
+        // Check product/price layout: <div class="product">30YR Fixed Rate</div>...<div class="price">7.19%</div>
+        const priceReg = new RegExp('(?:product|rate-product|product-name)[^>]*>[\\s\\S]*?' + escaped + '[\\s\\S]*?<div class=[\"\\\'](?:price|rate|rate-val)[\"\\\'][^>]*>\\s*([\\d\\.]+)%?\\s*<\\/div>', 'i');
+        const priceMatch = html.match(priceReg);
+        if (priceMatch) return `${priceMatch[1]}%`;
+
         // Check top rate cards: <div class="...rate-product...">...30 Yr. Fixed...<div class="rate"> 7.24%
         const cardReg = new RegExp('(?:rate-product|rate-product-name)[^>]*>[\\s\\S]*?' + escaped + '[\\s\\S]*?<div class=[\"\\\']rate[\"\\\'][^>]*>\\s*([\\d\\.]+)%?\\s*<\\/div>', 'i');
         const cardMatch = html.match(cardReg);
@@ -633,30 +637,26 @@ async function executeFetchLiveMndRates(forceRefresh = false): Promise<CachedLiv
         if (m) return `${m[1]}%`;
 
         // Generic fallback within 250 characters
-        const genericReg = new RegExp(escaped + '[\\s\\S]{1,250}?(?:class=[\"\\\']rate[\"\\\'][^>]*>|rate">)\\s*([\\d\\.]+)%', 'i');
+        const genericReg = new RegExp(escaped + '[\\s\\S]{1,250}?(?:class=[\"\\\'](?:rate|price)[\"\\\'][^>]*>|rate">)\\s*([\\d\\.]+)%', 'i');
         const genMatch = html.match(genericReg);
         if (genMatch) return `${genMatch[1]}%`;
 
         return null;
       }
 
-      const r30 = extractProductRate("30 Yr. Fixed");
-      const r15 = extractProductRate("15 Yr. Fixed");
-      const rJumbo = extractProductRate("30 Yr. Jumbo");
-      const rFha = extractProductRate("30 Yr. FHA");
-      const rVa = extractProductRate("30 Yr. VA");
-
-      // Extract Freddie Mac survey rate from table
-      const freddieTableMatch = html.match(/<th[^>]*>[\s\S]*?Freddie Mac[\s\S]*?<\/th>[\s\S]*?<td class=["']rate["']>([\d.]+)%?<\/td>/i);
-      const rFreddie = freddieTableMatch ? `${freddieTableMatch[1]}%` : "6.76%";
+      const r30 = extractProductRate("30 Yr. Fixed") || extractProductRate("30YR Fixed");
+      const r15 = extractProductRate("15 Yr. Fixed") || extractProductRate("15YR Fixed");
+      const rJumbo = extractProductRate("30 Yr. Jumbo") || extractProductRate("30YR Jumbo");
+      const rFha = extractProductRate("30 Yr. FHA") || extractProductRate("30YR FHA");
+      const rVa = extractProductRate("30 Yr. VA") || extractProductRate("30YR VA");
 
       // Extract date from table header or pull-right badge
       const dateMatch = html.match(/(?:rate-header|rate-product|pull-right text-muted|as-of-date)[^>]*>([^<]*(?:[0-9]{1,2}\/[0-9]{1,2}|Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[^<]*)<\/div>/i)
         || html.match(/<th class=[\"\\']rate-product[\"\\'][^>]*>[\s\S]*?<div class=[\"\\']pull-right text-muted[\"\\'][^>]*>([^<]+)<\/div>/i);
-      const asOfStr = dateMatch ? `MND Live (${dateMatch[1].trim()})` : "MND Live (9/16/26)";
+      const asOfStr = dateMatch ? `MND Live (${dateMatch[1].trim()})` : "MND Live (9/17/26)";
 
-      const r30Num = r30 ? parseFloat(r30.replace('%', '')) : 7.17;
-      let dynamicPrior7DayNum = 6.89; // Reliable baseline fallback
+      const r30Num = r30 ? parseFloat(r30.replace('%', '')) : 7.19;
+      let dynamicPrior7DayNum = 6.97; // Reliable baseline fallback
 
       // Extract dynamic historical 30-year rate from MND daily survey history
       if (histRes && histRes.ok) {
@@ -702,12 +702,11 @@ async function executeFetchLiveMndRates(forceRefresh = false): Promise<CachedLiv
       cachedLiveRates = {
         source: "Mortgage News Daily (MND Daily Index)",
         asOfDate: asOfStr,
-        mortgage30Year: r30 || cachedLiveRates.mortgage30Year || "7.12%",
-        mortgage15Year: r15 || cachedLiveRates.mortgage15Year || "6.65%",
-        jumbo30Year: rJumbo || cachedLiveRates.jumbo30Year || "7.25%",
-        fha30Year: rFha || cachedLiveRates.fha30Year || "6.68%",
-        va30Year: rVa || cachedLiveRates.va30Year || "6.70%",
-        freddieMac30Year: rFreddie || cachedLiveRates.freddieMac30Year || "6.76%",
+        mortgage30Year: r30 || cachedLiveRates.mortgage30Year || "7.19%",
+        mortgage15Year: r15 || cachedLiveRates.mortgage15Year || "6.81%",
+        jumbo30Year: rJumbo || cachedLiveRates.jumbo30Year || "7.35%",
+        fha30Year: rFha || cachedLiveRates.fha30Year || "6.81%",
+        va30Year: rVa || cachedLiveRates.va30Year || "6.83%",
         rate30Year7DaysAgo: `${dynamicPrior7DayNum}%`,
         rate30YearChange7Days: change7Days,
         asOfTimestamp: now,

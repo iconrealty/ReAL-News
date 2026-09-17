@@ -149,7 +149,9 @@ export function App() {
       const saved = localStorage.getItem('cached_live_mortgage_rates');
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (parsed && parsed.mortgage30Year) {
+        // If cached rates exist and are fresh (within 30 mins), use them; otherwise use fresh daily defaults while immediate fetch runs
+        const isFresh = parsed.asOfTimestamp && (Date.now() - parsed.asOfTimestamp < 30 * 60 * 1000);
+        if (parsed && parsed.mortgage30Year && isFresh) {
           return parsed;
         }
       }
@@ -158,15 +160,14 @@ export function App() {
     }
     return {
       source: 'Mortgage News Daily (MND Daily Index)',
-      asOfDate: 'MND Live (9/16/26)',
-      mortgage30Year: '7.24%',
-      mortgage15Year: '6.84%',
-      jumbo30Year: '7.40%',
-      fha30Year: '6.82%',
-      va30Year: '6.84%',
-      freddieMac30Year: '6.76%',
+      asOfDate: 'MND Live (9/17/26)',
+      mortgage30Year: '7.19%',
+      mortgage15Year: '6.81%',
+      jumbo30Year: '7.35%',
+      fha30Year: '6.81%',
+      va30Year: '6.83%',
       rate30Year7DaysAgo: '6.97%',
-      rate30YearChange7Days: 0.27,
+      rate30YearChange7Days: 0.22,
       sourceType: 'MORTGAGE_NEWS_DAILY',
       isRealLiveRate: true
     };
