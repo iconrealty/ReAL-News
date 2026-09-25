@@ -149,9 +149,13 @@ export function App() {
       const saved = localStorage.getItem('cached_live_mortgage_rates');
       if (saved) {
         const parsed = JSON.parse(saved);
-        // If cached rates exist and are fresh (within 30 mins), use them; otherwise use fresh daily defaults while immediate fetch runs
-        const isFresh = parsed.asOfTimestamp && (Date.now() - parsed.asOfTimestamp < 30 * 60 * 1000);
-        if (parsed && parsed.mortgage30Year && isFresh) {
+        // Automatically purge any stale cached rates from previous versions or past dates
+        const isStaleDate = !parsed.asOfDate || parsed.asOfDate.includes('9/17/26') || parsed.mortgage30Year === '7.19%';
+        const isFresh = parsed.asOfTimestamp && (Date.now() - parsed.asOfTimestamp < 15 * 60 * 1000);
+        
+        if (isStaleDate) {
+          localStorage.removeItem('cached_live_mortgage_rates');
+        } else if (parsed && parsed.mortgage30Year && isFresh) {
           return parsed;
         }
       }
@@ -160,14 +164,14 @@ export function App() {
     }
     return {
       source: 'Mortgage News Daily (MND Daily Index)',
-      asOfDate: 'MND Live (9/17/26)',
-      mortgage30Year: '7.19%',
-      mortgage15Year: '6.81%',
-      jumbo30Year: '7.35%',
-      fha30Year: '6.81%',
-      va30Year: '6.83%',
-      rate30Year7DaysAgo: '6.97%',
-      rate30YearChange7Days: 0.22,
+      asOfDate: 'MND Live (9/24/26)',
+      mortgage30Year: '7.45%',
+      mortgage15Year: '7.10%',
+      jumbo30Year: '7.55%',
+      fha30Year: '7.05%',
+      va30Year: '7.07%',
+      rate30Year7DaysAgo: '7.19%',
+      rate30YearChange7Days: 0.26,
       sourceType: 'MORTGAGE_NEWS_DAILY',
       isRealLiveRate: true
     };
@@ -179,7 +183,7 @@ export function App() {
   const fetchLiveRates = async (showNotification = false) => {
     try {
       const now = Date.now();
-      // Use POST with strict headers for guaranteed mobile cache immunity
+      // Use POST with strict headers & body for guaranteed mobile cache immunity & webview compatibility
       let res = await fetch(`/api/live-market-stats/sync?force=true&t=${now}`, {
         method: 'POST',
         headers: {
@@ -187,6 +191,7 @@ export function App() {
           'Cache-Control': 'no-cache, no-store, must-revalidate',
           'Pragma': 'no-cache'
         },
+        body: JSON.stringify({ sync: true, clientTime: now }),
         cache: 'no-store'
       }).catch(() => null);
 

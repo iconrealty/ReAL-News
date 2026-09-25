@@ -553,14 +553,14 @@ interface CachedLiveRates {
 
 let cachedLiveRates: CachedLiveRates = {
   source: "Mortgage News Daily (MND Daily Index)",
-  asOfDate: "MND Live (9/17/26)",
-  mortgage30Year: "7.19%",
-  mortgage15Year: "6.81%",
-  jumbo30Year: "7.35%",
-  fha30Year: "6.81%",
-  va30Year: "6.83%",
-  rate30Year7DaysAgo: "6.97%",
-  rate30YearChange7Days: 0.22,
+  asOfDate: "MND Live (9/24/26)",
+  mortgage30Year: "7.45%",
+  mortgage15Year: "7.10%",
+  jumbo30Year: "7.55%",
+  fha30Year: "7.05%",
+  va30Year: "7.07%",
+  rate30Year7DaysAgo: "7.19%",
+  rate30YearChange7Days: 0.26,
   asOfTimestamp: 0, // 0 forces immediate live fetch on first request or startup
   lastChecked: new Date().toISOString(),
   sourceType: "MORTGAGE_NEWS_DAILY",
@@ -653,10 +653,10 @@ async function executeFetchLiveMndRates(forceRefresh = false): Promise<CachedLiv
       // Extract date from table header or pull-right badge
       const dateMatch = html.match(/(?:rate-header|rate-product|pull-right text-muted|as-of-date)[^>]*>([^<]*(?:[0-9]{1,2}\/[0-9]{1,2}|Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[^<]*)<\/div>/i)
         || html.match(/<th class=[\"\\']rate-product[\"\\'][^>]*>[\s\S]*?<div class=[\"\\']pull-right text-muted[\"\\'][^>]*>([^<]+)<\/div>/i);
-      const asOfStr = dateMatch ? `MND Live (${dateMatch[1].trim()})` : "MND Live (9/17/26)";
+      const asOfStr = dateMatch ? `MND Live (${dateMatch[1].trim()})` : "MND Live (9/24/26)";
 
-      const r30Num = r30 ? parseFloat(r30.replace('%', '')) : 7.19;
-      let dynamicPrior7DayNum = 6.97; // Reliable baseline fallback
+      const r30Num = r30 ? parseFloat(r30.replace('%', '')) : 7.45;
+      let dynamicPrior7DayNum = 7.19; // Reliable baseline fallback (7 days prior)
 
       // Extract dynamic historical 30-year rate from MND daily survey history
       if (histRes && histRes.ok) {
@@ -702,11 +702,11 @@ async function executeFetchLiveMndRates(forceRefresh = false): Promise<CachedLiv
       cachedLiveRates = {
         source: "Mortgage News Daily (MND Daily Index)",
         asOfDate: asOfStr,
-        mortgage30Year: r30 || cachedLiveRates.mortgage30Year || "7.19%",
-        mortgage15Year: r15 || cachedLiveRates.mortgage15Year || "6.81%",
-        jumbo30Year: rJumbo || cachedLiveRates.jumbo30Year || "7.35%",
-        fha30Year: rFha || cachedLiveRates.fha30Year || "6.81%",
-        va30Year: rVa || cachedLiveRates.va30Year || "6.83%",
+        mortgage30Year: r30 || cachedLiveRates.mortgage30Year || "7.45%",
+        mortgage15Year: r15 || cachedLiveRates.mortgage15Year || "7.10%",
+        jumbo30Year: rJumbo || cachedLiveRates.jumbo30Year || "7.55%",
+        fha30Year: rFha || cachedLiveRates.fha30Year || "7.05%",
+        va30Year: rVa || cachedLiveRates.va30Year || "7.07%",
         rate30Year7DaysAgo: `${dynamicPrior7DayNum}%`,
         rate30YearChange7Days: change7Days,
         asOfTimestamp: now,

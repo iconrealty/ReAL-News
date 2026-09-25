@@ -35,10 +35,10 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
   onOpenSavedDrawer,
   onResetToMain,
   liveRates,
-  fredRate = '7.19%',
-  rate30Year7DaysAgo = '6.97%',
-  rate30YearChange7Days = 0.22,
-  asOfDate = 'MND Live (9/17/26)',
+  fredRate = '7.45%',
+  rate30Year7DaysAgo = '7.19%',
+  rate30YearChange7Days = 0.26,
+  asOfDate = 'MND Live (9/24/26)',
   onOpenManager,
   onOpenNewsManager,
   isMonetizationEnabled = false,
@@ -100,6 +100,7 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
           'Cache-Control': 'no-cache, no-store, must-revalidate',
           'Pragma': 'no-cache'
         },
+        body: JSON.stringify({ sync: true, clientTime: now }),
         cache: 'no-store'
       }).catch(() => null);
 
@@ -173,12 +174,12 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
   ];
 
   // Calculate 7-day prior comparison strictly from current rate vs 7-day prior rate
-  const active30YrRate = currentLiveRates?.mortgage30Year || fredRate || '7.19%';
-  const activePriorRate = currentLiveRates?.rate30Year7DaysAgo || rate30Year7DaysAgo || '6.97%';
-  const activeAsOfDate = currentLiveRates?.asOfDate || asOfDate || 'MND Live (9/17/26)';
+  const active30YrRate = currentLiveRates?.mortgage30Year || fredRate || '7.45%';
+  const activePriorRate = currentLiveRates?.rate30Year7DaysAgo || rate30Year7DaysAgo || '7.19%';
+  const activeAsOfDate = currentLiveRates?.asOfDate || asOfDate || 'MND Live (9/24/26)';
 
-  const currentNum = parseFloat(active30YrRate.replace(/[^0-9.]/g, '')) || 7.19;
-  const priorNum = parseFloat(activePriorRate.replace(/[^0-9.]/g, '')) || 6.97;
+  const currentNum = parseFloat(active30YrRate.replace(/[^0-9.]/g, '')) || 7.45;
+  const priorNum = parseFloat(activePriorRate.replace(/[^0-9.]/g, '')) || 7.19;
   const computedDiff = currentLiveRates?.rate30YearChange7Days !== undefined
     ? currentLiveRates.rate30YearChange7Days
     : parseFloat((currentNum - priorNum).toFixed(2));
@@ -381,31 +382,31 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
                   id: '30-yr-fixed',
                   label: '30-Yr Fixed',
                   tag: 'MND Daily Index',
-                  rate: currentLiveRates?.mortgage30Year || fredRate || '7.19%',
+                  rate: currentLiveRates?.mortgage30Year || fredRate || '7.45%',
                 },
                 {
                   id: '15-yr-fixed',
                   label: '15-Yr Fixed',
                   tag: 'MND Daily Index',
-                  rate: currentLiveRates?.mortgage15Year || '6.81%',
+                  rate: currentLiveRates?.mortgage15Year || '7.10%',
                 },
                 {
                   id: '30-yr-jumbo',
                   label: '30-Yr Jumbo',
                   tag: 'MND Daily Index',
-                  rate: currentLiveRates?.jumbo30Year || '7.35%',
+                  rate: currentLiveRates?.jumbo30Year || '7.55%',
                 },
                 {
                   id: '30-yr-fha',
                   label: '30-Yr FHA',
                   tag: 'MND Daily Index',
-                  rate: currentLiveRates?.fha30Year || '6.81%',
+                  rate: currentLiveRates?.fha30Year || '7.05%',
                 },
                 {
                   id: '30-yr-va',
                   label: '30-Yr VA',
                   tag: 'MND Daily Index',
-                  rate: currentLiveRates?.va30Year || '6.83%',
+                  rate: currentLiveRates?.va30Year || '7.07%',
                 },
               ].map((r) => (
                 <button

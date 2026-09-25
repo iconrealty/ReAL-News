@@ -59,33 +59,33 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
 }) => {
   // MND Daily rates
   const mnd30Num = useMemo(() => {
-    if (!propLiveRates?.mortgage30Year) return 7.19;
+    if (!propLiveRates?.mortgage30Year) return 7.45;
     const val = parseFloat(propLiveRates.mortgage30Year.replace('%', ''));
-    return isNaN(val) ? 7.19 : val;
+    return isNaN(val) ? 7.45 : val;
   }, [propLiveRates?.mortgage30Year]);
 
   const mnd15Num = useMemo(() => {
-    if (!propLiveRates?.mortgage15Year) return 6.81;
+    if (!propLiveRates?.mortgage15Year) return 7.10;
     const val = parseFloat(propLiveRates.mortgage15Year.replace('%', ''));
-    return isNaN(val) ? 6.81 : val;
+    return isNaN(val) ? 7.10 : val;
   }, [propLiveRates?.mortgage15Year]);
 
   const mndJumboNum = useMemo(() => {
-    if (!propLiveRates?.jumbo30Year) return 7.35;
+    if (!propLiveRates?.jumbo30Year) return 7.55;
     const val = parseFloat(propLiveRates.jumbo30Year.replace('%', ''));
-    return isNaN(val) ? 7.35 : val;
+    return isNaN(val) ? 7.55 : val;
   }, [propLiveRates?.jumbo30Year]);
 
   const mndFhaNum = useMemo(() => {
-    if (!propLiveRates?.fha30Year) return 6.81;
+    if (!propLiveRates?.fha30Year) return 7.05;
     const val = parseFloat(propLiveRates.fha30Year.replace('%', ''));
-    return isNaN(val) ? 6.81 : val;
+    return isNaN(val) ? 7.05 : val;
   }, [propLiveRates?.fha30Year]);
 
   const mndVaNum = useMemo(() => {
-    if (!propLiveRates?.va30Year) return 6.83;
+    if (!propLiveRates?.va30Year) return 7.07;
     const val = parseFloat(propLiveRates.va30Year.replace('%', ''));
-    return isNaN(val) ? 6.83 : val;
+    return isNaN(val) ? 7.07 : val;
   }, [propLiveRates?.va30Year]);
 
   const rateOptions = useMemo(() => [
@@ -187,6 +187,7 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
           'Cache-Control': 'no-cache, no-store, must-revalidate',
           'Pragma': 'no-cache'
         },
+        body: JSON.stringify({ sync: true, clientTime: now }),
         cache: 'no-store'
       }).catch(() => null);
 
@@ -211,11 +212,11 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
           }
           hasUserEditedRate.current = false;
           
-          const r30 = parseFloat(freshData.mortgage30Year?.replace('%', '') || '7.19');
-          const r15 = parseFloat(freshData.mortgage15Year?.replace('%', '') || '6.81');
-          const rJumbo = parseFloat(freshData.jumbo30Year?.replace('%', '') || '7.35');
-          const rFha = parseFloat(freshData.fha30Year?.replace('%', '') || '6.81');
-          const rVa = parseFloat(freshData.va30Year?.replace('%', '') || '6.83');
+          const r30 = parseFloat(freshData.mortgage30Year?.replace('%', '') || '7.45');
+          const r15 = parseFloat(freshData.mortgage15Year?.replace('%', '') || '7.10');
+          const rJumbo = parseFloat(freshData.jumbo30Year?.replace('%', '') || '7.55');
+          const rFha = parseFloat(freshData.fha30Year?.replace('%', '') || '7.05');
+          const rVa = parseFloat(freshData.va30Year?.replace('%', '') || '7.07');
 
           if (selectedRateProgram === '15-Yr Fixed') setInterestRate(r15);
           else if (selectedRateProgram === '30-Yr Jumbo') setInterestRate(rJumbo);
@@ -263,7 +264,7 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
           const r = parseFloat(data.va30Year.replace('%', ''));
           if (!isNaN(r)) setInterestRate(r);
         } else if (selectedRateProgram === '30-Yr Fixed' || selectedRateProgram === 'custom') {
-          const r30 = parseFloat(data.mortgage30Year?.replace('%', '') || '7.19');
+          const r30 = parseFloat(data.mortgage30Year?.replace('%', '') || '7.45');
           if (!isNaN(r30) && r30 > 0) {
             setInterestRate(r30);
             if (selectedRateProgram === 'custom') {
@@ -929,11 +930,13 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                     id="calc-sync-rates-btn"
                     onClick={handleCalcSyncRates}
                     disabled={isCalcSyncing}
-                    className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 transition-all cursor-pointer active:scale-95 shadow-xs"
+                    className="min-h-[38px] px-3 py-1.5 rounded-xl text-xs font-extrabold text-slate-700 hover:text-slate-950 bg-slate-100 hover:bg-slate-200 border border-slate-200/80 transition-all cursor-pointer active:scale-95 touch-manipulation select-none shadow-xs flex items-center gap-1.5"
                     title="Sync with live Mortgage News Daily rates"
                   >
-                    <RefreshCw className={`w-3 h-3 ${isCalcSyncing ? 'animate-spin text-[#FA2D48]' : ''}`} />
-                    <span>{calcSyncSuccess ? '✓ Synced' : isCalcSyncing ? 'Syncing...' : 'Sync Live'}</span>
+                    <RefreshCw className={`w-3.5 h-3.5 ${isCalcSyncing ? 'animate-spin text-[#FA2D48]' : 'text-slate-500'}`} />
+                    <span className={calcSyncSuccess ? 'text-emerald-700 font-black' : ''}>
+                      {calcSyncSuccess ? '✓ Synced' : isCalcSyncing ? 'Syncing...' : 'Sync Live'}
+                    </span>
                   </button>
                 </div>
 
@@ -982,7 +985,7 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                         step="0.01"
                         min="0"
                         max="25"
-                        placeholder="7.19"
+                        placeholder="7.45"
                       />
                       <span className="absolute right-2 text-slate-400 font-bold text-xs pointer-events-none">%</span>
                     </div>
@@ -1160,11 +1163,13 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                     id="calc-sync-rates-btn-rev"
                     onClick={handleCalcSyncRates}
                     disabled={isCalcSyncing}
-                    className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 transition-all cursor-pointer active:scale-95 shadow-xs"
+                    className="min-h-[38px] px-3 py-1.5 rounded-xl text-xs font-extrabold text-slate-200 hover:text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 transition-all cursor-pointer active:scale-95 touch-manipulation select-none shadow-xs flex items-center gap-1.5"
                     title="Sync with live Mortgage News Daily rates"
                   >
-                    <RefreshCw className={`w-3 h-3 ${isCalcSyncing ? 'animate-spin text-[#FA2D48]' : ''}`} />
-                    <span>{calcSyncSuccess ? '✓ Synced' : isCalcSyncing ? 'Syncing...' : 'Sync Live'}</span>
+                    <RefreshCw className={`w-3.5 h-3.5 ${isCalcSyncing ? 'animate-spin text-[#FA2D48]' : 'text-slate-400'}`} />
+                    <span className={calcSyncSuccess ? 'text-emerald-400 font-black' : ''}>
+                      {calcSyncSuccess ? '✓ Synced' : isCalcSyncing ? 'Syncing...' : 'Sync Live'}
+                    </span>
                   </button>
                 </div>
 
@@ -1209,11 +1214,11 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                         type="number"
                         value={interestRate}
                         onChange={(e) => handleRateInputChange(e.target.value)}
-                        className="w-full pl-2.5 pr-6 py-2 rounded-xl bg-slate-800/90 border border-slate-700 focus:border-[#FA2D48] focus:bg-slate-800 focus:ring-2 focus:ring-[#FA2D48]/20 font-black text-white text-sm outline-none transition-all text-center tracking-tight"
+                        className="w-full pl-2.5 pr-6 py-2 rounded-xl bg-slate-800 border border-slate-700 focus:border-[#FA2D48] focus:bg-slate-850 focus:ring-2 focus:ring-[#FA2D48]/20 font-black text-white text-sm outline-none transition-all text-center tracking-tight"
                         step="0.01"
                         min="0"
                         max="25"
-                        placeholder="7.19"
+                        placeholder="7.45"
                       />
                       <span className="absolute right-2 text-slate-400 font-bold text-xs pointer-events-none">%</span>
                     </div>

@@ -194,12 +194,14 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
   const [liveRates, setLiveRates] = useState<LiveMortgageRates>(
     propLiveRates || { 
       source: 'Mortgage News Daily (MND Daily Index)',
-      mortgage30Year: '7.19%',
-      mortgage15Year: '6.81%',
-      jumbo30Year: '7.35%',
-      fha30Year: '6.81%',
-      va30Year: '6.83%',
-      asOfDate: 'MND Live (9/17/26)',
+      mortgage30Year: '7.45%',
+      mortgage15Year: '7.10%',
+      jumbo30Year: '7.55%',
+      fha30Year: '7.05%',
+      va30Year: '7.07%',
+      rate30Year7DaysAgo: '7.19%',
+      rate30YearChange7Days: 0.26,
+      asOfDate: 'MND Live (9/24/26)',
       sourceType: 'MORTGAGE_NEWS_DAILY',
       isRealLiveRate: true
     }
@@ -239,6 +241,7 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
           'Cache-Control': 'no-cache, no-store, must-revalidate',
           'Pragma': 'no-cache'
         },
+        body: JSON.stringify({ sync: true, clientTime: now }),
         cache: 'no-store'
       }).catch(() => null);
 
@@ -847,9 +850,9 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                         <span className="text-[9px] text-slate-400 font-bold">{liveRates?.asOfDate || 'Daily Live Market'}</span>
                       </div>
                       <div className="flex items-baseline space-x-2.5 pt-1">
-                        <span className="text-3xl sm:text-4xl font-black text-slate-900">{liveRates?.mortgage30Year || '7.19%'}</span>
+                        <span className="text-3xl sm:text-4xl font-black text-slate-900">{liveRates?.mortgage30Year || '7.45%'}</span>
                         <span className="text-xs font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md">
-                          15-Yr: {liveRates?.mortgage15Year || '6.81%'}
+                          15-Yr: {liveRates?.mortgage15Year || '7.10%'}
                         </span>
                       </div>
                       <div className="flex flex-wrap items-center gap-1.5 pt-2">
