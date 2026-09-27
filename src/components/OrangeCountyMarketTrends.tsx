@@ -834,6 +834,7 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                       </div>
 
                       <button
+                        type="button"
                         onClick={handleManualRateRefresh}
                         disabled={localRefreshing || isRefreshingRates}
                         className="inline-flex items-center space-x-1 min-h-[44px] px-3.5 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-700 text-xs font-bold transition-all cursor-pointer disabled:opacity-50 touch-manipulation active:scale-95 select-none shadow-2xs"

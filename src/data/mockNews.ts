@@ -284,6 +284,38 @@ export const CITIES: CityInfo[] = [
 ];
 
 export const INITIAL_ARTICLES: NewsArticle[] = [
+  // STEVEN THOMAS BI-WEEKLY HOUSING REPORT (SEPTEMBER 14, 2026)
+  {
+    id: 'steven-thomas-sep-14-2026-buyers-playbook',
+    title: "The Buyer's Playbook: Steven Thomas September 14 Orange County Housing Report",
+    subtitle: "Buyers equipped with the newest housing trends will possess a strategic playbook to excel in Orange County's shifting autumn market.",
+    category: 'market-trends',
+    cityName: 'Orange County',
+    publisher: 'Reports On Housing (Steven Thomas)',
+    publisherLogo: '📊',
+    publishedAt: 'September 14, 2026',
+    readTime: '6 min read',
+    heroImage: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80',
+    sourceUrl: 'https://www.reportsonhousing.com',
+    sourceCitation: 'Reports On Housing • Orange County Housing Report (September 14, 2026 Edition)',
+    isBreaking: true,
+    isFeatured: true,
+    keyTakeaways: [
+      'Expected Market Time (EMT) increased by 3 days over the prior two weeks to 101 days, placing the countywide market in balanced territory (slowest September since 2011).',
+      'Active listing inventory dropped slightly by 43 homes (-1%) to 4,939 homes, while buyer demand (30-day pending escrows) fell 4% (-60 escrows) to 1,468.',
+      'Pricing breakdown: 52% of closed sales sold below asking price (median discount $32,500 with 34 DOM), 18% sold at asking (9 DOM), and 30% sold above asking (median premium $21,000 with 9 DOM).',
+      'Attached homes (condos/townhomes) slowed to 115 days EMT, while detached single-family homes held stronger at 92 days EMT.',
+      'August 2026 closed resales reached 1,755 units (-6% YoY) with a median sales price of $1,215,000 and 99.5% sales-to-list ratio.'
+    ],
+    content: `In the latest Orange County Housing Report titled "The Buyer's Playbook," chief economist Steven Thomas analyzes how the autumn real estate transition is reshaping negotiations between buyers and sellers.\n\nOver the past two weeks, the active listing inventory experienced a slight seasonal decline, dipping by 43 homes (-1%) to settle at 4,939 homes. Concurrently, 30-day buyer demand (pending escrows) dropped by 60 pending sales (-4%) to 1,468 escrows as mortgage rates hovered above 7.17%.\n\nBecause demand contracted faster than available inventory, the countywide Expected Market Time (EMT) slowed by 3 days to 101 days. At 101 days, the Orange County housing market firmly occupies Balanced Market status (90–119 days), leaning towards a slight buyer's market. This represents the slowest September velocity observed across Orange County since 2011.\n\nProperty Type Comparison:\n• Detached Single-Family: EMT sits at 92 days (Balanced Market, up from 90 days two weeks ago), with 2,700 active listings and 882 pending escrows.\n• Attached Condos & Townhomes: EMT climbed to 115 days (Balanced Market, up from 109 days two weeks ago; up from 93 days last year), reflecting 2,239 active listings and 586 pending escrows.\n• Luxury Market ($2.5M+): EMT rose to 157 days (Buyer's Market, up from 144 days two weeks ago), with 979 active listings and 187 pending escrows.\n\nPricing Realities for Buyers & Sellers:\nClosed sales analysis reveals that 52% of homes sold below their final list price, shaving a median of $32,500 and spending a median of 34 days on market. 18% closed exactly at asking price (9 DOM), while 30% closed above asking price (median premium of $21,000 and 9 DOM).\n\nSteven Thomas notes: "Today's buyers who understand this playbook realize they do not need to rush headlong into bidding wars on overpriced inventory. Sellers must price accurately from day one, while prepared buyers hold genuine negotiation leverage on homes that have lingered past the initial 14-day launch window."`,
+    realEstateData: {
+      neighborhood: 'Orange County (Countywide)',
+      priceRange: '$650,000 - $35,000,000',
+      avgSqftPrice: '$715/sqft',
+      trend: 'stable',
+      keyStat: '101 Days EMT (Balanced Market)'
+    }
+  },
   // 0. MORTGAGE NEWS DAILY (MND) LIVE WIRE ARTICLES
   {
     id: 'news-mnd-live-featured-1',

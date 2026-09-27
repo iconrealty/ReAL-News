@@ -180,23 +180,28 @@ export function App() {
   const [liveRates, setLiveRates] = useState<LiveMortgageRates>(getInitialRates);
   const [isRefreshingRates, setIsRefreshingRates] = useState(false);
 
-  const fetchLiveRates = async (showNotification = false) => {
+  const fetchLiveRates = async (showNotification = false, forceRefresh = false) => {
     try {
       const now = Date.now();
-      // Use POST with strict headers & body for guaranteed mobile cache immunity & webview compatibility
-      let res = await fetch(`/api/live-market-stats/sync?force=true&t=${now}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
-          'Pragma': 'no-cache'
-        },
-        body: JSON.stringify({ sync: true, clientTime: now }),
-        cache: 'no-store'
-      }).catch(() => null);
+      let res: Response | null = null;
+
+      if (forceRefresh) {
+        // Fast POST with cache-busting headers for guaranteed manual refresh
+        res = await fetch(`/api/live-market-stats/sync?force=true&t=${now}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache'
+          },
+          body: JSON.stringify({ sync: true, clientTime: now }),
+          cache: 'no-store'
+        }).catch(() => null);
+      }
 
       if (!res || !res.ok) {
-        res = await fetch(`/api/live-market-stats?force=true&t=${now}&_rnd=${Math.random()}`, {
+        // Fast GET request utilizing server cache
+        res = await fetch(`/api/live-market-stats?t=${now}`, {
           method: 'GET',
           cache: 'no-store'
         }).catch(() => null);
@@ -228,7 +233,7 @@ export function App() {
   const handleRefreshLiveRates = async () => {
     setIsRefreshingRates(true);
     try {
-      await fetchLiveRates(true);
+      await fetchLiveRates(true, true);
     } finally {
       setTimeout(() => setIsRefreshingRates(false), 400);
     }
@@ -273,17 +278,25 @@ export function App() {
     const syncInterval = setInterval(() => {
       fetchAds();
       fetchMonetizationStatus();
-      fetchLiveRates();
-    }, 10000);
+      fetchLiveRates(false, false);
+    }, 45000);
 
     // 3. Instant sync on mobile/desktop focus, tab visibility change, page show, online & resume
     const handleSyncOnResume = () => {
       if (document.visibilityState === 'visible' || document.visibilityState === undefined) {
         fetchAds();
         fetchMonetizationStatus();
-        fetchLiveRates();
+        fetchLiveRates(false, false);
       }
     };
+
+    // Cross-component sync listener so all views immediately share any updated rate
+    const handleExternalRateSync = (e: any) => {
+      if (e.detail && e.detail.mortgage30Year) {
+        setLiveRates(e.detail);
+      }
+    };
+    window.addEventListener('live-rates-synced', handleExternalRateSync);
 
     window.addEventListener('focus', handleSyncOnResume);
     window.addEventListener('pageshow', handleSyncOnResume);
@@ -303,6 +316,7 @@ export function App() {
       window.removeEventListener('online', handleSyncOnResume);
       document.removeEventListener('visibilitychange', handleSyncOnResume);
       window.removeEventListener('touchstart', handleFirstTouch);
+      window.removeEventListener('live-rates-synced', handleExternalRateSync);
     };
   }, []);
 

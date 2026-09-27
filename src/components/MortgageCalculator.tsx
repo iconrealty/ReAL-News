@@ -930,7 +930,7 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                     id="calc-sync-rates-btn"
                     onClick={handleCalcSyncRates}
                     disabled={isCalcSyncing}
-                    className="min-h-[38px] px-3 py-1.5 rounded-xl text-xs font-extrabold text-slate-700 hover:text-slate-950 bg-slate-100 hover:bg-slate-200 border border-slate-200/80 transition-all cursor-pointer active:scale-95 touch-manipulation select-none shadow-xs flex items-center gap-1.5"
+                    className="min-h-[44px] px-3.5 py-1.5 rounded-xl text-xs font-extrabold text-slate-700 hover:text-slate-950 bg-slate-100 hover:bg-slate-200 border border-slate-200/80 transition-all cursor-pointer active:scale-95 touch-manipulation select-none shadow-xs flex items-center gap-1.5"
                     title="Sync with live Mortgage News Daily rates"
                   >
                     <RefreshCw className={`w-3.5 h-3.5 ${isCalcSyncing ? 'animate-spin text-[#FA2D48]' : 'text-slate-500'}`} />
@@ -1163,7 +1163,7 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                     id="calc-sync-rates-btn-rev"
                     onClick={handleCalcSyncRates}
                     disabled={isCalcSyncing}
-                    className="min-h-[38px] px-3 py-1.5 rounded-xl text-xs font-extrabold text-slate-200 hover:text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 transition-all cursor-pointer active:scale-95 touch-manipulation select-none shadow-xs flex items-center gap-1.5"
+                    className="min-h-[44px] px-3.5 py-1.5 rounded-xl text-xs font-extrabold text-slate-200 hover:text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 transition-all cursor-pointer active:scale-95 touch-manipulation select-none shadow-xs flex items-center gap-1.5"
                     title="Sync with live Mortgage News Daily rates"
                   >
                     <RefreshCw className={`w-3.5 h-3.5 ${isCalcSyncing ? 'animate-spin text-[#FA2D48]' : 'text-slate-400'}`} />

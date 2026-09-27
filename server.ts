@@ -570,9 +570,19 @@ let cachedLiveRates: CachedLiveRates = {
 let inFlightMndFetch: Promise<CachedLiveRates> | null = null;
 
 async function fetchLiveMndRates(forceRefresh = false): Promise<CachedLiveRates> {
-  if (inFlightMndFetch && !forceRefresh) {
+  const now = Date.now();
+
+  // If an external fetch is already running, reuse it! Avoids duplicate 3MB scrapes to MND
+  if (inFlightMndFetch) {
     return inFlightMndFetch;
   }
+
+  // If cached rates are fresh (within 20 seconds on forceRefresh, or 60 seconds normal), return immediately!
+  const minFreshnessMs = forceRefresh ? 20 * 1000 : 60 * 1000;
+  if (cachedLiveRates.asOfTimestamp > 0 && (now - cachedLiveRates.asOfTimestamp < minFreshnessMs)) {
+    return cachedLiveRates;
+  }
+
   inFlightMndFetch = executeFetchLiveMndRates(forceRefresh).finally(() => {
     inFlightMndFetch = null;
   });
@@ -611,8 +621,8 @@ async function executeFetchLiveMndRates(forceRefresh = false): Promise<CachedLiv
     };
 
     const [mndRes, histRes] = await Promise.all([
-      fetch("https://www.mortgagenewsdaily.com/mortgage-rates", { headers, signal: AbortSignal.timeout(8000) }),
-      fetch("https://www.mortgagenewsdaily.com/mortgage-rates/30-year-fixed", { headers, signal: AbortSignal.timeout(8000) }).catch(() => null)
+      fetch("https://www.mortgagenewsdaily.com/mortgage-rates", { headers, signal: AbortSignal.timeout(4500) }),
+      fetch("https://www.mortgagenewsdaily.com/mortgage-rates/30-year-fixed", { headers, signal: AbortSignal.timeout(4500) }).catch(() => null)
     ]);
     
     if (mndRes.ok) {

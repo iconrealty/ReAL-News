@@ -219,13 +219,12 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
 
           {/* Right Side: Live Mortgage Rate & Bookmarks */}
           <div className="flex items-center space-x-3">
-            {/* Live 30-Day Mortgage Rate Display - Click toggles MND 5 Live Rates Modal */}
+            {/* Live 30-Day Mortgage Rate Display - Click opens MND 5 Live Rates Modal */}
             <button
+              type="button"
               onClick={() => {
-                setIsRatesModalOpen((prev) => !prev);
-                if (!isRatesModalOpen) {
-                  handleDirectSync();
-                }
+                setIsRatesModalOpen(true);
+                handleDirectSync();
               }}
               className="flex flex-col items-end text-right group cursor-pointer hover:opacity-80 transition-opacity shrink-0 px-1 select-none touch-manipulation min-h-[44px] justify-center"
               title="Mortgage News Daily Live Rates - Click to view 5 live rates"
