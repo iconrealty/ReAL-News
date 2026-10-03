@@ -164,14 +164,14 @@ export function App() {
     }
     return {
       source: 'Mortgage News Daily (MND Daily Index)',
-      asOfDate: 'MND Live (9/24/26)',
-      mortgage30Year: '7.45%',
-      mortgage15Year: '7.10%',
-      jumbo30Year: '7.55%',
-      fha30Year: '7.05%',
-      va30Year: '7.07%',
-      rate30Year7DaysAgo: '7.19%',
-      rate30YearChange7Days: 0.26,
+      asOfDate: 'MND Live (10/2/26)',
+      mortgage30Year: '7.57%',
+      mortgage15Year: '7.19%',
+      jumbo30Year: '7.66%',
+      fha30Year: '7.20%',
+      va30Year: '7.21%',
+      rate30Year7DaysAgo: '7.43%',
+      rate30YearChange7Days: 0.14,
       sourceType: 'MORTGAGE_NEWS_DAILY',
       isRealLiveRate: true
     };
@@ -303,19 +303,12 @@ export function App() {
     window.addEventListener('online', handleSyncOnResume);
     document.addEventListener('visibilitychange', handleSyncOnResume);
 
-    // First touch trigger on mobile devices to guarantee wake-up synchronization
-    const handleFirstTouch = () => {
-      fetchLiveRates();
-    };
-    window.addEventListener('touchstart', handleFirstTouch, { once: true, passive: true });
-
     return () => {
       clearInterval(syncInterval);
       window.removeEventListener('focus', handleSyncOnResume);
       window.removeEventListener('pageshow', handleSyncOnResume);
       window.removeEventListener('online', handleSyncOnResume);
       document.removeEventListener('visibilitychange', handleSyncOnResume);
-      window.removeEventListener('touchstart', handleFirstTouch);
       window.removeEventListener('live-rates-synced', handleExternalRateSync);
     };
   }, []);
@@ -424,7 +417,7 @@ export function App() {
   // Fetch live city news when city or category changes (only on local municipal pages, not on main page or special report tabs)
   useEffect(() => {
     if (!currentCity) return;
-    if (activeCategory === 'all' || activeCategory === 'mortgage-news' || activeCategory === 'market-trends' || activeCategory === 'oc-fast' || activeCategory === 'mortgage-calculator') {
+    if (activeCategory === 'all' || activeCategory === 'market-trends' || activeCategory === 'oc-fast' || activeCategory === 'mortgage-calculator') {
       return;
     }
     
@@ -475,31 +468,17 @@ export function App() {
   const filteredArticles = useMemo(() => {
     const q = searchQuery.toLowerCase().trim();
 
-    // 1. Main Page ("Top Stories" / "all") & "Mortgage Daily News":
-    // Exclusively showcase Mortgage News Daily (MND) wire stories
-    if (activeCategory === 'all' || activeCategory === 'mortgage-news') {
-      let mndList = articles.filter(art => art.category === 'mortgage-news' || art.publisher === 'Mortgage News Daily');
-      
-      if (q) {
-        mndList = mndList.filter(art => 
-          art.title.toLowerCase().includes(q) ||
-          art.subtitle.toLowerCase().includes(q) ||
-          art.publisher.toLowerCase().includes(q)
-        );
-      }
+    // Always exclude national mortgage-news/MND articles from local news feeds
+    const baseArticles = articles.filter(
+      art => art.category !== 'mortgage-news' && art.publisher !== 'Mortgage News Daily'
+    );
 
-      if (mndList.length > 0) {
-        return deduplicateArticles(mndList);
-      }
-    }
-
-    // 2. Local Orange County & Municipal News Pages (Orange County News, Team News, Dining):
     const isOrangeCountyAll = currentCity.id === 'orange-county';
     const cName = currentCity.name.toLowerCase().trim();
 
-    let matched = articles;
+    let matched = baseArticles;
     if (!isOrangeCountyAll) {
-      matched = articles.filter(art => {
+      matched = baseArticles.filter(art => {
         const artCity = (art.cityName || '').toLowerCase().trim();
         const artTitle = (art.title || '').toLowerCase();
         const artSub = (art.subtitle || '').toLowerCase();
@@ -515,14 +494,19 @@ export function App() {
           artAddr.includes(cName)
         );
       });
+      // If city-specific match yields fewer than 3 articles, supplement with countywide stories
+      if (matched.length < 3) {
+        const countywide = baseArticles.filter(art => (art.cityName || '').toLowerCase().includes('orange county'));
+        matched = deduplicateArticles([...matched, ...countywide]);
+      }
     }
 
-    // Category & Search query filtering for local pages
+    // Category & Search query filtering
     let finalFiltered = matched.filter(art => {
       let matchesCat = false;
-      if (activeCategory === 'real-estate') {
-        // "Orange County News" page: show all local Orange County news (exclude national mortgage wire)
-        matchesCat = art.category !== 'mortgage-news' && art.publisher !== 'Mortgage News Daily';
+      if (activeCategory === 'all' || activeCategory === 'real-estate') {
+        // "Home" or "Orange County News" page: show all local Orange County news
+        matchesCat = true;
       } else {
         matchesCat = art.category === activeCategory;
       }
@@ -537,23 +521,26 @@ export function App() {
       return matchesCat && matchesQuery;
     });
 
-    // Fallback: If category filter resulted in 0 articles for a specific city,
-    // fallback to showing regional articles matching that requested category
+    // Fallback if category filter is empty
     if (finalFiltered.length === 0 && activeCategory !== 'all') {
-      if (activeCategory === 'real-estate') {
-        finalFiltered = articles.filter(art => art.category !== 'mortgage-news' && art.publisher !== 'Mortgage News Daily');
-      } else {
-        finalFiltered = articles.filter(art => art.category === activeCategory);
-      }
+      finalFiltered = baseArticles.filter(art => {
+        const matchesQuery = !q || 
+          art.title.toLowerCase().includes(q) ||
+          art.subtitle.toLowerCase().includes(q) ||
+          art.publisher.toLowerCase().includes(q);
+        return art.category === activeCategory && matchesQuery;
+      });
     }
 
-    // Sort to ensure the freshest published stories appear at the top
+    // Sort: Featured & breaking articles first, then freshest timestamps
     const sorted = [...finalFiltered].sort((a, b) => {
+      if (a.isBreaking && !b.isBreaking) return -1;
+      if (!a.isBreaking && b.isBreaking) return 1;
+      if (a.isFeatured && !b.isFeatured) return -1;
+      if (!a.isFeatured && b.isFeatured) return 1;
       const aTime = (a as any).createdAtMs || 0;
       const bTime = (b as any).createdAtMs || 0;
       if (aTime !== bTime) return bTime - aTime;
-      if (a.isLivePublicRss && !b.isLivePublicRss) return -1;
-      if (!a.isLivePublicRss && b.isLivePublicRss) return 1;
       return 0;
     });
 
@@ -573,50 +560,54 @@ export function App() {
   }, [filteredArticles, heroArticle]);
 
   // Non-overlapping section assignment: every article appears AT MOST ONCE on page
-  const { mortgageArticles, realEstateArticles, teamAndEventArticles, diningArticles, developmentArticles, otherArticles } = useMemo(() => {
+  const { realEstateArticles, developmentArticles, teamAndEventArticles, diningArticles, otherArticles } = useMemo(() => {
     const usedIds = new Set<string>();
 
-    const mndList: NewsArticle[] = [];
-    const teamList: NewsArticle[] = [];
     const reList: NewsArticle[] = [];
-    const diningList: NewsArticle[] = [];
     const devList: NewsArticle[] = [];
+    const diningList: NewsArticle[] = [];
+    const teamList: NewsArticle[] = [];
     const othList: NewsArticle[] = [];
 
-    // 0. Mortgage Daily News (MND Live Feeds)
-    remainingArticles.forEach(a => {
-      if (!usedIds.has(a.id) && (a.category === 'mortgage-news' || a.publisher === 'Mortgage News Daily')) {
-        mndList.push(a);
+    // Filter out any mortgage-news articles completely
+    const validArticles = remainingArticles.filter(
+      a => a.category !== 'mortgage-news' && a.publisher !== 'Mortgage News Daily'
+    );
+
+    // 1. Real Estate & Market Trends (Steven Thomas, local housing, pricing)
+    validArticles.forEach(a => {
+      if (!usedIds.has(a.id) && (a.category === 'real-estate' || a.category === 'market-trends' || !!a.realEstateData)) {
+        reList.push(a);
         usedIds.add(a.id);
       }
     });
 
-    // 1. Team News & Local Events
-    remainingArticles.forEach(a => {
+    // 2. City Developments, Municipal Infrastructure & Master Plans
+    validArticles.forEach(a => {
+      if (!usedIds.has(a.id) && (a.category === 'city-developments' || a.venueDetails?.type === 'development')) {
+        devList.push(a);
+        usedIds.add(a.id);
+      }
+    });
+
+    // 3. Hot New Restaurants, Bars & Culinary Openings
+    validArticles.forEach(a => {
+      if (!usedIds.has(a.id) && (a.category === 'restaurants-bars' || a.venueDetails?.type === 'restaurant' || a.venueDetails?.type === 'bar')) {
+        diningList.push(a);
+        usedIds.add(a.id);
+      }
+    });
+
+    // 4. Team News, Brokerage Updates & Local Events
+    validArticles.forEach(a => {
       if (!usedIds.has(a.id) && (a.category === 'team-news' || a.category === 'events')) {
         teamList.push(a);
         usedIds.add(a.id);
       }
     });
 
-    // 2. Real Estate, Housing & Local Projects
-    remainingArticles.forEach(a => {
-      if (!usedIds.has(a.id) && (a.category === 'real-estate' || a.category === 'market-trends' || a.category === 'city-developments' || !!a.realEstateData)) {
-        reList.push(a);
-        usedIds.add(a.id);
-      }
-    });
-
-    // 3. Restaurants & Dining
-    remainingArticles.forEach(a => {
-      if (!usedIds.has(a.id) && (a.category === 'restaurants-bars' || !!a.venueDetails)) {
-        diningList.push(a);
-        usedIds.add(a.id);
-      }
-    });
-
-    // 4. Other Local Coverage
-    remainingArticles.forEach(a => {
+    // 5. Additional Local Coverage
+    validArticles.forEach(a => {
       if (!usedIds.has(a.id)) {
         othList.push(a);
         usedIds.add(a.id);
@@ -624,8 +615,8 @@ export function App() {
     });
 
     return {
-      mortgageArticles: mndList,
       realEstateArticles: reList,
+      developmentArticles: devList,
       teamAndEventArticles: teamList,
       diningArticles: diningList,
       otherArticles: othList
@@ -1240,7 +1231,7 @@ export function App() {
                   title="Orange County Local Market Update"
                 />
               </>
-            ) : activeCategory !== 'team-news' ? (
+            ) : (
               /* Internal Pages Clean Header: No Steven Thomas or OC Fast duplicated top blocks */
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white border border-slate-200/90 rounded-3xl p-5 sm:p-6 shadow-xs">
                 <div className="space-y-1">
@@ -1311,7 +1302,65 @@ export function App() {
                   )}
                 </div>
               </div>
-            ) : null}
+            )}
+
+            {/* Live Mortgage Rates Snapshot Bar on Main News Page */}
+            {activeCategory === 'all' && (
+              <section className="bg-white border border-slate-200/90 rounded-3xl p-4 sm:p-5 shadow-xs">
+                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-2xl bg-rose-50 text-[#FA2D48] flex items-center justify-center shrink-0">
+                      <TrendingUp className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-black uppercase tracking-wider text-[#FA2D48] font-sans">
+                          Live Mortgage Rates
+                        </span>
+                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                        <span className="text-[10px] text-slate-400 font-semibold hidden sm:inline">
+                          {liveRates?.asOfDate || 'Daily MND Index'}
+                        </span>
+                      </div>
+                      <p className="text-xs sm:text-sm text-slate-600 font-medium">
+                        Live benchmark financing rates for Orange County buyers and refinancers.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-4 sm:gap-6 flex-wrap justify-between lg:justify-end border-t lg:border-t-0 pt-3 lg:pt-0 border-slate-100">
+                    <div className="flex flex-col">
+                      <span className="text-[10px] uppercase tracking-wider font-extrabold text-slate-400 font-sans">30-Yr Fixed</span>
+                      <span className="text-2xl sm:text-3xl font-black text-slate-950 tabular-nums">
+                        {liveRates?.mortgage30Year || '7.57%'}
+                      </span>
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-[10px] uppercase tracking-wider font-extrabold text-slate-400 font-sans">15-Yr Fixed</span>
+                      <span className="text-lg sm:text-xl font-bold text-slate-700 tabular-nums">
+                        {liveRates?.mortgage15Year || '7.19%'}
+                      </span>
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-[10px] uppercase tracking-wider font-extrabold text-slate-400 font-sans">Jumbo 30-Yr</span>
+                      <span className="text-lg sm:text-xl font-bold text-slate-700 tabular-nums">
+                        {liveRates?.jumbo30Year || '7.55%'}
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setActiveCategory('mortgage-calculator');
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }}
+                      className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 active:bg-slate-950 text-white text-xs font-bold transition-all shadow-xs cursor-pointer active:scale-95 shrink-0"
+                    >
+                      Payment Calculator →
+                    </button>
+                  </div>
+                </div>
+              </section>
+            )}
 
             {/* Featured Hero / Top Stories */}
             {heroArticle && (
@@ -1340,22 +1389,10 @@ export function App() {
               onOpenManager={() => setIsManagerModalOpen(true)}
             />
 
-            {/* Section: Mortgage News Daily • Live Market Reports (Shown on Main Page & MND Wire) */}
-            {mortgageArticles.length > 0 && (activeCategory === 'all' || activeCategory === 'mortgage-news') && (
+            {/* Section 1: Real Estate & Housing Market */}
+            {realEstateArticles.length > 0 && (activeCategory === 'all' || activeCategory === 'real-estate') && (
               <NewsGridSection
-                title={activeCategory === 'all' ? "Mortgage News Daily • Live Market Wire & Top Stories" : "Mortgage News Daily • Live Market Wire & Rates"}
-                icon={<Newspaper className="w-5 h-5 text-[#FA2D48]" />}
-                articles={mortgageArticles}
-                onSelectArticle={setSelectedArticle}
-                bookmarkedIds={bookmarkedIds}
-                onToggleBookmark={toggleBookmark}
-              />
-            )}
-
-            {/* Section 1: Real Estate & Housing Market (Shown exclusively on 'Orange County News' tab) */}
-            {realEstateArticles.length > 0 && activeCategory === 'real-estate' && (
-              <NewsGridSection
-                title={`Real Estate & Housing in ${currentCity.name}`}
+                title={activeCategory === 'all' ? `Orange County Real Estate & Market Trends` : `Real Estate & Housing in ${currentCity.name}`}
                 icon={<Building2 className="w-5 h-5 text-amber-600" />}
                 articles={realEstateArticles}
                 onSelectArticle={setSelectedArticle}
@@ -1372,22 +1409,22 @@ export function App() {
               />
             )}
 
-            {/* Section 2: Team News & Events (Shown on 'Team News & Events' tab or 'Orange County News' tab) */}
-            {teamAndEventArticles.length > 0 && (activeCategory === 'team-news' || activeCategory === 'real-estate') && (
+            {/* Section 2: City Developments, Infrastructure & Master Plans */}
+            {developmentArticles.length > 0 && (activeCategory === 'all' || activeCategory === 'real-estate' || activeCategory === 'city-developments') && (
               <NewsGridSection
-                title={`Team News, Brokerage Updates & Local Events`}
-                icon={<Users className="w-5 h-5 text-indigo-600" />}
-                articles={teamAndEventArticles}
+                title={activeCategory === 'all' ? `Civic Developments & Regional Infrastructure` : `City Developments in ${currentCity.name}`}
+                icon={<Building2 className="w-5 h-5 text-sky-600" />}
+                articles={developmentArticles}
                 onSelectArticle={setSelectedArticle}
                 bookmarkedIds={bookmarkedIds}
                 onToggleBookmark={toggleBookmark}
               />
             )}
 
-            {/* Section 3: Hot New Restaurant & Bar Openings (Shown on 'New Restaurants & Bars' tab or 'Orange County News' tab) */}
-            {diningArticles.length > 0 && (activeCategory === 'restaurants-bars' || activeCategory === 'real-estate') && (
+            {/* Section 3: Hot New Restaurant & Bar Openings */}
+            {diningArticles.length > 0 && (activeCategory === 'all' || activeCategory === 'restaurants-bars' || activeCategory === 'real-estate') && (
               <NewsGridSection
-                title={`New Restaurant & Bar Debuts in ${currentCity.name}`}
+                title={activeCategory === 'all' ? `New Restaurant & Bar Debuts` : `New Restaurant & Bar Debuts in ${currentCity.name}`}
                 icon={<Utensils className="w-5 h-5 text-emerald-600" />}
                 articles={diningArticles}
                 onSelectArticle={setSelectedArticle}
@@ -1396,10 +1433,10 @@ export function App() {
               />
             )}
 
-            {/* Section 4: Other Local Coverage (Shown on 'Orange County News' tab) */}
-            {otherArticles.length > 0 && activeCategory === 'real-estate' && (
+            {/* Section 4: Other Local Coverage */}
+            {otherArticles.length > 0 && (activeCategory === 'all' || activeCategory === 'real-estate') && (
               <NewsGridSection
-                title={`More Local Updates in ${currentCity.name}`}
+                title={activeCategory === 'all' ? `Community & Lifestyle News` : `More Local Updates in ${currentCity.name}`}
                 icon={<Sparkles className="w-5 h-5 text-[#FA2D48]" />}
                 articles={otherArticles}
                 onSelectArticle={setSelectedArticle}

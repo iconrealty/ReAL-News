@@ -316,182 +316,79 @@ export const INITIAL_ARTICLES: NewsArticle[] = [
       keyStat: '101 Days EMT (Balanced Market)'
     }
   },
-  // 0. MORTGAGE NEWS DAILY (MND) LIVE WIRE ARTICLES
+  // 1. ORANGE COUNTY REAL ESTATE & HOUSING SPOTLIGHTS
   {
-    id: 'news-mnd-live-featured-1',
-    title: 'Mortgage Rates Hold Steady as Bond Markets Digest Federal Reserve & Inflation Data',
-    subtitle: 'Conforming 30-year fixed rate indices hover near recent range as treasury yields stabilize amid fresh economic reports and housing demand.',
-    category: 'mortgage-news',
-    cityName: 'Daily Mortgage Market',
-    publisher: 'Mortgage News Daily',
-    publisherLogo: '📈',
-    publishedAt: '1h ago',
+    id: 'news-oc-realestate-luxury-coastal',
+    title: 'Coastal Orange County Luxury Market Reaches $2.4M Median as High-Net-Worth Buyers Seek Turnkey Properties',
+    subtitle: 'From Newport Coast to Laguna Beach, affluent buyers are prioritizing turnkey architectural remodels and private ocean-view enclaves.',
+    category: 'real-estate',
+    cityName: 'Orange County',
+    publisher: 'OC Luxury Real Estate Journal',
+    publisherLogo: '🏡',
+    publishedAt: '2h ago',
     readTime: '4 min read',
-    heroImage: 'https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&w=1200&q=80',
-    sourceUrl: 'https://www.mortgagenewsdaily.com/mortgage-rates',
-    sourceCitation: 'Mortgage News Daily • Live Daily Market Wire',
-    isBreaking: true,
+    heroImage: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80',
+    sourceUrl: 'https://www.ocregister.com/business/real-estate/',
+    sourceCitation: 'Orange County Coastal Real Estate Survey • Luxury Market Analysis',
+    isBreaking: false,
     isFeatured: true,
     keyTakeaways: [
-      'Mortgage News Daily Index monitors conforming 30-Year fixed rate movements daily across top US mortgage lenders.',
-      'Bond market traders reacting to latest economic indicators, CPI trends, and Federal Reserve guidance.',
-      'Borrowers locking in rates as purchase demand and refinance volume respond to day-to-day rate sheet shifts.'
+      'Coastal OC luxury inventory ($2.5M+) currently sits at 979 active homes with 157 days Expected Market Time.',
+      'Turnkey properties with completed designer renovations command a 12% to 15% price premium over dated listings.',
+      'Cash transactions and private portfolio financing remain resilient despite broader interest rate environment.'
     ],
-    content: `Mortgage interest rates traded in a tight, disciplined range today as bond market volatility subsided following the latest economic data releases.\n\nAccording to the Mortgage News Daily rate survey, conforming 30-year fixed mortgages remain responsive to movements in 10-year Treasury yields and inflation expectations.\n\nFinancial market analysts and loan originators continue to monitor central bank guidance, employment statistics, and Treasury auction results for direction on upcoming rate moves. MND continues to provide transparent daily rate benchmarks for prospective homebuyers and refinancers.`
+    content: `Coastal Orange County's luxury enclave—stretching from Newport Beach and Corona del Mar to the cliffside bluffs of Laguna Beach and Dana Point—continues to demonstrate remarkable resilience.\n\nAccording to top coastal brokerages, high-net-worth buyers in late 2026 are overwhelmingly prioritizing turnkey homes that require zero immediate renovation. Supply chain timelines and high construction costs have made fully finished properties prime targets for competitive offers.\n\n"Today's luxury buyers value their time above all else," explains a prominent Newport Beach managing broker. "If a property is impeccably styled, incorporates seamless indoor-outdoor living, and offers protected coastal or canyon views, it draws immediate interest even in a balanced market environment."`,
+    realEstateData: {
+      neighborhood: 'Coastal Orange County (Newport Beach & Laguna Beach)',
+      priceRange: '$2,500,000 - $32,000,000',
+      avgSqftPrice: '$1,450/sqft',
+      trend: 'up',
+      keyStat: 'Turnkey Luxury Demand Remains Elevated'
+    }
   },
   {
-    id: 'news-mnd-live-wire-2',
-    title: 'Understanding the 10-Year Treasury Yield Spread and Daily Lender Rate Sheets',
-    subtitle: 'A breakdown of why mortgage interest rates move with benchmark bond yields and how loan originators price daily rate sheets for buyers.',
-    category: 'mortgage-news',
-    cityName: 'Daily Mortgage Market',
-    publisher: 'Mortgage News Daily',
-    publisherLogo: '📊',
-    publishedAt: '2h ago',
-    readTime: '5 min read',
-    heroImage: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=1200&q=80',
-    sourceUrl: 'https://www.mortgagenewsdaily.com/mortgage-rates',
-    sourceCitation: 'Mortgage News Daily • Rate Watch Technical Analysis',
-    isBreaking: false,
-    isFeatured: false,
-    keyTakeaways: [
-      'Mortgage-Backed Securities (MBS) pricing directly influences lender rate sheet adjustments.',
-      'The primary-secondary mortgage rate spread provides critical insight into originator capacity and market liquidity.',
-      'Daily updates from MND provide market transparency for homebuyers comparing 30-year, 15-year, and Jumbo loan options.'
-    ],
-    content: `The relationship between 10-year Treasury yields and mortgage rates is one of the most closely watched barometers in real estate finance.\n\nWhile mortgage rates typically track long-term Treasury yields, the spread between them widens and narrows based on market liquidity, prepayment risk, and Federal Reserve balance sheet activity.\n\nToday's report examines current MBS coupon performance and offers tactical guidance for borrowers weighing floating vs. locking decisions in the current rate environment.`
-  },
-  {
-    id: 'news-mnd-live-wire-3',
-    title: 'MBS Market Overview: Mortgage-Backed Securities Steady Amid Steady Treasury Action',
-    subtitle: 'Mortgage-backed bonds maintain support levels as originators report balanced purchase volume across regional markets.',
-    category: 'mortgage-news',
-    cityName: 'Daily Mortgage Market',
-    publisher: 'Mortgage News Daily',
-    publisherLogo: '🏦',
+    id: 'news-oc-housing-supply-dynamics',
+    title: 'Orange County Autumn Housing Trends: Why Sellers Are Reassessing Asking Prices',
+    subtitle: 'With 52% of closed sales closing below original list price, accurate upfront pricing is proving vital for sellers aiming to avoid stale days on market.',
+    category: 'real-estate',
+    cityName: 'Orange County',
+    publisher: 'Orange County Housing Monitor',
+    publisherLogo: '📈',
     publishedAt: '3h ago',
-    readTime: '3 min read',
-    heroImage: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=1200&q=80',
-    sourceUrl: 'https://www.mortgagenewsdaily.com/mbs-commentary',
-    sourceCitation: 'Mortgage News Daily • MBS Morning Report',
+    readTime: '5 min read',
+    heroImage: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1200&q=80',
+    sourceUrl: 'https://www.reportsonhousing.com',
+    sourceCitation: 'Reports On Housing • Pricing Dynamics & Days on Market Study',
     isBreaking: false,
     isFeatured: false,
     keyTakeaways: [
-      'Agency MBS prices trade within established weekly resistance channels.',
-      'Lender pricing remains competitive with attractive pricing on conforming and FHA loan products.',
-      'Technical indicators point to continued rangebound movement heading into upcoming FOMC meetings.'
+      'Homes priced correctly from launch receive qualified buyer foot traffic within the first 10 to 14 days.',
+      'Sellers who shave a median of $32,500 find buyers after an average of 34 days on market.',
+      'Detached single-family homes continue to sell significantly faster (92 days EMT) than attached condominiums (115 days EMT).'
     ],
-    content: `Agency mortgage-backed securities held their ground in today's trading session, providing price stability for residential mortgage loan pricing across major wholesale and retail lenders.\n\nOriginators report steady pipeline flow from qualified buyers taking advantage of price adjustments in several major housing markets.`
+    content: `As autumn sets into the Southern California housing landscape, Orange County sellers are adapting to a market characterized by selective, price-conscious buyers.\n\nRecent MLS transaction data highlights that over half of closed escrows closed beneath asking price, with buyers negotiating price reductions or significant seller credits toward closing costs or rate buydowns.\n\nReal estate advisors emphasize that pricing a home 3% to 5% above comparable sales in the current environment often results in extended market times, whereas pricing right at fair market value sparks competitive interest and solid offers.`
   },
   {
-    id: 'news-mnd-live-wire-4',
-    title: 'Conforming vs. Jumbo Loan Limits: 2026 High-Balance Financing Guide for Coastal California',
-    subtitle: 'How high-cost area loan limits benefit Orange County borrowers seeking competitive interest rates and flexible down payment terms.',
-    category: 'mortgage-news',
-    cityName: 'Daily Mortgage Market',
-    publisher: 'Mortgage News Daily',
-    publisherLogo: '🏡',
+    id: 'news-oc-irvine-master-planned',
+    title: 'Irvine Master-Planned Villages Lead County in Family Home Demand Heading Into Fall',
+    subtitle: 'Proximity to award-winning Irvine Unified schools, community parks, and business corridors drives sustained buyer competition.',
+    category: 'real-estate',
+    cityName: 'Irvine',
+    publisher: 'Irvine Community & Real Estate News',
+    publisherLogo: '🌳',
     publishedAt: '4h ago',
     readTime: '4 min read',
-    heroImage: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1200&q=80',
-    sourceUrl: 'https://www.mortgagenewsdaily.com/mortgage-rates',
-    sourceCitation: 'Mortgage News Daily • Lending Limits Special Report',
+    heroImage: 'https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&w=1200&q=80',
+    sourceUrl: 'https://www.cityofirvine.org',
+    sourceCitation: 'Irvine Housing Overview • Central OC Real Estate Highlights',
     isBreaking: false,
     isFeatured: false,
     keyTakeaways: [
-      'High-balance conforming mortgage limits in Orange County allow financing up to statutory federal ceilings.',
-      'Jumbo mortgage rates remain highly competitive against conventional conforming loans for tier-1 credit borrowers.',
-      'Detailed comparison of reserve requirements, private mortgage insurance (PMI), and debt-to-income limits.'
+      'Irvine single-family homes and detached condos maintain some of the fastest absorption rates in Orange County.',
+      'Villages such as Portola Springs, Woodbury, and Great Park Neighborhoods see consistent weekend open-house traffic.',
+      'Median days on market in Irvine remains notably lower than countywide averages due to strong corporate relocation pipelines.'
     ],
-    content: `For homebuyers in premium coastal California markets like Orange County, understanding the distinction between standard conforming limits, agency high-balance products, and non-conforming jumbo mortgages is essential.\n\nRecent data shows tighter rate spreads between jumbo products and conforming notes, creating attractive financing packages for luxury and executive residential properties.`
-  },
-  {
-    id: 'news-mnd-live-wire-5',
-    title: 'Lock or Float? Daily Strategy for Borrowers Ahead of Next Week’s Economic Releases',
-    subtitle: 'Expert guidance on managing interest rate lock periods, float-down options, and closing timeline contingencies in current markets.',
-    category: 'mortgage-news',
-    cityName: 'Daily Mortgage Market',
-    publisher: 'Mortgage News Daily',
-    publisherLogo: '🔒',
-    publishedAt: '5h ago',
-    readTime: '4 min read',
-    heroImage: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80',
-    sourceUrl: 'https://www.mortgagenewsdaily.com/news',
-    sourceCitation: 'Mortgage News Daily • Rate Lock Strategy Column',
-    isBreaking: false,
-    isFeatured: false,
-    keyTakeaways: [
-      'Floating rates heading into high-volatility employment or inflation releases carries asymmetric risk.',
-      '30-day and 45-day lock agreements provide protection against sudden intraday rate sheet repricing.',
-      'Ask your mortgage advisor about float-down provisions that allow rate reductions if benchmark bonds rally.'
-    ],
-    content: `When bond markets trade near key inflection points, deciding whether to lock an interest rate or float becomes a critical financial decision.\n\nMortgage News Daily’s tactical advisory outlines how borrowers under active purchase contracts can shield themselves from unexpected rate surges while preserving closing timeline certainty.`
-  },
-  {
-    id: 'news-mnd-live-wire-6',
-    title: '15-Year Fixed vs. 30-Year Fixed: Analyzing Equity Buildup and Monthly Payment Spreads',
-    subtitle: 'A historical comparison of shorter-duration amortization schedules vs. liquidity advantages for residential property owners.',
-    category: 'mortgage-news',
-    cityName: 'Daily Mortgage Market',
-    publisher: 'Mortgage News Daily',
-    publisherLogo: '⏱️',
-    publishedAt: '6h ago',
-    readTime: '5 min read',
-    heroImage: 'https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?auto=format&fit=crop&w=1200&q=80',
-    sourceUrl: 'https://www.mortgagenewsdaily.com/mortgage-rates',
-    sourceCitation: 'Mortgage News Daily • Consumer Finance Analysis',
-    isBreaking: false,
-    isFeatured: false,
-    keyTakeaways: [
-      '15-year fixed loans typically trade 50–75 basis points below 30-year conforming benchmarks.',
-      'Accelerated principal paydown substantially reduces total lifetime interest expense.',
-      'Liquidity-conscious buyers often opt for 30-year notes with voluntary extra principal payments.'
-    ],
-    content: `Choosing between a 15-year fixed mortgage and a standard 30-year term requires balancing monthly cash flow flexibility with long-term wealth preservation.\n\nThis comprehensive analysis illustrates side-by-side equity trajectories and reveals how strategic prepayment strategies on 30-year loans can replicate 15-year benefits without the mandatory monthly commitment.`
-  },
-  {
-    id: 'news-mnd-live-wire-7',
-    title: 'Federal Reserve Policy & Housing Liquidity: What Originators Expect Through Late 2026',
-    subtitle: 'How balance sheet normalization, quantitative tightening adjustments, and monetary policy stances shape mortgage availability.',
-    category: 'mortgage-news',
-    cityName: 'Daily Mortgage Market',
-    publisher: 'Mortgage News Daily',
-    publisherLogo: '🏛️',
-    publishedAt: '7h ago',
-    readTime: '6 min read',
-    heroImage: 'https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=1200&q=80',
-    sourceUrl: 'https://www.mortgagenewsdaily.com/news',
-    sourceCitation: 'Mortgage News Daily • Central Bank Watch',
-    isBreaking: false,
-    isFeatured: false,
-    keyTakeaways: [
-      'Federal Open Market Committee (FOMC) statements remain the chief driver of long-duration yield curves.',
-      'Mortgage spreads are anticipated to gradually normalize as market uncertainty around inflation subsides.',
-      'Institutional demand for mortgage-backed securities provides strong structural backstop for residential credit.'
-    ],
-    content: `Monetary policy developments continue to set the macro backdrop for home lending across the country. In this extended outlook, senior market strategists evaluate the Federal Reserve’s economic projections and their direct implications for retail mortgage rates over the coming quarters.`
-  },
-  {
-    id: 'news-mnd-live-wire-8',
-    title: 'First-Time Homebuyer Financing: CRA Credits, Down Payment Assistance & FHA Loan Dynamics',
-    subtitle: 'Exploring affordable lending options, reduced mortgage insurance premiums, and specialized programs for new entrants in 2026.',
-    category: 'mortgage-news',
-    cityName: 'Daily Mortgage Market',
-    publisher: 'Mortgage News Daily',
-    publisherLogo: '🔑',
-    publishedAt: '8h ago',
-    readTime: '4 min read',
-    heroImage: 'https://images.unsplash.com/photo-1582407947304-fd86f028f716?auto=format&fit=crop&w=1200&q=80',
-    sourceUrl: 'https://www.mortgagenewsdaily.com/mortgage-rates',
-    sourceCitation: 'Mortgage News Daily • Homebuyer Resource Series',
-    isBreaking: false,
-    isFeatured: false,
-    keyTakeaways: [
-      'FHA loan programs offer accessible 3.5% down payment options with reduced upfront MIP guidelines.',
-      'Conventional 97% LTV programs (HomeReady & Home Possible) provide competitive pricing for qualified buyers.',
-      'State and regional down payment assistance (DPA) grants help bridge upfront transaction costs.'
-    ],
-    content: `Navigating entry into homeownership is made easier with current specialty lending programs. This guide details qualifying guidelines, credit score tiers, and income limit waivers available to prospective first-time homebuyers today.`
+    content: `The City of Irvine continues to serve as an economic and residential powerhouse for Orange County. Homebuyers seeking top-ranked public schools, extensive park systems, and master-planned neighborhood amenities are keeping the city's housing inventory moving briskly.\n\nLocal realtors note that homes under $1.5 million in central Irvine frequently receive multiple inquiries within their opening week, highlighting the enduring appeal of the region's employment hubs and master-planned lifestyle.`
   },
   // 1. ORANGE COUNTY (Countywide Metro & Regional Government News)
   {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { CityInfo, NewsCategory, LiveMortgageRates } from '../types';
-import { Bookmark, ArrowUp, ArrowDown, Minus, RefreshCw, X, ChevronRight, Calculator } from 'lucide-react';
+import { Bookmark, ArrowUp, ArrowDown, Minus, RefreshCw, X, Calculator } from 'lucide-react';
 
 interface AppleNewsHeaderProps {
   currentCity: CityInfo;
@@ -35,10 +35,10 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
   onOpenSavedDrawer,
   onResetToMain,
   liveRates,
-  fredRate = '7.45%',
-  rate30Year7DaysAgo = '7.19%',
-  rate30YearChange7Days = 0.26,
-  asOfDate = 'MND Live (9/24/26)',
+  fredRate = '7.57%',
+  rate30Year7DaysAgo = '7.43%',
+  rate30YearChange7Days = 0.14,
+  asOfDate = 'MND Live (10/2/26)',
   onOpenManager,
   onOpenNewsManager,
   isMonetizationEnabled = false,
@@ -59,8 +59,6 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
     } catch (e) {}
     return null;
   });
-  const [isLocalSyncing, setIsLocalSyncing] = useState(false);
-  const [syncSuccess, setSyncSuccess] = useState(false);
 
   // Synchronize when prop liveRates changes
   useEffect(() => {
@@ -69,7 +67,7 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
     }
   }, [liveRates]);
 
-  // Listen to global live-rates-synced event from ANY component/background fetch
+  // Listen to global live-rates-synced event
   useEffect(() => {
     const handleSyncedEvent = (e: any) => {
       if (e.detail) {
@@ -79,66 +77,6 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
     window.addEventListener('live-rates-synced', handleSyncedEvent);
     return () => window.removeEventListener('live-rates-synced', handleSyncedEvent);
   }, []);
-
-  // Direct mobile/desktop rate synchronization with POST cache-immunity
-  const handleDirectSync = async (e?: React.SyntheticEvent) => {
-    if (e) {
-      e.stopPropagation();
-    }
-    if (isLocalSyncing) return;
-
-    setIsLocalSyncing(true);
-    setSyncSuccess(false);
-
-    try {
-      const now = Date.now();
-      // POST prevents mobile browser caching
-      let res: Response | null = await fetch(`/api/live-market-stats/sync?force=true&t=${now}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
-          'Pragma': 'no-cache'
-        },
-        body: JSON.stringify({ sync: true, clientTime: now }),
-        cache: 'no-store'
-      }).catch(() => null);
-
-      if (!res || !res.ok) {
-        res = await fetch(`/api/live-market-stats?force=true&t=${now}&_rnd=${Math.random()}`, {
-          method: 'GET',
-          cache: 'no-store'
-        }).catch(() => null);
-      }
-
-      if (res && res.ok) {
-        const json = await res.json();
-        if (json.success && json.data) {
-          const freshData = { ...json.data, asOfTimestamp: Date.now() };
-          setCurrentLiveRates(freshData);
-          try {
-            localStorage.setItem('cached_live_mortgage_rates', JSON.stringify(freshData));
-          } catch (e) {
-            console.warn("Could not cache live rates in localStorage", e);
-          }
-          if (typeof window !== 'undefined') {
-            window.dispatchEvent(new CustomEvent('live-rates-synced', { detail: freshData }));
-          }
-          if (onRefreshRates) {
-            try {
-              onRefreshRates();
-            } catch (err) {}
-          }
-          setSyncSuccess(true);
-          setTimeout(() => setSyncSuccess(false), 3000);
-        }
-      }
-    } catch (err) {
-      console.warn("Direct modal sync note:", err);
-    } finally {
-      setTimeout(() => setIsLocalSyncing(false), 400);
-    }
-  };
 
   // Escape key listener to close modal and prevent body scroll
   useEffect(() => {
@@ -158,6 +96,7 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
       document.body.style.overflow = '';
     };
   }, [isRatesModalOpen]);
+
   const monthDay = new Date().toLocaleDateString('en-US', {
     month: 'long',
     day: 'numeric',
@@ -165,21 +104,20 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
 
   const categories: { id: NewsCategory; label: string }[] = [
     { id: 'all', label: 'Home' },
-    { id: 'market-trends', label: 'Steven Thomas' },
     { id: 'mortgage-calculator', label: 'Mortgage Calculator' },
-    { id: 'oc-fast', label: 'OC FastStats' },
+    { id: 'market-trends', label: 'Steven Thomas' },
     { id: 'real-estate', label: 'Orange County News' },
-    { id: 'team-news', label: 'Team News & Events' },
     { id: 'restaurants-bars', label: 'New Restaurants & Bars' },
+    { id: 'oc-fast', label: 'OC FastStats' },
   ];
 
-  // Calculate 7-day prior comparison strictly from current rate vs 7-day prior rate
-  const active30YrRate = currentLiveRates?.mortgage30Year || fredRate || '7.45%';
-  const activePriorRate = currentLiveRates?.rate30Year7DaysAgo || rate30Year7DaysAgo || '7.19%';
-  const activeAsOfDate = currentLiveRates?.asOfDate || asOfDate || 'MND Live (9/24/26)';
+  // Active rate display calculations
+  const active30YrRate = currentLiveRates?.mortgage30Year || fredRate || '7.57%';
+  const activePriorRate = currentLiveRates?.rate30Year7DaysAgo || rate30Year7DaysAgo || '7.43%';
+  const activeAsOfDate = currentLiveRates?.asOfDate || asOfDate || 'MND Live (10/2/26)';
 
-  const currentNum = parseFloat(active30YrRate.replace(/[^0-9.]/g, '')) || 7.45;
-  const priorNum = parseFloat(activePriorRate.replace(/[^0-9.]/g, '')) || 7.19;
+  const currentNum = parseFloat(active30YrRate.replace(/[^0-9.]/g, '')) || 7.57;
+  const priorNum = parseFloat(activePriorRate.replace(/[^0-9.]/g, '')) || 7.43;
   const computedDiff = currentLiveRates?.rate30YearChange7Days !== undefined
     ? currentLiveRates.rate30YearChange7Days
     : parseFloat((currentNum - priorNum).toFixed(2));
@@ -218,23 +156,26 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
           </button>
 
           {/* Right Side: Live Mortgage Rate & Bookmarks */}
-          <div className="flex items-center space-x-3">
-            {/* Live 30-Day Mortgage Rate Display - Click opens MND 5 Live Rates Modal */}
+          <div className="flex items-center space-x-2 sm:space-x-3">
+            {/* Live Mortgage Rate Button - Tap opens detailed rate breakdown modal */}
             <button
               type="button"
+              id="header-live-mortgage-rate-btn"
               onClick={() => {
                 setIsRatesModalOpen(true);
-                handleDirectSync();
+                if (onRefreshRates) {
+                  onRefreshRates();
+                }
               }}
-              className="flex flex-col items-end text-right group cursor-pointer hover:opacity-80 transition-opacity shrink-0 px-1 select-none touch-manipulation min-h-[44px] justify-center"
-              title="Mortgage News Daily Live Rates - Click to view 5 live rates"
+              className="flex flex-col items-end text-right group cursor-pointer hover:opacity-85 transition-all shrink-0 px-2 sm:px-3 py-1 sm:py-1.5 rounded-2xl bg-white hover:bg-slate-50 border border-slate-200/80 shadow-2xs select-none touch-manipulation min-h-[44px] justify-center active:scale-95"
+              title="Live Mortgage Rates — Tap to view all rate programs"
             >
               <div className="flex items-center gap-1.5">
                 <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#FA2D48] leading-none flex items-center gap-1">
-                  <span>MND Live 30-Yr</span>
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                  <span>Live 30-Yr Rate</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                 </span>
-                {(isLocalSyncing || isRefreshingRates) ? (
+                {isRefreshingRates ? (
                   <RefreshCw className="w-2.5 h-2.5 text-[#FA2D48] animate-spin inline" />
                 ) : isUp ? (
                   <span className="inline-flex items-center text-[10px] font-black text-emerald-600">
@@ -255,7 +196,7 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
               </div>
 
               <div className="flex items-center justify-end gap-1.5 pt-0.5">
-                <span className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-950 font-sans tracking-tight leading-none group-hover:text-[#FA2D48] transition-colors">
+                <span className="text-xl sm:text-2xl font-black text-slate-950 font-sans tracking-tight leading-none group-hover:text-[#FA2D48] transition-colors tabular-nums">
                   {active30YrRate}
                 </span>
               </div>
@@ -269,8 +210,9 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
             {/* Saved Bookmarks Button */}
             <button
               onClick={onOpenSavedDrawer}
-              className="p-2 sm:p-2.5 rounded-full bg-[#EBEBEF] hover:bg-slate-200 active:bg-slate-300 border border-slate-200/80 text-slate-800 relative transition-all cursor-pointer min-h-[38px] min-w-[38px] flex items-center justify-center shrink-0"
+              className="p-2 sm:p-2.5 rounded-full bg-[#EBEBEF] hover:bg-slate-200 active:bg-slate-300 border border-slate-200/80 text-slate-800 relative transition-all cursor-pointer min-h-[44px] min-w-[44px] flex items-center justify-center shrink-0 shadow-2xs active:scale-95 touch-manipulation"
               title="Saved Bookmarks"
+              aria-label="View Saved Bookmarks"
             >
               <Bookmark className="w-4 h-4 text-[#FA2D48]" />
               {savedCount > 0 && (
@@ -298,7 +240,7 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
                     }
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                   }}
-                  className={`px-4 py-2 rounded-full text-[13.5px] sm:text-sm font-bold tracking-tight transition-all whitespace-nowrap cursor-pointer ${
+                  className={`px-4 py-2 rounded-full text-[13.5px] sm:text-sm font-bold tracking-tight transition-all whitespace-nowrap cursor-pointer select-none touch-manipulation active:scale-95 ${
                     isActive
                       ? 'bg-[#FA2D48] text-white shadow-xs font-extrabold'
                       : 'bg-white text-slate-800 hover:bg-slate-100 hover:text-slate-950 border border-slate-200/90'
@@ -313,7 +255,7 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
 
       </div>
 
-      {/* Simple, Minimalistic Mortgage News Daily Rates Modal mounted directly to document.body via Portal */}
+      {/* Live Mortgage Rates Modal mounted via Portal */}
       {isRatesModalOpen && typeof document !== 'undefined' && createPortal(
         <div
           id="mnd-header-rates-modal-backdrop"
@@ -329,29 +271,25 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
             <div className="flex flex-col gap-1 pb-3 border-b border-slate-100 shrink-0">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <h3 className="text-xl font-semibold text-slate-900 tracking-tight font-sans">
-                    Daily Rates
+                  <h3 className="text-xl font-bold text-slate-900 tracking-tight font-sans">
+                    Live Mortgage Rates
                   </h3>
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                 </div>
 
                 <div className="flex items-center gap-1.5 shrink-0">
                   <button
                     type="button"
                     id="header-modal-sync-rates-btn"
-                    onClick={handleDirectSync}
-                    disabled={isLocalSyncing || isRefreshingRates}
-                    className="min-h-[44px] px-3.5 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-700 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer touch-manipulation active:scale-95 disabled:opacity-50 select-none shadow-xs"
-                    title="Sync Latest Live Rates"
+                    onClick={() => {
+                      if (onRefreshRates) onRefreshRates();
+                    }}
+                    disabled={isRefreshingRates}
+                    className="min-h-[40px] px-3.5 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-700 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer active:scale-95 disabled:opacity-50 select-none shadow-xs"
+                    title="Refresh Live Rates"
                   >
-                    <RefreshCw className={`w-3.5 h-3.5 text-[#FA2D48] ${(isLocalSyncing || isRefreshingRates) ? 'animate-spin' : ''}`} />
-                    <span>
-                      {(isLocalSyncing || isRefreshingRates)
-                        ? 'Syncing...'
-                        : syncSuccess
-                        ? '✓ Synced'
-                        : 'Sync Rates'}
-                    </span>
+                    <RefreshCw className={`w-3.5 h-3.5 text-[#FA2D48] ${isRefreshingRates ? 'animate-spin' : ''}`} />
+                    <span>{isRefreshingRates ? 'Syncing...' : 'Sync Rates'}</span>
                   </button>
                   <button
                     type="button"
@@ -368,44 +306,41 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
                 <span>Mortgage News Daily</span>
                 <span>•</span>
                 <span className="font-semibold text-slate-700">{activeAsOfDate}</span>
-                {syncSuccess && (
-                  <span className="text-emerald-600 font-bold ml-1 animate-pulse">✓ Synced Just Now</span>
-                )}
               </div>
             </div>
 
-            {/* 6 Live Rates List - Apple / Tesla Minimalist Typography */}
+            {/* Live Rates List */}
             <div className="divide-y divide-slate-100 overflow-y-auto flex-1 py-1">
               {[
                 {
                   id: '30-yr-fixed',
                   label: '30-Yr Fixed',
-                  tag: 'MND Daily Index',
-                  rate: currentLiveRates?.mortgage30Year || fredRate || '7.45%',
+                  tag: 'Conforming Benchmark',
+                  rate: currentLiveRates?.mortgage30Year || fredRate || '7.57%',
                 },
                 {
                   id: '15-yr-fixed',
                   label: '15-Yr Fixed',
-                  tag: 'MND Daily Index',
-                  rate: currentLiveRates?.mortgage15Year || '7.10%',
+                  tag: 'Accelerated Equity',
+                  rate: currentLiveRates?.mortgage15Year || '7.19%',
                 },
                 {
                   id: '30-yr-jumbo',
                   label: '30-Yr Jumbo',
-                  tag: 'MND Daily Index',
-                  rate: currentLiveRates?.jumbo30Year || '7.55%',
+                  tag: 'Luxury High-Balance',
+                  rate: currentLiveRates?.jumbo30Year || '7.66%',
                 },
                 {
                   id: '30-yr-fha',
                   label: '30-Yr FHA',
-                  tag: 'MND Daily Index',
-                  rate: currentLiveRates?.fha30Year || '7.05%',
+                  tag: 'Government Backed 3.5%',
+                  rate: currentLiveRates?.fha30Year || '7.20%',
                 },
                 {
                   id: '30-yr-va',
                   label: '30-Yr VA',
-                  tag: 'MND Daily Index',
-                  rate: currentLiveRates?.va30Year || '7.07%',
+                  tag: 'Veterans 0% Down',
+                  rate: currentLiveRates?.va30Year || '7.21%',
                 },
               ].map((r) => (
                 <button
@@ -421,9 +356,6 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
                     onSelectCategory('mortgage-calculator');
                     if (typeof window !== 'undefined') {
                       window.dispatchEvent(new CustomEvent('select-rate-program', { detail: r.label }));
-                      setTimeout(() => {
-                        window.dispatchEvent(new CustomEvent('select-rate-program', { detail: r.label }));
-                      }, 100);
                     }
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                   }}
@@ -455,10 +387,10 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
                   onSelectCategory('mortgage-calculator');
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
-                className="w-full py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-medium text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-xs"
+                className="w-full py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-medium text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-xs active:scale-95"
               >
                 <Calculator className="w-3.5 h-3.5 text-[#FA2D48]" />
-                <span>Calculate Payments</span>
+                <span>Calculate Payments in Mortgage Calculator</span>
               </button>
             </div>
           </div>
@@ -468,4 +400,3 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
     </header>
   );
 };
-

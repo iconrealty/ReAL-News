@@ -194,14 +194,14 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
   const [liveRates, setLiveRates] = useState<LiveMortgageRates>(
     propLiveRates || { 
       source: 'Mortgage News Daily (MND Daily Index)',
-      mortgage30Year: '7.45%',
-      mortgage15Year: '7.10%',
-      jumbo30Year: '7.55%',
-      fha30Year: '7.05%',
-      va30Year: '7.07%',
-      rate30Year7DaysAgo: '7.19%',
-      rate30YearChange7Days: 0.26,
-      asOfDate: 'MND Live (9/24/26)',
+      mortgage30Year: '7.57%',
+      mortgage15Year: '7.19%',
+      jumbo30Year: '7.66%',
+      fha30Year: '7.20%',
+      va30Year: '7.21%',
+      rate30Year7DaysAgo: '7.43%',
+      rate30YearChange7Days: 0.14,
+      asOfDate: 'MND Live (10/2/26)',
       sourceType: 'MORTGAGE_NEWS_DAILY',
       isRealLiveRate: true
     }
@@ -821,55 +821,51 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
           {/* TAB 1: EXECUTIVE SUMMARY */}
           {activeTab === 'summary' && (
             <div className="space-y-6">
-              {/* Key Indicators */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-white border border-slate-200/90 rounded-3xl p-6 shadow-xs relative flex flex-col justify-between">
+              {/* Key Indicators — 4 Cards including Live Mortgage Rate Benchmark */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {/* 1. Live Mortgage Rate Card */}
+                <div className="bg-white border border-slate-200/90 rounded-3xl p-5 shadow-xs relative flex flex-col justify-between">
                   <div>
                     <div className="flex items-center justify-between gap-2">
                       <div className="flex items-center gap-1.5">
                         <span className="text-xs font-black uppercase tracking-wider text-[#FA2D48]">
-                          Mortgage News Daily
+                          Live Mortgage Rate
                         </span>
-                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                       </div>
 
                       <button
                         type="button"
                         onClick={handleManualRateRefresh}
                         disabled={localRefreshing || isRefreshingRates}
-                        className="inline-flex items-center space-x-1 min-h-[44px] px-3.5 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-700 text-xs font-bold transition-all cursor-pointer disabled:opacity-50 touch-manipulation active:scale-95 select-none shadow-2xs"
-                        title="Sync latest live rates from Mortgage News Daily"
+                        className="inline-flex items-center space-x-1 min-h-[36px] px-3 py-1 rounded-full bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-700 text-xs font-bold transition-all cursor-pointer disabled:opacity-50 touch-manipulation active:scale-95 select-none shadow-2xs"
+                        title="Sync latest live mortgage rates"
                       >
-                        <RefreshCw className={`w-3.5 h-3.5 text-[#FA2D48] ${(localRefreshing || isRefreshingRates) ? 'animate-spin' : ''}`} />
-                        <span>{(localRefreshing || isRefreshingRates) ? 'Syncing...' : 'Sync Live'}</span>
+                        <RefreshCw className={`w-3 h-3 text-[#FA2D48] ${(localRefreshing || isRefreshingRates) ? 'animate-spin' : ''}`} />
+                        <span>{(localRefreshing || isRefreshingRates) ? 'Syncing...' : 'Sync'}</span>
                       </button>
                     </div>
 
-                    <div className="pt-2.5">
+                    <div className="pt-2">
                       <div className="text-[10px] font-sans uppercase tracking-widest text-slate-500 font-extrabold flex items-center justify-between">
                         <span>30-Year Fixed Benchmark</span>
-                        <span className="text-[9px] text-slate-400 font-bold">{liveRates?.asOfDate || 'Daily Live Market'}</span>
+                        <span className="text-[9px] text-slate-400 font-bold">{liveRates?.asOfDate || 'Live MND Feed'}</span>
                       </div>
-                      <div className="flex items-baseline space-x-2.5 pt-1">
-                        <span className="text-3xl sm:text-4xl font-black text-slate-900">{liveRates?.mortgage30Year || '7.45%'}</span>
-                        <span className="text-xs font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md">
+                      <div className="flex items-baseline space-x-2 pt-1">
+                        <span className="text-3xl font-black text-slate-900 tabular-nums">{liveRates?.mortgage30Year || '7.45%'}</span>
+                        <span className="text-xs font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md tabular-nums">
                           15-Yr: {liveRates?.mortgage15Year || '7.10%'}
                         </span>
                       </div>
                       <div className="flex flex-wrap items-center gap-1.5 pt-2">
                         {liveRates?.jumbo30Year && (
-                          <span className="text-[10px] font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md">
+                          <span className="text-[10px] font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md tabular-nums">
                             Jumbo: {liveRates.jumbo30Year}
                           </span>
                         )}
                         {liveRates?.fha30Year && (
-                          <span className="text-[10px] font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md">
+                          <span className="text-[10px] font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md tabular-nums">
                             FHA: {liveRates.fha30Year}
-                          </span>
-                        )}
-                        {liveRates?.va30Year && (
-                          <span className="text-[10px] font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md">
-                            VA: {liveRates.va30Year}
                           </span>
                         )}
                       </div>
@@ -878,25 +874,92 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
 
                   <div className="pt-3 border-t border-slate-100 mt-3">
                     <p className="text-xs text-slate-600 font-medium leading-snug">
-                      Real-time MND daily rate index updated continuously throughout the trading day.
+                      Live daily rate index benchmark for home purchases.
                     </p>
                     <div className="flex items-center justify-between text-[11px] text-slate-900 font-bold pt-1">
                       <span>Source</span>
                       <span className="text-[#FA2D48] font-black">
-                        Mortgage News Daily Live Feed
+                        Mortgage News Daily
                       </span>
                     </div>
                   </div>
                 </div>
-                <div className="bg-white border border-slate-200/90 rounded-3xl p-6 shadow-xs">
-                  <div className="text-xs font-sans uppercase tracking-widest text-black font-extrabold">Countywide Median List Price</div>
-                  <div className="text-3xl font-black text-slate-900 pt-1">{OC_HOUSING_REPORT_METADATA.countywideMedianPrice}</div>
-                  <p className="text-sm text-slate-700 font-normal mt-2 leading-snug">Across {OC_HOUSING_REPORT_METADATA.countywideActives.toLocaleString()} active listings in all 34 OC municipalities.</p>
+
+                {/* 2. Expected Market Time Card */}
+                <div className="bg-white border border-slate-200/90 rounded-3xl p-5 shadow-xs relative flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs font-black uppercase tracking-wider text-[#FA2D48]">
+                        Expected Market Time
+                      </span>
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 border border-sky-200">
+                        Balanced Market
+                      </span>
+                    </div>
+
+                    <div className="pt-2">
+                      <div className="text-[10px] font-sans uppercase tracking-widest text-slate-500 font-extrabold flex items-center justify-between">
+                        <span>Countywide Velocity</span>
+                        <span className="text-[9px] text-slate-400 font-bold">{OC_HOUSING_REPORT_METADATA.reportDate}</span>
+                      </div>
+                      <div className="flex items-baseline space-x-2 pt-1">
+                        <span className="text-3xl font-black text-slate-900 tabular-nums">{OC_HOUSING_REPORT_METADATA.countywideMarketTime} Days</span>
+                        <span className="text-xs font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md">
+                          Prior: {OC_HOUSING_REPORT_METADATA.countywideMarketTime2WksAgo}d
+                        </span>
+                      </div>
+                      <div className="flex flex-wrap items-center gap-1.5 pt-2">
+                        <span className="text-[10px] font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md">
+                          Detached: {OC_HOUSING_REPORT_METADATA.detachedMarketTime}d
+                        </span>
+                        <span className="text-[10px] font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md">
+                          Attached: {OC_HOUSING_REPORT_METADATA.attachedMarketTime}d
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="pt-3 border-t border-slate-100 mt-3">
+                    <p className="text-xs text-slate-600 font-medium leading-snug">
+                      Speed at which active inventory is absorbed by 30-day demand.
+                    </p>
+                    <div className="flex items-center justify-between text-[11px] text-slate-900 font-bold pt-1">
+                      <span>Source</span>
+                      <span className="text-[#FA2D48] font-black">
+                        Reports On Housing
+                      </span>
+                    </div>
+                  </div>
                 </div>
-                <div className="bg-white border border-slate-200/90 rounded-3xl p-6 shadow-xs">
-                  <div className="text-xs font-sans uppercase tracking-widest text-black font-extrabold">{OC_HOUSING_REPORT_METADATA.closedSalesPeriod} Closed Sales</div>
-                  <div className="text-3xl font-black text-[#FA2D48] pt-1">{OC_HOUSING_REPORT_METADATA.closedSalesUnits.toLocaleString()} Sales</div>
-                  <p className="text-sm text-slate-700 font-normal mt-2 leading-snug">{OC_HOUSING_REPORT_METADATA.closedSalesYoYNote}</p>
+
+                {/* 3. Countywide Median List Price */}
+                <div className="bg-white border border-slate-200/90 rounded-3xl p-5 shadow-xs relative flex flex-col justify-between">
+                  <div>
+                    <div className="text-xs font-sans uppercase tracking-widest text-black font-extrabold">Countywide Median Price</div>
+                    <div className="text-3xl font-black text-slate-900 pt-1">{OC_HOUSING_REPORT_METADATA.countywideMedianPrice}</div>
+                    <p className="text-xs sm:text-sm text-slate-700 font-normal mt-2 leading-snug">Across {OC_HOUSING_REPORT_METADATA.countywideActives.toLocaleString()} active listings in OC.</p>
+                  </div>
+                  <div className="pt-3 border-t border-slate-100 mt-3">
+                    <div className="flex items-center justify-between text-[11px] text-slate-900 font-bold">
+                      <span>Active Inventory</span>
+                      <span className="text-slate-800 font-black">{OC_HOUSING_REPORT_METADATA.countywideActives.toLocaleString()} Homes</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 4. Closed Sales */}
+                <div className="bg-white border border-slate-200/90 rounded-3xl p-5 shadow-xs relative flex flex-col justify-between">
+                  <div>
+                    <div className="text-xs font-sans uppercase tracking-widest text-black font-extrabold">{OC_HOUSING_REPORT_METADATA.closedSalesPeriod} Closed Sales</div>
+                    <div className="text-3xl font-black text-[#FA2D48] pt-1">{OC_HOUSING_REPORT_METADATA.closedSalesUnits.toLocaleString()} Sales</div>
+                    <p className="text-xs sm:text-sm text-slate-700 font-normal mt-2 leading-snug">{OC_HOUSING_REPORT_METADATA.closedSalesYoYNote}</p>
+                  </div>
+                  <div className="pt-3 border-t border-slate-100 mt-3">
+                    <div className="flex items-center justify-between text-[11px] text-slate-900 font-bold">
+                      <span>Sales-to-List</span>
+                      <span className="text-emerald-600 font-black">{OC_HOUSING_REPORT_METADATA.salesToListRatio}</span>
+                    </div>
+                  </div>
                 </div>
               </div>
 
