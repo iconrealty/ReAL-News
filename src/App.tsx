@@ -1304,64 +1304,6 @@ export function App() {
               </div>
             )}
 
-            {/* Live Mortgage Rates Snapshot Bar on Main News Page */}
-            {activeCategory === 'all' && (
-              <section className="bg-white border border-slate-200/90 rounded-3xl p-4 sm:p-5 shadow-xs">
-                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-2xl bg-rose-50 text-[#FA2D48] flex items-center justify-center shrink-0">
-                      <TrendingUp className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-black uppercase tracking-wider text-[#FA2D48] font-sans">
-                          Live Mortgage Rates
-                        </span>
-                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                        <span className="text-[10px] text-slate-400 font-semibold hidden sm:inline">
-                          {liveRates?.asOfDate || 'Daily MND Index'}
-                        </span>
-                      </div>
-                      <p className="text-xs sm:text-sm text-slate-600 font-medium">
-                        Live benchmark financing rates for Orange County buyers and refinancers.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-4 sm:gap-6 flex-wrap justify-between lg:justify-end border-t lg:border-t-0 pt-3 lg:pt-0 border-slate-100">
-                    <div className="flex flex-col">
-                      <span className="text-[10px] uppercase tracking-wider font-extrabold text-slate-400 font-sans">30-Yr Fixed</span>
-                      <span className="text-2xl sm:text-3xl font-black text-slate-950 tabular-nums">
-                        {liveRates?.mortgage30Year || '7.57%'}
-                      </span>
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-[10px] uppercase tracking-wider font-extrabold text-slate-400 font-sans">15-Yr Fixed</span>
-                      <span className="text-lg sm:text-xl font-bold text-slate-700 tabular-nums">
-                        {liveRates?.mortgage15Year || '7.19%'}
-                      </span>
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-[10px] uppercase tracking-wider font-extrabold text-slate-400 font-sans">Jumbo 30-Yr</span>
-                      <span className="text-lg sm:text-xl font-bold text-slate-700 tabular-nums">
-                        {liveRates?.jumbo30Year || '7.55%'}
-                      </span>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setActiveCategory('mortgage-calculator');
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                      }}
-                      className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 active:bg-slate-950 text-white text-xs font-bold transition-all shadow-xs cursor-pointer active:scale-95 shrink-0"
-                    >
-                      Payment Calculator →
-                    </button>
-                  </div>
-                </div>
-              </section>
-            )}
-
             {/* Featured Hero / Top Stories */}
             {heroArticle && (
               <section className="space-y-3">
