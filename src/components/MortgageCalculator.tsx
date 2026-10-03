@@ -103,11 +103,62 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
   const [downPaymentMode, setDownPaymentMode] = useState<'percent' | 'dollar'>('dollar');
   const [downPaymentPercent, setDownPaymentPercent] = useState<number | ''>('');
   const [downPaymentDollar, setDownPaymentDollar] = useState<number | ''>('');
+  
+  // Rate always initializes to default 30-Yr Fixed upon app reload
   const [selectedRateProgram, setSelectedRateProgram] = useState<string>('30-Yr Fixed');
-  const [interestRate, setInterestRate] = useState<number | ''>(mnd30Num); // Preset default to 30-year rate
+  const [interestRate, setInterestRate] = useState<number | ''>(mnd30Num);
   const [loanTermYears, setLoanTermYears] = useState<number>(30);
+  const hasUserEditedRate = React.useRef<boolean>(false);
+  const customRateTimerRef = React.useRef<any>(null);
+
   const [isCalcSyncing, setIsCalcSyncing] = useState<boolean>(false);
   const [calcSyncSuccess, setCalcSyncSuccess] = useState<boolean>(false);
+
+  // Helper to reset calculator rate back to default 30-Yr live rate
+  const resetToDefaultRate = React.useCallback(() => {
+    if (customRateTimerRef.current) {
+      clearTimeout(customRateTimerRef.current);
+      customRateTimerRef.current = null;
+    }
+    hasUserEditedRate.current = false;
+    setSelectedRateProgram('30-Yr Fixed');
+    setInterestRate(mnd30Num);
+    setLoanTermYears(30);
+    try {
+      sessionStorage.removeItem('calc_custom_interest_rate');
+    } catch (e) {}
+  }, [mnd30Num]);
+
+  // Start or refresh the 10-minute countdown timer for custom rate
+  const startCustomRateTimer = React.useCallback(() => {
+    if (customRateTimerRef.current) {
+      clearTimeout(customRateTimerRef.current);
+      customRateTimerRef.current = null;
+    }
+    // Set 10-minute timer (10 * 60 * 1000 = 600,000 ms)
+    customRateTimerRef.current = setTimeout(() => {
+      resetToDefaultRate();
+    }, 10 * 60 * 1000);
+  }, [resetToDefaultRate]);
+
+  // Clean up 10-minute timer on unmount
+  React.useEffect(() => {
+    return () => {
+      if (customRateTimerRef.current) {
+        clearTimeout(customRateTimerRef.current);
+        customRateTimerRef.current = null;
+      }
+    };
+  }, []);
+
+  // Listen to reset-calc-rate-default (fired when user clicks Home, ReaL logo, or main feed)
+  React.useEffect(() => {
+    const handleResetEvent = () => {
+      resetToDefaultRate();
+    };
+    window.addEventListener('reset-calc-rate-default', handleResetEvent);
+    return () => window.removeEventListener('reset-calc-rate-default', handleResetEvent);
+  }, [resetToDefaultRate]);
 
   const handleProgramSelect = (programLabel: string) => {
     let targetLabel = programLabel;
@@ -117,9 +168,18 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
     setSelectedRateProgram(targetLabel);
     if (targetLabel === 'custom') {
       hasUserEditedRate.current = true;
+      startCustomRateTimer();
       return;
     }
+    // User selected a preset program
+    if (customRateTimerRef.current) {
+      clearTimeout(customRateTimerRef.current);
+      customRateTimerRef.current = null;
+    }
     hasUserEditedRate.current = false;
+    try {
+      sessionStorage.removeItem('calc_custom_interest_rate');
+    } catch (e) {}
     const found = rateOptions.find((r) => r.label === targetLabel);
     if (found) {
       setInterestRate(found.rate);
@@ -132,9 +192,10 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
 
   const handleRateInputChange = (valStr: string) => {
     hasUserEditedRate.current = true;
+    setSelectedRateProgram('custom');
+    startCustomRateTimer(); // Reset 10-minute timer
     if (valStr === '') {
       setInterestRate('');
-      setSelectedRateProgram('custom');
       return;
     }
     const parts = valStr.split('.');
@@ -143,17 +204,9 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
       cleanStr = `${parts[0]}.${parts[1].slice(0, 2)}`;
     }
     const num = Number(cleanStr);
-    setInterestRate(isNaN(num) ? '' : num);
-    const matched = rateOptions.find((r) => r.rate === num);
-    if (matched) {
-      setSelectedRateProgram(matched.label);
-    } else {
-      setSelectedRateProgram('custom');
-    }
+    const validNum = isNaN(num) ? '' : num;
+    setInterestRate(validNum);
   };
-
-  // Sync interest rate with live rates when propLiveRates updates initially or refreshes
-  const hasUserEditedRate = React.useRef(false);
 
   // Check for pending rate program navigation on mount
   React.useEffect(() => {
@@ -210,23 +263,26 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
           if (typeof window !== 'undefined') {
             window.dispatchEvent(new CustomEvent('live-rates-synced', { detail: freshData }));
           }
-          hasUserEditedRate.current = false;
           
-          const r30 = parseFloat(freshData.mortgage30Year?.replace('%', '') || '7.45');
-          const r15 = parseFloat(freshData.mortgage15Year?.replace('%', '') || '7.10');
-          const rJumbo = parseFloat(freshData.jumbo30Year?.replace('%', '') || '7.55');
-          const rFha = parseFloat(freshData.fha30Year?.replace('%', '') || '7.05');
-          const rVa = parseFloat(freshData.va30Year?.replace('%', '') || '7.07');
+          const r30 = parseFloat(freshData.mortgage30Year?.replace('%', '') || '7.57');
+          const r15 = parseFloat(freshData.mortgage15Year?.replace('%', '') || '7.19');
+          const rJumbo = parseFloat(freshData.jumbo30Year?.replace('%', '') || '7.66');
+          const rFha = parseFloat(freshData.fha30Year?.replace('%', '') || '7.20');
+          const rVa = parseFloat(freshData.va30Year?.replace('%', '') || '7.21');
 
-          if (selectedRateProgram === '15-Yr Fixed') setInterestRate(r15);
-          else if (selectedRateProgram === '30-Yr Jumbo') setInterestRate(rJumbo);
-          else if (selectedRateProgram === '30-Yr FHA') setInterestRate(rFha);
-          else if (selectedRateProgram === '30-Yr VA') setInterestRate(rVa);
-          else {
+          // Only update rate if user is on a standard live program; NEVER overwrite custom rate
+          if (hasUserEditedRate.current || selectedRateProgram === 'custom') {
+            // Keep user's custom interest rate intact
+          } else if (selectedRateProgram === '15-Yr Fixed') {
+            setInterestRate(r15);
+          } else if (selectedRateProgram === '30-Yr Jumbo') {
+            setInterestRate(rJumbo);
+          } else if (selectedRateProgram === '30-Yr FHA') {
+            setInterestRate(rFha);
+          } else if (selectedRateProgram === '30-Yr VA') {
+            setInterestRate(rVa);
+          } else if (selectedRateProgram === '30-Yr Fixed') {
             setInterestRate(r30);
-            if (selectedRateProgram === 'custom') {
-              setSelectedRateProgram('30-Yr Fixed');
-            }
           }
 
           if (onRefreshRates) {
@@ -249,6 +305,10 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
   // Listen to global live-rates-synced event for instant cross-component updates on mobile
   React.useEffect(() => {
     const handleLiveRatesSynced = (e: any) => {
+      // NEVER overwrite custom interest rate or change custom program on background syncs
+      if (hasUserEditedRate.current || selectedRateProgram === 'custom') {
+        return;
+      }
       const data = e.detail;
       if (data) {
         if (selectedRateProgram === '15-Yr Fixed' && data.mortgage15Year) {
@@ -263,14 +323,10 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
         } else if (selectedRateProgram === '30-Yr VA' && data.va30Year) {
           const r = parseFloat(data.va30Year.replace('%', ''));
           if (!isNaN(r)) setInterestRate(r);
-        } else if (selectedRateProgram === '30-Yr Fixed' || selectedRateProgram === 'custom') {
-          const r30 = parseFloat(data.mortgage30Year?.replace('%', '') || '7.45');
+        } else if (selectedRateProgram === '30-Yr Fixed') {
+          const r30 = parseFloat(data.mortgage30Year?.replace('%', '') || '7.57');
           if (!isNaN(r30) && r30 > 0) {
             setInterestRate(r30);
-            if (selectedRateProgram === 'custom') {
-              setSelectedRateProgram('30-Yr Fixed');
-              hasUserEditedRate.current = false;
-            }
           }
         }
       }
@@ -293,13 +349,15 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
 
   // Keep interestRate synchronized with selected live program whenever live rates refresh
   React.useEffect(() => {
-    if (selectedRateProgram !== 'custom') {
-      const activeProg = rateOptions.find((r) => r.label === selectedRateProgram);
-      if (activeProg && activeProg.rate > 0) {
-        setInterestRate(activeProg.rate);
-      } else if (mnd30Num > 0) {
-        setInterestRate(mnd30Num);
-      }
+    // NEVER overwrite custom interest rate or change custom program
+    if (hasUserEditedRate.current || selectedRateProgram === 'custom') {
+      return;
+    }
+    const activeProg = rateOptions.find((r) => r.label === selectedRateProgram);
+    if (activeProg && activeProg.rate > 0) {
+      setInterestRate(activeProg.rate);
+    } else if (mnd30Num > 0) {
+      setInterestRate(mnd30Num);
     }
   }, [rateOptions, selectedRateProgram, mnd30Num, propLiveRates?.asOfTimestamp, propLiveRates?.mortgage30Year]);
 

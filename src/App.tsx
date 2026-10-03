@@ -345,6 +345,9 @@ export function App() {
     fetchArticles(false);
     fetchMndNews();
     fetchLiveRates();
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('reset-calc-rate-default'));
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -678,6 +681,9 @@ export function App() {
           onSelectCategory={(cat) => {
             setSelectedArticle(null);
             setActiveCategory(cat);
+            if (cat === 'all' && typeof window !== 'undefined') {
+              window.dispatchEvent(new CustomEvent('reset-calc-rate-default'));
+            }
           }}
           savedCount={bookmarkedIds.size}
           onOpenSavedDrawer={() => setIsSavedDrawerOpen(true)}
