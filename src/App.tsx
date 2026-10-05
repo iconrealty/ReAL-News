@@ -24,7 +24,7 @@ import { AdBannerRenderer } from './components/AdBannerRenderer';
 import { ManagerAdminModal } from './components/ManagerAdminModal';
 import { NewsManagerModal } from './components/NewsManagerModal';
 import { MarketSpeedStatusModal } from './components/MarketSpeedStatusModal';
-import { Sparkles, Building2, Utensils, Flame, Compass, ChevronRight, Users, MapPin, TrendingUp, Clock, Tag, BarChart3, Check, Newspaper, X, Info, RefreshCw } from 'lucide-react';
+import { Sparkles, Building2, Flame, Compass, ChevronRight, Users, MapPin, TrendingUp, Clock, Tag, BarChart3, Check, Newspaper, X, Info, RefreshCw } from 'lucide-react';
 
 // Helper function to check if an article is recent (within 1 day / 24 hours) and not deprecated
 export function isArticleRecent(art: NewsArticle, maxDays: number = 1): boolean {
@@ -1253,8 +1253,7 @@ export function App() {
                     )}
                   </div>
                   <h2 className="text-2xl sm:text-3xl font-black font-sans text-slate-950 tracking-tight">
-                    {activeCategory === 'real-estate' ? 'Orange County News' :
-                     activeCategory === 'restaurants-bars' ? 'New Restaurants & Bars' : 'Local Coverage'}
+                    {activeCategory === 'real-estate' ? 'Orange County News' : 'Local Coverage'}
                   </h2>
                 </div>
 
@@ -1363,18 +1362,6 @@ export function App() {
                 title={activeCategory === 'all' ? `Civic Developments & Regional Infrastructure` : `City Developments in ${currentCity.name}`}
                 icon={<Building2 className="w-5 h-5 text-sky-600" />}
                 articles={developmentArticles}
-                onSelectArticle={setSelectedArticle}
-                bookmarkedIds={bookmarkedIds}
-                onToggleBookmark={toggleBookmark}
-              />
-            )}
-
-            {/* Section 3: Hot New Restaurant & Bar Openings */}
-            {diningArticles.length > 0 && (activeCategory === 'all' || activeCategory === 'restaurants-bars' || activeCategory === 'real-estate') && (
-              <NewsGridSection
-                title={activeCategory === 'all' ? `New Restaurant & Bar Debuts` : `New Restaurant & Bar Debuts in ${currentCity.name}`}
-                icon={<Utensils className="w-5 h-5 text-emerald-600" />}
-                articles={diningArticles}
                 onSelectArticle={setSelectedArticle}
                 bookmarkedIds={bookmarkedIds}
                 onToggleBookmark={toggleBookmark}
