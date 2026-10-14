@@ -4,6 +4,7 @@ export type NewsCategory =
   | 'market-trends'
   | 'oc-fast'
   | 'mortgage-calculator'
+  | 'buydown-calculator'
   | 'real-estate' 
   | 'restaurants-bars' 
   | 'city-developments' 

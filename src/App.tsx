@@ -18,6 +18,7 @@ import { IconMarketIntelligence } from './components/IconMarketIntelligence';
 import { OCFastMarketReport } from './components/OCFastMarketReport';
 import { OCFastTopOverview } from './components/OCFastTopOverview';
 import { MortgageCalculator } from './components/MortgageCalculator';
+import { BuydownCalculator } from './components/BuydownCalculator';
 import { ArticleReaderPage } from './components/ArticleReaderPage';
 import { SavedArticlesDrawer } from './components/SavedArticlesDrawer';
 import { AdBannerRenderer } from './components/AdBannerRenderer';
@@ -730,7 +731,24 @@ export function App() {
             />
 
         {/* Category Views */}
-        {activeCategory === 'mortgage-calculator' ? (
+        {activeCategory === 'buydown-calculator' ? (
+          <BuydownCalculator
+            currentCity={currentCity}
+            liveRates={liveRates}
+            ads={ads}
+            monetizationEnabled={isMonetizationEnabled}
+            onRefreshRates={handleRefreshLiveRates}
+            isRefreshingRates={isRefreshingRates}
+            onSelectCity={(city) => {
+              setCurrentCity(city);
+              showToast(`Selected ${city.name}`);
+            }}
+            onNavigateCategory={(cat) => {
+              setActiveCategory(cat);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
+        ) : activeCategory === 'mortgage-calculator' ? (
           <MortgageCalculator
             currentCity={currentCity}
             liveRates={liveRates}
@@ -741,6 +759,10 @@ export function App() {
             onSelectCity={(city) => {
               setCurrentCity(city);
               showToast(`Selected ${city.name}`);
+            }}
+            onNavigateCategory={(cat) => {
+              setActiveCategory(cat);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
           />
         ) : activeCategory === 'market-trends' ? (
