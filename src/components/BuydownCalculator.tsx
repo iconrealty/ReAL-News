@@ -353,7 +353,7 @@ export const BuydownCalculator: React.FC<BuydownCalculatorProps> = ({
       {/* Header Title & Actions */}
       <div className="border-b border-slate-200/80 pb-4 sm:pb-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-slate-950 font-serif">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black font-sans tracking-tighter text-[#FA2D48] leading-none">
             Temporary Buydown Calculator
           </h1>
 
