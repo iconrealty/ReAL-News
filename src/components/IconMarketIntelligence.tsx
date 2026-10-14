@@ -200,94 +200,94 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                       <button
                         type="button"
                         onClick={() => setShowHistoricalMarketTimeModal(true)}
-                        className="relative flex items-center h-11 sm:h-12 w-full overflow-hidden rounded-full bg-white hover:bg-slate-50 border border-slate-200/90 text-slate-800 shadow-xs hover:shadow-sm transition-all cursor-pointer font-sans group active:scale-[0.99] px-2.5 sm:px-4 select-none"
+                        className="relative flex items-center h-14 sm:h-16 w-full overflow-hidden rounded-full bg-gradient-to-r from-white via-slate-50/80 to-white hover:from-slate-50 hover:to-white border-2 border-slate-300/80 hover:border-rose-400 text-slate-800 shadow-md hover:shadow-lg hover:ring-2 hover:ring-rose-400/20 transition-all cursor-pointer font-sans group active:scale-[0.99] px-3.5 sm:px-5 select-none"
                         title={`Click to view ${currentCity.name} Historical Speed & Pace`}
                       >
                         {/* Fixed Left Live Badge */}
-                        <div className="flex items-center gap-1.5 sm:gap-2 pr-2 sm:pr-3 border-r border-slate-200/80 shrink-0 z-10 bg-white group-hover:bg-slate-50 transition-colors">
-                          <span className="relative flex h-2 w-2 sm:h-2.5 sm:w-2.5 shrink-0">
+                        <div className="flex items-center gap-2 sm:gap-2.5 pr-3 sm:pr-4 border-r-2 border-slate-200/90 shrink-0 z-10 bg-white group-hover:bg-slate-50 transition-colors">
+                          <span className="relative flex h-3 w-3 sm:h-3.5 sm:w-3.5 shrink-0">
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FA2D48] opacity-75"></span>
-                            <span className="relative inline-flex rounded-full h-2 w-2 sm:h-2.5 sm:w-2.5 bg-[#FA2D48]"></span>
+                            <span className="relative inline-flex rounded-full h-3 w-3 sm:h-3.5 sm:w-3.5 bg-[#FA2D48] shadow-sm"></span>
                           </span>
-                          <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-slate-900 shrink-0">
+                          <span className="text-xs sm:text-sm font-black uppercase tracking-wider text-[#FA2D48] bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200/70 shrink-0">
                             LIVE
                           </span>
                         </div>
 
                         {/* Running City Equation Scrolling Slower to the Left */}
-                        <div className="relative overflow-hidden flex-1 mx-1.5 sm:mx-3">
+                        <div className="relative overflow-hidden flex-1 mx-2 sm:mx-4">
                           <div className="animate-ticker flex items-center group-hover:[animation-play-state:paused]">
                             {/* 1st copy */}
-                            <div className="flex items-center gap-3.5 sm:gap-5 text-[11px] sm:text-[13px] font-bold tracking-wide uppercase text-slate-700 shrink-0 pr-4 sm:pr-5">
-                              <span className={`font-black uppercase tracking-wider px-2 py-0.5 rounded-full border text-[10px] sm:text-xs ${cond.tickerBadgeClass}`}>
+                            <div className="flex items-center gap-4 sm:gap-6 text-xs sm:text-sm md:text-[15px] font-bold tracking-tight uppercase text-slate-700 shrink-0 pr-6 sm:pr-8">
+                              <span className={`font-black uppercase tracking-wider px-2.5 sm:px-3.5 py-1 rounded-full border shadow-2xs text-xs sm:text-sm ${cond.tickerBadgeClass}`}>
                                 {cond.capitalLabel}
                               </span>
-                              <span className="text-[#FA2D48]">●</span>
-                              <span className="font-black text-slate-900">
-                                MARKET SPEED: <span className={speedColor}>{speedLabel}</span>
+                              <span className="text-[#FA2D48] text-xs sm:text-sm opacity-90">●</span>
+                              <span className="font-extrabold text-slate-900 text-xs sm:text-sm md:text-[15px]">
+                                MARKET SPEED: <span className={`${speedColor} font-black underline decoration-2 decoration-current underline-offset-2`}>{speedLabel}</span>
                               </span>
-                              <span className="text-[#FA2D48]">●</span>
-                              <span className="text-slate-500 font-bold">
-                                DEMAND: <span className="text-emerald-600 font-extrabold">{marketData.demand30Days}</span>{' '}
-                                <span className="text-emerald-600 font-black text-lg leading-none inline-block">↑</span>
+                              <span className="text-[#FA2D48] text-xs sm:text-sm opacity-90">●</span>
+                              <span className="text-slate-600 font-bold">
+                                DEMAND: <span className="text-emerald-600 font-black text-sm sm:text-base md:text-lg">{marketData.demand30Days}</span>{' '}
+                                <span className="text-emerald-600 font-black text-xl leading-none inline-block">↑</span>
                               </span>
-                              <span className="text-[#FA2D48]">●</span>
-                              <span className="text-slate-500 font-bold">
-                                SUPPLY: <span className="text-slate-800 font-extrabold">{marketData.currentActives}</span>{' '}
-                                <span className="text-[#FA2D48] font-black text-lg leading-none inline-block">↓</span>
+                              <span className="text-[#FA2D48] text-xs sm:text-sm opacity-90">●</span>
+                              <span className="text-slate-600 font-bold">
+                                SUPPLY: <span className="text-slate-900 font-black text-sm sm:text-base md:text-lg">{marketData.currentActives}</span>{' '}
+                                <span className="text-[#FA2D48] font-black text-xl leading-none inline-block">↓</span>
                               </span>
-                              <span className="text-[#FA2D48]">●</span>
-                              <span className="text-slate-500 font-bold">
-                                EMT: <span className="text-slate-950 font-extrabold">{marketData.marketTimeDays} DAYS</span>
+                              <span className="text-[#FA2D48] text-xs sm:text-sm opacity-90">●</span>
+                              <span className="text-slate-600 font-bold">
+                                EMT: <span className="text-slate-950 font-black text-sm sm:text-base md:text-lg">{marketData.marketTimeDays} DAYS</span>
                                 {emtDelta !== 0 && (
-                                  <span className={`ml-1.5 font-black inline-flex items-center gap-0.5 ${isFaster ? 'text-emerald-600' : 'text-[#FA2D48]'}`}>
-                                    <span className="text-lg leading-none font-extrabold">{isFaster ? '↓' : '↑'}</span>
-                                    <span>{Math.abs(emtDelta)}d</span>
+                                  <span className={`ml-1.5 font-black inline-flex items-center gap-0.5 text-xs sm:text-sm ${isFaster ? 'text-emerald-600' : 'text-[#FA2D48]'}`}>
+                                    <span className="text-xl leading-none font-black">{isFaster ? '↓' : '↑'}</span>
+                                    <span>{Math.abs(emtDelta)}d {isFaster ? 'FASTER' : 'SLOWER'}</span>
                                   </span>
                                 )}
                               </span>
-                              <span className="text-[#FA2D48] font-black text-xs sm:text-sm">=</span>
+                              <span className="text-[#FA2D48] font-black text-sm sm:text-base">=</span>
                             </div>
                             {/* 2nd identical copy for seamless loop */}
-                            <div className="flex items-center gap-3.5 sm:gap-5 text-[11px] sm:text-[13px] font-bold tracking-wide uppercase text-slate-700 shrink-0 pr-4 sm:pr-5" aria-hidden="true">
-                              <span className={`font-black uppercase tracking-wider px-2 py-0.5 rounded-full border text-[10px] sm:text-xs ${cond.tickerBadgeClass}`}>
+                            <div className="flex items-center gap-4 sm:gap-6 text-xs sm:text-sm md:text-[15px] font-bold tracking-tight uppercase text-slate-700 shrink-0 pr-6 sm:pr-8" aria-hidden="true">
+                              <span className={`font-black uppercase tracking-wider px-2.5 sm:px-3.5 py-1 rounded-full border shadow-2xs text-xs sm:text-sm ${cond.tickerBadgeClass}`}>
                                 {cond.capitalLabel}
                               </span>
-                              <span className="text-[#FA2D48]">●</span>
-                              <span className="font-black text-slate-900">
-                                MARKET SPEED: <span className={speedColor}>{speedLabel}</span>
+                              <span className="text-[#FA2D48] text-xs sm:text-sm opacity-90">●</span>
+                              <span className="font-extrabold text-slate-900 text-xs sm:text-sm md:text-[15px]">
+                                MARKET SPEED: <span className={`${speedColor} font-black underline decoration-2 decoration-current underline-offset-2`}>{speedLabel}</span>
                               </span>
-                              <span className="text-[#FA2D48]">●</span>
-                              <span className="text-slate-500 font-bold">
-                                DEMAND: <span className="text-emerald-600 font-extrabold">{marketData.demand30Days}</span>{' '}
-                                <span className="text-emerald-600 font-black text-lg leading-none inline-block">↑</span>
+                              <span className="text-[#FA2D48] text-xs sm:text-sm opacity-90">●</span>
+                              <span className="text-slate-600 font-bold">
+                                DEMAND: <span className="text-emerald-600 font-black text-sm sm:text-base md:text-lg">{marketData.demand30Days}</span>{' '}
+                                <span className="text-emerald-600 font-black text-xl leading-none inline-block">↑</span>
                               </span>
-                              <span className="text-[#FA2D48]">●</span>
-                              <span className="text-slate-500 font-bold">
-                                SUPPLY: <span className="text-slate-800 font-extrabold">{marketData.currentActives}</span>{' '}
-                                <span className="text-[#FA2D48] font-black text-lg leading-none inline-block">↓</span>
+                              <span className="text-[#FA2D48] text-xs sm:text-sm opacity-90">●</span>
+                              <span className="text-slate-600 font-bold">
+                                SUPPLY: <span className="text-slate-900 font-black text-sm sm:text-base md:text-lg">{marketData.currentActives}</span>{' '}
+                                <span className="text-[#FA2D48] font-black text-xl leading-none inline-block">↓</span>
                               </span>
-                              <span className="text-[#FA2D48]">●</span>
-                              <span className="text-slate-500 font-bold">
-                                EMT: <span className="text-slate-950 font-extrabold">{marketData.marketTimeDays} DAYS</span>
+                              <span className="text-[#FA2D48] text-xs sm:text-sm opacity-90">●</span>
+                              <span className="text-slate-600 font-bold">
+                                EMT: <span className="text-slate-950 font-black text-sm sm:text-base md:text-lg">{marketData.marketTimeDays} DAYS</span>
                                 {emtDelta !== 0 && (
-                                  <span className={`ml-1.5 font-black inline-flex items-center gap-0.5 ${isFaster ? 'text-emerald-600' : 'text-[#FA2D48]'}`}>
-                                    <span className="text-lg leading-none font-extrabold">{isFaster ? '↓' : '↑'}</span>
-                                    <span>{Math.abs(emtDelta)}d</span>
+                                  <span className={`ml-1.5 font-black inline-flex items-center gap-0.5 text-xs sm:text-sm ${isFaster ? 'text-emerald-600' : 'text-[#FA2D48]'}`}>
+                                    <span className="text-xl leading-none font-black">{isFaster ? '↓' : '↑'}</span>
+                                    <span>{Math.abs(emtDelta)}d {isFaster ? 'FASTER' : 'SLOWER'}</span>
                                   </span>
                                 )}
                               </span>
-                              <span className="text-[#FA2D48] font-black text-xs sm:text-sm">=</span>
+                              <span className="text-[#FA2D48] font-black text-sm sm:text-base">=</span>
                             </div>
                           </div>
                         </div>
 
                         {/* Fixed Right Action */}
-                        <div className="pl-2 sm:pl-3 border-l border-slate-200/80 shrink-0 z-10 bg-white group-hover:bg-slate-50 transition-colors flex items-center gap-1">
-                          <span className="text-[10px] sm:text-xs font-black text-slate-500 group-hover:text-slate-900 uppercase tracking-wider transition-colors hidden sm:inline">
+                        <div className="pl-3 sm:pr-1 sm:pl-4 border-l-2 border-slate-200/90 shrink-0 z-10 bg-white group-hover:bg-slate-50 transition-colors flex items-center gap-1.5">
+                          <span className="text-xs sm:text-sm font-black text-slate-700 group-hover:text-rose-600 uppercase tracking-wider transition-colors hidden sm:inline px-2 py-0.5 rounded bg-slate-100 group-hover:bg-rose-50">
                             Pace
                           </span>
-                          <span className="text-xs font-black text-[#FA2D48]">↗</span>
+                          <span className="text-sm sm:text-base font-black text-[#FA2D48] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform">↗</span>
                         </div>
                       </button>
                     );
@@ -473,27 +473,27 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
       {/* 2. MARKET SPEED TABS / CARDS */}
       <div className="space-y-3 sm:space-y-4">
         {/* Market Speed Live Stock-Style Ticker Tab based on Steven Thomas Report */}
-        <div className="px-1">
+        <div className="px-1 pb-1">
           <button
             type="button"
             id="steven-thomas-market-speed-pill"
             onClick={() => setShowMarketDirectionModal(true)}
-            className="relative flex items-center h-11 sm:h-12 w-full max-w-2xl overflow-hidden rounded-full bg-white hover:bg-slate-50 border border-slate-200/90 text-slate-800 shadow-xs hover:shadow-sm transition-all cursor-pointer font-sans group active:scale-[0.99] px-2.5 sm:px-4 select-none"
-            title="Click to view Market Speed &amp; Status"
+            className="relative flex items-center h-14 sm:h-16 w-full max-w-3xl overflow-hidden rounded-full bg-gradient-to-r from-white via-slate-50/80 to-white hover:from-slate-50 hover:to-white border-2 border-slate-300/80 hover:border-rose-400 text-slate-800 shadow-md hover:shadow-lg hover:ring-2 hover:ring-rose-400/20 transition-all cursor-pointer font-sans group active:scale-[0.99] px-3.5 sm:px-5 select-none"
+            title="Click to view Market Speed & Status"
           >
             {/* Fixed Left Live Beacon */}
-            <div className="flex items-center gap-1.5 sm:gap-2 pr-2 sm:pr-3 border-r border-slate-200/80 shrink-0 z-10 bg-white group-hover:bg-slate-50 transition-colors">
-              <span className="relative flex h-2 w-2 sm:h-2.5 sm:w-2.5 shrink-0">
+            <div className="flex items-center gap-2 sm:gap-2.5 pr-3 sm:pr-4 border-r-2 border-slate-200/90 shrink-0 z-10 bg-white group-hover:bg-slate-50 transition-colors">
+              <span className="relative flex h-3 w-3 sm:h-3.5 sm:w-3.5 shrink-0">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FA2D48] opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 sm:h-2.5 sm:w-2.5 bg-[#FA2D48]"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 sm:h-3.5 sm:w-3.5 bg-[#FA2D48] shadow-sm"></span>
               </span>
-              <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-slate-900 shrink-0">
+              <span className="text-xs sm:text-sm font-black uppercase tracking-wider text-[#FA2D48] bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200/70 shrink-0">
                 LIVE
               </span>
             </div>
 
             {/* Running Text Streaming Slower to the Left (Stock / Live Feed Style) */}
-            <div className="relative overflow-hidden flex-1 mx-1.5 sm:mx-3">
+            <div className="relative overflow-hidden flex-1 mx-2 sm:mx-4">
               {(() => {
                 const countyCond = getMarketCondition(OC_COUNTYWIDE_LIVE_METRICS.emtDays);
                 const countyEmtDelta = OC_COUNTYWIDE_LIVE_METRICS.emtDelta;
@@ -505,74 +505,74 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                 return (
                   <div className="animate-ticker flex items-center group-hover:[animation-play-state:paused]">
                     {/* 1st copy */}
-                    <div className="flex items-center gap-3.5 sm:gap-5 text-[11px] sm:text-[13px] font-bold tracking-wide uppercase text-slate-700 shrink-0 pr-4 sm:pr-5">
-                      <span className={`font-black uppercase tracking-wider px-2 py-0.5 rounded-full border text-[10px] sm:text-xs ${countyCond.tickerBadgeClass}`}>
+                    <div className="flex items-center gap-4 sm:gap-6 text-xs sm:text-sm md:text-[15px] font-bold tracking-tight uppercase text-slate-700 shrink-0 pr-6 sm:pr-8">
+                      <span className={`font-black uppercase tracking-wider px-2.5 sm:px-3.5 py-1 rounded-full border shadow-2xs text-xs sm:text-sm ${countyCond.tickerBadgeClass}`}>
                         {countyCond.capitalLabel}
                       </span>
-                      <span className="text-[#FA2D48]">●</span>
-                      <span className="font-black text-slate-900">
-                        MARKET SPEED: <span className={countySpeedColor}>{countySpeedLabel}</span>
+                      <span className="text-[#FA2D48] text-xs sm:text-sm opacity-90">●</span>
+                      <span className="font-extrabold text-slate-900 text-xs sm:text-sm md:text-[15px]">
+                        MARKET SPEED: <span className={`${countySpeedColor} font-black underline decoration-2 decoration-current underline-offset-2`}>{countySpeedLabel}</span>
                       </span>
-                      <span className="text-[#FA2D48]">●</span>
-                      <span className="text-slate-500 font-bold">
-                        DEMAND: <span className="text-emerald-600 font-extrabold">{OC_COUNTYWIDE_LIVE_METRICS.demand.toLocaleString()}</span>{' '}
-                        <span className="text-rose-500 font-black inline-flex items-center gap-0.5">
-                          <span className="text-lg leading-none font-extrabold">↓</span>
+                      <span className="text-[#FA2D48] text-xs sm:text-sm opacity-90">●</span>
+                      <span className="text-slate-600 font-bold">
+                        DEMAND: <span className="text-emerald-600 font-black text-sm sm:text-base md:text-lg">{OC_COUNTYWIDE_LIVE_METRICS.demand.toLocaleString()}</span>{' '}
+                        <span className="text-rose-500 font-black inline-flex items-center gap-0.5 text-xs sm:text-sm">
+                          <span className="text-xl leading-none font-black">↓</span>
                           <span>{OC_COUNTYWIDE_LIVE_METRICS.demandDelta}</span>
                         </span>
                       </span>
-                      <span className="text-[#FA2D48]">●</span>
-                      <span className="text-slate-500 font-bold">
-                        SUPPLY: <span className="text-slate-800 font-extrabold">{OC_COUNTYWIDE_LIVE_METRICS.supply.toLocaleString()}</span>{' '}
-                        <span className="text-emerald-600 font-black inline-flex items-center gap-0.5">
-                          <span className="text-lg leading-none font-extrabold">↓</span>
+                      <span className="text-[#FA2D48] text-xs sm:text-sm opacity-90">●</span>
+                      <span className="text-slate-600 font-bold">
+                        SUPPLY: <span className="text-slate-900 font-black text-sm sm:text-base md:text-lg">{OC_COUNTYWIDE_LIVE_METRICS.supply.toLocaleString()}</span>{' '}
+                        <span className="text-emerald-600 font-black inline-flex items-center gap-0.5 text-xs sm:text-sm">
+                          <span className="text-xl leading-none font-black">↓</span>
                           <span>{OC_COUNTYWIDE_LIVE_METRICS.supplyDelta}</span>
                         </span>
                       </span>
-                      <span className="text-[#FA2D48]">●</span>
-                      <span className="text-slate-500 font-bold">
-                        EMT: <span className="text-slate-950 font-extrabold">{OC_COUNTYWIDE_LIVE_METRICS.emtDays} DAYS</span>{' '}
-                        <span className="text-emerald-600 font-black inline-flex items-center gap-0.5">
-                          <span className="text-lg leading-none font-extrabold">↓</span>
+                      <span className="text-[#FA2D48] text-xs sm:text-sm opacity-90">●</span>
+                      <span className="text-slate-600 font-bold">
+                        EMT: <span className="text-slate-950 font-black text-sm sm:text-base md:text-lg">{OC_COUNTYWIDE_LIVE_METRICS.emtDays} DAYS</span>{' '}
+                        <span className="text-emerald-600 font-black inline-flex items-center gap-0.5 text-xs sm:text-sm">
+                          <span className="text-xl leading-none font-black">↓</span>
                           <span>{Math.abs(OC_COUNTYWIDE_LIVE_METRICS.emtDelta)}d FASTER</span>
                         </span>
                       </span>
-                      <span className="text-[#FA2D48] font-black text-xs sm:text-sm">=</span>
+                      <span className="text-[#FA2D48] font-black text-sm sm:text-base">=</span>
                     </div>
                     {/* 2nd identical copy for seamless infinite loop */}
-                    <div className="flex items-center gap-3.5 sm:gap-5 text-[11px] sm:text-[13px] font-bold tracking-wide uppercase text-slate-700 shrink-0 pr-4 sm:pr-5" aria-hidden="true">
-                      <span className={`font-black uppercase tracking-wider px-2 py-0.5 rounded-full border text-[10px] sm:text-xs ${countyCond.tickerBadgeClass}`}>
+                    <div className="flex items-center gap-4 sm:gap-6 text-xs sm:text-sm md:text-[15px] font-bold tracking-tight uppercase text-slate-700 shrink-0 pr-6 sm:pr-8" aria-hidden="true">
+                      <span className={`font-black uppercase tracking-wider px-2.5 sm:px-3.5 py-1 rounded-full border shadow-2xs text-xs sm:text-sm ${countyCond.tickerBadgeClass}`}>
                         {countyCond.capitalLabel}
                       </span>
-                      <span className="text-[#FA2D48]">●</span>
-                      <span className="font-black text-slate-900">
-                        MARKET SPEED: <span className={countySpeedColor}>{countySpeedLabel}</span>
+                      <span className="text-[#FA2D48] text-xs sm:text-sm opacity-90">●</span>
+                      <span className="font-extrabold text-slate-900 text-xs sm:text-sm md:text-[15px]">
+                        MARKET SPEED: <span className={`${countySpeedColor} font-black underline decoration-2 decoration-current underline-offset-2`}>{countySpeedLabel}</span>
                       </span>
-                      <span className="text-[#FA2D48]">●</span>
-                      <span className="text-slate-500 font-bold">
-                        DEMAND: <span className="text-emerald-600 font-extrabold">{OC_COUNTYWIDE_LIVE_METRICS.demand.toLocaleString()}</span>{' '}
-                        <span className="text-rose-500 font-black inline-flex items-center gap-0.5">
-                          <span className="text-lg leading-none font-extrabold">↓</span>
+                      <span className="text-[#FA2D48] text-xs sm:text-sm opacity-90">●</span>
+                      <span className="text-slate-600 font-bold">
+                        DEMAND: <span className="text-emerald-600 font-black text-sm sm:text-base md:text-lg">{OC_COUNTYWIDE_LIVE_METRICS.demand.toLocaleString()}</span>{' '}
+                        <span className="text-rose-500 font-black inline-flex items-center gap-0.5 text-xs sm:text-sm">
+                          <span className="text-xl leading-none font-black">↓</span>
                           <span>{OC_COUNTYWIDE_LIVE_METRICS.demandDelta}</span>
                         </span>
                       </span>
-                      <span className="text-[#FA2D48]">●</span>
-                      <span className="text-slate-500 font-bold">
-                        SUPPLY: <span className="text-slate-800 font-extrabold">{OC_COUNTYWIDE_LIVE_METRICS.supply.toLocaleString()}</span>{' '}
-                        <span className="text-emerald-600 font-black inline-flex items-center gap-0.5">
-                          <span className="text-lg leading-none font-extrabold">↓</span>
+                      <span className="text-[#FA2D48] text-xs sm:text-sm opacity-90">●</span>
+                      <span className="text-slate-600 font-bold">
+                        SUPPLY: <span className="text-slate-900 font-black text-sm sm:text-base md:text-lg">{OC_COUNTYWIDE_LIVE_METRICS.supply.toLocaleString()}</span>{' '}
+                        <span className="text-emerald-600 font-black inline-flex items-center gap-0.5 text-xs sm:text-sm">
+                          <span className="text-xl leading-none font-black">↓</span>
                           <span>{OC_COUNTYWIDE_LIVE_METRICS.supplyDelta}</span>
                         </span>
                       </span>
-                      <span className="text-[#FA2D48]">●</span>
-                      <span className="text-slate-500 font-bold">
-                        EMT: <span className="text-slate-950 font-extrabold">{OC_COUNTYWIDE_LIVE_METRICS.emtDays} DAYS</span>{' '}
-                        <span className="text-emerald-600 font-black inline-flex items-center gap-0.5">
-                          <span className="text-lg leading-none font-extrabold">↓</span>
+                      <span className="text-[#FA2D48] text-xs sm:text-sm opacity-90">●</span>
+                      <span className="text-slate-600 font-bold">
+                        EMT: <span className="text-slate-950 font-black text-sm sm:text-base md:text-lg">{OC_COUNTYWIDE_LIVE_METRICS.emtDays} DAYS</span>{' '}
+                        <span className="text-emerald-600 font-black inline-flex items-center gap-0.5 text-xs sm:text-sm">
+                          <span className="text-xl leading-none font-black">↓</span>
                           <span>{Math.abs(OC_COUNTYWIDE_LIVE_METRICS.emtDelta)}d FASTER</span>
                         </span>
                       </span>
-                      <span className="text-[#FA2D48] font-black text-xs sm:text-sm">=</span>
+                      <span className="text-[#FA2D48] font-black text-sm sm:text-base">=</span>
                     </div>
                   </div>
                 );
@@ -580,11 +580,11 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
             </div>
 
             {/* Fixed Right Action */}
-            <div className="pl-2 sm:pl-3 border-l border-slate-200/80 shrink-0 z-10 bg-white group-hover:bg-slate-50 transition-colors flex items-center gap-1">
-              <span className="text-[10px] sm:text-xs font-black text-slate-500 group-hover:text-slate-900 uppercase tracking-wider transition-colors hidden sm:inline">
+            <div className="pl-3 sm:pr-1 sm:pl-4 border-l-2 border-slate-200/90 shrink-0 z-10 bg-white group-hover:bg-slate-50 transition-colors flex items-center gap-1.5">
+              <span className="text-xs sm:text-sm font-black text-slate-700 group-hover:text-rose-600 uppercase tracking-wider transition-colors hidden sm:inline px-2 py-0.5 rounded bg-slate-100 group-hover:bg-rose-50">
                 Table
               </span>
-              <span className="text-xs font-black text-[#FA2D48]">↗</span>
+              <span className="text-sm sm:text-base font-black text-[#FA2D48] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform">↗</span>
             </div>
           </button>
         </div>
