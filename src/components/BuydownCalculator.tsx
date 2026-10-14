@@ -340,7 +340,7 @@ export const BuydownCalculator: React.FC<BuydownCalculatorProps> = ({
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 space-y-8 font-sans animate-fade-in text-slate-900">
+    <div className="max-w-4xl mx-auto px-3 sm:px-6 py-4 sm:py-6 space-y-6 sm:space-y-8 font-sans animate-fade-in text-slate-900">
       
       {/* Top Banner / Ad Placement */}
       <AdBannerRenderer
@@ -351,9 +351,9 @@ export const BuydownCalculator: React.FC<BuydownCalculatorProps> = ({
       />
 
       {/* Header Title & Actions */}
-      <div className="border-b border-slate-200/80 pb-5">
+      <div className="border-b border-slate-200/80 pb-4 sm:pb-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-950 font-serif">
+          <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-slate-950 font-serif">
             Temporary Buydown Calculator
           </h1>
 
@@ -393,7 +393,7 @@ export const BuydownCalculator: React.FC<BuydownCalculatorProps> = ({
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
         {/* LEFT COLUMN: Input Configuration Form (Clean & Minimalist) */}
-        <div className="lg:col-span-6 space-y-5 bg-white rounded-3xl border border-slate-200/90 p-5 sm:p-7 shadow-xs">
+        <div className="lg:col-span-6 space-y-5 bg-white rounded-3xl border border-slate-200/90 p-4 sm:p-7 shadow-xs">
           
           {/* 1. Direct Loan Amount Input */}
           <div className="space-y-2">
@@ -516,9 +516,9 @@ export const BuydownCalculator: React.FC<BuydownCalculatorProps> = ({
             </label>
             <div className="grid grid-cols-3 gap-2">
               {[
-                { label: '30-Year Fixed', val: 30 },
-                { label: '20-Year Fixed', val: 20 },
-                { label: '15-Year Fixed', val: 15 },
+                { label: '30 yr', val: 30 },
+                { label: '20 yr', val: 20 },
+                { label: '15 yr', val: 15 },
               ].map((term) => (
                 <button
                   key={term.val}
@@ -648,53 +648,59 @@ export const BuydownCalculator: React.FC<BuydownCalculatorProps> = ({
         <div className="lg:col-span-6 space-y-6">
           
           {/* Main Total Escrow / Subsidy Cost Card */}
-          <div className="rounded-3xl bg-[#FA2D48] text-white p-6 sm:p-7 shadow-lg shadow-rose-500/20 relative overflow-hidden space-y-4">
-            <div className="flex items-start justify-between">
+          <div className="rounded-3xl bg-[#FA2D48] text-white p-4 sm:p-7 shadow-lg shadow-rose-500/20 relative overflow-hidden space-y-3.5 sm:space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2.5 sm:gap-4">
               <div>
-                <span className="text-[11px] uppercase tracking-wider font-extrabold text-rose-100">
+                <span className="text-[10px] sm:text-[11px] uppercase tracking-wider font-extrabold text-rose-100 block">
                   Total Buydown Cost
                 </span>
-                <div className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white mt-1">
+                <div className="text-3xl sm:text-4xl font-black tracking-tight text-white mt-0.5">
                   ${Math.round(totalBuydownCost).toLocaleString()}
                 </div>
               </div>
-              <div className="text-right">
-                <span className="inline-block px-2.5 py-1 rounded-full bg-white/20 text-white text-xs font-extrabold border border-white/30 backdrop-blur-xs">
+              <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-start gap-1 bg-black/10 sm:bg-transparent -mx-1 sm:mx-0 p-2 sm:p-0 rounded-xl sm:rounded-none">
+                <span className="inline-block px-2.5 py-1 rounded-full bg-white/20 text-white text-[11px] sm:text-xs font-extrabold border border-white/30 backdrop-blur-xs">
                   {costAsPercentOfLoan.toFixed(2)}% ({costInBps} BPS)
                 </span>
-                <div className="text-[11px] text-rose-100 mt-1">
+                <div className="text-[11px] text-rose-100 font-medium">
                   {totalBuydownMonths} Months Discount
                 </div>
               </div>
             </div>
 
-            {/* Metric Highlights */}
-            <div className="grid grid-cols-2 gap-3">
-              <div className="bg-white/15 rounded-2xl p-3 border border-white/25 backdrop-blur-xs">
-                <div className="text-[10px] text-rose-100 uppercase font-semibold">{initialPaymentTitle}</div>
-                <div className="text-xl font-extrabold text-white mt-0.5">
-                  ${Math.round(initialMonthlyPayment).toLocaleString()}
+            {/* Metric Highlights - Fluid Responsive Stack on Mobile */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+              <div className="bg-white/15 rounded-2xl p-3 sm:p-3.5 border border-white/25 backdrop-blur-xs flex sm:flex-col items-center sm:items-start justify-between">
+                <div>
+                  <div className="text-[10px] text-rose-100 uppercase font-bold tracking-wider">{initialPaymentTitle}</div>
+                  <div className="text-xl sm:text-2xl font-black text-white mt-0.5">
+                    ${Math.round(initialMonthlyPayment).toLocaleString()}<span className="text-xs font-normal text-rose-100">/mo</span>
+                  </div>
                 </div>
-                <div className="text-[11px] text-white font-semibold mt-0.5 flex items-center gap-1">
-                  <ArrowDownRight className="w-3.5 h-3.5 text-white" />
-                  Save ${Math.round(initialMonthlySavings).toLocaleString()}/mo
+                <div className="text-right sm:text-left mt-0 sm:mt-1.5">
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-white/20 text-white text-[11px] font-bold border border-white/30">
+                    <ArrowDownRight className="w-3.5 h-3.5 text-white" />
+                    Save ${Math.round(initialMonthlySavings).toLocaleString()}/mo
+                  </span>
                 </div>
               </div>
 
-              <div className="bg-white/15 rounded-2xl p-3 border border-white/25 backdrop-blur-xs">
-                <div className="text-[10px] text-rose-100 uppercase font-semibold">Permanent Note Payment</div>
-                <div className="text-xl font-extrabold text-white mt-0.5">
-                  ${Math.round(fullMonthlyPayment).toLocaleString()}
+              <div className="bg-white/15 rounded-2xl p-3 sm:p-3.5 border border-white/25 backdrop-blur-xs flex sm:flex-col items-center sm:items-start justify-between">
+                <div>
+                  <div className="text-[10px] text-rose-100 uppercase font-bold tracking-wider">Permanent Note Payment</div>
+                  <div className="text-xl sm:text-2xl font-black text-white mt-0.5">
+                    ${Math.round(fullMonthlyPayment).toLocaleString()}<span className="text-xs font-normal text-rose-100">/mo</span>
+                  </div>
                 </div>
-                <div className="text-[11px] text-rose-100 font-medium mt-0.5">
+                <div className="text-right sm:text-left text-[11px] text-rose-100 font-medium mt-0 sm:mt-1.5">
                   at {noteRate.toFixed(3)}% note rate
                 </div>
               </div>
             </div>
           </div>
 
-          {/* MONTHLY PROGRESSION - Crystal Clear Step-by-Step Breakdown */}
-          <div className="rounded-3xl bg-white border border-slate-200/90 p-5 sm:p-6 shadow-xs space-y-4">
+          {/* MONTHLY PROGRESSION - Clean & Crisp on Mobile & Desktop */}
+          <div className="rounded-3xl bg-white border border-slate-200/90 p-4 sm:p-6 shadow-xs space-y-4">
             <div className="border-b border-slate-100 pb-3">
               <h3 className="text-base font-bold text-slate-900 tracking-tight">
                 Monthly Payment Progression
@@ -711,48 +717,55 @@ export const BuydownCalculator: React.FC<BuydownCalculatorProps> = ({
                 return (
                   <div 
                     key={item.label}
-                    className={`p-4 rounded-2xl border transition-all ${
+                    className={`p-3.5 sm:p-4 rounded-2xl border transition-all ${
                       isPermanent 
                         ? 'bg-slate-50 border-slate-200' 
                         : 'bg-white border-slate-200 shadow-2xs hover:border-slate-300'
                     }`}
                   >
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <div className="flex items-center gap-2">
-                        <span className="font-extrabold text-sm text-slate-900">
-                          {item.label}
-                        </span>
-                        {!isPermanent && (
-                          <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-slate-100 text-slate-800 border border-slate-200">
-                            -{item.rateDiscountPct.toFixed(2)}% Rate
+                    {/* Top Row: Label, Discount Badge, and Payment */}
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="space-y-1">
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          <span className="font-extrabold text-sm text-slate-900">
+                            {item.label}
                           </span>
-                        )}
+                          {!isPermanent && (
+                            <span className="text-[10px] sm:text-[11px] font-bold px-1.5 sm:px-2 py-0.5 rounded-md bg-rose-50 text-rose-600 border border-rose-200/80">
+                              -{item.rateDiscountPct.toFixed(2)}% Rate
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-[11px] text-slate-500 font-medium flex items-center gap-2">
+                          <span>Rate: <strong className="text-slate-800">{item.effectiveRate.toFixed(3)}%</strong></span>
+                          <span>•</span>
+                          <span>{item.monthsRange}</span>
+                        </div>
                       </div>
 
-                      <div className="text-right">
-                        <span className="text-lg font-black text-slate-950">
+                      <div className="text-right shrink-0">
+                        <div className="text-base sm:text-lg font-black text-slate-950">
                           ${Math.round(item.monthlyPayment).toLocaleString()}
-                        </span>
-                        <span className="text-xs text-slate-400">/mo</span>
+                          <span className="text-xs font-normal text-slate-400">/mo</span>
+                        </div>
                       </div>
                     </div>
 
-                    <div className="mt-2.5 pt-2.5 border-t border-slate-100 flex flex-wrap items-center justify-between text-xs text-slate-600 gap-2">
-                      <div className="flex items-center gap-3">
-                        <span>
-                          Rate: <strong className="text-slate-900">{item.effectiveRate.toFixed(3)}%</strong>
-                        </span>
-                        <span>•</span>
-                        <span className="text-slate-500">{item.monthsRange}</span>
-                      </div>
-
+                    {/* Bottom Row / Callout: Savings or Permanent Note */}
+                    <div className="mt-2.5 pt-2.5 border-t border-slate-100 text-xs">
                       {!isPermanent ? (
-                        <div className="font-bold text-slate-900">
-                          You save ${Math.round(item.monthlySavings).toLocaleString()}/mo (${Math.round(item.periodSavings).toLocaleString()} total)
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-slate-700 font-semibold bg-emerald-50/70 sm:bg-transparent p-2 sm:p-0 rounded-xl sm:rounded-none border border-emerald-100 sm:border-0">
+                          <span className="text-emerald-700 flex items-center gap-1">
+                            <ArrowDownRight className="w-3.5 h-3.5 shrink-0 text-emerald-600" />
+                            <span>Save <strong className="font-black text-emerald-800">${Math.round(item.monthlySavings).toLocaleString()}</strong>/month</span>
+                          </span>
+                          <span className="text-emerald-800/80 text-[11px] font-medium sm:font-semibold">
+                            ${Math.round(item.periodSavings).toLocaleString()} saved over {item.durationMonths} mos
+                          </span>
                         </div>
                       ) : (
-                        <div className="text-slate-500 font-medium">
-                          Permanent payment for remainder of loan
+                        <div className="text-slate-500 font-medium text-[11px] sm:text-xs">
+                          Standard permanent payment for remaining {item.durationMonths} months
                         </div>
                       )}
                     </div>
@@ -766,8 +779,8 @@ export const BuydownCalculator: React.FC<BuydownCalculatorProps> = ({
 
       </div>
 
-      {/* DETAILED SCHEDULE TABLE */}
-      <div className="bg-white rounded-3xl border border-slate-200/90 p-5 sm:p-7 shadow-xs space-y-4">
+      {/* DETAILED SCHEDULE SECTION */}
+      <div className="bg-white rounded-3xl border border-slate-200/90 p-4 sm:p-7 shadow-xs space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-4">
           <div>
             <h3 className="text-base font-bold text-slate-950 tracking-tight">
@@ -784,9 +797,99 @@ export const BuydownCalculator: React.FC<BuydownCalculatorProps> = ({
           </div>
         </div>
 
-        {/* Responsive Table */}
-        <div className="overflow-x-auto scrollbar-none -mx-5 px-5 sm:mx-0 sm:px-0">
-          <table className="w-full text-left border-collapse min-w-[580px]">
+        {/* Mobile View: High-Clarity Card Stack for Small Screens (No horizontal overflow) */}
+        <div className="sm:hidden space-y-3">
+          {schedule.map((row) => (
+            <div
+              key={row.label}
+              className={`p-3.5 rounded-2xl border ${
+                row.isPermanent
+                  ? 'bg-slate-50/70 border-slate-200'
+                  : 'bg-white border-slate-200 shadow-2xs'
+              }`}
+            >
+              {/* Card Header */}
+              <div className="flex items-start justify-between gap-2 pb-2.5 border-b border-slate-100">
+                <div>
+                  <div className="font-extrabold text-sm text-slate-950">{row.label}</div>
+                  <div className="text-[11px] text-slate-500 font-medium">{row.monthsRange}</div>
+                </div>
+                <div className="text-right">
+                  <span className="inline-block px-2 py-0.5 rounded-md bg-slate-900 text-white text-xs font-bold">
+                    {row.effectiveRate.toFixed(3)}%
+                  </span>
+                  {row.rateDiscountPct > 0 && (
+                    <span className="text-[10px] text-rose-600 font-bold block mt-0.5">
+                      -{row.rateDiscountPct.toFixed(2)}% rate
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* 2x2 Metric Grid */}
+              <div className="grid grid-cols-2 gap-2 pt-2.5 text-xs">
+                <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                  <span className="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">
+                    Monthly Payment
+                  </span>
+                  <span className="text-sm font-black text-slate-950 mt-0.5 block">
+                    ${Math.round(row.monthlyPayment).toLocaleString()}
+                    <span className="text-[10px] font-normal text-slate-500">/mo</span>
+                  </span>
+                </div>
+
+                <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                  <span className="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">
+                    Monthly Savings
+                  </span>
+                  <span className={`text-sm font-black mt-0.5 block ${row.monthlySavings > 0 ? 'text-emerald-700' : 'text-slate-400'}`}>
+                    {row.monthlySavings > 0 ? `+$${Math.round(row.monthlySavings).toLocaleString()}` : '—'}
+                  </span>
+                </div>
+
+                <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                  <span className="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">
+                    Period Total
+                  </span>
+                  <span className={`text-sm font-black mt-0.5 block ${row.periodSavings > 0 ? 'text-slate-900' : 'text-slate-400'}`}>
+                    {row.periodSavings > 0 ? `$${Math.round(row.periodSavings).toLocaleString()}` : '—'}
+                  </span>
+                </div>
+
+                <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                  <span className="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">
+                    Remaining Escrow
+                  </span>
+                  <span className="text-sm font-bold font-mono text-slate-700 mt-0.5 block">
+                    ${Math.round(row.remainingEscrow).toLocaleString()}
+                  </span>
+                </div>
+              </div>
+            </div>
+          ))}
+
+          {/* Mobile Footer Summary Card */}
+          <div className="p-3.5 rounded-2xl bg-slate-900 text-white space-y-1.5 mt-2">
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-slate-300 font-medium">Total Buydown Escrow Fund</span>
+              <span className="font-black text-white text-sm">
+                ${Math.round(totalBuydownCost).toLocaleString()}
+              </span>
+            </div>
+            <div className="flex items-center justify-between text-[11px] text-slate-400 pt-1.5 border-t border-slate-800">
+              <span>Rate Sheet Cost</span>
+              <span className="font-bold text-rose-300">{costInBps} BPS ({costAsPercentOfLoan.toFixed(2)}% of loan)</span>
+            </div>
+            <div className="flex items-center justify-between text-[11px] text-slate-400">
+              <span>Remaining After Program</span>
+              <span className="font-mono font-bold text-emerald-400">$0.00 (Fully utilized)</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Desktop View: Full Data Table (Shown on sm: and up) */}
+        <div className="hidden sm:block overflow-x-auto scrollbar-none">
+          <table className="w-full text-left border-collapse">
             <thead>
               <tr className="border-b border-slate-200 text-[11px] font-extrabold uppercase tracking-wider text-slate-500 bg-slate-50/70">
                 <th className="py-2.5 px-3 rounded-l-xl">Period</th>

@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { ChevronDown, RefreshCw, TrendingDown, ArrowRight } from 'lucide-react';
+import { ChevronDown, RefreshCw } from 'lucide-react';
 import { CityInfo, AdBanner, LiveMortgageRates, NewsCategory } from '../types';
 import { AdBannerRenderer } from './AdBannerRenderer';
 
@@ -765,32 +765,6 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
 
   return (
     <div className="space-y-6 sm:space-y-8 animate-fadeIn">
-      {/* Switch to Temporary Buydown Calculator Banner */}
-      {onNavigateCategory && (
-        <div className="bg-gradient-to-r from-red-500/10 via-white to-red-500/5 rounded-2xl border border-[#FA2D48]/30 p-3.5 sm:p-4 flex flex-wrap items-center justify-between gap-3 shadow-2xs">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-[#FA2D48] text-white shrink-0">
-              <TrendingDown className="w-4 h-4" />
-            </div>
-            <div>
-              <div className="text-xs sm:text-sm font-bold text-slate-900">
-                Temporary Buydown Calculator (2-1 & 3-2-1)
-              </div>
-              <div className="text-[11px] sm:text-xs text-slate-500">
-                Calculate seller concession escrow costs, lower initial payments, and 100 BPS tiered savings.
-              </div>
-            </div>
-          </div>
-          <button
-            type="button"
-            onClick={() => onNavigateCategory('buydown-calculator')}
-            className="text-xs font-bold text-white bg-[#FA2D48] hover:bg-[#d92239] px-3.5 py-2 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer shadow-xs active:scale-95"
-          >
-            <span>Open Buydown Calculator</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </button>
-        </div>
-      )}
 
       {/* Main 2-Column Calculator Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
