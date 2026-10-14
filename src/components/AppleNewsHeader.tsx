@@ -156,7 +156,7 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
 
           {/* Right Side: Live Mortgage Rate & Bookmarks */}
           <div className="flex items-center space-x-2 sm:space-x-3">
-            {/* Live Mortgage Rate Button - Tap opens detailed rate breakdown modal */}
+            {/* Mortgage Rate Button - Tap opens detailed rate breakdown modal */}
             <button
               type="button"
               id="header-live-mortgage-rate-btn"
@@ -166,38 +166,31 @@ export const AppleNewsHeader: React.FC<AppleNewsHeaderProps> = ({
                   onRefreshRates();
                 }
               }}
-              className="flex flex-col items-end text-right group cursor-pointer hover:opacity-85 transition-all shrink-0 px-2 sm:px-3 py-1 sm:py-1.5 rounded-2xl bg-white hover:bg-slate-50 border border-slate-200/80 shadow-2xs select-none touch-manipulation min-h-[44px] justify-center active:scale-95"
-              title="Live Mortgage Rates — Tap to view all rate programs"
+              className="flex flex-col items-end text-right group cursor-pointer hover:opacity-85 transition-all shrink-0 px-2 sm:px-2.5 py-1 rounded-2xl bg-transparent hover:bg-black/5 select-none touch-manipulation min-h-[44px] justify-center active:scale-95"
+              title="Mortgage Rates — Tap to view all rate programs"
             >
-              <div className="flex items-center gap-1.5">
-                <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#FA2D48] leading-none flex items-center gap-1">
-                  <span>Live 30-Yr Rate</span>
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                </span>
-                {isRefreshingRates ? (
-                  <RefreshCw className="w-2.5 h-2.5 text-[#FA2D48] animate-spin inline" />
-                ) : isUp ? (
-                  <span className="inline-flex items-center text-[10px] font-black text-emerald-600">
-                    <ArrowUp className="w-2.5 h-2.5 stroke-[3] inline mr-0.5" />
-                    +{Math.abs(computedDiff).toFixed(2)}%
-                  </span>
-                ) : isDown ? (
-                  <span className="inline-flex items-center text-[10px] font-black text-rose-600">
-                    <ArrowDown className="w-2.5 h-2.5 stroke-[3] inline mr-0.5" />
-                    -{Math.abs(computedDiff).toFixed(2)}%
-                  </span>
-                ) : (
-                  <span className="inline-flex items-center text-[10px] font-black text-slate-500">
-                    <Minus className="w-2.5 h-2.5 inline mr-0.5" />
-                    0.00%
-                  </span>
-                )}
-              </div>
-
-              <div className="flex items-center justify-end gap-1.5 pt-0.5">
+              <div className="flex items-center justify-end gap-1.5">
                 <span className="text-xl sm:text-2xl font-black text-slate-950 font-sans tracking-tight leading-none group-hover:text-[#FA2D48] transition-colors tabular-nums">
                   {active30YrRate}
                 </span>
+                {isRefreshingRates ? (
+                  <RefreshCw className="w-3 h-3 text-[#FA2D48] animate-spin inline" />
+                ) : isUp ? (
+                  <span className="inline-flex items-center text-[11px] font-black text-emerald-600">
+                    <ArrowUp className="w-3 h-3 stroke-[3] inline mr-0.5" />
+                    +{Math.abs(computedDiff).toFixed(2)}%
+                  </span>
+                ) : isDown ? (
+                  <span className="inline-flex items-center text-[11px] font-black text-rose-600">
+                    <ArrowDown className="w-3 h-3 stroke-[3] inline mr-0.5" />
+                    -{Math.abs(computedDiff).toFixed(2)}%
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center text-[11px] font-black text-slate-500">
+                    <Minus className="w-3 h-3 inline mr-0.5" />
+                    0.00%
+                  </span>
+                )}
               </div>
 
               <div className="flex items-center justify-end gap-1 text-[9px] font-semibold text-slate-500 pt-0.5">

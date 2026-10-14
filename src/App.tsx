@@ -871,14 +871,11 @@ export function App() {
                               className="relative flex items-center h-14 sm:h-16 w-full overflow-hidden rounded-full bg-gradient-to-r from-white via-slate-50/80 to-white hover:from-slate-50 hover:to-white border-2 border-slate-300/80 hover:border-rose-400 text-slate-800 shadow-md hover:shadow-lg hover:ring-2 hover:ring-rose-400/20 transition-all cursor-pointer font-sans group active:scale-[0.99] px-3.5 sm:px-5 select-none mb-5"
                               title={`Click to view ${currentCity.name} Historical Speed & Pace`}
                             >
-                              {/* Fixed Left Live Badge */}
-                              <div className="flex items-center gap-2 sm:gap-2.5 pr-3 sm:pr-4 border-r-2 border-slate-200/90 shrink-0 z-10 bg-white group-hover:bg-slate-50 transition-colors">
+                              {/* Fixed Left Beacon */}
+                              <div className="flex items-center pr-3 sm:pr-4 border-r-2 border-slate-200/90 shrink-0 z-10 bg-white group-hover:bg-slate-50 transition-colors">
                                 <span className="relative flex h-3 w-3 sm:h-3.5 sm:w-3.5 shrink-0">
                                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FA2D48] opacity-75"></span>
                                   <span className="relative inline-flex rounded-full h-3 w-3 sm:h-3.5 sm:w-3.5 bg-[#FA2D48] shadow-sm"></span>
-                                </span>
-                                <span className="text-xs sm:text-sm font-black uppercase tracking-wider text-[#FA2D48] bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200/70 shrink-0">
-                                  LIVE
                                 </span>
                               </div>
 
@@ -1133,14 +1130,11 @@ export function App() {
                         className="relative flex items-center h-14 sm:h-16 w-full max-w-3xl overflow-hidden rounded-full bg-gradient-to-r from-white via-slate-50/80 to-white hover:from-slate-50 hover:to-white border-2 border-slate-300/80 hover:border-rose-400 text-slate-800 shadow-md hover:shadow-lg hover:ring-2 hover:ring-rose-400/20 transition-all cursor-pointer font-sans group active:scale-[0.99] px-3.5 sm:px-5 select-none"
                         title="Click to view Market Speed & Status"
                       >
-                        {/* Fixed Left Live Beacon */}
-                        <div className="flex items-center gap-2 sm:gap-2.5 pr-3 sm:pr-4 border-r-2 border-slate-200/90 shrink-0 z-10 bg-white group-hover:bg-slate-50 transition-colors">
+                        {/* Fixed Left Beacon */}
+                        <div className="flex items-center pr-3 sm:pr-4 border-r-2 border-slate-200/90 shrink-0 z-10 bg-white group-hover:bg-slate-50 transition-colors">
                           <span className="relative flex h-3 w-3 sm:h-3.5 sm:w-3.5 shrink-0">
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FA2D48] opacity-75"></span>
                             <span className="relative inline-flex rounded-full h-3 w-3 sm:h-3.5 sm:w-3.5 bg-[#FA2D48] shadow-sm"></span>
-                          </span>
-                          <span className="text-xs sm:text-sm font-black uppercase tracking-wider text-[#FA2D48] bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200/70 shrink-0">
-                            LIVE
                           </span>
                         </div>
 
