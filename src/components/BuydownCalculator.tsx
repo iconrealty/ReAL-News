@@ -104,7 +104,7 @@ export const BuydownCalculator: React.FC<BuydownCalculatorProps> = ({
         // Lender scenario: 6 Month 1% buydown
         return [
           {
-            label: 'Months 1–6 (First 6 Months)',
+            label: 'Months 1–6',
             monthsRange: 'Months 1–6',
             durationMonths: 6,
             rateDiscountPct: stepPct * 1, // 1.00% if bpsStep=100
@@ -116,7 +116,7 @@ export const BuydownCalculator: React.FC<BuydownCalculatorProps> = ({
         // Lender scenario: 12 Month 0.5% buydown
         return [
           {
-            label: 'Months 1–12 (Full First Year)',
+            label: 'Months 1–12',
             monthsRange: 'Months 1–12',
             durationMonths: 12,
             rateDiscountPct: (bpsStep / 100) * 0.5, // 0.50% if bpsStep=100
@@ -127,7 +127,7 @@ export const BuydownCalculator: React.FC<BuydownCalculatorProps> = ({
       case '1-0':
         return [
           {
-            label: 'Year 1 (Months 1–12)',
+            label: 'Year 1',
             monthsRange: 'Months 1–12',
             durationMonths: 12,
             rateDiscountPct: stepPct * 1,
@@ -138,14 +138,14 @@ export const BuydownCalculator: React.FC<BuydownCalculatorProps> = ({
       case '2-1':
         return [
           {
-            label: 'Year 1 (Months 1–12)',
+            label: 'Year 1',
             monthsRange: 'Months 1–12',
             durationMonths: 12,
             rateDiscountPct: stepPct * 2,
             rateDiscountBps: bpsStep * 2,
           },
           {
-            label: 'Year 2 (Months 13–24)',
+            label: 'Year 2',
             monthsRange: 'Months 13–24',
             durationMonths: 12,
             rateDiscountPct: stepPct * 1,
@@ -156,21 +156,21 @@ export const BuydownCalculator: React.FC<BuydownCalculatorProps> = ({
       case '3-2-1':
         return [
           {
-            label: 'Year 1 (Months 1–12)',
+            label: 'Year 1',
             monthsRange: 'Months 1–12',
             durationMonths: 12,
             rateDiscountPct: stepPct * 3,
             rateDiscountBps: bpsStep * 3,
           },
           {
-            label: 'Year 2 (Months 13–24)',
+            label: 'Year 2',
             monthsRange: 'Months 13–24',
             durationMonths: 12,
             rateDiscountPct: stepPct * 2,
             rateDiscountBps: bpsStep * 2,
           },
           {
-            label: 'Year 3 (Months 25–36)',
+            label: 'Year 3',
             monthsRange: 'Months 25–36',
             durationMonths: 12,
             rateDiscountPct: stepPct * 1,
@@ -181,14 +181,14 @@ export const BuydownCalculator: React.FC<BuydownCalculatorProps> = ({
       case '3-1':
         return [
           {
-            label: 'Year 1 (Months 1–12)',
+            label: 'Year 1',
             monthsRange: 'Months 1–12',
             durationMonths: 12,
             rateDiscountPct: stepPct * 3,
             rateDiscountBps: bpsStep * 3,
           },
           {
-            label: 'Year 2 (Months 13–24)',
+            label: 'Year 2',
             monthsRange: 'Months 13–24',
             durationMonths: 12,
             rateDiscountPct: stepPct * 1,
@@ -256,8 +256,8 @@ export const BuydownCalculator: React.FC<BuydownCalculatorProps> = ({
     const startPermanentMonth = cumulativeMonths + 1;
     const totalLoanMonths = loanTermYears * 12;
     const permanentLabel = cumulativeMonths < 12 
-      ? `Month ${startPermanentMonth}+ (Permanent)` 
-      : `Year ${Math.floor(cumulativeMonths / 12) + 1}+ (Permanent)`;
+      ? `Month ${startPermanentMonth}+` 
+      : `Year ${Math.floor(cumulativeMonths / 12) + 1}+`;
 
     finalSchedule.push({
       periodIndex: finalSchedule.length + 1,
@@ -540,7 +540,7 @@ export const BuydownCalculator: React.FC<BuydownCalculatorProps> = ({
           <div className="space-y-2.5 pt-2 border-t border-slate-100">
             <div className="flex items-center justify-between">
               <label className="text-sm font-bold text-slate-800">
-                Buydown Scenario / Program
+                Buydown Scenario
               </label>
               <span className="text-xs text-slate-500 font-medium">
                 Select Option
@@ -552,37 +552,31 @@ export const BuydownCalculator: React.FC<BuydownCalculatorProps> = ({
                 { 
                   id: '6-mo-1', 
                   label: '6-Month 1% Buydown', 
-                  badge: 'Lender Offer',
                   desc: 'Months 1–6: -1.00% rate reduction' 
                 },
                 { 
                   id: '12-mo-0.5', 
                   label: '12-Month 0.5% Buydown', 
-                  badge: 'Lender Offer',
                   desc: 'Months 1–12: -0.50% rate reduction' 
                 },
                 { 
                   id: '2-1', 
                   label: '2-1 Buydown', 
-                  badge: 'Popular',
                   desc: 'Yr 1: -2.00%, Yr 2: -1.00%' 
                 },
                 { 
                   id: '1-0', 
                   label: '1-0 Buydown', 
-                  badge: '1 Year',
                   desc: 'Yr 1: -1.00% rate reduction' 
                 },
                 { 
                   id: '3-2-1', 
                   label: '3-2-1 Buydown', 
-                  badge: '3 Years',
                   desc: 'Yr 1: -3%, Yr 2: -2%, Yr 3: -1%' 
                 },
                 { 
                   id: '3-1', 
                   label: '3-1 Buydown', 
-                  badge: '2 Years',
                   desc: 'Yr 1: -3.00%, Yr 2: -1.00%' 
                 },
               ].map((item) => (
@@ -596,14 +590,7 @@ export const BuydownCalculator: React.FC<BuydownCalculatorProps> = ({
                       : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
                   }`}
                 >
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-xs sm:text-sm">{item.label}</span>
-                    <span className={`text-[10px] font-extrabold px-1.5 py-0.5 rounded-md uppercase tracking-wider ${
-                      buydownType === item.id ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-600'
-                    }`}>
-                      {item.badge}
-                    </span>
-                  </div>
+                  <div className="font-bold text-xs sm:text-sm">{item.label}</div>
                   <div className={`text-[11px] mt-1 ${buydownType === item.id ? 'text-slate-300' : 'text-slate-500'}`}>
                     {item.desc}
                   </div>
@@ -660,7 +647,7 @@ export const BuydownCalculator: React.FC<BuydownCalculatorProps> = ({
               </div>
               <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-start gap-1 bg-black/10 sm:bg-transparent -mx-1 sm:mx-0 p-2 sm:p-0 rounded-xl sm:rounded-none">
                 <span className="inline-block px-2.5 py-1 rounded-full bg-white/20 text-white text-[11px] sm:text-xs font-extrabold border border-white/30 backdrop-blur-xs">
-                  {costAsPercentOfLoan.toFixed(2)}% ({costInBps} BPS)
+                  {costAsPercentOfLoan.toFixed(2)}% • {costInBps} BPS
                 </span>
                 <div className="text-[11px] text-rose-100 font-medium">
                   {totalBuydownMonths} Months Discount
@@ -705,9 +692,6 @@ export const BuydownCalculator: React.FC<BuydownCalculatorProps> = ({
               <h3 className="text-base font-bold text-slate-900 tracking-tight">
                 Monthly Payment Progression
               </h3>
-              <p className="text-xs text-slate-500 mt-0.5">
-                Exact interest rates, monthly payments, and savings for each period.
-              </p>
             </div>
 
             <div className="space-y-3">
@@ -736,10 +720,8 @@ export const BuydownCalculator: React.FC<BuydownCalculatorProps> = ({
                             </span>
                           )}
                         </div>
-                        <div className="text-[11px] text-slate-500 font-medium flex items-center gap-2">
-                          <span>Rate: <strong className="text-slate-800">{item.effectiveRate.toFixed(3)}%</strong></span>
-                          <span>•</span>
-                          <span>{item.monthsRange}</span>
+                        <div className="text-[11px] text-slate-500 font-medium">
+                          Rate: <strong className="text-slate-800">{item.effectiveRate.toFixed(3)}%</strong>
                         </div>
                       </div>
 
@@ -786,14 +768,11 @@ export const BuydownCalculator: React.FC<BuydownCalculatorProps> = ({
             <h3 className="text-base font-bold text-slate-950 tracking-tight">
               Detailed Period & Subsidy Breakdown
             </h3>
-            <p className="text-xs text-slate-500 mt-0.5">
-              Full breakdown of interest rate, payment, monthly discount, and period totals.
-            </p>
           </div>
 
           <div className="text-xs font-semibold text-slate-700 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200">
             Total Escrow Needed: <strong className="text-slate-950">${Math.round(totalBuydownCost).toLocaleString()}</strong>
-            <span className="text-slate-500 font-medium ml-1.5">({costInBps} BPS / {costAsPercentOfLoan.toFixed(2)}%)</span>
+            <span className="text-slate-500 font-medium ml-1.5">• {costInBps} BPS / {costAsPercentOfLoan.toFixed(2)}%</span>
           </div>
         </div>
 
@@ -812,7 +791,6 @@ export const BuydownCalculator: React.FC<BuydownCalculatorProps> = ({
               <div className="flex items-start justify-between gap-2 pb-2.5 border-b border-slate-100">
                 <div>
                   <div className="font-extrabold text-sm text-slate-950">{row.label}</div>
-                  <div className="text-[11px] text-slate-500 font-medium">{row.monthsRange}</div>
                 </div>
                 <div className="text-right">
                   <span className="inline-block px-2 py-0.5 rounded-md bg-slate-900 text-white text-xs font-bold">
@@ -878,11 +856,11 @@ export const BuydownCalculator: React.FC<BuydownCalculatorProps> = ({
             </div>
             <div className="flex items-center justify-between text-[11px] text-slate-400 pt-1.5 border-t border-slate-800">
               <span>Rate Sheet Cost</span>
-              <span className="font-bold text-rose-300">{costInBps} BPS ({costAsPercentOfLoan.toFixed(2)}% of loan)</span>
+              <span className="font-bold text-rose-300">{costInBps} BPS • {costAsPercentOfLoan.toFixed(2)}% of loan</span>
             </div>
             <div className="flex items-center justify-between text-[11px] text-slate-400">
               <span>Remaining After Program</span>
-              <span className="font-mono font-bold text-emerald-400">$0.00 (Fully utilized)</span>
+              <span className="font-mono font-bold text-emerald-400">$0.00 • Fully utilized</span>
             </div>
           </div>
         </div>
@@ -910,14 +888,13 @@ export const BuydownCalculator: React.FC<BuydownCalculatorProps> = ({
                 >
                   <td className="py-3 px-3">
                     <div className="font-bold text-slate-950">{row.label}</div>
-                    <div className="text-[10px] text-slate-400">{row.monthsRange}</div>
                   </td>
 
                   <td className="py-3 px-3 font-bold text-slate-900">
                     {row.effectiveRate.toFixed(3)}%
                     {row.rateDiscountPct > 0 && (
                       <span className="text-[10px] font-normal text-slate-500 block">
-                        (-{row.rateDiscountPct.toFixed(2)}%)
+                        -{row.rateDiscountPct.toFixed(2)}%
                       </span>
                     )}
                   </td>
@@ -954,7 +931,7 @@ export const BuydownCalculator: React.FC<BuydownCalculatorProps> = ({
                   <div className="text-slate-950 font-extrabold">Total Buydown Escrow Fund:</div>
                 </td>
                 <td className="py-3 px-3 font-extrabold text-slate-950" colSpan={2}>
-                  ${Math.round(totalBuydownCost).toLocaleString()} Total Savings ({costInBps} BPS)
+                  ${Math.round(totalBuydownCost).toLocaleString()} Total Savings • {costInBps} BPS
                 </td>
                 <td className="py-3 px-3 font-mono font-bold text-slate-950">
                   $0.00
