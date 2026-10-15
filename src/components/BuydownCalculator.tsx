@@ -845,24 +845,6 @@ export const BuydownCalculator: React.FC<BuydownCalculatorProps> = ({
               </div>
             </div>
           ))}
-
-          {/* Mobile Footer Summary Card */}
-          <div className="p-3.5 rounded-2xl bg-slate-900 text-white space-y-1.5 mt-2">
-            <div className="flex items-center justify-between text-xs">
-              <span className="text-slate-300 font-medium">Total Buydown Escrow Fund</span>
-              <span className="font-black text-white text-sm">
-                ${Math.round(totalBuydownCost).toLocaleString()}
-              </span>
-            </div>
-            <div className="flex items-center justify-between text-[11px] text-slate-400 pt-1.5 border-t border-slate-800">
-              <span>Rate Sheet Cost</span>
-              <span className="font-bold text-rose-300">{costInBps} BPS • {costAsPercentOfLoan.toFixed(2)}% of loan</span>
-            </div>
-            <div className="flex items-center justify-between text-[11px] text-slate-400">
-              <span>Remaining After Program</span>
-              <span className="font-mono font-bold text-emerald-400">$0.00 • Fully utilized</span>
-            </div>
-          </div>
         </div>
 
         {/* Desktop View: Full Data Table (Shown on sm: and up) */}
