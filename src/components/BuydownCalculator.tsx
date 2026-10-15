@@ -715,13 +715,13 @@ export const BuydownCalculator: React.FC<BuydownCalculatorProps> = ({
                             {item.label}
                           </span>
                           {!isPermanent && (
-                            <span className="text-[10px] sm:text-[11px] font-bold px-1.5 sm:px-2 py-0.5 rounded-md bg-rose-50 text-rose-600 border border-rose-200/80">
+                            <span className="text-[11px] sm:text-xs font-bold text-red-600">
                               -{item.rateDiscountPct.toFixed(2)}% Rate
                             </span>
                           )}
                         </div>
                         <div className="text-[11px] text-slate-500 font-medium">
-                          Rate: <strong className="text-slate-800">{item.effectiveRate.toFixed(3)}%</strong>
+                          Rate: <strong className={!isPermanent ? "text-red-600 font-bold" : "text-slate-800 font-bold"}>{item.effectiveRate.toFixed(3)}%</strong>
                         </div>
                       </div>
 
