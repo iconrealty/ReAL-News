@@ -19,6 +19,7 @@ import { OCFastMarketReport } from './components/OCFastMarketReport';
 import { OCFastTopOverview } from './components/OCFastTopOverview';
 import { MortgageCalculator } from './components/MortgageCalculator';
 import { BuydownCalculator } from './components/BuydownCalculator';
+import { CommissionCalculator } from './components/CommissionCalculator';
 import { ArticleReaderPage } from './components/ArticleReaderPage';
 import { SavedArticlesDrawer } from './components/SavedArticlesDrawer';
 import { AdBannerRenderer } from './components/AdBannerRenderer';
@@ -421,7 +422,14 @@ export function App() {
   // Fetch live city news when city or category changes (only on local municipal pages, not on main page or special report tabs)
   useEffect(() => {
     if (!currentCity) return;
-    if (activeCategory === 'all' || activeCategory === 'market-trends' || activeCategory === 'oc-fast' || activeCategory === 'mortgage-calculator') {
+    if (
+      activeCategory === 'all' || 
+      activeCategory === 'market-trends' || 
+      activeCategory === 'oc-fast' || 
+      activeCategory === 'commission-calculator' ||
+      activeCategory === 'buydown-calculator' ||
+      activeCategory === 'mortgage-calculator'
+    ) {
       return;
     }
     
@@ -731,7 +739,18 @@ export function App() {
             />
 
         {/* Category Views */}
-        {activeCategory === 'buydown-calculator' ? (
+        {activeCategory === 'commission-calculator' ? (
+          <CommissionCalculator
+            currentCity={currentCity}
+            ads={ads}
+            monetizationEnabled={isMonetizationEnabled}
+            onNavigateCategory={(cat) => {
+              setActiveCategory(cat);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            onShowToast={showToast}
+          />
+        ) : activeCategory === 'buydown-calculator' ? (
           <BuydownCalculator
             currentCity={currentCity}
             liveRates={liveRates}
@@ -1501,8 +1520,10 @@ export function App() {
               <span className="text-xl font-black leading-none pl-0.5">.</span>
             </button>
           </div>
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 font-mono">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 font-sans text-xs font-semibold text-slate-600">
             <button onClick={handleResetToMain} className="hover:text-slate-900 cursor-pointer">Main Feed</button>
+            <button onClick={() => { setActiveCategory('commission-calculator'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="text-[#FA2D48] hover:underline cursor-pointer font-bold">Commission Calc</button>
+            <button onClick={() => { setActiveCategory('buydown-calculator'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="hover:text-slate-900 cursor-pointer">Buydown Calc</button>
             <button onClick={() => setActiveCategory('market-trends')} className="hover:text-slate-900 cursor-pointer font-bold">Market Trends</button>
             <button onClick={() => setActiveCategory('oc-fast')} className="text-[#FA2D48] hover:underline cursor-pointer font-black">OC Fast Report</button>
             <button onClick={() => setActiveCategory('mortgage-calculator')} className="hover:text-slate-900 cursor-pointer">Mortgage Calc</button>

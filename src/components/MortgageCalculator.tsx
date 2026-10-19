@@ -1189,7 +1189,7 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                     className="w-full pl-9 pr-14 py-3 rounded-2xl bg-slate-800/90 border border-slate-700 focus:border-[#FA2D48] focus:ring-2 focus:ring-[#FA2D48]/20 font-bold text-white text-lg outline-none transition-all placeholder:text-slate-500"
                     placeholder="5,000"
                   />
-                  <span className="absolute right-4 text-slate-400 font-bold text-xs font-mono">/mo</span>
+                  <span className="absolute right-4 text-slate-400 font-bold text-xs font-sans">/mo</span>
                 </div>
               </div>
 

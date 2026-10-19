@@ -838,7 +838,7 @@ export const BuydownCalculator: React.FC<BuydownCalculatorProps> = ({
                   <span className="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">
                     Remaining Escrow
                   </span>
-                  <span className="text-sm font-bold font-mono text-slate-700 mt-0.5 block">
+                  <span className="text-sm font-bold font-sans tabular-nums text-slate-700 mt-0.5 block">
                     ${Math.round(row.remainingEscrow).toLocaleString()}
                   </span>
                 </div>
@@ -901,7 +901,7 @@ export const BuydownCalculator: React.FC<BuydownCalculatorProps> = ({
                     )}
                   </td>
 
-                  <td className="py-3 px-3 font-mono text-slate-600">
+                  <td className="py-3 px-3 font-sans tabular-nums text-slate-600">
                     ${Math.round(row.remainingEscrow).toLocaleString()}
                   </td>
                 </tr>
@@ -915,7 +915,7 @@ export const BuydownCalculator: React.FC<BuydownCalculatorProps> = ({
                 <td className="py-3 px-3 font-extrabold text-slate-950" colSpan={2}>
                   ${Math.round(totalBuydownCost).toLocaleString()} Total Savings • {costInBps} BPS
                 </td>
-                <td className="py-3 px-3 font-mono font-bold text-slate-950">
+                <td className="py-3 px-3 font-sans tabular-nums font-bold text-slate-950">
                   $0.00
                 </td>
               </tr>
