@@ -821,43 +821,43 @@ export function App() {
                         <span className="font-bold text-slate-700 flex items-center gap-1 font-sans text-xs">
                           <span>Reports On Housing</span>
                         </span>
-                        <span className="text-slate-300 font-bold">•</span>
+                        <span className="text-slate-300 font-bold hidden sm:inline">•</span>
                         <span className="font-bold text-slate-500 font-sans text-xs">
                           {OC_HOUSING_REPORT_METADATA.reportDate}
                         </span>
-                        {currentCityMarketData && (
-                          <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200 ml-auto sm:ml-0 font-sans">
-                            {currentCityMarketData.region}
-                          </span>
-                        )}
                       </div>
 
-                      <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap">
-                        <h2 className="text-xl sm:text-2xl lg:text-3xl font-black font-sans text-slate-950 tracking-tight whitespace-nowrap">
-                          {currentCity.id === 'orange-county' ? 'Select City' : currentCity.name}
+                      <div className="space-y-2 pt-0.5">
+                        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black font-sans text-slate-950 tracking-tight">
+                          {currentCity.id === 'orange-county' ? 'Orange County Housing Summary' : currentCity.name}
                         </h2>
 
-                        {/* Direct Dropdown City Selector */}
-                        <div className="relative">
-                          <select
-                            value={currentCity.id}
-                            onChange={(e) => {
-                              const val = e.target.value;
-                              const matched = CITIES.find(c => c.id === val);
-                              if (matched) {
-                                setCurrentCity(matched);
-                                showToast(`Selected ${matched.name}`);
-                              }
-                            }}
-                            className="bg-[#F2F2F7] hover:bg-slate-200 border border-slate-300/80 rounded-xl pl-3 pr-7 py-1.5 sm:py-2 text-xs sm:text-sm font-bold text-slate-900 focus:outline-none focus:border-[#FA2D48] transition-all cursor-pointer appearance-none shadow-xs"
-                          >
-                            {CITIES.map(c => (
-                              <option key={c.id} value={c.id}>
-                                {c.name}
-                              </option>
-                            ))}
-                          </select>
-                          <ChevronRight className="w-3.5 h-3.5 text-slate-500 absolute right-2 top-2.5 sm:top-3 rotate-90 pointer-events-none" />
+                        {/* City Selection Under Title */}
+                        <div className="flex items-center gap-2.5 pt-1 flex-wrap">
+                          <span className="text-xs sm:text-sm font-bold text-slate-600 font-sans">
+                            Select your City:
+                          </span>
+                          <div className="relative">
+                            <select
+                              value={currentCity.id}
+                              onChange={(e) => {
+                                const val = e.target.value;
+                                const matched = CITIES.find(c => c.id === val);
+                                if (matched) {
+                                  setCurrentCity(matched);
+                                  showToast(`Selected ${matched.name}`);
+                                }
+                              }}
+                              className="bg-[#F2F2F7] hover:bg-slate-200 border border-slate-300/80 rounded-xl pl-3 pr-7 py-1.5 sm:py-2 text-xs sm:text-sm font-bold text-slate-900 focus:outline-none focus:border-[#FA2D48] transition-all cursor-pointer appearance-none shadow-xs"
+                            >
+                              {CITIES.map(c => (
+                                <option key={c.id} value={c.id}>
+                                  {c.name}
+                                </option>
+                              ))}
+                            </select>
+                            <ChevronRight className="w-3.5 h-3.5 text-slate-500 absolute right-2 top-2.5 sm:top-3 rotate-90 pointer-events-none" />
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -1163,12 +1163,12 @@ export function App() {
                   const countySpeedColor = isCountyFaster ? 'text-emerald-600' : isCountySlower ? 'text-[#FA2D48]' : 'text-slate-600';
 
                   return (
-                    <div className="flex justify-center sm:justify-start pt-1 pb-2">
+                    <div className="w-full pt-1 pb-2">
                       <button
                         type="button"
                         id="main-steven-thomas-market-speed-pill"
                         onClick={() => setShowMarketDirectionModal(true)}
-                        className="relative flex items-center h-14 sm:h-16 w-full max-w-3xl overflow-hidden rounded-full bg-gradient-to-r from-white via-slate-50/80 to-white hover:from-slate-50 hover:to-white border-2 border-slate-300/80 hover:border-rose-400 text-slate-800 shadow-md hover:shadow-lg hover:ring-2 hover:ring-rose-400/20 transition-all cursor-pointer font-sans group active:scale-[0.99] px-3.5 sm:px-5 select-none"
+                        className="relative flex items-center h-14 sm:h-16 w-full overflow-hidden rounded-full bg-gradient-to-r from-white via-slate-50/80 to-white hover:from-slate-50 hover:to-white border-2 border-slate-300/80 hover:border-rose-400 text-slate-800 shadow-md hover:shadow-lg hover:ring-2 hover:ring-rose-400/20 transition-all cursor-pointer font-sans group active:scale-[0.99] px-3.5 sm:px-5 select-none"
                         title="Click to view Market Speed & Status"
                       >
                         {/* Fixed Left Beacon */}
@@ -1344,24 +1344,6 @@ export function App() {
               </div>
             )}
 
-            {/* Featured Hero / Top Stories */}
-            {heroArticle && (
-              <section className="space-y-3">
-                <div className="flex items-center justify-between pb-1">
-                  <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black font-sans tracking-tighter text-[#FA2D48] leading-none">
-                    {activeCategory === 'all' ? 'Top Stories' : 'Featured Story'}
-                  </h2>
-                </div>
-
-                <FeaturedHeroStory
-                  article={heroArticle}
-                  onSelectArticle={setSelectedArticle}
-                  isBookmarked={bookmarkedIds.has(heroArticle.id)}
-                  onToggleBookmark={toggleBookmark}
-                />
-              </section>
-            )}
-
             {/* Mid-Page Sponsor Spotlight */}
             <AdBannerRenderer
               placement="market-trends-banner"
@@ -1371,63 +1353,86 @@ export function App() {
               onOpenManager={() => setIsManagerModalOpen(true)}
             />
 
-            {/* Section 1: Real Estate & Housing Market */}
-            {realEstateArticles.length > 0 && (activeCategory === 'all' || activeCategory === 'real-estate') && (
-              <NewsGridSection
-                title={activeCategory === 'all' ? `Orange County Real Estate & Market Trends` : `Real Estate & Housing in ${currentCity.name}`}
-                icon={<Building2 className="w-5 h-5 text-amber-600" />}
-                articles={realEstateArticles}
-                onSelectArticle={setSelectedArticle}
-                bookmarkedIds={bookmarkedIds}
-                onToggleBookmark={toggleBookmark}
-                adBanner={
-                  <AdBannerRenderer 
-                    placement="feed-native" 
-                    ads={ads} 
-                    cityName={currentCity.name} 
-                    monetizationEnabled={isMonetizationEnabled}
+            {/* News Sections — Displayed ONLY on News Category Views (e.g. Orange County News), NOT on Main Page */}
+            {activeCategory !== 'all' && (
+              <>
+                {/* Featured Hero / Top Stories */}
+                {heroArticle && (
+                  <section className="space-y-3">
+                    <div className="flex items-center justify-between pb-1">
+                      <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black font-sans tracking-tighter text-[#FA2D48] leading-none">
+                        Featured Story
+                      </h2>
+                    </div>
+
+                    <FeaturedHeroStory
+                      article={heroArticle}
+                      onSelectArticle={setSelectedArticle}
+                      isBookmarked={bookmarkedIds.has(heroArticle.id)}
+                      onToggleBookmark={toggleBookmark}
+                    />
+                  </section>
+                )}
+
+                {/* Section 1: Real Estate & Housing Market */}
+                {realEstateArticles.length > 0 && (
+                  <NewsGridSection
+                    title={`Real Estate & Housing in ${currentCity.name}`}
+                    icon={<Building2 className="w-5 h-5 text-amber-600" />}
+                    articles={realEstateArticles}
+                    onSelectArticle={setSelectedArticle}
+                    bookmarkedIds={bookmarkedIds}
+                    onToggleBookmark={toggleBookmark}
+                    adBanner={
+                      <AdBannerRenderer 
+                        placement="feed-native" 
+                        ads={ads} 
+                        cityName={currentCity.name} 
+                        monetizationEnabled={isMonetizationEnabled}
+                      />
+                    }
                   />
-                }
-              />
-            )}
+                )}
 
-            {/* Section 2: City Developments, Infrastructure & Master Plans */}
-            {developmentArticles.length > 0 && (activeCategory === 'all' || activeCategory === 'real-estate' || activeCategory === 'city-developments') && (
-              <NewsGridSection
-                title={activeCategory === 'all' ? `Civic Developments & Regional Infrastructure` : `City Developments in ${currentCity.name}`}
-                icon={<Building2 className="w-5 h-5 text-sky-600" />}
-                articles={developmentArticles}
-                onSelectArticle={setSelectedArticle}
-                bookmarkedIds={bookmarkedIds}
-                onToggleBookmark={toggleBookmark}
-              />
-            )}
+                {/* Section 2: City Developments, Infrastructure & Master Plans */}
+                {developmentArticles.length > 0 && (
+                  <NewsGridSection
+                    title={`City Developments in ${currentCity.name}`}
+                    icon={<Building2 className="w-5 h-5 text-sky-600" />}
+                    articles={developmentArticles}
+                    onSelectArticle={setSelectedArticle}
+                    bookmarkedIds={bookmarkedIds}
+                    onToggleBookmark={toggleBookmark}
+                  />
+                )}
 
-            {/* Section 4: Other Local Coverage */}
-            {otherArticles.length > 0 && (activeCategory === 'all' || activeCategory === 'real-estate') && (
-              <NewsGridSection
-                title={activeCategory === 'all' ? `Community & Lifestyle News` : `More Local Updates in ${currentCity.name}`}
-                icon={<Sparkles className="w-5 h-5 text-[#FA2D48]" />}
-                articles={otherArticles}
-                onSelectArticle={setSelectedArticle}
-                bookmarkedIds={bookmarkedIds}
-                onToggleBookmark={toggleBookmark}
-              />
-            )}
+                {/* Section 4: Other Local Coverage */}
+                {otherArticles.length > 0 && (
+                  <NewsGridSection
+                    title={`More Local Updates in ${currentCity.name}`}
+                    icon={<Sparkles className="w-5 h-5 text-[#FA2D48]" />}
+                    articles={otherArticles}
+                    onSelectArticle={setSelectedArticle}
+                    bookmarkedIds={bookmarkedIds}
+                    onToggleBookmark={toggleBookmark}
+                  />
+                )}
 
-            {/* Loading / Empty state if no news found for selected city */}
-            {filteredArticles.length === 0 && (
-              <div className="bg-white border border-slate-200/90 rounded-3xl p-8 sm:p-12 text-center space-y-4 shadow-xs my-6">
-                <div className="w-12 h-12 rounded-2xl bg-rose-50 text-[#FA2D48] flex items-center justify-center mx-auto">
-                  <Sparkles className="w-6 h-6 animate-spin" />
-                </div>
-                <h3 className="text-xl font-bold text-slate-900">
-                  Fetching Local News for {currentCity.name}...
-                </h3>
-                <p className="text-xs sm:text-sm text-slate-500 max-w-md mx-auto">
-                  Retrieving verified local municipal feeds, development permits, and real estate market reports for {currentCity.name}.
-                </p>
-              </div>
+                {/* Loading / Empty state if no news found for selected city */}
+                {filteredArticles.length === 0 && (
+                  <div className="bg-white border border-slate-200/90 rounded-3xl p-8 sm:p-12 text-center space-y-4 shadow-xs my-6">
+                    <div className="w-12 h-12 rounded-2xl bg-rose-50 text-[#FA2D48] flex items-center justify-center mx-auto">
+                      <Sparkles className="w-6 h-6 animate-spin" />
+                    </div>
+                    <h3 className="text-xl font-bold text-slate-900">
+                      Fetching Local News for {currentCity.name}...
+                    </h3>
+                    <p className="text-xs sm:text-sm text-slate-500 max-w-md mx-auto">
+                      Retrieving verified local municipal feeds, development permits, and real estate market reports for {currentCity.name}.
+                    </p>
+                  </div>
+                )}
+              </>
             )}
           </>
         )}
@@ -1522,8 +1527,8 @@ export function App() {
           </div>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2 font-sans text-xs font-semibold text-slate-600">
             <button onClick={handleResetToMain} className="hover:text-slate-900 cursor-pointer">Main Feed</button>
-            <button onClick={() => { setActiveCategory('commission-calculator'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="text-[#FA2D48] hover:underline cursor-pointer font-bold">Commission Calc</button>
             <button onClick={() => { setActiveCategory('buydown-calculator'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="hover:text-slate-900 cursor-pointer">Buydown Calc</button>
+            <button onClick={() => { setActiveCategory('commission-calculator'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="text-[#FA2D48] hover:underline cursor-pointer font-bold">Commission Calc</button>
             <button onClick={() => setActiveCategory('market-trends')} className="hover:text-slate-900 cursor-pointer font-bold">Market Trends</button>
             <button onClick={() => setActiveCategory('oc-fast')} className="text-[#FA2D48] hover:underline cursor-pointer font-black">OC Fast Report</button>
             <button onClick={() => setActiveCategory('mortgage-calculator')} className="hover:text-slate-900 cursor-pointer">Mortgage Calc</button>

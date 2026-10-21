@@ -284,36 +284,36 @@ export const CITIES: CityInfo[] = [
 ];
 
 export const INITIAL_ARTICLES: NewsArticle[] = [
-  // STEVEN THOMAS BI-WEEKLY HOUSING REPORT (SEPTEMBER 28, 2026)
+  // STEVEN THOMAS BI-WEEKLY HOUSING REPORT (OCTOBER 12, 2026)
   {
-    id: 'steven-thomas-sep-28-2026-then-and-now',
-    title: "Then and Now: 2008 vs. Today — Steven Thomas September 28 Orange County Housing Report",
-    subtitle: "Many think that the slow housing market and rising rates will cause a crash like the Great Recession, but the data does not back this up.",
+    id: 'steven-thomas-oct-12-2026-rates-rise-housing-stalls',
+    title: "Rates Rise, Housing Stalls — Steven Thomas October 12 Orange County Housing Report",
+    subtitle: "Buyer demand plunged in the past two weeks, reaching its lowest October reading since 2007 as mortgage rates moved higher.",
     category: 'market-trends',
     cityName: 'Orange County',
     publisher: 'Reports On Housing (Steven Thomas)',
     publisherLogo: '📊',
-    publishedAt: 'September 28, 2026',
+    publishedAt: 'October 12, 2026',
     readTime: '6 min read',
     heroImage: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80',
     sourceUrl: 'https://www.reportsonhousing.com',
-    sourceCitation: 'Reports On Housing • Orange County Housing Report (September 28, 2026 Edition)',
+    sourceCitation: 'Reports On Housing • Orange County Housing Report (October 12, 2026 Edition)',
     isBreaking: true,
     isFeatured: true,
     keyTakeaways: [
-      'Expected Market Time (EMT) increased from 101 to 110 days over the past couple of weeks (85 days last year), its highest reading since April 2020.',
-      'Buyer demand (30-day pending sales) plunged by 119 (-8%) from 1,468 to 1,349, registering the largest drop of the year and lowest September level since 2007.',
-      'Active listing inventory inched up by 13 homes to 4,952 (vs 4,576 last year and 16,000+ in 2006–2007).',
-      'Detached single-family homes sit at 99 days EMT (2,721 actives, 827 pending), while attached condos/townhomes lengthened to 128 days EMT (2,231 actives, 522 pending).',
-      'Distressed properties remain near zero: only 6 foreclosures and 7 short sales (13 total), comprising just 0.3% of listings and 0.5% of demand, disproving any 2008 crash comparisons.'
+      'Expected Market Time (EMT) increased from 110 to 118 days over the past couple of weeks (85 days last year), its highest reading since the April 2020 COVID lockdowns.',
+      'Buyer demand (30-day pending sales) plunged by 100 (-7.4%) from 1,349 to 1,249, registering the lowest October level since 2007.',
+      'Active listing inventory decreased by 28 homes to 4,924 (vs 4,478 last year and 6,306 pre-COVID average).',
+      'Detached single-family homes sit at 105 days EMT (2,710 actives, 771 pending), while attached condos/townhomes lengthened to 139 days EMT (2,214 actives, 478 pending).',
+      'Distressed properties remain near zero: only 6 foreclosures and 11 short sales (17 total), comprising just 0.3% of active supply and 0.4% of demand.'
     ],
-    content: `In the latest Orange County Housing Report titled "Then and Now: 2008 vs. Today," chief economist Steven Thomas examines why fears of a 2008-style housing crash are unfounded despite slower market velocity and elevated mortgage rates.\n\nFirst, the housing market's path depends on supply and demand. Orange County inventory climbed to 16,000 homes in 2006 and nearly 18,000 in 2007—over three times today's 4,952 listings. Today's low demand stems from high mortgage rates reaching 7.5%, which has reduced affordability and buyer purchasing power.\n\nOver the past two weeks, buyer demand (new pending sales over the prior month) dropped by 119 pending sales (-8%) from 1,468 to 1,349 escrows, the lowest September reading in Orange County since 2007. Meanwhile, active listing inventory added 13 homes to reach 4,952 homes.\n\nBecause demand contracted while available listings remained flat, the countywide Expected Market Time (EMT) increased from 101 to 110 days, its highest reading since April 2020 during the COVID lockdowns (compared to 85 days last year).\n\nProperty Type Comparison:\n• Detached Single-Family: EMT sits at 99 days (up from 92 days two weeks ago; 84 days last year), reflecting 2,721 active listings and 827 pending escrows.\n• Attached Condos & Townhomes: EMT climbed to 128 days (up from 115 days two weeks ago; 87 days last year), reflecting 2,231 active listings and 522 pending escrows.\n• Luxury Market ($2.5M+): EMT rose from 157 to 184 days, with 981 active listings and 160 pending escrows ($2.5M–$4M at 121 days, $4M–$6M at 218 days, $6M+ at 454 days).\n\nDistressed Sales Comparison:\nIn 2007, Orange County saw 1,521 closed foreclosures and short sales, ballooning to 10,244 in 2008 and 13,008 in 2009. In 2026, through August, only 25 closed. Today, there are only 6 active foreclosures and 7 short sales across the entire county (13 total), accounting for only 0.3% of supply.\n\nSteven Thomas concludes: "The bottom line: No imminent housing crash is lurking around the corner. The data and key ingredients don't support a plunge in home prices. While higher rates have slowed velocity to 110 days, tight lending standards, massive homeowner equity, and low inventory create a vastly different landscape than 2008."`,
+    content: `In the latest Orange County Housing Report titled "Rates Rise, Housing Stalls," chief economist Steven Thomas examines how rising mortgage rates have pulled buyer demand down to its lowest October reading since 2007.\n\nOver the past two weeks, buyer demand (new pending sales over the prior month) plunged by 100 pending sales (-7%) from 1,349 to 1,249 escrows. Meanwhile, active listing inventory inched down by 28 homes to 4,924 listings.\n\nBecause demand contracted faster than supply, the countywide Expected Market Time (EMT) increased from 110 to 118 days, its highest reading since April 2020 during the COVID lockdowns (compared to 85 days last year and 87 days pre-COVID average).\n\nProperty Type Comparison:\n• Detached Single-Family: EMT sits at 105 days (up from 99 days two weeks ago; 86 days last year), reflecting 2,710 active listings and 771 pending escrows.\n• Attached Condos & Townhomes: EMT climbed to 139 days (up from 128 days two weeks ago; 83 days last year), reflecting 2,214 active listings and 478 pending escrows.\n• Luxury Market ($2.5M+): EMT decreased slightly from 184 to 183 days, with 952 active listings and 156 pending escrows ($2.5M–$4M at 125 days, $4M–$6M at 224 days, $6M+ at 379 days).\n\nDistressed Sales Comparison:\nOrange County currently has only 6 active foreclosures and 11 short sales available (17 total), accounting for only 0.3% of active listings and 0.4% of demand. In August 2026, closed resales totaled 1,755 with a 99.5% sales-to-list ratio, and 99.72% of all sales were equity sellers.\n\nSteven Thomas concludes: "With higher rates, velocity has slowed to 118 days, creating balanced-to-buyer conditions across higher price tiers, but tight supply and equity maintain fundamental price stability."`,
     realEstateData: {
       neighborhood: 'Orange County (Countywide)',
       priceRange: '$650,000 - $35,000,000',
       avgSqftPrice: '$715/sqft',
       trend: 'stable',
-      keyStat: '110 Days EMT (Balanced Market)'
+      keyStat: '118 Days EMT (Balanced Market)'
     }
   },
   // 1. ORANGE COUNTY REAL ESTATE & HOUSING SPOTLIGHTS
