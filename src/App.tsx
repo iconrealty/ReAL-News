@@ -16,7 +16,6 @@ import { NewsGridSection } from './components/NewsGridSection';
 import { OrangeCountyMarketTrends, getMarketCondition } from './components/OrangeCountyMarketTrends';
 import { IconMarketIntelligence } from './components/IconMarketIntelligence';
 import { OCFastMarketReport } from './components/OCFastMarketReport';
-import { OCFastTopOverview } from './components/OCFastTopOverview';
 import { MortgageCalculator } from './components/MortgageCalculator';
 import { BuydownCalculator } from './components/BuydownCalculator';
 import { CommissionCalculator } from './components/CommissionCalculator';
@@ -1219,11 +1218,6 @@ export function App() {
                     </div>
                   );
                 })()}
-
-                {/* Main Page Top Market Overview: Days on Market, Months of Supply, % Orig List Price, Price/SqFt */}
-                <OCFastTopOverview 
-                  title="Orange County Local Market Update"
-                />
               </>
             ) : (
               /* Internal Pages Clean Header: No Steven Thomas or OC Fast duplicated top blocks */

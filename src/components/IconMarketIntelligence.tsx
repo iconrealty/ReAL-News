@@ -592,11 +592,11 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
               SECTION 1: PAGE 9 — ORANGE COUNTY HOUSING SUMMARY
               (Minimalist Apple / Tesla Telemetry Grid: Pure Numbers & Metrics, Zero Explanations)
           ────────────────────────────────────────────────────────────────────────── */}
-          <div className="space-y-6">
+          <div className="space-y-4">
         
         {/* Section Header */}
         <div className="px-1 flex items-center justify-between flex-wrap gap-2">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black font-sans tracking-tight text-slate-950">
+          <h2 className="text-2xl sm:text-3xl font-extrabold font-sans tracking-tight text-slate-900">
             Housing Summary
           </h2>
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 border border-slate-200/90 text-slate-700 font-bold text-xs font-sans shadow-2xs">
@@ -605,8 +605,8 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
           </span>
         </div>
 
-        {/* 6 Minimalist Apple / Tesla Metric Pillar Cards (Clean, Un-Crowded — Click to Open Modal) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+        {/* 6 Compact & Simple Metric Pillar Cards — Easy to See, Read & Understand */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
           {page9.pillars.map((pillar) => {
             const isNegative = pillar.badgeType === 'negative';
             const isWarning = pillar.badgeType === 'warning';
@@ -617,15 +617,15 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                 type="button"
                 key={pillar.id}
                 onClick={() => setSelectedPillar(pillar)}
-                className="w-full text-left rounded-3xl bg-white border border-slate-200/90 p-5 sm:p-6 shadow-xs flex flex-col justify-between space-y-4 hover:shadow-md hover:border-[#FA2D48]/70 hover:ring-2 hover:ring-[#FA2D48]/15 transition-all font-sans group cursor-pointer active:scale-[0.99]"
-                title={`Click to inspect ${pillar.title} breakdown`}
+                className="w-full text-left rounded-2xl bg-white border border-slate-200/90 p-4 hover:border-slate-300 hover:shadow-xs transition-all font-sans group cursor-pointer active:scale-[0.99] flex flex-col justify-between gap-2.5"
+                title={`Click to view ${pillar.title} breakdown`}
               >
-                {/* Pillar Header */}
-                <div className="flex items-center justify-between gap-2 border-b border-slate-100 pb-3">
-                  <span className="text-xs font-black tracking-widest text-slate-700 uppercase font-sans group-hover:text-slate-950 transition-colors">
+                {/* Top Row: Title & Status Badge */}
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-xs font-bold text-slate-600 uppercase tracking-wide group-hover:text-slate-900 transition-colors">
                     {pillar.title}
                   </span>
-                  <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black tracking-wider uppercase font-sans border ${
+                  <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold tracking-wide uppercase border shrink-0 ${
                     isNegative 
                       ? 'bg-rose-50 text-rose-700 border-rose-200' 
                       : isWarning 
@@ -638,29 +638,29 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                   </span>
                 </div>
 
-                {/* Primary Hero Numeric Stat */}
-                <div className="space-y-0.5 py-1">
-                  <div className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-950 tracking-tight font-sans tabular-nums group-hover:text-[#FA2D48] transition-colors">
+                {/* Primary Numeric Stat & Unit */}
+                <div className="flex items-baseline justify-between gap-2 pt-0.5">
+                  <span className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight tabular-nums">
                     {pillar.stat}
-                  </div>
-                  <div className="text-xs font-bold text-slate-500 font-sans tracking-wide">
+                  </span>
+                  <span className="text-xs font-medium text-slate-500 truncate">
                     {pillar.unit}
-                  </div>
+                  </span>
                 </div>
 
-                {/* Simplified Un-Crowded Footer: 2-Wk Velocity + Tap to Inspect Modal */}
-                <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold font-sans">
-                  <div className="flex items-center gap-1.5 truncate">
-                    <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">2-Wk:</span>
-                    <span className={`font-black tabular-nums text-xs sm:text-[13px] ${
+                {/* Bottom Row: 2-Wk Velocity & Click Hint */}
+                <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-1.5 text-slate-500">
+                    <span className="text-[10px] uppercase font-semibold text-slate-400">2-Wk:</span>
+                    <span className={`font-bold tabular-nums text-xs ${
                       isNegative ? 'text-rose-600' : isWarning ? 'text-amber-700' : isPositive ? 'text-emerald-700' : 'text-slate-800'
                     }`}>
                       {pillar.delta2Wks}
                     </span>
                   </div>
-                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 group-hover:bg-rose-50 border border-slate-200/80 group-hover:border-rose-200 text-slate-700 group-hover:text-[#FA2D48] text-[11px] font-black tracking-wide transition-all shrink-0">
-                    <span>Inspect</span>
-                    <span className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform text-[#FA2D48]">↗</span>
+                  <span className="text-[11px] font-medium text-slate-400 group-hover:text-slate-700 transition-colors flex items-center gap-0.5">
+                    <span>Details</span>
+                    <span className="text-xs">↗</span>
                   </span>
                 </div>
               </button>
