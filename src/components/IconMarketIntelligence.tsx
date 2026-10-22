@@ -622,12 +622,9 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
               >
                 {/* Pillar Header */}
                 <div className="flex items-center justify-between gap-2 border-b border-slate-100 pb-3">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-[#FA2D48]"></span>
-                    <span className="text-xs font-black tracking-widest text-slate-700 uppercase font-sans group-hover:text-slate-950 transition-colors">
-                      {pillar.title}
-                    </span>
-                  </div>
+                  <span className="text-xs font-black tracking-widest text-slate-700 uppercase font-sans group-hover:text-slate-950 transition-colors">
+                    {pillar.title}
+                  </span>
                   <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black tracking-wider uppercase font-sans border ${
                     isNegative 
                       ? 'bg-rose-50 text-rose-700 border-rose-200' 
