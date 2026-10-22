@@ -547,7 +547,7 @@ export const OC_PAGE_9_HOUSING_SUMMARY = {
     },
     {
       id: "closed-sales",
-      title: "CLOSED RESALES (AUG)",
+      title: "CLOSED SALES (AUG)",
       stat: "1,755",
       unit: "August Closed Escrows",
       badge: "99.5% Sale-to-List",
@@ -648,7 +648,7 @@ export const OC_HOUSING_SUMMARY_CARDS: OCSummaryCardData[] = [
   {
     id: "closed",
     title: `${cfg.closedSales.period} Closed Sales`,
-    shortTitle: "Closed Resales",
+    shortTitle: "Closed Sales",
     currentStat: `${cfg.closedSales.unitsSold.toLocaleString()} Sales`,
     currentValue: cfg.closedSales.unitsSold,
     unit: `${cfg.closedSales.salesToListRatio} Sale-to-List Ratio`,

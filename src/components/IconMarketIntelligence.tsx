@@ -16,7 +16,8 @@ import {
   Check,
   Building2,
   SlidersHorizontal,
-  Compass
+  Compass,
+  Calendar
 } from 'lucide-react';
 import {
   OC_HOUSING_REPORT_METADATA,
@@ -53,6 +54,7 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
   const [activeBreakdownView, setActiveBreakdownView] = useState<'page8' | 'attached' | 'detached'>('page8');
   const [selectedTierPrice, setSelectedTierPrice] = useState<string>('$1.25M - $1.5M');
   const [hasCopiedSummary, setHasCopiedSummary] = useState<boolean>(false);
+  const [selectedPillar, setSelectedPillar] = useState<typeof OC_PAGE_9_HOUSING_SUMMARY.pillars[0] | null>(null);
 
   const meta = OC_HOUSING_REPORT_METADATA;
   const page9 = OC_PAGE_9_HOUSING_SUMMARY;
@@ -175,8 +177,9 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                 <span>Reports On Housing</span>
               </span>
               <span className="text-slate-300 font-bold hidden sm:inline">•</span>
-              <span className="font-bold text-slate-500 font-sans text-xs">
-                {OC_HOUSING_REPORT_METADATA.reportDate}
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-100 border border-slate-200/90 text-slate-800 font-bold text-xs font-sans shadow-2xs">
+                <Calendar className="w-3.5 h-3.5 text-[#FA2D48]" />
+                <span>Report Date: {OC_HOUSING_REPORT_METADATA.reportDate}</span>
               </span>
             </div>
 
@@ -271,40 +274,28 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                   <button
                     type="button"
                     onClick={() => setShowHistoricalMarketTimeModal(true)}
-                    className="relative flex items-center h-14 sm:h-16 w-full overflow-hidden rounded-full bg-gradient-to-r from-white via-slate-50/80 to-white hover:from-slate-50 hover:to-white border-2 border-slate-300/80 hover:border-rose-400 text-slate-800 shadow-md hover:shadow-lg hover:ring-2 hover:ring-rose-400/20 transition-all cursor-pointer font-sans group active:scale-[0.99] px-3.5 sm:px-5 select-none mb-5"
+                    className="relative flex items-center h-12 w-full overflow-hidden bg-transparent text-slate-800 transition-opacity hover:opacity-85 cursor-pointer font-sans group select-none mb-4"
                     title={`Click to view ${currentCity.name} Historical Speed & Pace`}
                   >
-                    {/* Fixed Left Beacon */}
-                    <div className="flex items-center pr-3 sm:pr-4 border-r-2 border-slate-200/90 shrink-0 z-10 bg-white group-hover:bg-slate-50 transition-colors">
-                      <span className="relative flex h-3 w-3 sm:h-3.5 sm:w-3.5 shrink-0">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FA2D48] opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-3 w-3 sm:h-3.5 sm:w-3.5 bg-[#FA2D48] shadow-sm"></span>
-                      </span>
-                    </div>
-
                     {/* Running City Equation */}
-                    <div className="relative overflow-hidden flex-1 mx-2 sm:mx-4">
+                    <div className="relative overflow-hidden w-full">
                       <div className="animate-ticker flex items-center group-hover:[animation-play-state:paused]">
                         {/* 1st copy */}
                         <div className="flex items-center gap-4 sm:gap-6 text-xs sm:text-sm md:text-[15px] font-bold tracking-tight uppercase text-slate-700 shrink-0 pr-6 sm:pr-8">
                           <span className={`font-black uppercase tracking-wider px-2.5 sm:px-3.5 py-1 rounded-full border shadow-2xs text-xs sm:text-sm ${cond.tickerBadgeClass}`}>
                             {cond.capitalLabel}
                           </span>
-                          <span className="text-[#FA2D48] text-xs sm:text-sm opacity-90">●</span>
                           <span className="font-extrabold text-slate-900 text-xs sm:text-sm md:text-[15px]">
                             MARKET SPEED: <span className={`${speedColor} font-black underline decoration-2 decoration-current underline-offset-2`}>{speedLabel}</span>
                           </span>
-                          <span className="text-[#FA2D48] text-xs sm:text-sm opacity-90">●</span>
                           <span className="text-slate-600 font-bold">
                             DEMAND: <span className="text-emerald-600 font-black text-sm sm:text-base md:text-lg">{marketData.demand30Days}</span>{' '}
                             <span className="text-emerald-600 font-black text-xl leading-none inline-block">↑</span>
                           </span>
-                          <span className="text-[#FA2D48] text-xs sm:text-sm opacity-90">●</span>
                           <span className="text-slate-600 font-bold">
                             SUPPLY: <span className="text-slate-900 font-black text-sm sm:text-base md:text-lg">{marketData.currentActives}</span>{' '}
                             <span className="text-[#FA2D48] font-black text-xl leading-none inline-block">↓</span>
                           </span>
-                          <span className="text-[#FA2D48] text-xs sm:text-sm opacity-90">●</span>
                           <span className="text-slate-600 font-bold">
                             EMT: <span className="text-slate-950 font-black text-sm sm:text-base md:text-lg">{marketData.marketTimeDays} DAYS</span>
                             {emtDelta !== 0 && (
@@ -314,28 +305,24 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                               </span>
                             )}
                           </span>
-                          <span className="text-[#FA2D48] font-black text-sm sm:text-base">=</span>
+                          <span className="text-slate-300 font-light text-sm sm:text-base select-none">/</span>
                         </div>
                         {/* 2nd identical copy */}
                         <div className="flex items-center gap-4 sm:gap-6 text-xs sm:text-sm md:text-[15px] font-bold tracking-tight uppercase text-slate-700 shrink-0 pr-6 sm:pr-8" aria-hidden="true">
                           <span className={`font-black uppercase tracking-wider px-2.5 sm:px-3.5 py-1 rounded-full border shadow-2xs text-xs sm:text-sm ${cond.tickerBadgeClass}`}>
                             {cond.capitalLabel}
                           </span>
-                          <span className="text-[#FA2D48] text-xs sm:text-sm opacity-90">●</span>
                           <span className="font-extrabold text-slate-900 text-xs sm:text-sm md:text-[15px]">
                             MARKET SPEED: <span className={`${speedColor} font-black underline decoration-2 decoration-current underline-offset-2`}>{speedLabel}</span>
                           </span>
-                          <span className="text-[#FA2D48] text-xs sm:text-sm opacity-90">●</span>
                           <span className="text-slate-600 font-bold">
                             DEMAND: <span className="text-emerald-600 font-black text-sm sm:text-base md:text-lg">{marketData.demand30Days}</span>{' '}
                             <span className="text-emerald-600 font-black text-xl leading-none inline-block">↑</span>
                           </span>
-                          <span className="text-[#FA2D48] text-xs sm:text-sm opacity-90">●</span>
                           <span className="text-slate-600 font-bold">
                             SUPPLY: <span className="text-slate-900 font-black text-sm sm:text-base md:text-lg">{marketData.currentActives}</span>{' '}
                             <span className="text-[#FA2D48] font-black text-xl leading-none inline-block">↓</span>
                           </span>
-                          <span className="text-[#FA2D48] text-xs sm:text-sm opacity-90">●</span>
                           <span className="text-slate-600 font-bold">
                             EMT: <span className="text-slate-950 font-black text-sm sm:text-base md:text-lg">{marketData.marketTimeDays} DAYS</span>
                             {emtDelta !== 0 && (
@@ -345,17 +332,9 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                               </span>
                             )}
                           </span>
-                          <span className="text-[#FA2D48] font-black text-sm sm:text-base">=</span>
+                          <span className="text-slate-300 font-light text-sm sm:text-base select-none">/</span>
                         </div>
                       </div>
-                    </div>
-
-                    {/* Fixed Right Action */}
-                    <div className="pl-3 sm:pr-1 sm:pl-4 border-l-2 border-slate-200/90 shrink-0 z-10 bg-white group-hover:bg-slate-50 transition-colors flex items-center gap-1.5">
-                      <span className="text-xs sm:text-sm font-black text-slate-700 group-hover:text-rose-600 uppercase tracking-wider transition-colors hidden sm:inline px-2 py-0.5 rounded bg-slate-100 group-hover:bg-rose-50">
-                        Pace
-                      </span>
-                      <span className="text-sm sm:text-base font-black text-[#FA2D48] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform">↗</span>
                     </div>
                   </button>
                 );
@@ -519,6 +498,96 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
       {/* RENDER COUNTYWIDE SECTION 1 & SECTION 2 ONLY WHEN isCountywide IS TRUE */}
       {isCountywide && (
         <>
+          {/* Live Steven Thomas Orange County Live Tab (Countywide Only - Matches Main Page Slider Tab Exactly) */}
+          {(() => {
+            const countywideCond = getMarketCondition(OC_COUNTYWIDE_LIVE_METRICS.emtDays);
+            const countywideEmtDelta = OC_COUNTYWIDE_LIVE_METRICS.emtDelta;
+            const isCountyFaster = countywideEmtDelta < 0;
+            const isCountySlower = countywideEmtDelta > 0;
+            const countySpeedLabel = isCountyFaster ? 'FASTER' : isCountySlower ? 'SLOWER' : 'STEADY';
+            const countySpeedColor = isCountyFaster ? 'text-emerald-600' : isCountySlower ? 'text-[#FA2D48]' : 'text-slate-600';
+
+            return (
+              <div className="w-full pt-1 pb-2">
+                <button
+                  type="button"
+                  id="steven-thomas-page-market-speed-pill"
+                  onClick={() => setShowMarketDirectionModal(true)}
+                  className="relative flex items-center h-12 w-full overflow-hidden bg-transparent text-slate-800 transition-opacity hover:opacity-85 cursor-pointer font-sans group select-none"
+                  title="Click to view Market Speed & Status"
+                >
+                  {/* Running Text Streaming Slower to the Left (Stock / Live Feed Style) */}
+                  <div className="relative overflow-hidden w-full">
+                    <div className="animate-ticker flex items-center group-hover:[animation-play-state:paused]">
+                      {/* 1st copy */}
+                      <div className="flex items-center gap-4 sm:gap-6 text-xs sm:text-sm md:text-[15px] font-bold tracking-tight uppercase text-slate-700 shrink-0 pr-6 sm:pr-8">
+                        <span className={`font-black uppercase tracking-wider px-2.5 sm:px-3.5 py-1 rounded-full border shadow-2xs text-xs sm:text-sm ${countywideCond.tickerBadgeClass}`}>
+                          {countywideCond.capitalLabel}
+                        </span>
+                        <span className="font-extrabold text-slate-900 text-xs sm:text-sm md:text-[15px]">
+                          MARKET SPEED: <span className={`${countySpeedColor} font-black underline decoration-2 decoration-current underline-offset-2`}>{countySpeedLabel}</span>
+                        </span>
+                        <span className="text-slate-600 font-bold">
+                          DEMAND: <span className="text-emerald-600 font-black text-sm sm:text-base md:text-lg">{OC_COUNTYWIDE_LIVE_METRICS.demand.toLocaleString()}</span>{' '}
+                          <span className="text-rose-500 font-black inline-flex items-center gap-0.5 text-xs sm:text-sm">
+                            <span className="text-xl leading-none font-black">↓</span>
+                            <span>{OC_COUNTYWIDE_LIVE_METRICS.demandDelta}</span>
+                          </span>
+                        </span>
+                        <span className="text-slate-600 font-bold">
+                          SUPPLY: <span className="text-slate-900 font-black text-sm sm:text-base md:text-lg">{OC_COUNTYWIDE_LIVE_METRICS.supply.toLocaleString()}</span>{' '}
+                          <span className="text-emerald-600 font-black inline-flex items-center gap-0.5 text-xs sm:text-sm">
+                            <span className="text-xl leading-none font-black">↓</span>
+                            <span>{OC_COUNTYWIDE_LIVE_METRICS.supplyDelta}</span>
+                          </span>
+                        </span>
+                        <span className="text-slate-600 font-bold">
+                          EMT: <span className="text-slate-950 font-black text-sm sm:text-base md:text-lg">{OC_COUNTYWIDE_LIVE_METRICS.emtDays} DAYS</span>{' '}
+                          <span className="text-emerald-600 font-black inline-flex items-center gap-0.5 text-xs sm:text-sm">
+                            <span className="text-xl leading-none font-black">↓</span>
+                            <span>{Math.abs(OC_COUNTYWIDE_LIVE_METRICS.emtDelta)}d FASTER</span>
+                          </span>
+                        </span>
+                        <span className="text-slate-300 font-light text-sm sm:text-base select-none">/</span>
+                      </div>
+                      {/* 2nd identical copy for seamless infinite loop */}
+                      <div className="flex items-center gap-4 sm:gap-6 text-xs sm:text-sm md:text-[15px] font-bold tracking-tight uppercase text-slate-700 shrink-0 pr-6 sm:pr-8" aria-hidden="true">
+                        <span className={`font-black uppercase tracking-wider px-2.5 sm:px-3.5 py-1 rounded-full border shadow-2xs text-xs sm:text-sm ${countywideCond.tickerBadgeClass}`}>
+                          {countywideCond.capitalLabel}
+                        </span>
+                        <span className="font-extrabold text-slate-900 text-xs sm:text-sm md:text-[15px]">
+                          MARKET SPEED: <span className={`${countySpeedColor} font-black underline decoration-2 decoration-current underline-offset-2`}>{countySpeedLabel}</span>
+                        </span>
+                        <span className="text-slate-600 font-bold">
+                          DEMAND: <span className="text-emerald-600 font-black text-sm sm:text-base md:text-lg">{OC_COUNTYWIDE_LIVE_METRICS.demand.toLocaleString()}</span>{' '}
+                          <span className="text-rose-500 font-black inline-flex items-center gap-0.5 text-xs sm:text-sm">
+                            <span className="text-xl leading-none font-black">↓</span>
+                            <span>{OC_COUNTYWIDE_LIVE_METRICS.demandDelta}</span>
+                          </span>
+                        </span>
+                        <span className="text-slate-600 font-bold">
+                          SUPPLY: <span className="text-slate-900 font-black text-sm sm:text-base md:text-lg">{OC_COUNTYWIDE_LIVE_METRICS.supply.toLocaleString()}</span>{' '}
+                          <span className="text-emerald-600 font-black inline-flex items-center gap-0.5 text-xs sm:text-sm">
+                            <span className="text-xl leading-none font-black">↓</span>
+                            <span>{OC_COUNTYWIDE_LIVE_METRICS.supplyDelta}</span>
+                          </span>
+                        </span>
+                        <span className="text-slate-600 font-bold">
+                          EMT: <span className="text-slate-950 font-black text-sm sm:text-base md:text-lg">{OC_COUNTYWIDE_LIVE_METRICS.emtDays} DAYS</span>{' '}
+                          <span className="text-emerald-600 font-black inline-flex items-center gap-0.5 text-xs sm:text-sm">
+                            <span className="text-xl leading-none font-black">↓</span>
+                            <span>{Math.abs(OC_COUNTYWIDE_LIVE_METRICS.emtDelta)}d FASTER</span>
+                          </span>
+                        </span>
+                        <span className="text-slate-300 font-light text-sm sm:text-base select-none">/</span>
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </div>
+            );
+          })()}
+
           {/* ──────────────────────────────────────────────────────────────────────────
               SECTION 1: PAGE 9 — ORANGE COUNTY HOUSING SUMMARY
               (Minimalist Apple / Tesla Telemetry Grid: Pure Numbers & Metrics, Zero Explanations)
@@ -526,13 +595,17 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
           <div className="space-y-6">
         
         {/* Section Header */}
-        <div className="px-1">
+        <div className="px-1 flex items-center justify-between flex-wrap gap-2">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black font-sans tracking-tight text-slate-950">
             Housing Summary
           </h2>
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 border border-slate-200/90 text-slate-700 font-bold text-xs font-sans shadow-2xs">
+            <Calendar className="w-3.5 h-3.5 text-[#FA2D48]" />
+            <span>Report Date: {meta.reportDate}</span>
+          </span>
         </div>
 
-        {/* 6 Minimalist Apple / Tesla Metric Pillar Cards (Pure Numbers & Metrics) */}
+        {/* 6 Minimalist Apple / Tesla Metric Pillar Cards (Clean, Un-Crowded — Click to Open Modal) */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
           {page9.pillars.map((pillar) => {
             const isNegative = pillar.badgeType === 'negative';
@@ -540,15 +613,18 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
             const isPositive = pillar.badgeType === 'positive';
 
             return (
-              <div
+              <button
+                type="button"
                 key={pillar.id}
-                className="rounded-3xl bg-white border border-slate-200/90 p-5 sm:p-6 shadow-xs flex flex-col justify-between space-y-4 hover:shadow-sm hover:border-slate-300 transition-all font-sans"
+                onClick={() => setSelectedPillar(pillar)}
+                className="w-full text-left rounded-3xl bg-white border border-slate-200/90 p-5 sm:p-6 shadow-xs flex flex-col justify-between space-y-4 hover:shadow-md hover:border-[#FA2D48]/70 hover:ring-2 hover:ring-[#FA2D48]/15 transition-all font-sans group cursor-pointer active:scale-[0.99]"
+                title={`Click to inspect ${pillar.title} breakdown`}
               >
                 {/* Pillar Header */}
                 <div className="flex items-center justify-between gap-2 border-b border-slate-100 pb-3">
                   <div className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-[#FA2D48]"></span>
-                    <span className="text-xs font-black tracking-widest text-slate-700 uppercase font-sans">
+                    <span className="text-xs font-black tracking-widest text-slate-700 uppercase font-sans group-hover:text-slate-950 transition-colors">
                       {pillar.title}
                     </span>
                   </div>
@@ -567,7 +643,7 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
 
                 {/* Primary Hero Numeric Stat */}
                 <div className="space-y-0.5 py-1">
-                  <div className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-950 tracking-tight font-sans tabular-nums">
+                  <div className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-950 tracking-tight font-sans tabular-nums group-hover:text-[#FA2D48] transition-colors">
                     {pillar.stat}
                   </div>
                   <div className="text-xs font-bold text-slate-500 font-sans tracking-wide">
@@ -575,39 +651,22 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                   </div>
                 </div>
 
-                {/* Telemetry Metrics Matrix (Pure Numbers & Micro-Metrics) */}
-                <div className="pt-3 border-t border-slate-100 grid grid-cols-2 gap-2 text-xs font-sans">
-                  <div className="p-2.5 rounded-2xl bg-slate-50/80 border border-slate-100 space-y-0.5">
-                    <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">2-Wk Velocity</div>
-                    <div className={`text-xs sm:text-[13px] font-black tabular-nums ${
+                {/* Simplified Un-Crowded Footer: 2-Wk Velocity + Tap to Inspect Modal */}
+                <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold font-sans">
+                  <div className="flex items-center gap-1.5 truncate">
+                    <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">2-Wk:</span>
+                    <span className={`font-black tabular-nums text-xs sm:text-[13px] ${
                       isNegative ? 'text-rose-600' : isWarning ? 'text-amber-700' : isPositive ? 'text-emerald-700' : 'text-slate-800'
                     }`}>
                       {pillar.delta2Wks}
-                    </div>
+                    </span>
                   </div>
-
-                  <div className="p-2.5 rounded-2xl bg-slate-50/80 border border-slate-100 space-y-0.5">
-                    <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Last Year (YoY)</div>
-                    <div className="text-xs sm:text-[13px] font-black text-slate-900 tabular-nums">
-                      {pillar.deltaYoY}
-                    </div>
-                  </div>
-
-                  <div className="p-2.5 rounded-2xl bg-slate-50/80 border border-slate-100 space-y-0.5">
-                    <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">{pillar.metricLabel1}</div>
-                    <div className="text-xs sm:text-[13px] font-black text-slate-800 tabular-nums">
-                      {pillar.metricValue1}
-                    </div>
-                  </div>
-
-                  <div className="p-2.5 rounded-2xl bg-slate-50/80 border border-slate-100 space-y-0.5">
-                    <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">{pillar.metricLabel2}</div>
-                    <div className="text-xs sm:text-[13px] font-black text-slate-800 tabular-nums">
-                      {pillar.metricValue2}
-                    </div>
-                  </div>
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 group-hover:bg-rose-50 border border-slate-200/80 group-hover:border-rose-200 text-slate-700 group-hover:text-[#FA2D48] text-[11px] font-black tracking-wide transition-all shrink-0">
+                    <span>Inspect</span>
+                    <span className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform text-[#FA2D48]">↗</span>
+                  </span>
                 </div>
-              </div>
+              </button>
             );
           })}
         </div>
@@ -899,18 +958,18 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                   onClick={() => setSelectedTierPrice(tier.priceRange)}
                   className={`w-full p-3 sm:p-3.5 rounded-2xl border transition-all text-left flex items-center justify-between gap-3 sm:gap-4 cursor-pointer group ${
                     isSelected 
-                      ? 'bg-slate-950 text-white border-slate-950 shadow-md ring-1 ring-slate-950' 
-                      : 'bg-white hover:bg-slate-50 text-slate-900 border-slate-200/80 hover:border-slate-300'
+                      ? 'bg-slate-900 text-white border-slate-900 shadow-md ring-1 ring-slate-900/30' 
+                      : 'bg-white hover:bg-slate-50 text-slate-800 border-slate-200/90 hover:border-slate-300'
                   }`}
                 >
                   {/* Price Tier Label */}
                   <div className="flex items-center gap-2 w-36 sm:w-48 shrink-0">
-                    <span className={`text-xs sm:text-sm font-black tracking-tight ${isSelected ? 'text-white' : 'text-slate-950'}`}>
+                    <span className={`text-xs sm:text-sm font-bold tracking-tight ${isSelected ? 'text-white' : 'text-slate-900'}`}>
                       {tier.priceRange}
                     </span>
                     {isSweetSpot && (
-                      <span className={`text-[9px] font-black px-1.5 py-0.2 rounded-full uppercase tracking-wider ${
-                        isSelected ? 'bg-amber-400 text-slate-950' : 'bg-amber-100 text-amber-900'
+                      <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wider ${
+                        isSelected ? 'bg-amber-400 text-slate-950' : 'bg-amber-100 text-amber-800 border border-amber-200'
                       }`}>
                         Sweet Spot
                       </span>
@@ -929,7 +988,7 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
 
                   {/* Days & Speed Status */}
                   <div className="flex items-center gap-2.5 shrink-0 text-right">
-                    <span className={`text-xs sm:text-sm font-black tabular-nums ${isSelected ? 'text-white' : 'text-slate-950'}`}>
+                    <span className={`text-xs sm:text-sm font-bold tabular-nums ${isSelected ? 'text-white' : 'text-slate-800'}`}>
                       {tier.marketTimeDays} Days
                     </span>
                     <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md border ${
@@ -1138,6 +1197,123 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
         supplyDelta={OC_COUNTYWIDE_LIVE_METRICS.supplyDelta}
         emtDelta={OC_COUNTYWIDE_LIVE_METRICS.emtDelta}
       />
+
+      {/* HOUSING SUMMARY PILLAR BREAKDOWN MODAL */}
+      {selectedPillar && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs transition-opacity animate-in fade-in"
+          onClick={() => setSelectedPillar(null)}
+        >
+          <div 
+            className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-7 max-w-lg w-full shadow-2xl space-y-5 relative animate-in zoom-in-95 duration-150 text-left font-sans"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="flex items-start justify-between pb-3 border-b border-slate-100 gap-3">
+              <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight font-sans">
+                {selectedPillar.title}
+              </h3>
+              <button
+                type="button"
+                onClick={() => setSelectedPillar(null)}
+                className="p-1.5 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
+                title="Close"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Primary Stat Highlight Card */}
+            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-between flex-wrap gap-2">
+              <div className="space-y-0.5">
+                <div className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight font-sans tabular-nums">
+                  {selectedPillar.stat}
+                </div>
+                <div className="text-xs font-medium text-slate-500 font-sans">
+                  {selectedPillar.unit}
+                </div>
+              </div>
+              <span className={`px-3 py-1 rounded-full text-xs font-bold tracking-wider uppercase font-sans border ${
+                selectedPillar.badgeType === 'negative'
+                  ? 'bg-rose-50 text-rose-700 border-rose-200'
+                  : selectedPillar.badgeType === 'warning'
+                    ? 'bg-amber-50 text-amber-700 border-amber-200'
+                    : selectedPillar.badgeType === 'positive'
+                      ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                      : 'bg-slate-100 text-slate-700 border-slate-200'
+              }`}>
+                {selectedPillar.badge}
+              </span>
+            </div>
+
+            {/* 4 Clear Sub-Metrics (Displayed Cleanly in a Grid, Not in Tabs) */}
+            <div className="space-y-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {/* 1. 2-Week Velocity */}
+                <div className="p-4 rounded-2xl bg-slate-50/70 border border-slate-200/80 shadow-2xs space-y-1.5">
+                  <div className="text-xs font-bold uppercase tracking-wider text-slate-600 font-sans">
+                    2-Week Velocity
+                  </div>
+                  <div className={`text-base sm:text-lg font-bold tabular-nums font-sans ${
+                    selectedPillar.badgeType === 'negative' ? 'text-rose-600' : selectedPillar.badgeType === 'warning' ? 'text-amber-700' : selectedPillar.badgeType === 'positive' ? 'text-emerald-700' : 'text-slate-800'
+                  }`}>
+                    {selectedPillar.delta2Wks}
+                  </div>
+                </div>
+
+                {/* 2. Last Year Comparison */}
+                <div className="p-4 rounded-2xl bg-slate-50/70 border border-slate-200/80 shadow-2xs space-y-1.5">
+                  <div className="text-xs font-bold uppercase tracking-wider text-slate-600 font-sans">
+                    Last Year (YoY)
+                  </div>
+                  <div className="text-base sm:text-lg font-bold text-slate-800 tabular-nums font-sans">
+                    {selectedPillar.deltaYoY}
+                  </div>
+                </div>
+
+                {/* 3. Metric 1 */}
+                <div className="p-4 rounded-2xl bg-slate-50/70 border border-slate-200/80 shadow-2xs space-y-1.5">
+                  <div className="text-xs font-bold uppercase tracking-wider text-slate-600 font-sans">
+                    {selectedPillar.metricLabel1}
+                  </div>
+                  <div className="text-base sm:text-lg font-bold text-slate-800 tabular-nums font-sans">
+                    {selectedPillar.metricValue1}
+                  </div>
+                </div>
+
+                {/* 4. Metric 2 */}
+                <div className="p-4 rounded-2xl bg-slate-50/70 border border-slate-200/80 shadow-2xs space-y-1.5">
+                  <div className="text-xs font-bold uppercase tracking-wider text-slate-600 font-sans">
+                    {selectedPillar.metricLabel2}
+                  </div>
+                  <div className="text-base sm:text-lg font-bold text-slate-800 tabular-nums font-sans">
+                    {selectedPillar.metricValue2}
+                  </div>
+                </div>
+              </div>
+
+              {/* Pre-COVID Benchmark if available */}
+              {selectedPillar.compPreCovid && (
+                <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs flex items-center justify-between">
+                  <span className="font-bold text-slate-600 uppercase text-[11px] tracking-wide">Pre-COVID Benchmark:</span>
+                  <span className="font-bold text-slate-800">{selectedPillar.compPreCovid}</span>
+                </div>
+              )}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="flex justify-end pt-2 border-t border-slate-100">
+              <button
+                type="button"
+                onClick={() => setSelectedPillar(null)}
+                className="w-full sm:w-auto px-6 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-semibold font-sans transition-all cursor-pointer shadow-xs"
+              >
+                Close Breakdown
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

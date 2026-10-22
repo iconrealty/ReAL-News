@@ -26,7 +26,7 @@ import { AdBannerRenderer } from './components/AdBannerRenderer';
 import { ManagerAdminModal } from './components/ManagerAdminModal';
 import { NewsManagerModal } from './components/NewsManagerModal';
 import { MarketSpeedStatusModal } from './components/MarketSpeedStatusModal';
-import { Sparkles, Building2, Flame, Compass, ChevronRight, Users, MapPin, TrendingUp, Clock, Tag, BarChart3, Check, Newspaper, X, Info, RefreshCw } from 'lucide-react';
+import { Sparkles, Building2, Flame, Compass, ChevronRight, Users, MapPin, TrendingUp, Clock, Tag, BarChart3, Check, Newspaper, X, Info, RefreshCw, Calendar } from 'lucide-react';
 
 // Helper function to check if an article is recent (within 1 day / 24 hours) and not deprecated
 export function isArticleRecent(art: NewsArticle, maxDays: number = 1): boolean {
@@ -822,8 +822,9 @@ export function App() {
                           <span>Reports On Housing</span>
                         </span>
                         <span className="text-slate-300 font-bold hidden sm:inline">•</span>
-                        <span className="font-bold text-slate-500 font-sans text-xs">
-                          {OC_HOUSING_REPORT_METADATA.reportDate}
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-100 border border-slate-200/90 text-slate-800 font-bold text-xs font-sans shadow-2xs">
+                          <Calendar className="w-3.5 h-3.5 text-[#FA2D48]" />
+                          <span>Report Date: {OC_HOUSING_REPORT_METADATA.reportDate}</span>
                         </span>
                       </div>
 
@@ -909,40 +910,28 @@ export function App() {
                             <button
                               type="button"
                               onClick={() => setShowHistoricalMarketTimeModal(true)}
-                              className="relative flex items-center h-14 sm:h-16 w-full overflow-hidden rounded-full bg-gradient-to-r from-white via-slate-50/80 to-white hover:from-slate-50 hover:to-white border-2 border-slate-300/80 hover:border-rose-400 text-slate-800 shadow-md hover:shadow-lg hover:ring-2 hover:ring-rose-400/20 transition-all cursor-pointer font-sans group active:scale-[0.99] px-3.5 sm:px-5 select-none mb-5"
+                              className="relative flex items-center h-12 w-full overflow-hidden bg-transparent text-slate-800 transition-opacity hover:opacity-85 cursor-pointer font-sans group select-none mb-4"
                               title={`Click to view ${currentCity.name} Historical Speed & Pace`}
                             >
-                              {/* Fixed Left Beacon */}
-                              <div className="flex items-center pr-3 sm:pr-4 border-r-2 border-slate-200/90 shrink-0 z-10 bg-white group-hover:bg-slate-50 transition-colors">
-                                <span className="relative flex h-3 w-3 sm:h-3.5 sm:w-3.5 shrink-0">
-                                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FA2D48] opacity-75"></span>
-                                  <span className="relative inline-flex rounded-full h-3 w-3 sm:h-3.5 sm:w-3.5 bg-[#FA2D48] shadow-sm"></span>
-                                </span>
-                              </div>
-
                               {/* Running City Equation */}
-                              <div className="relative overflow-hidden flex-1 mx-2 sm:mx-4">
+                              <div className="relative overflow-hidden w-full">
                                 <div className="animate-ticker flex items-center group-hover:[animation-play-state:paused]">
                                   {/* 1st copy */}
                                   <div className="flex items-center gap-4 sm:gap-6 text-xs sm:text-sm md:text-[15px] font-bold tracking-tight uppercase text-slate-700 shrink-0 pr-6 sm:pr-8">
                                     <span className={`font-black uppercase tracking-wider px-2.5 sm:px-3.5 py-1 rounded-full border shadow-2xs text-xs sm:text-sm ${cond.tickerBadgeClass}`}>
                                       {cond.capitalLabel}
                                     </span>
-                                    <span className="text-[#FA2D48] text-xs sm:text-sm opacity-90">●</span>
                                     <span className="font-extrabold text-slate-900 text-xs sm:text-sm md:text-[15px]">
                                       MARKET SPEED: <span className={`${speedColor} font-black underline decoration-2 decoration-current underline-offset-2`}>{speedLabel}</span>
                                     </span>
-                                    <span className="text-[#FA2D48] text-xs sm:text-sm opacity-90">●</span>
                                     <span className="text-slate-600 font-bold">
                                       DEMAND: <span className="text-emerald-600 font-black text-sm sm:text-base md:text-lg">{marketData.demand30Days}</span>{' '}
                                       <span className="text-emerald-600 font-black text-xl leading-none inline-block">↑</span>
                                     </span>
-                                    <span className="text-[#FA2D48] text-xs sm:text-sm opacity-90">●</span>
                                     <span className="text-slate-600 font-bold">
                                       SUPPLY: <span className="text-slate-900 font-black text-sm sm:text-base md:text-lg">{marketData.currentActives}</span>{' '}
                                       <span className="text-[#FA2D48] font-black text-xl leading-none inline-block">↓</span>
                                     </span>
-                                    <span className="text-[#FA2D48] text-xs sm:text-sm opacity-90">●</span>
                                     <span className="text-slate-600 font-bold">
                                       EMT: <span className="text-slate-950 font-black text-sm sm:text-base md:text-lg">{marketData.marketTimeDays} DAYS</span>
                                       {emtDelta !== 0 && (
@@ -952,28 +941,24 @@ export function App() {
                                         </span>
                                       )}
                                     </span>
-                                    <span className="text-[#FA2D48] font-black text-sm sm:text-base">=</span>
+                                    <span className="text-slate-300 font-light text-sm sm:text-base select-none">/</span>
                                   </div>
                                   {/* 2nd identical copy */}
                                   <div className="flex items-center gap-4 sm:gap-6 text-xs sm:text-sm md:text-[15px] font-bold tracking-tight uppercase text-slate-700 shrink-0 pr-6 sm:pr-8" aria-hidden="true">
                                     <span className={`font-black uppercase tracking-wider px-2.5 sm:px-3.5 py-1 rounded-full border shadow-2xs text-xs sm:text-sm ${cond.tickerBadgeClass}`}>
                                       {cond.capitalLabel}
                                     </span>
-                                    <span className="text-[#FA2D48] text-xs sm:text-sm opacity-90">●</span>
                                     <span className="font-extrabold text-slate-900 text-xs sm:text-sm md:text-[15px]">
                                       MARKET SPEED: <span className={`${speedColor} font-black underline decoration-2 decoration-current underline-offset-2`}>{speedLabel}</span>
                                     </span>
-                                    <span className="text-[#FA2D48] text-xs sm:text-sm opacity-90">●</span>
                                     <span className="text-slate-600 font-bold">
                                       DEMAND: <span className="text-emerald-600 font-black text-sm sm:text-base md:text-lg">{marketData.demand30Days}</span>{' '}
                                       <span className="text-emerald-600 font-black text-xl leading-none inline-block">↑</span>
                                     </span>
-                                    <span className="text-[#FA2D48] text-xs sm:text-sm opacity-90">●</span>
                                     <span className="text-slate-600 font-bold">
                                       SUPPLY: <span className="text-slate-900 font-black text-sm sm:text-base md:text-lg">{marketData.currentActives}</span>{' '}
                                       <span className="text-[#FA2D48] font-black text-xl leading-none inline-block">↓</span>
                                     </span>
-                                    <span className="text-[#FA2D48] text-xs sm:text-sm opacity-90">●</span>
                                     <span className="text-slate-600 font-bold">
                                       EMT: <span className="text-slate-950 font-black text-sm sm:text-base md:text-lg">{marketData.marketTimeDays} DAYS</span>
                                       {emtDelta !== 0 && (
@@ -983,17 +968,9 @@ export function App() {
                                         </span>
                                       )}
                                     </span>
-                                    <span className="text-[#FA2D48] font-black text-sm sm:text-base">=</span>
+                                    <span className="text-slate-300 font-light text-sm sm:text-base select-none">/</span>
                                   </div>
                                 </div>
-                              </div>
-
-                              {/* Fixed Right Action */}
-                              <div className="pl-3 sm:pr-1 sm:pl-4 border-l-2 border-slate-200/90 shrink-0 z-10 bg-white group-hover:bg-slate-50 transition-colors flex items-center gap-1.5">
-                                <span className="text-xs sm:text-sm font-black text-slate-700 group-hover:text-rose-600 uppercase tracking-wider transition-colors hidden sm:inline px-2 py-0.5 rounded bg-slate-100 group-hover:bg-rose-50">
-                                  Pace
-                                </span>
-                                <span className="text-sm sm:text-base font-black text-[#FA2D48] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform">↗</span>
                               </div>
                             </button>
                           );
@@ -1153,8 +1130,8 @@ export function App() {
                   })()}
                 </div>
 
-                {/* Live Steven Thomas Orange County Live Tab right below the Steven Thomas tab/card */}
-                {(() => {
+                {/* Live Steven Thomas Orange County Live Tab right below the Steven Thomas tab/card (Shown ONLY when Orange County is selected) */}
+                {currentCity.id === 'orange-county' && (() => {
                   const countywideCond = getMarketCondition(OC_COUNTYWIDE_LIVE_METRICS.emtDays);
                   const countywideEmtDelta = OC_COUNTYWIDE_LIVE_METRICS.emtDelta;
                   const isCountyFaster = countywideEmtDelta < 0;
@@ -1168,30 +1145,20 @@ export function App() {
                         type="button"
                         id="main-steven-thomas-market-speed-pill"
                         onClick={() => setShowMarketDirectionModal(true)}
-                        className="relative flex items-center h-14 sm:h-16 w-full overflow-hidden rounded-full bg-gradient-to-r from-white via-slate-50/80 to-white hover:from-slate-50 hover:to-white border-2 border-slate-300/80 hover:border-rose-400 text-slate-800 shadow-md hover:shadow-lg hover:ring-2 hover:ring-rose-400/20 transition-all cursor-pointer font-sans group active:scale-[0.99] px-3.5 sm:px-5 select-none"
+                        className="relative flex items-center h-12 w-full overflow-hidden bg-transparent text-slate-800 transition-opacity hover:opacity-85 cursor-pointer font-sans group select-none"
                         title="Click to view Market Speed & Status"
                       >
-                        {/* Fixed Left Beacon */}
-                        <div className="flex items-center pr-3 sm:pr-4 border-r-2 border-slate-200/90 shrink-0 z-10 bg-white group-hover:bg-slate-50 transition-colors">
-                          <span className="relative flex h-3 w-3 sm:h-3.5 sm:w-3.5 shrink-0">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FA2D48] opacity-75"></span>
-                            <span className="relative inline-flex rounded-full h-3 w-3 sm:h-3.5 sm:w-3.5 bg-[#FA2D48] shadow-sm"></span>
-                          </span>
-                        </div>
-
                         {/* Running Text Streaming Slower to the Left (Stock / Live Feed Style) */}
-                        <div className="relative overflow-hidden flex-1 mx-2 sm:mx-4">
+                        <div className="relative overflow-hidden w-full">
                           <div className="animate-ticker flex items-center group-hover:[animation-play-state:paused]">
                             {/* 1st copy */}
                             <div className="flex items-center gap-4 sm:gap-6 text-xs sm:text-sm md:text-[15px] font-bold tracking-tight uppercase text-slate-700 shrink-0 pr-6 sm:pr-8">
                               <span className={`font-black uppercase tracking-wider px-2.5 sm:px-3.5 py-1 rounded-full border shadow-2xs text-xs sm:text-sm ${countywideCond.tickerBadgeClass}`}>
                                 {countywideCond.capitalLabel}
                               </span>
-                              <span className="text-[#FA2D48] text-xs sm:text-sm opacity-90">●</span>
                               <span className="font-extrabold text-slate-900 text-xs sm:text-sm md:text-[15px]">
                                 MARKET SPEED: <span className={`${countySpeedColor} font-black underline decoration-2 decoration-current underline-offset-2`}>{countySpeedLabel}</span>
                               </span>
-                              <span className="text-[#FA2D48] text-xs sm:text-sm opacity-90">●</span>
                               <span className="text-slate-600 font-bold">
                                 DEMAND: <span className="text-emerald-600 font-black text-sm sm:text-base md:text-lg">{OC_COUNTYWIDE_LIVE_METRICS.demand.toLocaleString()}</span>{' '}
                                 <span className="text-rose-500 font-black inline-flex items-center gap-0.5 text-xs sm:text-sm">
@@ -1199,7 +1166,6 @@ export function App() {
                                   <span>{OC_COUNTYWIDE_LIVE_METRICS.demandDelta}</span>
                                 </span>
                               </span>
-                              <span className="text-[#FA2D48] text-xs sm:text-sm opacity-90">●</span>
                               <span className="text-slate-600 font-bold">
                                 SUPPLY: <span className="text-slate-900 font-black text-sm sm:text-base md:text-lg">{OC_COUNTYWIDE_LIVE_METRICS.supply.toLocaleString()}</span>{' '}
                                 <span className="text-emerald-600 font-black inline-flex items-center gap-0.5 text-xs sm:text-sm">
@@ -1207,7 +1173,6 @@ export function App() {
                                   <span>{OC_COUNTYWIDE_LIVE_METRICS.supplyDelta}</span>
                                 </span>
                               </span>
-                              <span className="text-[#FA2D48] text-xs sm:text-sm opacity-90">●</span>
                               <span className="text-slate-600 font-bold">
                                 EMT: <span className="text-slate-950 font-black text-sm sm:text-base md:text-lg">{OC_COUNTYWIDE_LIVE_METRICS.emtDays} DAYS</span>{' '}
                                 <span className="text-emerald-600 font-black inline-flex items-center gap-0.5 text-xs sm:text-sm">
@@ -1215,18 +1180,16 @@ export function App() {
                                   <span>{Math.abs(OC_COUNTYWIDE_LIVE_METRICS.emtDelta)}d FASTER</span>
                                 </span>
                               </span>
-                              <span className="text-[#FA2D48] font-black text-sm sm:text-base">=</span>
+                              <span className="text-slate-300 font-light text-sm sm:text-base select-none">/</span>
                             </div>
                             {/* 2nd identical copy for seamless infinite loop */}
                             <div className="flex items-center gap-4 sm:gap-6 text-xs sm:text-sm md:text-[15px] font-bold tracking-tight uppercase text-slate-700 shrink-0 pr-6 sm:pr-8" aria-hidden="true">
                               <span className={`font-black uppercase tracking-wider px-2.5 sm:px-3.5 py-1 rounded-full border shadow-2xs text-xs sm:text-sm ${countywideCond.tickerBadgeClass}`}>
                                 {countywideCond.capitalLabel}
                               </span>
-                              <span className="text-[#FA2D48] text-xs sm:text-sm opacity-90">●</span>
                               <span className="font-extrabold text-slate-900 text-xs sm:text-sm md:text-[15px]">
                                 MARKET SPEED: <span className={`${countySpeedColor} font-black underline decoration-2 decoration-current underline-offset-2`}>{countySpeedLabel}</span>
                               </span>
-                              <span className="text-[#FA2D48] text-xs sm:text-sm opacity-90">●</span>
                               <span className="text-slate-600 font-bold">
                                 DEMAND: <span className="text-emerald-600 font-black text-sm sm:text-base md:text-lg">{OC_COUNTYWIDE_LIVE_METRICS.demand.toLocaleString()}</span>{' '}
                                 <span className="text-rose-500 font-black inline-flex items-center gap-0.5 text-xs sm:text-sm">
@@ -1234,7 +1197,6 @@ export function App() {
                                   <span>{OC_COUNTYWIDE_LIVE_METRICS.demandDelta}</span>
                                 </span>
                               </span>
-                              <span className="text-[#FA2D48] text-xs sm:text-sm opacity-90">●</span>
                               <span className="text-slate-600 font-bold">
                                 SUPPLY: <span className="text-slate-900 font-black text-sm sm:text-base md:text-lg">{OC_COUNTYWIDE_LIVE_METRICS.supply.toLocaleString()}</span>{' '}
                                 <span className="text-emerald-600 font-black inline-flex items-center gap-0.5 text-xs sm:text-sm">
@@ -1242,7 +1204,6 @@ export function App() {
                                   <span>{OC_COUNTYWIDE_LIVE_METRICS.supplyDelta}</span>
                                 </span>
                               </span>
-                              <span className="text-[#FA2D48] text-xs sm:text-sm opacity-90">●</span>
                               <span className="text-slate-600 font-bold">
                                 EMT: <span className="text-slate-950 font-black text-sm sm:text-base md:text-lg">{OC_COUNTYWIDE_LIVE_METRICS.emtDays} DAYS</span>{' '}
                                 <span className="text-emerald-600 font-black inline-flex items-center gap-0.5 text-xs sm:text-sm">
@@ -1250,17 +1211,9 @@ export function App() {
                                   <span>{Math.abs(OC_COUNTYWIDE_LIVE_METRICS.emtDelta)}d FASTER</span>
                                 </span>
                               </span>
-                              <span className="text-[#FA2D48] font-black text-sm sm:text-base">=</span>
+                              <span className="text-slate-300 font-light text-sm sm:text-base select-none">/</span>
                             </div>
                           </div>
-                        </div>
-
-                        {/* Fixed Right Action */}
-                        <div className="pl-3 sm:pr-1 sm:pl-4 border-l-2 border-slate-200/90 shrink-0 z-10 bg-white group-hover:bg-slate-50 transition-colors flex items-center gap-1.5">
-                          <span className="text-xs sm:text-sm font-black text-slate-700 group-hover:text-rose-600 uppercase tracking-wider transition-colors hidden sm:inline px-2 py-0.5 rounded bg-slate-100 group-hover:bg-rose-50">
-                            Table
-                          </span>
-                          <span className="text-sm sm:text-base font-black text-[#FA2D48] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform">↗</span>
                         </div>
                       </button>
                     </div>
