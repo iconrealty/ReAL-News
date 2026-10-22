@@ -15,6 +15,7 @@ import { FeaturedHeroStory } from './components/FeaturedHeroStory';
 import { NewsGridSection } from './components/NewsGridSection';
 import { OrangeCountyMarketTrends, getMarketCondition } from './components/OrangeCountyMarketTrends';
 import { IconMarketIntelligence } from './components/IconMarketIntelligence';
+import { HousingSummarySection } from './components/HousingSummarySection';
 import { OCFastMarketReport } from './components/OCFastMarketReport';
 import { MortgageCalculator } from './components/MortgageCalculator';
 import { BuydownCalculator } from './components/BuydownCalculator';
@@ -1218,6 +1219,9 @@ export function App() {
                     </div>
                   );
                 })()}
+
+                {/* Steven Thomas Housing Summary (Page 9) on Front Page */}
+                <HousingSummarySection className="pt-2" showHeader={true} />
               </>
             ) : (
               /* Internal Pages Clean Header: No Steven Thomas or OC Fast duplicated top blocks */

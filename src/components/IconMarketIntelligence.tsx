@@ -36,6 +36,7 @@ import { CITIES } from '../data/mockNews';
 import { CityInfo } from '../types';
 import { getMarketCondition } from './OrangeCountyMarketTrends';
 import { MarketSpeedStatusModal } from './MarketSpeedStatusModal';
+import { HousingSummarySection } from './HousingSummarySection';
 
 interface IconMarketIntelligenceProps {
   currentCity?: CityInfo;
@@ -54,7 +55,6 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
   const [activeBreakdownView, setActiveBreakdownView] = useState<'page8' | 'attached' | 'detached'>('page8');
   const [selectedTierPrice, setSelectedTierPrice] = useState<string>('$1.25M - $1.5M');
   const [hasCopiedSummary, setHasCopiedSummary] = useState<boolean>(false);
-  const [selectedPillar, setSelectedPillar] = useState<typeof OC_PAGE_9_HOUSING_SUMMARY.pillars[0] | null>(null);
 
   const meta = OC_HOUSING_REPORT_METADATA;
   const page9 = OC_PAGE_9_HOUSING_SUMMARY;
@@ -152,7 +152,7 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
         return { bg: "bg-emerald-50 text-emerald-700 border-emerald-200", dot: "bg-emerald-500", barColor: "bg-emerald-500" };
       case "Buyer's Market":
       default:
-        return { bg: "bg-indigo-50 text-indigo-700 border-indigo-200", dot: "bg-indigo-500", barColor: "bg-indigo-600" };
+        return { bg: "bg-blue-50 text-blue-700 border-blue-200", dot: "bg-blue-500", barColor: "bg-blue-600" };
     }
   };
 
@@ -592,83 +592,7 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
               SECTION 1: PAGE 9 — ORANGE COUNTY HOUSING SUMMARY
               (Minimalist Apple / Tesla Telemetry Grid: Pure Numbers & Metrics, Zero Explanations)
           ────────────────────────────────────────────────────────────────────────── */}
-          <div className="space-y-4">
-        
-        {/* Section Header */}
-        <div className="px-1 flex items-center justify-between flex-wrap gap-2">
-          <h2 className="text-2xl sm:text-3xl font-extrabold font-sans tracking-tight text-slate-900">
-            Housing Summary
-          </h2>
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 border border-slate-200/90 text-slate-700 font-bold text-xs font-sans shadow-2xs">
-            <Calendar className="w-3.5 h-3.5 text-[#FA2D48]" />
-            <span>Report Date: {meta.reportDate}</span>
-          </span>
-        </div>
-
-        {/* 6 Compact & Simple Metric Pillar Cards — Easy to See, Read & Understand */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-          {page9.pillars.map((pillar) => {
-            const isNegative = pillar.badgeType === 'negative';
-            const isWarning = pillar.badgeType === 'warning';
-            const isPositive = pillar.badgeType === 'positive';
-
-            return (
-              <button
-                type="button"
-                key={pillar.id}
-                onClick={() => setSelectedPillar(pillar)}
-                className="w-full text-left rounded-2xl bg-white border border-slate-200/90 p-4 hover:border-slate-300 hover:shadow-xs transition-all font-sans group cursor-pointer active:scale-[0.99] flex flex-col justify-between gap-2.5"
-                title={`Click to view ${pillar.title} breakdown`}
-              >
-                {/* Top Row: Title & Status Badge */}
-                <div className="flex items-center justify-between gap-2">
-                  <span className="text-xs font-bold text-slate-600 uppercase tracking-wide group-hover:text-slate-900 transition-colors">
-                    {pillar.title}
-                  </span>
-                  <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold tracking-wide uppercase border shrink-0 ${
-                    isNegative 
-                      ? 'bg-rose-50 text-rose-700 border-rose-200' 
-                      : isWarning 
-                        ? 'bg-amber-50 text-amber-700 border-amber-200' 
-                        : isPositive 
-                          ? 'bg-emerald-50 text-emerald-700 border-emerald-200' 
-                          : 'bg-slate-100 text-slate-700 border-slate-200'
-                  }`}>
-                    {pillar.badge}
-                  </span>
-                </div>
-
-                {/* Primary Numeric Stat & Unit */}
-                <div className="flex items-baseline justify-between gap-2 pt-0.5">
-                  <span className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight tabular-nums">
-                    {pillar.stat}
-                  </span>
-                  <span className="text-xs font-medium text-slate-500 truncate">
-                    {pillar.unit}
-                  </span>
-                </div>
-
-                {/* Bottom Row: 2-Wk Velocity & Click Hint */}
-                <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-1.5 text-slate-500">
-                    <span className="text-[10px] uppercase font-semibold text-slate-400">2-Wk:</span>
-                    <span className={`font-bold tabular-nums text-xs ${
-                      isNegative ? 'text-rose-600' : isWarning ? 'text-amber-700' : isPositive ? 'text-emerald-700' : 'text-slate-800'
-                    }`}>
-                      {pillar.delta2Wks}
-                    </span>
-                  </div>
-                  <span className="text-[11px] font-medium text-slate-400 group-hover:text-slate-700 transition-colors flex items-center gap-0.5">
-                    <span>Details</span>
-                    <span className="text-xs">↗</span>
-                  </span>
-                </div>
-              </button>
-            );
-          })}
-        </div>
-
-      </div>
+          <HousingSummarySection showHeader={true} />
 
       {/* ──────────────────────────────────────────────────────────────────────────
           SECTION 2: PAGE 8 — ORANGE COUNTY MARKET BREAKDOWN
@@ -766,16 +690,16 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
             onClick={() => setSelectedTierPrice('$4M - $6M')}
             className={`p-5 sm:p-6 rounded-3xl border transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between space-y-4 ${
               ['$2.5M - $4M', '$4M - $6M', '$6M+'].includes(selectedTier.priceRange)
-                ? 'bg-indigo-50/60 border-indigo-300 ring-2 ring-indigo-400/30 shadow-xs'
+                ? 'bg-blue-50/60 border-blue-300 ring-2 ring-blue-400/30 shadow-xs'
                 : 'bg-white hover:bg-slate-50 border-slate-200/90'
             }`}
           >
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-black uppercase tracking-wider text-indigo-800 bg-indigo-100 px-2 py-0.5 rounded-full">
+                <span className="text-[10px] font-black uppercase tracking-wider text-blue-800 bg-blue-100 px-2 py-0.5 rounded-full">
                   High Inventory
                 </span>
-                <span className="text-xs font-black text-indigo-700">183–379 Days</span>
+                <span className="text-xs font-black text-blue-700">183–379 Days</span>
               </div>
               <h3 className="text-xl font-black text-slate-950 tracking-tight">
                 Luxury Segment
@@ -785,14 +709,14 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
               </div>
             </div>
 
-            <div className="pt-3 border-t border-indigo-200/60 grid grid-cols-2 gap-2 text-xs">
+            <div className="pt-3 border-t border-blue-200/60 grid grid-cols-2 gap-2 text-xs">
               <div>
                 <div className="text-[10px] font-bold text-slate-400 uppercase">Buyer Demand</div>
                 <div className="text-base font-black text-slate-950 tabular-nums">12% of OC</div>
               </div>
               <div>
                 <div className="text-[10px] font-bold text-slate-400 uppercase">Market State</div>
-                <div className="text-base font-black text-indigo-700">Buyer's Market</div>
+                <div className="text-base font-black text-blue-700">Buyer's Market</div>
               </div>
             </div>
           </div>
@@ -890,7 +814,7 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                   selectedTier.pctCurrentDemand > selectedTier.pctCurrentInventory
                     ? 'text-amber-700'
                     : selectedTier.pctCurrentDemand < selectedTier.pctCurrentInventory
-                      ? 'text-indigo-700'
+                      ? 'text-blue-700'
                       : 'text-sky-700'
                 }`}>
                   {selectedTier.pctCurrentDemand > selectedTier.pctCurrentInventory
@@ -1086,7 +1010,7 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                 { label: "Slight Seller's Market", days: "60 – 89 Days", color: "bg-amber-500", desc: "Sellers retain moderate negotiating leverage" },
                 { label: "Balanced Market", days: "90 – 119 Days", color: "bg-sky-500", desc: "Equal negotiating power, realistic pricing wins" },
                 { label: "Slight Buyer's Market", days: "120 – 149 Days", color: "bg-emerald-500", desc: "Buyers have leverage, price reductions frequent" },
-                { label: "Buyer's Market", days: "150+ Days", color: "bg-indigo-600", desc: "Significant buyer market, inventory lingers" },
+                { label: "Buyer's Market", days: "150+ Days", color: "bg-blue-600", desc: "Significant buyer market, inventory lingers" },
               ].map((range) => (
                 <div key={range.label} className="p-3.5 hover:bg-slate-50 transition-colors space-y-1">
                   <div className="flex items-center justify-between">
@@ -1194,123 +1118,6 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
         supplyDelta={OC_COUNTYWIDE_LIVE_METRICS.supplyDelta}
         emtDelta={OC_COUNTYWIDE_LIVE_METRICS.emtDelta}
       />
-
-      {/* HOUSING SUMMARY PILLAR BREAKDOWN MODAL */}
-      {selectedPillar && (
-        <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs transition-opacity animate-in fade-in"
-          onClick={() => setSelectedPillar(null)}
-        >
-          <div 
-            className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-7 max-w-lg w-full shadow-2xl space-y-5 relative animate-in zoom-in-95 duration-150 text-left font-sans"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Modal Header */}
-            <div className="flex items-start justify-between pb-3 border-b border-slate-100 gap-3">
-              <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight font-sans">
-                {selectedPillar.title}
-              </h3>
-              <button
-                type="button"
-                onClick={() => setSelectedPillar(null)}
-                className="p-1.5 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
-                title="Close"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* Primary Stat Highlight Card */}
-            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-between flex-wrap gap-2">
-              <div className="space-y-0.5">
-                <div className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight font-sans tabular-nums">
-                  {selectedPillar.stat}
-                </div>
-                <div className="text-xs font-medium text-slate-500 font-sans">
-                  {selectedPillar.unit}
-                </div>
-              </div>
-              <span className={`px-3 py-1 rounded-full text-xs font-bold tracking-wider uppercase font-sans border ${
-                selectedPillar.badgeType === 'negative'
-                  ? 'bg-rose-50 text-rose-700 border-rose-200'
-                  : selectedPillar.badgeType === 'warning'
-                    ? 'bg-amber-50 text-amber-700 border-amber-200'
-                    : selectedPillar.badgeType === 'positive'
-                      ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                      : 'bg-slate-100 text-slate-700 border-slate-200'
-              }`}>
-                {selectedPillar.badge}
-              </span>
-            </div>
-
-            {/* 4 Clear Sub-Metrics (Displayed Cleanly in a Grid, Not in Tabs) */}
-            <div className="space-y-3">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {/* 1. 2-Week Velocity */}
-                <div className="p-4 rounded-2xl bg-slate-50/70 border border-slate-200/80 shadow-2xs space-y-1.5">
-                  <div className="text-xs font-bold uppercase tracking-wider text-slate-600 font-sans">
-                    2-Week Velocity
-                  </div>
-                  <div className={`text-base sm:text-lg font-bold tabular-nums font-sans ${
-                    selectedPillar.badgeType === 'negative' ? 'text-rose-600' : selectedPillar.badgeType === 'warning' ? 'text-amber-700' : selectedPillar.badgeType === 'positive' ? 'text-emerald-700' : 'text-slate-800'
-                  }`}>
-                    {selectedPillar.delta2Wks}
-                  </div>
-                </div>
-
-                {/* 2. Last Year Comparison */}
-                <div className="p-4 rounded-2xl bg-slate-50/70 border border-slate-200/80 shadow-2xs space-y-1.5">
-                  <div className="text-xs font-bold uppercase tracking-wider text-slate-600 font-sans">
-                    Last Year (YoY)
-                  </div>
-                  <div className="text-base sm:text-lg font-bold text-slate-800 tabular-nums font-sans">
-                    {selectedPillar.deltaYoY}
-                  </div>
-                </div>
-
-                {/* 3. Metric 1 */}
-                <div className="p-4 rounded-2xl bg-slate-50/70 border border-slate-200/80 shadow-2xs space-y-1.5">
-                  <div className="text-xs font-bold uppercase tracking-wider text-slate-600 font-sans">
-                    {selectedPillar.metricLabel1}
-                  </div>
-                  <div className="text-base sm:text-lg font-bold text-slate-800 tabular-nums font-sans">
-                    {selectedPillar.metricValue1}
-                  </div>
-                </div>
-
-                {/* 4. Metric 2 */}
-                <div className="p-4 rounded-2xl bg-slate-50/70 border border-slate-200/80 shadow-2xs space-y-1.5">
-                  <div className="text-xs font-bold uppercase tracking-wider text-slate-600 font-sans">
-                    {selectedPillar.metricLabel2}
-                  </div>
-                  <div className="text-base sm:text-lg font-bold text-slate-800 tabular-nums font-sans">
-                    {selectedPillar.metricValue2}
-                  </div>
-                </div>
-              </div>
-
-              {/* Pre-COVID Benchmark if available */}
-              {selectedPillar.compPreCovid && (
-                <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs flex items-center justify-between">
-                  <span className="font-bold text-slate-600 uppercase text-[11px] tracking-wide">Pre-COVID Benchmark:</span>
-                  <span className="font-bold text-slate-800">{selectedPillar.compPreCovid}</span>
-                </div>
-              )}
-            </div>
-
-            {/* Modal Footer */}
-            <div className="flex justify-end pt-2 border-t border-slate-100">
-              <button
-                type="button"
-                onClick={() => setSelectedPillar(null)}
-                className="w-full sm:w-auto px-6 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-semibold font-sans transition-all cursor-pointer shadow-xs"
-              >
-                Close Breakdown
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
     </div>
   );
