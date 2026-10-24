@@ -885,11 +885,11 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                 <span>
                   {selectedTier.pctCurrentDemand > selectedTier.pctCurrentInventory ? (
                     <span className="text-amber-800 font-bold">
-                      Demand is +{selectedTier.pctCurrentDemand - selectedTier.pctCurrentInventory}% higher than supply — homes sell quickly.
+                      Demand is +{selectedTier.pctCurrentDemand - selectedTier.pctCurrentInventory}% higher than supply. Homes sell quickly.
                     </span>
                   ) : selectedTier.pctCurrentDemand < selectedTier.pctCurrentInventory ? (
                     <span className="text-blue-800 font-bold">
-                      Supply is +{selectedTier.pctCurrentInventory - selectedTier.pctCurrentDemand}% higher than demand — buyers have negotiating room.
+                      Supply is +{selectedTier.pctCurrentInventory - selectedTier.pctCurrentDemand}% higher than demand. Buyers have negotiating room.
                     </span>
                   ) : (
                     <span className="text-slate-700 font-bold">
@@ -898,7 +898,7 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                   )}
                 </span>
                 <span className="text-[10px] text-slate-400 font-bold uppercase shrink-0 pl-2">
-                  Scale: 0–25%
+                  Scale: 0 to 25%
                 </span>
               </div>
             </div>
