@@ -806,51 +806,90 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
               </div>
             </div>
 
-            {/* Demand vs Supply Visual Balance Indicator */}
-            <div className="bg-white p-4 rounded-2xl border border-slate-200/80 space-y-2.5">
-              <div className="flex items-center justify-between text-xs font-bold">
-                <span className="text-slate-800 font-black">Market Dynamics</span>
-                <span className={`text-[11px] font-extrabold ${
+            {/* Demand vs Supply Visual Balance Indicator — Stacked One Bar On Top of the Other */}
+            <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                <span className="text-xs sm:text-sm font-black uppercase tracking-wider text-slate-950">
+                  Buyer Demand vs. Available Supply
+                </span>
+                <span className={`self-start sm:self-auto px-2.5 py-1 rounded-full text-xs font-black border ${
                   selectedTier.pctCurrentDemand > selectedTier.pctCurrentInventory
-                    ? 'text-amber-700'
+                    ? 'bg-amber-50 text-amber-800 border-amber-200'
                     : selectedTier.pctCurrentDemand < selectedTier.pctCurrentInventory
-                      ? 'text-blue-700'
-                      : 'text-sky-700'
+                      ? 'bg-blue-50 text-blue-800 border-blue-200'
+                      : 'bg-sky-50 text-sky-800 border-sky-200'
                 }`}>
                   {selectedTier.pctCurrentDemand > selectedTier.pctCurrentInventory
-                    ? 'Demand exceeds supply · Advantage Seller'
+                    ? 'Demand Exceeds Supply · Advantage Seller'
                     : selectedTier.pctCurrentDemand < selectedTier.pctCurrentInventory
-                      ? 'Supply exceeds demand · Advantage Buyer'
-                      : 'Supply and demand in parity'}
+                      ? 'Supply Exceeds Demand · Advantage Buyer'
+                      : 'Supply & Demand in Parity'}
                 </span>
               </div>
 
-              <div className="grid grid-cols-2 gap-3 text-xs">
-                <div className="space-y-1">
-                  <div className="flex justify-between text-[11px] text-slate-500">
-                    <span>Buyer Demand</span>
-                    <span className="font-black text-emerald-600">{selectedTier.pctCurrentDemand}%</span>
+              {/* Stacked Comparative Bars: Top Bar on Top of Bottom Bar */}
+              <div className="space-y-3.5">
+                {/* 1. Top Bar: Buyer Demand */}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between text-xs font-bold">
+                    <span className="flex items-center gap-1.5 text-slate-800 font-extrabold">
+                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0"></span>
+                      <span>Buyer Demand</span>
+                      <span className="text-slate-400 font-normal text-[11px] hidden sm:inline">(Share of all OC buyers)</span>
+                    </span>
+                    <span className="text-sm font-black text-emerald-600 tabular-nums">
+                      {selectedTier.pctCurrentDemand}%
+                    </span>
                   </div>
-                  <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                  <div className="w-full bg-slate-100 h-3 rounded-full overflow-hidden p-0.5 border border-slate-200/50">
                     <div 
-                      className="bg-emerald-500 h-full rounded-full transition-all duration-300"
-                      style={{ width: `${Math.min(100, selectedTier.pctCurrentDemand * 5)}%` }}
+                      className="bg-emerald-500 h-full rounded-full transition-all duration-300 shadow-2xs"
+                      style={{ width: `${Math.max(4, Math.min(100, (selectedTier.pctCurrentDemand / 25) * 100))}%` }}
                     ></div>
                   </div>
                 </div>
 
-                <div className="space-y-1">
-                  <div className="flex justify-between text-[11px] text-slate-500">
-                    <span>Available Supply</span>
-                    <span className="font-black text-slate-900">{selectedTier.pctCurrentInventory}%</span>
+                {/* 2. Bottom Bar: Available Supply (Directly underneath) */}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between text-xs font-bold">
+                    <span className="flex items-center gap-1.5 text-slate-800 font-extrabold">
+                      <span className="w-2.5 h-2.5 rounded-full bg-slate-900 shrink-0"></span>
+                      <span>Available Supply</span>
+                      <span className="text-slate-400 font-normal text-[11px] hidden sm:inline">(Share of all OC listings)</span>
+                    </span>
+                    <span className="text-sm font-black text-slate-950 tabular-nums">
+                      {selectedTier.pctCurrentInventory}%
+                    </span>
                   </div>
-                  <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                  <div className="w-full bg-slate-100 h-3 rounded-full overflow-hidden p-0.5 border border-slate-200/50">
                     <div 
-                      className="bg-slate-900 h-full rounded-full transition-all duration-300"
-                      style={{ width: `${Math.min(100, selectedTier.pctCurrentInventory * 5)}%` }}
+                      className="bg-slate-900 h-full rounded-full transition-all duration-300 shadow-2xs"
+                      style={{ width: `${Math.max(4, Math.min(100, (selectedTier.pctCurrentInventory / 25) * 100))}%` }}
                     ></div>
                   </div>
                 </div>
+              </div>
+
+              {/* Instant Comparison Summary Note */}
+              <div className="pt-2 text-xs text-slate-600 flex items-center justify-between border-t border-slate-100 font-medium">
+                <span>
+                  {selectedTier.pctCurrentDemand > selectedTier.pctCurrentInventory ? (
+                    <span className="text-amber-800 font-bold">
+                      Demand is +{selectedTier.pctCurrentDemand - selectedTier.pctCurrentInventory}% higher than supply — homes sell quickly.
+                    </span>
+                  ) : selectedTier.pctCurrentDemand < selectedTier.pctCurrentInventory ? (
+                    <span className="text-blue-800 font-bold">
+                      Supply is +{selectedTier.pctCurrentInventory - selectedTier.pctCurrentDemand}% higher than demand — buyers have negotiating room.
+                    </span>
+                  ) : (
+                    <span className="text-slate-700 font-bold">
+                      Supply and demand are equal at {selectedTier.pctCurrentDemand}%.
+                    </span>
+                  )}
+                </span>
+                <span className="text-[10px] text-slate-400 font-bold uppercase shrink-0 pl-2">
+                  Scale: 0–25%
+                </span>
               </div>
             </div>
 
