@@ -269,52 +269,10 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
 
                 return (
                   <div className="mb-2">
-                    {/* Mobile View: High Clarity Telemetry Dashboard Card (Zero Chaos) */}
                     <button
                       type="button"
                       onClick={() => setShowHistoricalMarketTimeModal(true)}
-                      className="sm:hidden w-full bg-slate-50 hover:bg-slate-100/90 border border-slate-200/90 rounded-2xl p-3 text-left transition-all active:scale-[0.99] cursor-pointer shadow-2xs space-y-2.5"
-                      title={`Click to view ${currentCity.name} Historical Speed & Pace`}
-                    >
-                      <div className="flex items-center justify-between gap-2 border-b border-slate-200/70 pb-2">
-                        <span className={`font-black uppercase tracking-wider px-2 py-0.5 rounded-md border text-[10px] ${cond.tickerBadgeClass}`}>
-                          {cond.capitalLabel}
-                        </span>
-                        <div className="flex items-center gap-1 text-[11px] font-black">
-                          <span className="text-slate-500 font-bold">PACE:</span>
-                          <span className={`${speedColor} font-black`}>{speedLabel}</span>
-                          {emtDelta !== 0 && (
-                            <span className={isFaster ? 'text-emerald-600' : 'text-[#FA2D48]'}>
-                              ({Math.abs(emtDelta)}d {isFaster ? 'faster' : 'slower'})
-                            </span>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-3 gap-2 text-center">
-                        <div className="bg-white rounded-xl p-2 border border-slate-200/70 shadow-2xs">
-                          <div className="text-[9px] uppercase font-bold text-slate-400">Demand</div>
-                          <div className="text-base font-black text-emerald-600 tabular-nums">{marketData.demand30Days}</div>
-                          <div className="text-[9px] font-bold text-emerald-600 truncate">Escrows</div>
-                        </div>
-                        <div className="bg-white rounded-xl p-2 border border-slate-200/70 shadow-2xs">
-                          <div className="text-[9px] uppercase font-bold text-slate-400">Supply</div>
-                          <div className="text-base font-black text-slate-900 tabular-nums">{marketData.currentActives}</div>
-                          <div className="text-[9px] font-bold text-slate-500 truncate">Listings</div>
-                        </div>
-                        <div className="bg-white rounded-xl p-2 border border-slate-200/70 shadow-2xs">
-                          <div className="text-[9px] uppercase font-bold text-slate-400">Market Time</div>
-                          <div className="text-base font-black text-slate-950 tabular-nums">{marketData.marketTimeDays}d</div>
-                          <div className="text-[9px] font-bold text-slate-500 truncate">{cond.badgeText}</div>
-                        </div>
-                      </div>
-                    </button>
-
-                    {/* Tablet/Desktop View: Streaming Ticker */}
-                    <button
-                      type="button"
-                      onClick={() => setShowHistoricalMarketTimeModal(true)}
-                      className="hidden sm:flex relative items-center h-12 w-full overflow-hidden bg-transparent text-slate-800 transition-opacity hover:opacity-85 cursor-pointer font-sans group select-none"
+                      className="relative flex items-center h-12 w-full overflow-hidden bg-transparent text-slate-800 transition-opacity hover:opacity-85 cursor-pointer font-sans group select-none"
                       title={`Click to view ${currentCity.name} Historical Speed & Pace`}
                     >
                       {/* Running City Equation */}
@@ -468,17 +426,17 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                   )}
 
                   {/* Active Inventory & Price Metrics */}
-                  <div className="grid grid-cols-2 gap-2.5 sm:gap-4">
-                    <div className="bg-slate-50/80 p-3 sm:p-4 rounded-2xl border border-slate-200/70">
-                      <div className="text-[10px] sm:text-[11px] font-extrabold text-black uppercase tracking-wider truncate">Active Inventory</div>
-                      <div className="text-lg sm:text-3xl font-bold text-slate-900 pt-0.5 sm:pt-1 truncate">{marketData.currentActives} Homes</div>
-                      <div className="text-[10px] sm:text-[11px] text-emerald-600 pt-0.5 sm:pt-1 font-bold truncate">Active listings</div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-slate-50/80 p-4 rounded-2xl border border-slate-200/70">
+                      <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">Active Inventory</div>
+                      <div className="text-3xl font-bold text-slate-900 pt-1">{marketData.currentActives} Homes</div>
+                      <div className="text-xs text-emerald-600 pt-1 font-bold">Active listings</div>
                     </div>
 
-                    <div className="bg-slate-50/80 p-3 sm:p-4 rounded-2xl border border-slate-200/70">
-                      <div className="text-[10px] sm:text-[11px] font-extrabold text-black uppercase tracking-wider truncate">Median List Price</div>
-                      <div className="text-lg sm:text-3xl font-bold text-slate-900 pt-0.5 sm:pt-1 truncate">{marketData.medianActiveListPrice}</div>
-                      <div className="text-[10px] sm:text-[11px] text-emerald-600 pt-0.5 sm:pt-1 font-bold truncate">Current listings</div>
+                    <div className="bg-slate-50/80 p-4 rounded-2xl border border-slate-200/70">
+                      <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">Median List Price</div>
+                      <div className="text-3xl font-bold text-slate-900 pt-1">{marketData.medianActiveListPrice}</div>
+                      <div className="text-xs text-emerald-600 pt-1 font-bold">Current listings</div>
                     </div>
                   </div>
                 </div>
@@ -486,44 +444,44 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
 
               {/* 2. CLOSED SALES DATA (Steven Thomas Page 12 Report) */}
               {soldData && (
-                <div className="space-y-3 pt-3 sm:pt-4 border-t border-slate-100">
+                <div className="space-y-4 pt-4 border-t border-slate-100">
                   <div className="flex items-center justify-between flex-wrap gap-2">
                     <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-900 font-sans">
                       Closed Sales & Price Distribution ({OC_HOUSING_REPORT_METADATA.closedSalesPeriod})
                     </h3>
                   </div>
 
-                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
-                    <div className="bg-slate-50/90 rounded-2xl p-3 sm:p-4 border border-slate-200/70">
-                      <div className="text-[10px] sm:text-[11px] font-extrabold text-black uppercase tracking-wider truncate">Median Sales Price</div>
-                      <div className="text-lg sm:text-2xl lg:text-3xl font-bold text-slate-900 pt-0.5 sm:pt-1 truncate">{soldData.medianSalesPrice}</div>
-                      <div className="text-[10px] sm:text-[11px] text-emerald-600 pt-0.5 sm:pt-1 font-bold truncate">List: {soldData.medianListPrice}</div>
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div className="bg-slate-50/90 rounded-2xl p-4 border border-slate-200/70">
+                      <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">Median Sales Price</div>
+                      <div className="text-2xl sm:text-3xl font-bold text-slate-900 pt-1">{soldData.medianSalesPrice}</div>
+                      <div className="text-xs text-emerald-600 pt-1 font-bold">List: {soldData.medianListPrice}</div>
                     </div>
 
-                    <div className="bg-slate-50/90 rounded-2xl p-3 sm:p-4 border border-slate-200/70">
-                      <div className="text-[10px] sm:text-[11px] font-extrabold text-black uppercase tracking-wider truncate">Sales-to-List Ratio</div>
-                      <div className="text-lg sm:text-2xl lg:text-3xl font-bold text-emerald-600 pt-0.5 sm:pt-1 truncate">{soldData.salesToListRatio}</div>
-                      <div className="text-[10px] sm:text-[11px] text-emerald-600 pt-0.5 sm:pt-1 font-bold truncate">OC Avg: {OC_HOUSING_REPORT_METADATA.salesToListRatio}</div>
+                    <div className="bg-slate-50/90 rounded-2xl p-4 border border-slate-200/70">
+                      <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">Sales-to-List Ratio</div>
+                      <div className="text-2xl sm:text-3xl font-bold text-emerald-600 pt-1">{soldData.salesToListRatio}</div>
+                      <div className="text-xs text-emerald-600 pt-1 font-bold">OC Avg: {OC_HOUSING_REPORT_METADATA.salesToListRatio}</div>
                     </div>
 
-                    <div className="bg-slate-50/90 rounded-2xl p-3 sm:p-4 border border-slate-200/70">
-                      <div className="text-[10px] sm:text-[11px] font-extrabold text-black uppercase tracking-wider truncate">Price / Sq. Ft.</div>
-                      <div className="text-lg sm:text-2xl lg:text-3xl font-bold text-[#FA2D48] pt-0.5 sm:pt-1 truncate">{soldData.medianPricePerSqFt}</div>
-                      <div className="text-[10px] sm:text-[11px] text-emerald-600 pt-0.5 sm:pt-1 font-bold truncate">Size: {soldData.medianSqFt.toLocaleString()} sqft</div>
+                    <div className="bg-slate-50/90 rounded-2xl p-4 border border-slate-200/70">
+                      <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">Price / Sq. Ft.</div>
+                      <div className="text-2xl sm:text-3xl font-bold text-[#FA2D48] pt-1">{soldData.medianPricePerSqFt}</div>
+                      <div className="text-xs text-emerald-600 pt-1 font-bold">Size: {soldData.medianSqFt.toLocaleString()} sqft</div>
                     </div>
 
-                    <div className="bg-slate-50/90 rounded-2xl p-3 sm:p-4 border border-slate-200/70 flex flex-col justify-between">
+                    <div className="bg-slate-50/90 rounded-2xl p-4 border border-slate-200/70 flex flex-col justify-between">
                       <div>
-                        <div className="text-[10px] sm:text-[11px] font-extrabold text-black uppercase tracking-wider truncate">Closed Sales</div>
-                        <div className="text-lg sm:text-2xl lg:text-3xl font-bold text-slate-900 pt-0.5 sm:pt-1 truncate">{soldData.unitsSold2026} Units</div>
-                        <div className={`text-[10px] sm:text-[11px] pt-0.5 sm:pt-1 font-bold truncate ${yoyUnitsChange < 0 ? 'text-[#FA2D48]' : 'text-emerald-600'}`}>
+                        <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">Closed Sales</div>
+                        <div className="text-2xl sm:text-3xl font-bold text-slate-900 pt-1">{soldData.unitsSold2026} Units</div>
+                        <div className={`text-xs pt-1 font-bold ${yoyUnitsChange < 0 ? 'text-[#FA2D48]' : 'text-emerald-600'}`}>
                           {yoyUnitsChange >= 0 ? `+${yoyUnitsChange}` : yoyUnitsChange} YoY ({soldData.unitsSold2025})
                         </div>
                       </div>
                       {marketData && (
-                        <div className="text-[10px] sm:text-[11px] text-emerald-600 font-bold pt-1 mt-1 sm:pt-1.5 sm:mt-2 border-t border-slate-200/70 flex items-center justify-between">
+                        <div className="text-xs text-emerald-600 font-bold pt-1.5 mt-2 border-t border-slate-200/70 flex items-center justify-between">
                           <span>30d Demand:</span>
-                          <span className="text-emerald-700 font-extrabold truncate">{marketData.demand30Days} Escrows</span>
+                          <span className="text-emerald-700 font-extrabold">{marketData.demand30Days} Escrows</span>
                         </div>
                       )}
                     </div>
@@ -550,51 +508,11 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
 
             return (
               <div className="w-full pt-1 pb-2">
-                {/* Mobile View: High Clarity Telemetry Dashboard Card (Zero Chaos) */}
                 <button
                   type="button"
                   id="steven-thomas-page-market-speed-pill"
                   onClick={() => setShowMarketDirectionModal(true)}
-                  className="sm:hidden w-full bg-slate-50 hover:bg-slate-100/90 border border-slate-200/90 rounded-2xl p-3 text-left transition-all active:scale-[0.99] cursor-pointer shadow-2xs space-y-2.5"
-                  title="Click to view Market Speed & Status"
-                >
-                  <div className="flex items-center justify-between gap-2 border-b border-slate-200/70 pb-2">
-                    <span className={`font-black uppercase tracking-wider px-2 py-0.5 rounded-md border text-[10px] ${countywideCond.tickerBadgeClass}`}>
-                      {countywideCond.capitalLabel}
-                    </span>
-                    <div className="flex items-center gap-1 text-[11px] font-black">
-                      <span className="text-slate-500 font-bold">PACE:</span>
-                      <span className={`${countySpeedColor} font-black`}>{countySpeedLabel}</span>
-                      <span className={isCountyFaster ? 'text-emerald-600' : 'text-[#FA2D48]'}>
-                        ({Math.abs(countywideEmtDelta)}d {isCountyFaster ? 'faster' : 'slower'})
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-3 gap-2 text-center">
-                    <div className="bg-white rounded-xl p-2 border border-slate-200/70 shadow-2xs">
-                      <div className="text-[9px] uppercase font-bold text-slate-400">Demand</div>
-                      <div className="text-base font-black text-emerald-600 tabular-nums">{OC_COUNTYWIDE_LIVE_METRICS.demand.toLocaleString()}</div>
-                      <div className="text-[9px] font-bold text-rose-500 truncate">↓ {OC_COUNTYWIDE_LIVE_METRICS.demandDelta}</div>
-                    </div>
-                    <div className="bg-white rounded-xl p-2 border border-slate-200/70 shadow-2xs">
-                      <div className="text-[9px] uppercase font-bold text-slate-400">Supply</div>
-                      <div className="text-base font-black text-slate-900 tabular-nums">{OC_COUNTYWIDE_LIVE_METRICS.supply.toLocaleString()}</div>
-                      <div className="text-[9px] font-bold text-emerald-600 truncate">↓ {OC_COUNTYWIDE_LIVE_METRICS.supplyDelta}</div>
-                    </div>
-                    <div className="bg-white rounded-xl p-2 border border-slate-200/70 shadow-2xs">
-                      <div className="text-[9px] uppercase font-bold text-slate-400">Market Time</div>
-                      <div className="text-base font-black text-slate-950 tabular-nums">{OC_COUNTYWIDE_LIVE_METRICS.emtDays}d</div>
-                      <div className="text-[9px] font-bold text-slate-500 truncate">{countywideCond.badgeText}</div>
-                    </div>
-                  </div>
-                </button>
-
-                {/* Tablet/Desktop View: Streaming Ticker */}
-                <button
-                  type="button"
-                  onClick={() => setShowMarketDirectionModal(true)}
-                  className="hidden sm:flex relative items-center h-12 w-full overflow-hidden bg-transparent text-slate-800 transition-opacity hover:opacity-85 cursor-pointer font-sans group select-none"
+                  className="relative flex items-center h-12 w-full overflow-hidden bg-transparent text-slate-800 transition-opacity hover:opacity-85 cursor-pointer font-sans group select-none"
                   title="Click to view Market Speed & Status"
                 >
                   <div className="relative overflow-hidden w-full">
@@ -692,35 +610,35 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
           {/* Zone 1: Sweet Spot */}
           <div 
             onClick={() => setSelectedTierPrice('$1.25M - $1.5M')}
-            className={`p-4 sm:p-6 rounded-2xl sm:rounded-3xl border transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between space-y-3 sm:space-y-4 ${
+            className={`p-5 sm:p-6 rounded-3xl border transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between space-y-4 ${
               selectedTier.priceRange === '$1.25M - $1.5M' || selectedTier.priceRange === '$1M - $1.25M'
                 ? 'bg-amber-50/60 border-amber-300 ring-2 ring-amber-400/30 shadow-xs'
                 : 'bg-white hover:bg-slate-50 border-slate-200/90'
             }`}
           >
-            <div className="space-y-1.5 sm:space-y-2">
+            <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-black uppercase tracking-wider text-amber-800 bg-amber-100 px-2 py-0.5 rounded-full">
                   Fastest Velocity
                 </span>
                 <span className="text-xs font-black text-amber-700">86 to 102 Days</span>
               </div>
-              <h3 className="text-lg sm:text-xl font-black text-slate-950 tracking-tight">
+              <h3 className="text-xl font-black text-slate-950 tracking-tight">
                 The Sweet Spot
               </h3>
-              <div className="text-xs sm:text-sm font-bold text-slate-700">
+              <div className="text-sm font-bold text-slate-700">
                 $1.0M to $1.5M Price Range
               </div>
             </div>
 
-            <div className="pt-2.5 sm:pt-3 border-t border-amber-200/60 grid grid-cols-2 gap-2 text-xs">
+            <div className="pt-3 border-t border-amber-200/60 grid grid-cols-2 gap-2 text-xs">
               <div>
-                <div className="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase">Buyer Demand</div>
-                <div className="text-sm sm:text-base font-black text-slate-950 tabular-nums">30% of OC</div>
+                <div className="text-[10px] font-bold text-slate-400 uppercase">Buyer Demand</div>
+                <div className="text-base font-black text-slate-950 tabular-nums">30% of OC</div>
               </div>
               <div>
-                <div className="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase">Market State</div>
-                <div className="text-sm sm:text-base font-black text-amber-700">Slight Seller's</div>
+                <div className="text-[10px] font-bold text-slate-400 uppercase">Market State</div>
+                <div className="text-base font-black text-amber-700">Slight Seller's</div>
               </div>
             </div>
           </div>
@@ -728,35 +646,35 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
           {/* Zone 2: Balanced Core */}
           <div 
             onClick={() => setSelectedTierPrice('$750k - $1M')}
-            className={`p-4 sm:p-6 rounded-2xl sm:rounded-3xl border transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between space-y-3 sm:space-y-4 ${
+            className={`p-5 sm:p-6 rounded-3xl border transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between space-y-4 ${
               ['$0 - $750k', '$750k - $1M', '$1.5M - $2M', '$2M - $2.5M'].includes(selectedTier.priceRange)
                 ? 'bg-sky-50/60 border-sky-300 ring-2 ring-sky-400/30 shadow-xs'
                 : 'bg-white hover:bg-slate-50 border-slate-200/90'
             }`}
           >
-            <div className="space-y-1.5 sm:space-y-2">
+            <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-black uppercase tracking-wider text-sky-800 bg-sky-100 px-2 py-0.5 rounded-full">
                   Core Volume
                 </span>
                 <span className="text-xs font-black text-sky-700">103 to 126 Days</span>
               </div>
-              <h3 className="text-lg sm:text-xl font-black text-slate-950 tracking-tight">
+              <h3 className="text-xl font-black text-slate-950 tracking-tight">
                 Balanced Core
               </h3>
-              <div className="text-xs sm:text-sm font-bold text-slate-700">
+              <div className="text-sm font-bold text-slate-700">
                 $0 to $1M & $1.5M to $2.5M
               </div>
             </div>
 
-            <div className="pt-2.5 sm:pt-3 border-t border-sky-200/60 grid grid-cols-2 gap-2 text-xs">
+            <div className="pt-3 border-t border-sky-200/60 grid grid-cols-2 gap-2 text-xs">
               <div>
-                <div className="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase">Buyer Demand</div>
-                <div className="text-sm sm:text-base font-black text-slate-950 tabular-nums">58% of OC</div>
+                <div className="text-[10px] font-bold text-slate-400 uppercase">Buyer Demand</div>
+                <div className="text-base font-black text-slate-950 tabular-nums">58% of OC</div>
               </div>
               <div>
-                <div className="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase">Market State</div>
-                <div className="text-sm sm:text-base font-black text-sky-700">Balanced</div>
+                <div className="text-[10px] font-bold text-slate-400 uppercase">Market State</div>
+                <div className="text-base font-black text-sky-700">Balanced</div>
               </div>
             </div>
           </div>
@@ -764,35 +682,35 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
           {/* Zone 3: Luxury End */}
           <div 
             onClick={() => setSelectedTierPrice('$4M - $6M')}
-            className={`p-4 sm:p-6 rounded-2xl sm:rounded-3xl border transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between space-y-3 sm:space-y-4 ${
+            className={`p-5 sm:p-6 rounded-3xl border transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between space-y-4 ${
               ['$2.5M - $4M', '$4M - $6M', '$6M+'].includes(selectedTier.priceRange)
                 ? 'bg-blue-50/60 border-blue-300 ring-2 ring-blue-400/30 shadow-xs'
                 : 'bg-white hover:bg-slate-50 border-slate-200/90'
             }`}
           >
-            <div className="space-y-1.5 sm:space-y-2">
+            <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-black uppercase tracking-wider text-blue-800 bg-blue-100 px-2 py-0.5 rounded-full">
                   High Inventory
                 </span>
                 <span className="text-xs font-black text-blue-700">183 to 379 Days</span>
               </div>
-              <h3 className="text-lg sm:text-xl font-black text-slate-950 tracking-tight">
+              <h3 className="text-xl font-black text-slate-950 tracking-tight">
                 Luxury Segment
               </h3>
-              <div className="text-xs sm:text-sm font-bold text-slate-700">
+              <div className="text-sm font-bold text-slate-700">
                 $2.5M and Above
               </div>
             </div>
 
-            <div className="pt-2.5 sm:pt-3 border-t border-blue-200/60 grid grid-cols-2 gap-2 text-xs">
+            <div className="pt-3 border-t border-blue-200/60 grid grid-cols-2 gap-2 text-xs">
               <div>
-                <div className="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase">Buyer Demand</div>
-                <div className="text-sm sm:text-base font-black text-slate-950 tabular-nums">12% of OC</div>
+                <div className="text-[10px] font-bold text-slate-400 uppercase">Buyer Demand</div>
+                <div className="text-base font-black text-slate-950 tabular-nums">12% of OC</div>
               </div>
               <div>
-                <div className="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase">Market State</div>
-                <div className="text-sm sm:text-base font-black text-blue-700">Buyer's Market</div>
+                <div className="text-[10px] font-bold text-slate-400 uppercase">Market State</div>
+                <div className="text-base font-black text-blue-700">Buyer's Market</div>
               </div>
             </div>
           </div>
@@ -849,34 +767,34 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
               </div>
             </div>
 
-            {/* 3 Telemetry Metrics: 3-column micro-grid on mobile too for executive scannability */}
-            <div className="grid grid-cols-3 gap-2 sm:gap-3">
-              <div className="bg-white p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-200/80 space-y-0.5 sm:space-y-1">
-                <div className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-slate-400 truncate">Days to Sell</div>
-                <div className="text-base sm:text-3xl lg:text-4xl font-black text-slate-950 tabular-nums">
-                  {selectedTier.marketTimeDays} <span className="text-[10px] sm:text-lg font-bold text-slate-400">Days</span>
+            {/* 3 Telemetry Metrics */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="bg-white p-4 rounded-2xl border border-slate-200/80 space-y-1">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Days to Sell</div>
+                <div className="text-3xl sm:text-4xl font-black text-slate-950 tabular-nums">
+                  {selectedTier.marketTimeDays} <span className="text-lg font-bold text-slate-400">Days</span>
                 </div>
-                <div className="text-[9px] sm:text-xs font-bold text-slate-500 truncate">
+                <div className="text-xs font-bold text-slate-500">
                   {selectedTier.marketTimeDays < 90 ? 'High Speed' : selectedTier.marketTimeDays < 120 ? 'Moderate' : 'Slow Speed'}
                 </div>
               </div>
 
-              <div className="bg-white p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-200/80 space-y-0.5 sm:space-y-1">
-                <div className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-slate-400 truncate">Buyer Share</div>
-                <div className="text-base sm:text-3xl lg:text-4xl font-black text-emerald-600 tabular-nums">
+              <div className="bg-white p-4 rounded-2xl border border-slate-200/80 space-y-1">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Buyer Share</div>
+                <div className="text-3xl sm:text-4xl font-black text-emerald-600 tabular-nums">
                   {selectedTier.pctCurrentDemand}%
                 </div>
-                <div className="text-[9px] sm:text-xs font-bold text-slate-500 truncate">
+                <div className="text-xs font-bold text-slate-500">
                   Of OC Buyers
                 </div>
               </div>
 
-              <div className="bg-white p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-200/80 space-y-0.5 sm:space-y-1">
-                <div className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-slate-400 truncate">Listing Share</div>
-                <div className="text-base sm:text-3xl lg:text-4xl font-black text-slate-900 tabular-nums">
+              <div className="bg-white p-4 rounded-2xl border border-slate-200/80 space-y-1">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Listing Share</div>
+                <div className="text-3xl sm:text-4xl font-black text-slate-900 tabular-nums">
                   {selectedTier.pctCurrentInventory}%
                 </div>
-                <div className="text-[9px] sm:text-xs font-bold text-slate-500 truncate">
+                <div className="text-xs font-bold text-slate-500">
                   Of OC Listings
                 </div>
               </div>
@@ -972,15 +890,15 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
           </div>
         </div>
 
-        {/* 3. VISUAL VELOCITY SPECTRUM (Ranking from Fastest to Slowest • Responsive Mobile Card Layout) */}
-        <div className="rounded-3xl bg-white border border-slate-200/90 p-4 sm:p-7 shadow-xs space-y-3 sm:space-y-4">
+        {/* 3. VISUAL VELOCITY SPECTRUM (Ranking from Fastest to Slowest) */}
+        <div className="rounded-3xl bg-white border border-slate-200/90 p-5 sm:p-7 shadow-xs space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-base sm:text-lg font-black text-slate-950 tracking-tight font-sans">
+            <h3 className="text-lg font-black text-slate-950 tracking-tight font-sans">
               Velocity Spectrum (Fastest to Slowest)
             </h3>
           </div>
 
-          <div className="space-y-2 pt-0.5 sm:pt-1">
+          <div className="space-y-2 pt-1">
             {[...page8].sort((a, b) => a.marketTimeDays - b.marketTimeDays).map((tier) => {
               const isSelected = tier.priceRange === selectedTier.priceRange;
               const isSweetSpot = tier.priceRange === '$1.25M - $1.5M';
@@ -992,14 +910,14 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                   key={tier.priceRange}
                   type="button"
                   onClick={() => setSelectedTierPrice(tier.priceRange)}
-                  className={`w-full p-3 sm:p-3.5 rounded-2xl border transition-all text-left flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4 cursor-pointer group ${
+                  className={`w-full p-3 sm:p-3.5 rounded-2xl border transition-all text-left flex items-center justify-between gap-3 sm:gap-4 cursor-pointer group ${
                     isSelected 
                       ? 'bg-slate-900 text-white border-slate-900 shadow-md ring-1 ring-slate-900/30' 
                       : 'bg-white hover:bg-slate-50 text-slate-800 border-slate-200/90 hover:border-slate-300'
                   }`}
                 >
-                  {/* Price Tier Label + Mobile Header Stats */}
-                  <div className="flex items-center justify-between sm:justify-start gap-2 w-full sm:w-44 shrink-0">
+                  {/* Price Tier Label */}
+                  <div className="flex items-center gap-2 w-44 shrink-0">
                     <span className={`text-xs sm:text-sm font-bold tracking-tight ${isSelected ? 'text-white' : 'text-slate-900'}`}>
                       {tier.priceRange}
                     </span>
@@ -1010,23 +928,11 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                         Sweet Spot
                       </span>
                     )}
-
-                    {/* Mobile Only: Inline Days & Speed on Top Right */}
-                    <div className="flex sm:hidden items-center gap-1.5 text-right ml-auto">
-                      <span className={`text-xs font-black tabular-nums ${isSelected ? 'text-white' : 'text-slate-900'}`}>
-                        {tier.marketTimeDays}d
-                      </span>
-                      <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-md border ${
-                        isSelected ? 'bg-slate-800 text-slate-200 border-slate-700' : badge.bg
-                      }`}>
-                        {tier.speedCategory.replace(" Market", "")}
-                      </span>
-                    </div>
                   </div>
 
-                  {/* Relative Velocity Bar (Visible on Mobile & Desktop!) */}
-                  <div className="w-full sm:flex-1">
-                    <div className={`w-full h-1.5 sm:h-2 rounded-full overflow-hidden ${isSelected ? 'bg-slate-800' : 'bg-slate-100'}`}>
+                  {/* Relative Velocity Bar */}
+                  <div className="flex-1 hidden sm:block">
+                    <div className={`w-full h-2 rounded-full overflow-hidden ${isSelected ? 'bg-slate-800' : 'bg-slate-100'}`}>
                       <div 
                         className={`h-full rounded-full transition-all duration-300 ${isSelected ? 'bg-amber-400' : badge.barColor}`}
                         style={{ width: `${barWidth}%` }}
@@ -1034,8 +940,8 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                     </div>
                   </div>
 
-                  {/* Desktop Only: Days & Speed Status */}
-                  <div className="hidden sm:flex items-center gap-2.5 shrink-0 text-right">
+                  {/* Days & Speed Status */}
+                  <div className="flex items-center gap-2.5 shrink-0 text-right">
                     <span className={`text-xs sm:text-sm font-bold tabular-nums ${isSelected ? 'text-white' : 'text-slate-800'}`}>
                       {tier.marketTimeDays} Days
                     </span>
@@ -1052,46 +958,46 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
         </div>
 
         {/* 4. LUXURY END SNAPSHOT (Page 8 Telemetry) */}
-        <div className="rounded-3xl bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white p-4 sm:p-7 shadow-md border border-slate-800 space-y-3 sm:space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 border-b border-slate-800 pb-3">
+        <div className="rounded-3xl bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white p-5 sm:p-7 shadow-md border border-slate-800 space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-3">
             <div className="space-y-0.5">
               <span className="text-[10px] font-black uppercase tracking-widest text-[#FA2D48]">
                 {luxuryNote.title}
               </span>
-              <h3 className="text-sm sm:text-lg font-black tracking-tight text-white font-sans">
+              <h3 className="text-base sm:text-lg font-black tracking-tight text-white font-sans">
                 {luxuryNote.subtitle}
               </h3>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-[11px] sm:text-xs font-bold text-slate-300 bg-slate-800/80 px-2.5 sm:px-3 py-1 rounded-full border border-slate-700">
+              <span className="text-xs font-bold text-slate-300 bg-slate-800/80 px-3 py-1 rounded-full border border-slate-700">
                 Projected Pace: ~ {luxuryNote.pendingPaceMonth}
               </span>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 text-left">
-            <div className="bg-slate-900/80 p-2.5 sm:p-3 rounded-2xl border border-slate-800 space-y-0.5">
-              <div className="text-[9px] sm:text-[10px] text-slate-400 uppercase font-bold truncate">Luxury Actives ($2.5M+)</div>
-              <div className="text-base sm:text-2xl font-black text-white tabular-nums truncate">{luxuryNote.actives} Homes</div>
-              <div className="text-[10px] sm:text-[11px] font-bold text-emerald-400 truncate">{luxuryNote.activesDelta} (-3%)</div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-left">
+            <div className="bg-slate-900/80 p-3 rounded-2xl border border-slate-800 space-y-0.5">
+              <div className="text-[10px] text-slate-400 uppercase font-bold">Luxury Actives ($2.5M+)</div>
+              <div className="text-xl sm:text-2xl font-black text-white tabular-nums">{luxuryNote.actives} Homes</div>
+              <div className="text-[11px] font-bold text-emerald-400">{luxuryNote.activesDelta} (-3%)</div>
             </div>
 
-            <div className="bg-slate-900/80 p-2.5 sm:p-3 rounded-2xl border border-slate-800 space-y-0.5">
-              <div className="text-[9px] sm:text-[10px] text-slate-400 uppercase font-bold truncate">Luxury Demand ($2.5M+)</div>
-              <div className="text-base sm:text-2xl font-black text-white tabular-nums truncate">{luxuryNote.demand} Escrows</div>
-              <div className="text-[10px] sm:text-[11px] font-bold text-rose-400 truncate">{luxuryNote.demandDelta} (-3%)</div>
+            <div className="bg-slate-900/80 p-3 rounded-2xl border border-slate-800 space-y-0.5">
+              <div className="text-[10px] text-slate-400 uppercase font-bold">Luxury Demand ($2.5M+)</div>
+              <div className="text-xl sm:text-2xl font-black text-white tabular-nums">{luxuryNote.demand} Escrows</div>
+              <div className="text-[11px] font-bold text-rose-400">{luxuryNote.demandDelta} (-3%)</div>
             </div>
 
-            <div className="bg-slate-900/80 p-2.5 sm:p-3 rounded-2xl border border-slate-800 space-y-0.5">
-              <div className="text-[9px] sm:text-[10px] text-slate-400 uppercase font-bold truncate">Expected Market Time</div>
-              <div className="text-base sm:text-2xl font-black text-rose-400 tabular-nums truncate">{luxuryNote.emt} Days</div>
-              <div className="text-[10px] sm:text-[11px] font-bold text-slate-400 truncate">184d 2wks • 194d YoY</div>
+            <div className="bg-slate-900/80 p-3 rounded-2xl border border-slate-800 space-y-0.5">
+              <div className="text-[10px] text-slate-400 uppercase font-bold">Expected Market Time</div>
+              <div className="text-xl sm:text-2xl font-black text-rose-400 tabular-nums">{luxuryNote.emt} Days</div>
+              <div className="text-[11px] font-bold text-slate-400">184d 2wks • 194d YoY</div>
             </div>
 
-            <div className="bg-slate-900/80 p-2.5 sm:p-3 rounded-2xl border border-slate-800 space-y-0.5">
-              <div className="text-[9px] sm:text-[10px] text-slate-400 uppercase font-bold truncate">Ultra-Luxury ($6M+)</div>
-              <div className="text-base sm:text-2xl font-black text-white tabular-nums truncate">379 Days</div>
-              <div className="text-[10px] sm:text-[11px] font-bold text-emerald-400 truncate">-75d (from 454d)</div>
+            <div className="bg-slate-900/80 p-3 rounded-2xl border border-slate-800 space-y-0.5">
+              <div className="text-[10px] text-slate-400 uppercase font-bold">Ultra-Luxury ($6M+)</div>
+              <div className="text-xl sm:text-2xl font-black text-white tabular-nums">379 Days</div>
+              <div className="text-[11px] font-bold text-emerald-400">-75d (from 454d)</div>
             </div>
           </div>
         </div>

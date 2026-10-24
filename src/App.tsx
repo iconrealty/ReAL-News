@@ -908,52 +908,10 @@ export function App() {
 
                           return (
                             <div className="mb-2">
-                              {/* Mobile View: High Clarity Telemetry Dashboard Card (Zero Chaos) */}
                               <button
                                 type="button"
                                 onClick={() => setShowHistoricalMarketTimeModal(true)}
-                                className="sm:hidden w-full bg-slate-50 hover:bg-slate-100/90 border border-slate-200/90 rounded-2xl p-3 text-left transition-all active:scale-[0.99] cursor-pointer shadow-2xs space-y-2.5"
-                                title={`Click to view ${currentCity.name} Historical Speed & Pace`}
-                              >
-                                <div className="flex items-center justify-between gap-2 border-b border-slate-200/70 pb-2">
-                                  <span className={`font-black uppercase tracking-wider px-2 py-0.5 rounded-md border text-[10px] ${cond.tickerBadgeClass}`}>
-                                    {cond.capitalLabel}
-                                  </span>
-                                  <div className="flex items-center gap-1 text-[11px] font-black">
-                                    <span className="text-slate-500 font-bold">PACE:</span>
-                                    <span className={`${speedColor} font-black`}>{speedLabel}</span>
-                                    {emtDelta !== 0 && (
-                                      <span className={isFaster ? 'text-emerald-600' : 'text-[#FA2D48]'}>
-                                        ({Math.abs(emtDelta)}d {isFaster ? 'faster' : 'slower'})
-                                      </span>
-                                    )}
-                                  </div>
-                                </div>
-
-                                <div className="grid grid-cols-3 gap-2 text-center">
-                                  <div className="bg-white rounded-xl p-2 border border-slate-200/70 shadow-2xs">
-                                    <div className="text-[9px] uppercase font-bold text-slate-400">Demand</div>
-                                    <div className="text-base font-black text-emerald-600 tabular-nums">{marketData.demand30Days}</div>
-                                    <div className="text-[9px] font-bold text-emerald-600 truncate">Escrows</div>
-                                  </div>
-                                  <div className="bg-white rounded-xl p-2 border border-slate-200/70 shadow-2xs">
-                                    <div className="text-[9px] uppercase font-bold text-slate-400">Supply</div>
-                                    <div className="text-base font-black text-slate-900 tabular-nums">{marketData.currentActives}</div>
-                                    <div className="text-[9px] font-bold text-slate-500 truncate">Listings</div>
-                                  </div>
-                                  <div className="bg-white rounded-xl p-2 border border-slate-200/70 shadow-2xs">
-                                    <div className="text-[9px] uppercase font-bold text-slate-400">Market Time</div>
-                                    <div className="text-base font-black text-slate-950 tabular-nums">{marketData.marketTimeDays}d</div>
-                                    <div className="text-[9px] font-bold text-slate-500 truncate">{cond.badgeText}</div>
-                                  </div>
-                                </div>
-                              </button>
-
-                              {/* Tablet/Desktop View: Streaming Ticker */}
-                              <button
-                                type="button"
-                                onClick={() => setShowHistoricalMarketTimeModal(true)}
-                                className="hidden sm:flex relative items-center h-12 w-full overflow-hidden bg-transparent text-slate-800 transition-opacity hover:opacity-85 cursor-pointer font-sans group select-none"
+                                className="relative flex items-center h-12 w-full overflow-hidden bg-transparent text-slate-800 transition-opacity hover:opacity-85 cursor-pointer font-sans group select-none"
                                 title={`Click to view ${currentCity.name} Historical Speed & Pace`}
                               >
                                 <div className="relative overflow-hidden w-full">
@@ -1106,17 +1064,17 @@ export function App() {
                             )}
 
                             {/* Active Inventory & Price Metrics */}
-                            <div className="grid grid-cols-2 gap-2.5 sm:gap-4">
-                              <div className="bg-slate-50/80 p-3 sm:p-4 rounded-2xl border border-slate-200/70">
-                                <div className="text-[10px] sm:text-[11px] font-extrabold text-black uppercase tracking-wider truncate">Active Inventory</div>
-                                <div className="text-lg sm:text-3xl font-bold text-slate-900 pt-0.5 sm:pt-1 truncate">{marketData.currentActives} Homes</div>
-                                <div className="text-[10px] sm:text-[11px] text-emerald-600 pt-0.5 sm:pt-1 font-bold truncate">Active listings</div>
+                            <div className="grid grid-cols-2 gap-4">
+                              <div className="bg-slate-50/80 p-4 rounded-2xl border border-slate-200/70">
+                                <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">Active Inventory</div>
+                                <div className="text-3xl font-bold text-slate-900 pt-1">{marketData.currentActives} Homes</div>
+                                <div className="text-xs text-emerald-600 pt-1 font-bold">Active listings</div>
                               </div>
 
-                              <div className="bg-slate-50/80 p-3 sm:p-4 rounded-2xl border border-slate-200/70">
-                                <div className="text-[10px] sm:text-[11px] font-extrabold text-black uppercase tracking-wider truncate">Median List Price</div>
-                                <div className="text-lg sm:text-3xl font-bold text-slate-900 pt-0.5 sm:pt-1 truncate">{marketData.medianActiveListPrice}</div>
-                                <div className="text-[10px] sm:text-[11px] text-emerald-600 pt-0.5 sm:pt-1 font-bold truncate">Current listings</div>
+                              <div className="bg-slate-50/80 p-4 rounded-2xl border border-slate-200/70">
+                                <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">Median List Price</div>
+                                <div className="text-3xl font-bold text-slate-900 pt-1">{marketData.medianActiveListPrice}</div>
+                                <div className="text-xs text-emerald-600 pt-1 font-bold">Current listings</div>
                               </div>
                             </div>
                           </div>
@@ -1124,44 +1082,44 @@ export function App() {
 
                         {/* 2. CLOSED SALES DATA (Steven Thomas Page 12 Report) */}
                         {soldData && (
-                          <div className="space-y-3 pt-3 sm:pt-4 border-t border-slate-100">
+                          <div className="space-y-4 pt-4 border-t border-slate-100">
                             <div className="flex items-center justify-between flex-wrap gap-2">
                               <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-900 font-sans">
                                 Closed Sales & Price Distribution ({OC_HOUSING_REPORT_METADATA.closedSalesPeriod})
                               </h3>
                             </div>
 
-                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
-                              <div className="bg-slate-50/90 rounded-2xl p-3 sm:p-4 border border-slate-200/70">
-                                <div className="text-[10px] sm:text-[11px] font-extrabold text-black uppercase tracking-wider truncate">Median Sales Price</div>
-                                <div className="text-lg sm:text-2xl lg:text-3xl font-bold text-slate-900 pt-0.5 sm:pt-1 truncate">{soldData.medianSalesPrice}</div>
-                                <div className="text-[10px] sm:text-[11px] text-emerald-600 pt-0.5 sm:pt-1 font-bold truncate">List: {soldData.medianListPrice}</div>
+                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                              <div className="bg-slate-50/90 rounded-2xl p-4 border border-slate-200/70">
+                                <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">Median Sales Price</div>
+                                <div className="text-2xl sm:text-3xl font-bold text-slate-900 pt-1">{soldData.medianSalesPrice}</div>
+                                <div className="text-xs text-emerald-600 pt-1 font-bold">List: {soldData.medianListPrice}</div>
                               </div>
 
-                              <div className="bg-slate-50/90 rounded-2xl p-3 sm:p-4 border border-slate-200/70">
-                                <div className="text-[10px] sm:text-[11px] font-extrabold text-black uppercase tracking-wider truncate">Sales-to-List Ratio</div>
-                                <div className="text-lg sm:text-2xl lg:text-3xl font-bold text-emerald-600 pt-0.5 sm:pt-1 truncate">{soldData.salesToListRatio}</div>
-                                <div className="text-[10px] sm:text-[11px] text-emerald-600 pt-0.5 sm:pt-1 font-bold truncate">OC Avg: {OC_HOUSING_REPORT_METADATA.salesToListRatio}</div>
+                              <div className="bg-slate-50/90 rounded-2xl p-4 border border-slate-200/70">
+                                <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">Sales-to-List Ratio</div>
+                                <div className="text-2xl sm:text-3xl font-bold text-emerald-600 pt-1">{soldData.salesToListRatio}</div>
+                                <div className="text-xs text-emerald-600 pt-1 font-bold">OC Avg: {OC_HOUSING_REPORT_METADATA.salesToListRatio}</div>
                               </div>
 
-                              <div className="bg-slate-50/90 rounded-2xl p-3 sm:p-4 border border-slate-200/70">
-                                <div className="text-[10px] sm:text-[11px] font-extrabold text-black uppercase tracking-wider truncate">Price / Sq. Ft.</div>
-                                <div className="text-lg sm:text-2xl lg:text-3xl font-bold text-[#FA2D48] pt-0.5 sm:pt-1 truncate">{soldData.medianPricePerSqFt}</div>
-                                <div className="text-[10px] sm:text-[11px] text-emerald-600 pt-0.5 sm:pt-1 font-bold truncate">Size: {soldData.medianSqFt.toLocaleString()} sqft</div>
+                              <div className="bg-slate-50/90 rounded-2xl p-4 border border-slate-200/70">
+                                <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">Price / Sq. Ft.</div>
+                                <div className="text-2xl sm:text-3xl font-bold text-[#FA2D48] pt-1">{soldData.medianPricePerSqFt}</div>
+                                <div className="text-xs text-emerald-600 pt-1 font-bold">Size: {soldData.medianSqFt.toLocaleString()} sqft</div>
                               </div>
 
-                              <div className="bg-slate-50/90 rounded-2xl p-3 sm:p-4 border border-slate-200/70 flex flex-col justify-between">
+                              <div className="bg-slate-50/90 rounded-2xl p-4 border border-slate-200/70 flex flex-col justify-between">
                                 <div>
-                                  <div className="text-[10px] sm:text-[11px] font-extrabold text-black uppercase tracking-wider truncate">Closed Sales</div>
-                                  <div className="text-lg sm:text-2xl lg:text-3xl font-bold text-slate-900 pt-0.5 sm:pt-1 truncate">{soldData.unitsSold2026} Units</div>
-                                  <div className={`text-[10px] sm:text-[11px] pt-0.5 sm:pt-1 font-bold truncate ${yoyUnitsChange < 0 ? 'text-[#FA2D48]' : 'text-emerald-600'}`}>
+                                  <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">Closed Sales</div>
+                                  <div className="text-2xl sm:text-3xl font-bold text-slate-900 pt-1">{soldData.unitsSold2026} Units</div>
+                                  <div className={`text-xs pt-1 font-bold ${yoyUnitsChange < 0 ? 'text-[#FA2D48]' : 'text-emerald-600'}`}>
                                     {yoyUnitsChange >= 0 ? `+${yoyUnitsChange}` : yoyUnitsChange} YoY ({soldData.unitsSold2025})
                                   </div>
                                 </div>
                                 {marketData && (
-                                  <div className="text-[10px] sm:text-[11px] text-emerald-600 font-bold pt-1 mt-1 sm:pt-1.5 sm:mt-2 border-t border-slate-200/70 flex items-center justify-between">
+                                  <div className="text-xs text-emerald-600 font-bold pt-1.5 mt-2 border-t border-slate-200/70 flex items-center justify-between">
                                     <span>30d Demand:</span>
-                                    <span className="text-emerald-700 font-extrabold truncate">{marketData.demand30Days} Escrows</span>
+                                    <span className="text-emerald-700 font-extrabold">{marketData.demand30Days} Escrows</span>
                                   </div>
                                 )}
                               </div>
@@ -1184,51 +1142,11 @@ export function App() {
 
                   return (
                     <div className="w-full pt-1 pb-2">
-                      {/* Mobile View: High Clarity Telemetry Dashboard Card (Zero Chaos) */}
                       <button
                         type="button"
                         id="main-steven-thomas-market-speed-pill"
                         onClick={() => setShowMarketDirectionModal(true)}
-                        className="sm:hidden w-full bg-slate-50 hover:bg-slate-100/90 border border-slate-200/90 rounded-2xl p-3 text-left transition-all active:scale-[0.99] cursor-pointer shadow-2xs space-y-2.5"
-                        title="Click to view Market Speed & Status"
-                      >
-                        <div className="flex items-center justify-between gap-2 border-b border-slate-200/70 pb-2">
-                          <span className={`font-black uppercase tracking-wider px-2 py-0.5 rounded-md border text-[10px] ${countywideCond.tickerBadgeClass}`}>
-                            {countywideCond.capitalLabel}
-                          </span>
-                          <div className="flex items-center gap-1 text-[11px] font-black">
-                            <span className="text-slate-500 font-bold">PACE:</span>
-                            <span className={`${countySpeedColor} font-black`}>{countySpeedLabel}</span>
-                            <span className={isCountyFaster ? 'text-emerald-600' : 'text-[#FA2D48]'}>
-                              ({Math.abs(countywideEmtDelta)}d {isCountyFaster ? 'faster' : 'slower'})
-                            </span>
-                          </div>
-                        </div>
-
-                        <div className="grid grid-cols-3 gap-2 text-center">
-                          <div className="bg-white rounded-xl p-2 border border-slate-200/70 shadow-2xs">
-                            <div className="text-[9px] uppercase font-bold text-slate-400">Demand</div>
-                            <div className="text-base font-black text-emerald-600 tabular-nums">{OC_COUNTYWIDE_LIVE_METRICS.demand.toLocaleString()}</div>
-                            <div className="text-[9px] font-bold text-rose-500 truncate">↓ {OC_COUNTYWIDE_LIVE_METRICS.demandDelta}</div>
-                          </div>
-                          <div className="bg-white rounded-xl p-2 border border-slate-200/70 shadow-2xs">
-                            <div className="text-[9px] uppercase font-bold text-slate-400">Supply</div>
-                            <div className="text-base font-black text-slate-900 tabular-nums">{OC_COUNTYWIDE_LIVE_METRICS.supply.toLocaleString()}</div>
-                            <div className="text-[9px] font-bold text-emerald-600 truncate">↓ {OC_COUNTYWIDE_LIVE_METRICS.supplyDelta}</div>
-                          </div>
-                          <div className="bg-white rounded-xl p-2 border border-slate-200/70 shadow-2xs">
-                            <div className="text-[9px] uppercase font-bold text-slate-400">Market Time</div>
-                            <div className="text-base font-black text-slate-950 tabular-nums">{OC_COUNTYWIDE_LIVE_METRICS.emtDays}d</div>
-                            <div className="text-[9px] font-bold text-slate-500 truncate">{countywideCond.badgeText}</div>
-                          </div>
-                        </div>
-                      </button>
-
-                      {/* Tablet/Desktop View: Streaming Ticker */}
-                      <button
-                        type="button"
-                        onClick={() => setShowMarketDirectionModal(true)}
-                        className="hidden sm:flex relative items-center h-12 w-full overflow-hidden bg-transparent text-slate-800 transition-opacity hover:opacity-85 cursor-pointer font-sans group select-none"
+                        className="relative flex items-center h-12 w-full overflow-hidden bg-transparent text-slate-800 transition-opacity hover:opacity-85 cursor-pointer font-sans group select-none"
                         title="Click to view Market Speed & Status"
                       >
                         {/* Running Text Streaming Slower to the Left (Stock / Live Feed Style) */}
