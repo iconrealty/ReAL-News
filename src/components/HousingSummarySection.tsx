@@ -34,8 +34,8 @@ export const HousingSummarySection: React.FC<HousingSummarySectionProps> = ({
         </div>
       )}
 
-      {/* 6 Minimalist Metric Pillar Cards • Dynamic Color Identity per Metric */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+      {/* 6 Minimalist Metric Pillar Cards — Dynamic Color Identity per Metric */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4">
         {page9.pillars.map((pillar) => {
           const theme = (() => {
             switch (pillar.id) {
@@ -89,7 +89,7 @@ export const HousingSummarySection: React.FC<HousingSummarySectionProps> = ({
               type="button"
               key={pillar.id}
               onClick={() => setSelectedPillar(pillar)}
-              className="w-full text-left rounded-2xl bg-white border border-slate-200/90 p-5 hover:border-slate-400 hover:shadow-xs transition-all font-sans group cursor-pointer active:scale-[0.99] flex flex-col justify-between space-y-2.5"
+              className="w-full text-left rounded-2xl bg-white border border-slate-200/90 p-4 sm:p-5 hover:border-slate-400 hover:shadow-xs transition-all font-sans group cursor-pointer active:scale-[0.99] flex flex-col justify-between space-y-2.5"
               title={`Click to view ${pillar.title} breakdown`}
             >
               {/* Colored Title */}
@@ -99,10 +99,10 @@ export const HousingSummarySection: React.FC<HousingSummarySectionProps> = ({
 
               {/* Number & Highly Readable Colored Description */}
               <div className="space-y-0.5">
-                <div className={`text-3xl sm:text-4xl font-black tracking-tight tabular-nums ${theme.statColor}`}>
+                <div className={`text-2xl sm:text-3xl font-black tracking-tight tabular-nums ${theme.statColor}`}>
                   {pillar.stat}
                 </div>
-                <div className={`text-sm font-bold ${theme.unitColor}`}>
+                <div className={`text-xs sm:text-sm font-bold ${theme.unitColor}`}>
                   {pillar.unit}
                 </div>
               </div>

@@ -104,8 +104,8 @@ export const BuydownCalculator: React.FC<BuydownCalculatorProps> = ({
         // Lender scenario: 6 Month 1% buydown
         return [
           {
-            label: 'Months 1 to 6',
-            monthsRange: 'Months 1 to 6',
+            label: 'Months 1–6',
+            monthsRange: 'Months 1–6',
             durationMonths: 6,
             rateDiscountPct: stepPct * 1, // 1.00% if bpsStep=100
             rateDiscountBps: bpsStep * 1,
@@ -116,8 +116,8 @@ export const BuydownCalculator: React.FC<BuydownCalculatorProps> = ({
         // Lender scenario: 12 Month 0.5% buydown
         return [
           {
-            label: 'Months 1 to 12',
-            monthsRange: 'Months 1 to 12',
+            label: 'Months 1–12',
+            monthsRange: 'Months 1–12',
             durationMonths: 12,
             rateDiscountPct: (bpsStep / 100) * 0.5, // 0.50% if bpsStep=100
             rateDiscountBps: Math.round(bpsStep * 0.5),
@@ -128,7 +128,7 @@ export const BuydownCalculator: React.FC<BuydownCalculatorProps> = ({
         return [
           {
             label: 'Year 1',
-            monthsRange: 'Months 1 to 12',
+            monthsRange: 'Months 1–12',
             durationMonths: 12,
             rateDiscountPct: stepPct * 1,
             rateDiscountBps: bpsStep * 1,
@@ -139,14 +139,14 @@ export const BuydownCalculator: React.FC<BuydownCalculatorProps> = ({
         return [
           {
             label: 'Year 1',
-            monthsRange: 'Months 1 to 12',
+            monthsRange: 'Months 1–12',
             durationMonths: 12,
             rateDiscountPct: stepPct * 2,
             rateDiscountBps: bpsStep * 2,
           },
           {
             label: 'Year 2',
-            monthsRange: 'Months 13 to 24',
+            monthsRange: 'Months 13–24',
             durationMonths: 12,
             rateDiscountPct: stepPct * 1,
             rateDiscountBps: bpsStep * 1,
@@ -157,21 +157,21 @@ export const BuydownCalculator: React.FC<BuydownCalculatorProps> = ({
         return [
           {
             label: 'Year 1',
-            monthsRange: 'Months 1 to 12',
+            monthsRange: 'Months 1–12',
             durationMonths: 12,
             rateDiscountPct: stepPct * 3,
             rateDiscountBps: bpsStep * 3,
           },
           {
             label: 'Year 2',
-            monthsRange: 'Months 13 to 24',
+            monthsRange: 'Months 13–24',
             durationMonths: 12,
             rateDiscountPct: stepPct * 2,
             rateDiscountBps: bpsStep * 2,
           },
           {
             label: 'Year 3',
-            monthsRange: 'Months 25 to 36',
+            monthsRange: 'Months 25–36',
             durationMonths: 12,
             rateDiscountPct: stepPct * 1,
             rateDiscountBps: bpsStep * 1,
@@ -182,14 +182,14 @@ export const BuydownCalculator: React.FC<BuydownCalculatorProps> = ({
         return [
           {
             label: 'Year 1',
-            monthsRange: 'Months 1 to 12',
+            monthsRange: 'Months 1–12',
             durationMonths: 12,
             rateDiscountPct: stepPct * 3,
             rateDiscountBps: bpsStep * 3,
           },
           {
             label: 'Year 2',
-            monthsRange: 'Months 13 to 24',
+            monthsRange: 'Months 13–24',
             durationMonths: 12,
             rateDiscountPct: stepPct * 1,
             rateDiscountBps: bpsStep * 1,
@@ -262,7 +262,7 @@ export const BuydownCalculator: React.FC<BuydownCalculatorProps> = ({
     finalSchedule.push({
       periodIndex: finalSchedule.length + 1,
       label: permanentLabel,
-      monthsRange: `Months ${startPermanentMonth} to ${totalLoanMonths}`,
+      monthsRange: `Months ${startPermanentMonth}–${totalLoanMonths}`,
       durationMonths: Math.max(0, totalLoanMonths - cumulativeMonths),
       rateDiscountPct: 0,
       rateDiscountBps: 0,
@@ -552,12 +552,12 @@ export const BuydownCalculator: React.FC<BuydownCalculatorProps> = ({
                 { 
                   id: '6-mo-1', 
                   label: '6-Month 1% Buydown', 
-                  desc: 'Months 1 to 6: -1.00% rate reduction' 
+                  desc: 'Months 1–6: -1.00% rate reduction' 
                 },
                 { 
                   id: '12-mo-0.5', 
                   label: '12-Month 0.5% Buydown', 
-                  desc: 'Months 1 to 12: -0.50% rate reduction' 
+                  desc: 'Months 1–12: -0.50% rate reduction' 
                 },
                 { 
                   id: '2-1', 
@@ -821,7 +821,7 @@ export const BuydownCalculator: React.FC<BuydownCalculatorProps> = ({
                     Monthly Savings
                   </span>
                   <span className={`text-sm font-black mt-0.5 block ${row.monthlySavings > 0 ? 'text-emerald-700' : 'text-slate-400'}`}>
-                    {row.monthlySavings > 0 ? `+$${Math.round(row.monthlySavings).toLocaleString()}` : 'N/A'}
+                    {row.monthlySavings > 0 ? `+$${Math.round(row.monthlySavings).toLocaleString()}` : '—'}
                   </span>
                 </div>
 
@@ -830,7 +830,7 @@ export const BuydownCalculator: React.FC<BuydownCalculatorProps> = ({
                     Period Total
                   </span>
                   <span className={`text-sm font-black mt-0.5 block ${row.periodSavings > 0 ? 'text-slate-900' : 'text-slate-400'}`}>
-                    {row.periodSavings > 0 ? `$${Math.round(row.periodSavings).toLocaleString()}` : 'N/A'}
+                    {row.periodSavings > 0 ? `$${Math.round(row.periodSavings).toLocaleString()}` : '—'}
                   </span>
                 </div>
 
@@ -889,7 +889,7 @@ export const BuydownCalculator: React.FC<BuydownCalculatorProps> = ({
                     {row.monthlySavings > 0 ? (
                       `+$${Math.round(row.monthlySavings).toLocaleString()}/mo`
                     ) : (
-                      <span className="text-slate-400">N/A</span>
+                      <span className="text-slate-400">—</span>
                     )}
                   </td>
 
@@ -897,7 +897,7 @@ export const BuydownCalculator: React.FC<BuydownCalculatorProps> = ({
                     {row.periodSavings > 0 ? (
                       `$${Math.round(row.periodSavings).toLocaleString()}`
                     ) : (
-                      <span className="text-slate-400">N/A</span>
+                      <span className="text-slate-400">—</span>
                     )}
                   </td>
 

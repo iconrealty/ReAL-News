@@ -68,9 +68,9 @@ export function getMarketCondition(days: number) {
   } else if (days < 90) {
     return {
       label: "Slight Seller's",
-      tag: "60 to 89 Days",
-      tagNumbers: "60 to 89",
-      badgeText: "Slight Seller's Market (60 to 89 Days)",
+      tag: "60–89 Days",
+      tagNumbers: "60–89",
+      badgeText: "Slight Seller's Market (60–89 Days)",
       capitalLabel: "SLIGHT SELLER'S MARKET",
       bgClass: "bg-amber-500 text-white font-bold",
       cardBg: "bg-amber-50/80 border-amber-200 text-amber-950",
@@ -84,9 +84,9 @@ export function getMarketCondition(days: number) {
   } else if (days < 120) {
     return {
       label: "Balanced Market",
-      tag: "90 to 119 Days",
-      tagNumbers: "90 to 119",
-      badgeText: "Balanced Market (90 to 119 Days)",
+      tag: "90–119 Days",
+      tagNumbers: "90–119",
+      badgeText: "Balanced Market (90–119 Days)",
       capitalLabel: "BALANCED MARKET",
       bgClass: "bg-sky-600 text-white font-bold",
       cardBg: "bg-sky-50/80 border-sky-200 text-sky-950",
@@ -100,9 +100,9 @@ export function getMarketCondition(days: number) {
   } else if (days < 150) {
     return {
       label: "Slight Buyer's",
-      tag: "120 to 149 Days",
-      tagNumbers: "120 to 149",
-      badgeText: "Slight Buyer's Market (120 to 149 Days)",
+      tag: "120–149 Days",
+      tagNumbers: "120–149",
+      badgeText: "Slight Buyer's Market (120–149 Days)",
       capitalLabel: "SLIGHT BUYER'S MARKET",
       bgClass: "bg-emerald-600 text-white font-bold",
       cardBg: "bg-emerald-50/80 border-emerald-200 text-emerald-950",
@@ -711,7 +711,7 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
                     <div className="py-2.5 px-3 flex items-center justify-between text-sm border-b border-slate-100 sm:border-b-0">
                       <span className="font-bold text-black">Price Range:</span>
-                      <span className="font-sans font-black text-sm sm:text-base text-black">{soldData.lowPrice} to {soldData.highPrice}</span>
+                      <span className="font-sans font-black text-sm sm:text-base text-black">{soldData.lowPrice} – {soldData.highPrice}</span>
                     </div>
                     <div className="py-2.5 px-3 flex items-center justify-between text-sm">
                       <span className="font-bold text-black">Closed Days on Market (DOM):</span>
@@ -802,7 +802,7 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                         <div>
                           <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">2 Years Ago</div>
                           <div className="text-base font-black text-slate-950 pt-0.5">
-                            {marketData.marketTime2YearsAgo > 0 ? `${marketData.marketTime2YearsAgo} Days` : 'N/A'}
+                            {marketData.marketTime2YearsAgo > 0 ? `${marketData.marketTime2YearsAgo} Days` : '—'}
                           </div>
                         </div>
                         <div className={`text-[11px] font-black pt-1 border-t border-slate-100 mt-1 ${getMarketCondition(marketData.marketTime2YearsAgo).accentText}`}>
@@ -821,7 +821,7 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
           {/* TAB 1: EXECUTIVE SUMMARY */}
           {activeTab === 'summary' && (
             <div className="space-y-6">
-              {/* Key Indicators: 4 Cards including Live Mortgage Rate Benchmark */}
+              {/* Key Indicators — 4 Cards including Live Mortgage Rate Benchmark */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {/* 1. Live Mortgage Rate Card */}
                 <div className="bg-white border border-slate-200/90 rounded-3xl p-5 shadow-xs relative flex flex-col justify-between">
@@ -1145,7 +1145,7 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                         <div className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-white border border-slate-200 shadow-2xs text-xs font-bold">
                           <span className="text-[10px] font-bold uppercase text-slate-500">2y Ago:</span>
                           <span className="text-xs font-black text-slate-950">
-                            {activeRow.marketTime2YearsAgo > 0 ? `${activeRow.marketTime2YearsAgo}d` : 'N/A'}
+                            {activeRow.marketTime2YearsAgo > 0 ? `${activeRow.marketTime2YearsAgo}d` : '—'}
                           </span>
                           {activeRow.marketTime2YearsAgo > 0 && (
                             <span className={`text-[11px] font-black ${getMarketCondition(activeRow.marketTime2YearsAgo).accentText}`}>
@@ -1227,7 +1227,7 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                                 <span className={`ml-1 text-[11px] font-black hidden sm:inline ${cond2y.accentText}`}>({cond2y.label})</span>
                               </>
                             ) : (
-                              <span className="text-slate-400 font-medium">N/A</span>
+                              <span className="text-slate-400 font-medium">—</span>
                             )}
                           </td>
                           <td className="p-3 font-bold text-slate-950">{row.medianActivePrice}</td>
@@ -1372,7 +1372,7 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                         <th className="p-3.5 text-center">Median DOM</th>
                         <th className="p-3.5 text-center">{OC_HOUSING_REPORT_METADATA.closedSalesPeriod} Sales</th>
                         <th className="p-3.5 text-center">{OC_HOUSING_REPORT_METADATA.closedSalesPriorYearPeriod} Sales</th>
-                        <th className="p-3.5 text-right">Price Range (Low to High)</th>
+                        <th className="p-3.5 text-right">Price Range (Low – High)</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100 font-sans">
@@ -1422,7 +1422,7 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                             </td>
 
                             <td className="p-3 text-right font-mono font-bold text-slate-800">
-                              {row.medianSqFt ? `${row.medianSqFt.toLocaleString()} sqft` : 'N/A'}
+                              {row.medianSqFt ? `${row.medianSqFt.toLocaleString()} sqft` : '—'}
                             </td>
 
                             <td className="p-3 text-right font-mono font-bold text-slate-950">
@@ -1468,7 +1468,7 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
 
                             <td className="p-3 text-right font-mono text-[11px] text-slate-600 font-medium">
                               <span>{row.lowPrice}</span>
-                              <span className="text-slate-400 mx-1">to</span>
+                              <span className="text-slate-400 mx-1">–</span>
                               <span>{row.highPrice}</span>
                             </td>
                           </tr>

@@ -889,14 +889,14 @@ export function App() {
                     </div>
                   </div>
 
-                  {/* Dynamic Steven Thomas City Report Format • Displayed when a city is selected */}
+                  {/* Dynamic Steven Thomas City Report Format — Displayed when a city is selected */}
                   {currentCity.id !== 'orange-county' && (currentCityMarketData || currentCitySoldData) && (() => {
                     const soldData = currentCitySoldData;
                     const marketData = currentCityMarketData;
                     const yoyUnitsChange = soldData ? soldData.unitsSold2026 - soldData.unitsSold2025 : 0;
 
                     return (
-                      <div className="space-y-5 pt-1">
+                      <div className="space-y-6 pt-2">
                         {/* Dynamic City-Specific Market Speed Live Ticker */}
                         {marketData && (() => {
                           const emtDelta = marketData.marketTimeDays - marketData.marketTime2WeeksAgo;
@@ -907,89 +907,88 @@ export function App() {
                           const cond = getMarketCondition(marketData.marketTimeDays);
 
                           return (
-                            <div className="mb-2">
-                              <button
-                                type="button"
-                                onClick={() => setShowHistoricalMarketTimeModal(true)}
-                                className="relative flex items-center h-12 w-full overflow-hidden bg-transparent text-slate-800 transition-opacity hover:opacity-85 cursor-pointer font-sans group select-none"
-                                title={`Click to view ${currentCity.name} Historical Speed & Pace`}
-                              >
-                                <div className="relative overflow-hidden w-full">
-                                  <div className="animate-ticker flex items-center group-hover:[animation-play-state:paused]">
-                                    {/* 1st copy */}
-                                    <div className="flex items-center gap-4 sm:gap-6 text-xs sm:text-sm md:text-[15px] font-bold tracking-tight uppercase text-slate-700 shrink-0 pr-6 sm:pr-8">
-                                      <span className={`font-black uppercase tracking-wider px-2.5 sm:px-3.5 py-1 rounded-full border shadow-2xs text-xs sm:text-sm ${cond.tickerBadgeClass}`}>
-                                        {cond.capitalLabel}
-                                      </span>
-                                      <span className="font-extrabold text-slate-900 text-xs sm:text-sm md:text-[15px]">
-                                        MARKET SPEED: <span className={`${speedColor} font-black underline decoration-2 decoration-current underline-offset-2`}>{speedLabel}</span>
-                                      </span>
-                                      <span className="text-slate-600 font-bold">
-                                        DEMAND: <span className="text-emerald-600 font-black text-sm sm:text-base md:text-lg">{marketData.demand30Days}</span>{' '}
-                                        <span className="text-emerald-600 font-black text-xl leading-none inline-block">↑</span>
-                                      </span>
-                                      <span className="text-slate-600 font-bold">
-                                        SUPPLY: <span className="text-slate-900 font-black text-sm sm:text-base md:text-lg">{marketData.currentActives}</span>{' '}
-                                        <span className="text-[#FA2D48] font-black text-xl leading-none inline-block">↓</span>
-                                      </span>
-                                      <span className="text-slate-600 font-bold">
-                                        EMT: <span className="text-slate-950 font-black text-sm sm:text-base md:text-lg">{marketData.marketTimeDays} DAYS</span>
-                                        {emtDelta !== 0 && (
-                                          <span className={`ml-1.5 font-black inline-flex items-center gap-0.5 text-xs sm:text-sm ${isFaster ? 'text-emerald-600' : 'text-[#FA2D48]'}`}>
-                                            <span className="text-xl leading-none font-black">{isFaster ? '↓' : '↑'}</span>
-                                            <span>{Math.abs(emtDelta)}d {isFaster ? 'FASTER' : 'SLOWER'}</span>
-                                          </span>
-                                        )}
-                                      </span>
-                                      <span className="text-slate-300 font-light text-sm sm:text-base select-none">/</span>
-                                    </div>
-                                    {/* 2nd identical copy */}
-                                    <div className="flex items-center gap-4 sm:gap-6 text-xs sm:text-sm md:text-[15px] font-bold tracking-tight uppercase text-slate-700 shrink-0 pr-6 sm:pr-8" aria-hidden="true">
-                                      <span className={`font-black uppercase tracking-wider px-2.5 sm:px-3.5 py-1 rounded-full border shadow-2xs text-xs sm:text-sm ${cond.tickerBadgeClass}`}>
-                                        {cond.capitalLabel}
-                                      </span>
-                                      <span className="font-extrabold text-slate-900 text-xs sm:text-sm md:text-[15px]">
-                                        MARKET SPEED: <span className={`${speedColor} font-black underline decoration-2 decoration-current underline-offset-2`}>{speedLabel}</span>
-                                      </span>
-                                      <span className="text-slate-600 font-bold">
-                                        DEMAND: <span className="text-emerald-600 font-black text-sm sm:text-base md:text-lg">{marketData.demand30Days}</span>{' '}
-                                        <span className="text-emerald-600 font-black text-xl leading-none inline-block">↑</span>
-                                      </span>
-                                      <span className="text-slate-600 font-bold">
-                                        SUPPLY: <span className="text-slate-900 font-black text-sm sm:text-base md:text-lg">{marketData.currentActives}</span>{' '}
-                                        <span className="text-[#FA2D48] font-black text-xl leading-none inline-block">↓</span>
-                                      </span>
-                                      <span className="text-slate-600 font-bold">
-                                        EMT: <span className="text-slate-950 font-black text-sm sm:text-base md:text-lg">{marketData.marketTimeDays} DAYS</span>
-                                        {emtDelta !== 0 && (
-                                          <span className={`ml-1.5 font-black inline-flex items-center gap-0.5 text-xs sm:text-sm ${isFaster ? 'text-emerald-600' : 'text-[#FA2D48]'}`}>
-                                            <span className="text-xl leading-none font-black">{isFaster ? '↓' : '↑'}</span>
-                                            <span>{Math.abs(emtDelta)}d {isFaster ? 'FASTER' : 'SLOWER'}</span>
-                                          </span>
-                                        )}
-                                      </span>
-                                      <span className="text-slate-300 font-light text-sm sm:text-base select-none">/</span>
-                                    </div>
+                            <button
+                              type="button"
+                              onClick={() => setShowHistoricalMarketTimeModal(true)}
+                              className="relative flex items-center h-12 w-full overflow-hidden bg-transparent text-slate-800 transition-opacity hover:opacity-85 cursor-pointer font-sans group select-none mb-4"
+                              title={`Click to view ${currentCity.name} Historical Speed & Pace`}
+                            >
+                              {/* Running City Equation */}
+                              <div className="relative overflow-hidden w-full">
+                                <div className="animate-ticker flex items-center group-hover:[animation-play-state:paused]">
+                                  {/* 1st copy */}
+                                  <div className="flex items-center gap-4 sm:gap-6 text-xs sm:text-sm md:text-[15px] font-bold tracking-tight uppercase text-slate-700 shrink-0 pr-6 sm:pr-8">
+                                    <span className={`font-black uppercase tracking-wider px-2.5 sm:px-3.5 py-1 rounded-full border shadow-2xs text-xs sm:text-sm ${cond.tickerBadgeClass}`}>
+                                      {cond.capitalLabel}
+                                    </span>
+                                    <span className="font-extrabold text-slate-900 text-xs sm:text-sm md:text-[15px]">
+                                      MARKET SPEED: <span className={`${speedColor} font-black underline decoration-2 decoration-current underline-offset-2`}>{speedLabel}</span>
+                                    </span>
+                                    <span className="text-slate-600 font-bold">
+                                      DEMAND: <span className="text-emerald-600 font-black text-sm sm:text-base md:text-lg">{marketData.demand30Days}</span>{' '}
+                                      <span className="text-emerald-600 font-black text-xl leading-none inline-block">↑</span>
+                                    </span>
+                                    <span className="text-slate-600 font-bold">
+                                      SUPPLY: <span className="text-slate-900 font-black text-sm sm:text-base md:text-lg">{marketData.currentActives}</span>{' '}
+                                      <span className="text-[#FA2D48] font-black text-xl leading-none inline-block">↓</span>
+                                    </span>
+                                    <span className="text-slate-600 font-bold">
+                                      EMT: <span className="text-slate-950 font-black text-sm sm:text-base md:text-lg">{marketData.marketTimeDays} DAYS</span>
+                                      {emtDelta !== 0 && (
+                                        <span className={`ml-1.5 font-black inline-flex items-center gap-0.5 text-xs sm:text-sm ${isFaster ? 'text-emerald-600' : 'text-[#FA2D48]'}`}>
+                                          <span className="text-xl leading-none font-black">{isFaster ? '↓' : '↑'}</span>
+                                          <span>{Math.abs(emtDelta)}d {isFaster ? 'FASTER' : 'SLOWER'}</span>
+                                        </span>
+                                      )}
+                                    </span>
+                                    <span className="text-slate-300 font-light text-sm sm:text-base select-none">/</span>
+                                  </div>
+                                  {/* 2nd identical copy */}
+                                  <div className="flex items-center gap-4 sm:gap-6 text-xs sm:text-sm md:text-[15px] font-bold tracking-tight uppercase text-slate-700 shrink-0 pr-6 sm:pr-8" aria-hidden="true">
+                                    <span className={`font-black uppercase tracking-wider px-2.5 sm:px-3.5 py-1 rounded-full border shadow-2xs text-xs sm:text-sm ${cond.tickerBadgeClass}`}>
+                                      {cond.capitalLabel}
+                                    </span>
+                                    <span className="font-extrabold text-slate-900 text-xs sm:text-sm md:text-[15px]">
+                                      MARKET SPEED: <span className={`${speedColor} font-black underline decoration-2 decoration-current underline-offset-2`}>{speedLabel}</span>
+                                    </span>
+                                    <span className="text-slate-600 font-bold">
+                                      DEMAND: <span className="text-emerald-600 font-black text-sm sm:text-base md:text-lg">{marketData.demand30Days}</span>{' '}
+                                      <span className="text-emerald-600 font-black text-xl leading-none inline-block">↑</span>
+                                    </span>
+                                    <span className="text-slate-600 font-bold">
+                                      SUPPLY: <span className="text-slate-900 font-black text-sm sm:text-base md:text-lg">{marketData.currentActives}</span>{' '}
+                                      <span className="text-[#FA2D48] font-black text-xl leading-none inline-block">↓</span>
+                                    </span>
+                                    <span className="text-slate-600 font-bold">
+                                      EMT: <span className="text-slate-950 font-black text-sm sm:text-base md:text-lg">{marketData.marketTimeDays} DAYS</span>
+                                      {emtDelta !== 0 && (
+                                        <span className={`ml-1.5 font-black inline-flex items-center gap-0.5 text-xs sm:text-sm ${isFaster ? 'text-emerald-600' : 'text-[#FA2D48]'}`}>
+                                          <span className="text-xl leading-none font-black">{isFaster ? '↓' : '↑'}</span>
+                                          <span>{Math.abs(emtDelta)}d {isFaster ? 'FASTER' : 'SLOWER'}</span>
+                                        </span>
+                                      )}
+                                    </span>
+                                    <span className="text-slate-300 font-light text-sm sm:text-base select-none">/</span>
                                   </div>
                                 </div>
-                              </button>
-                            </div>
+                              </div>
+                            </button>
                           );
                         })()}
 
                         {/* 1. CURRENT ACTIVE INVENTORY & EXPECTED MARKET TIME (Steven Thomas Page 10 Report) */}
                         {marketData && (
-                          <div className="space-y-3.5 sm:space-y-4">
+                          <div className="space-y-4">
                             <div className="flex items-center justify-between flex-wrap gap-2">
-                              <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-900 font-sans">
+                              <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 font-sans">
                                 Market Velocity & Expected Pace
                               </h3>
-                              <span className="text-[10px] sm:text-[11px] font-bold text-slate-500">
+                              <span className="text-[11px] font-bold text-slate-500">
                                 Steven Thomas Analysis ({OC_HOUSING_REPORT_METADATA.reportDate})
                               </span>
                             </div>
 
-                            {/* Primary Speed Gauges: Expected Market Time & Closed Days on Market */}
+                            {/* Primary Speed Gauges: Expected Market Time & Closed Days on Market (Same Weight) */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                               {/* Expected Market Time - Tap to open historical pace modal */}
                               {(() => {
@@ -1014,12 +1013,12 @@ export function App() {
                                       {marketData.marketTimeDays} Days
                                     </div>
 
-                                    <div className="pt-1 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 w-full">
+                                    <div className="pt-1 flex items-center justify-between flex-wrap gap-2 w-full">
                                       <span className="bg-white text-slate-950 font-black text-xs px-2.5 py-1 rounded-lg inline-block shadow-xs font-sans">
                                         {cond.badgeText}
                                       </span>
                                       <span className="text-xs font-bold text-white/90 group-hover:text-white underline underline-offset-2 flex items-center gap-1 transition-colors">
-                                        <span>See historical pace</span>
+                                        <span>Click to see historical pace</span>
                                         <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
                                       </span>
                                     </div>
@@ -1043,7 +1042,7 @@ export function App() {
                                         Time to Sell Once Properly Priced
                                       </div>
                                       <div className="text-3xl sm:text-4xl font-black text-white tracking-tight font-sans">
-                                        {closedDays > 0 ? `${closedDays} Days` : 'N/A'}
+                                        {closedDays > 0 ? `${closedDays} Days` : '—'}
                                       </div>
                                     </div>
                                   </div>
@@ -1051,30 +1050,30 @@ export function App() {
                               })()}
                             </div>
 
-                            {/* Price Range Information */}
+                            {/* Price Range Information (Directly below Expected Market Time & Days on Market) */}
                             {soldData && soldData.lowPrice && soldData.highPrice && (
-                              <div className="bg-slate-50/90 rounded-2xl py-2.5 sm:py-3 px-3.5 sm:px-5 flex items-center justify-between border border-slate-200/80 shadow-2xs gap-2">
-                                <span className="font-bold text-xs sm:text-base text-slate-900 font-sans shrink-0">
+                              <div className="bg-slate-50/90 rounded-2xl py-3 px-4 sm:px-5 flex items-center justify-between border border-slate-200/80 shadow-2xs">
+                                <span className="font-bold text-sm sm:text-base text-slate-900 font-sans">
                                   Price Range:
                                 </span>
-                                <span className="font-sans font-black text-xs sm:text-lg text-slate-950 text-right">
-                                  {soldData.lowPrice} to {soldData.highPrice}
+                                <span className="font-sans font-black text-base sm:text-lg text-slate-950">
+                                  {soldData.lowPrice} – {soldData.highPrice}
                                 </span>
                               </div>
                             )}
 
                             {/* Active Inventory & Price Metrics */}
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                               <div className="bg-slate-50/80 p-4 rounded-2xl border border-slate-200/70">
                                 <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">Active Inventory</div>
-                                <div className="text-3xl font-bold text-slate-900 pt-1">{marketData.currentActives} Homes</div>
-                                <div className="text-xs text-emerald-600 pt-1 font-bold">Active listings</div>
+                                <div className="text-2xl sm:text-3xl font-bold text-slate-900 pt-1">{marketData.currentActives} Homes</div>
+                                <div className="text-[11px] text-emerald-600 pt-1 font-bold">Active listings on market</div>
                               </div>
 
                               <div className="bg-slate-50/80 p-4 rounded-2xl border border-slate-200/70">
-                                <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">Median List Price</div>
-                                <div className="text-3xl font-bold text-slate-900 pt-1">{marketData.medianActiveListPrice}</div>
-                                <div className="text-xs text-emerald-600 pt-1 font-bold">Current listings</div>
+                                <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">Median Active List Price</div>
+                                <div className="text-2xl sm:text-3xl font-bold text-slate-900 pt-1">{marketData.medianActiveListPrice}</div>
+                                <div className="text-[11px] text-emerald-600 pt-1 font-bold">Current active listings</div>
                               </div>
                             </div>
                           </div>
@@ -1082,44 +1081,44 @@ export function App() {
 
                         {/* 2. CLOSED SALES DATA (Steven Thomas Page 12 Report) */}
                         {soldData && (
-                          <div className="space-y-4 pt-4 border-t border-slate-100">
+                          <div className="space-y-3 pt-4 border-t border-slate-100">
                             <div className="flex items-center justify-between flex-wrap gap-2">
-                              <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-900 font-sans">
+                              <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 font-sans">
                                 Closed Sales & Price Distribution ({OC_HOUSING_REPORT_METADATA.closedSalesPeriod})
                               </h3>
                             </div>
 
-                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                               <div className="bg-slate-50/90 rounded-2xl p-4 border border-slate-200/70">
                                 <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">Median Sales Price</div>
                                 <div className="text-2xl sm:text-3xl font-bold text-slate-900 pt-1">{soldData.medianSalesPrice}</div>
-                                <div className="text-xs text-emerald-600 pt-1 font-bold">List: {soldData.medianListPrice}</div>
+                                <div className="text-[11px] text-emerald-600 pt-1 font-bold">List Price: {soldData.medianListPrice}</div>
                               </div>
 
                               <div className="bg-slate-50/90 rounded-2xl p-4 border border-slate-200/70">
                                 <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">Sales-to-List Ratio</div>
                                 <div className="text-2xl sm:text-3xl font-bold text-emerald-600 pt-1">{soldData.salesToListRatio}</div>
-                                <div className="text-xs text-emerald-600 pt-1 font-bold">OC Avg: {OC_HOUSING_REPORT_METADATA.salesToListRatio}</div>
+                                <div className="text-[11px] text-emerald-600 pt-1 font-bold">Countywide Avg: {OC_HOUSING_REPORT_METADATA.salesToListRatio}</div>
                               </div>
 
                               <div className="bg-slate-50/90 rounded-2xl p-4 border border-slate-200/70">
-                                <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">Price / Sq. Ft.</div>
+                                <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">Median Price / Sq. Ft.</div>
                                 <div className="text-2xl sm:text-3xl font-bold text-[#FA2D48] pt-1">{soldData.medianPricePerSqFt}</div>
-                                <div className="text-xs text-emerald-600 pt-1 font-bold">Size: {soldData.medianSqFt.toLocaleString()} sqft</div>
+                                <div className="text-[11px] text-emerald-600 pt-1 font-bold">Median Size: {soldData.medianSqFt.toLocaleString()} sq ft</div>
                               </div>
 
                               <div className="bg-slate-50/90 rounded-2xl p-4 border border-slate-200/70 flex flex-col justify-between">
                                 <div>
                                   <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">Closed Sales</div>
                                   <div className="text-2xl sm:text-3xl font-bold text-slate-900 pt-1">{soldData.unitsSold2026} Units</div>
-                                  <div className={`text-xs pt-1 font-bold ${yoyUnitsChange < 0 ? 'text-[#FA2D48]' : 'text-emerald-600'}`}>
-                                    {yoyUnitsChange >= 0 ? `+${yoyUnitsChange}` : yoyUnitsChange} YoY ({soldData.unitsSold2025})
+                                  <div className={`text-[11px] pt-1 font-bold ${yoyUnitsChange < 0 ? 'text-[#FA2D48]' : 'text-emerald-600'}`}>
+                                    {yoyUnitsChange >= 0 ? `+${yoyUnitsChange}` : yoyUnitsChange} vs Prior Year ({soldData.unitsSold2025})
                                   </div>
                                 </div>
                                 {marketData && (
-                                  <div className="text-xs text-emerald-600 font-bold pt-1.5 mt-2 border-t border-slate-200/70 flex items-center justify-between">
-                                    <span>30d Demand:</span>
-                                    <span className="text-emerald-700 font-extrabold">{marketData.demand30Days} Escrows</span>
+                                  <div className="text-[11px] text-emerald-600 font-bold pt-1.5 mt-2 border-t border-slate-200/70 flex items-center justify-between">
+                                    <span>30-Day Demand:</span>
+                                    <span className="text-emerald-700 font-extrabold">{marketData.demand30Days} Pending Escrow</span>
                                   </div>
                                 )}
                               </div>
@@ -1305,7 +1304,7 @@ export function App() {
               onOpenManager={() => setIsManagerModalOpen(true)}
             />
 
-            {/* News Sections • Displayed ONLY on News Category Views (e.g. Orange County News), NOT on Main Page */}
+            {/* News Sections — Displayed ONLY on News Category Views (e.g. Orange County News), NOT on Main Page */}
             {activeCategory !== 'all' && (
               <>
                 {/* Featured Hero / Top Stories */}
@@ -1525,9 +1524,9 @@ export function App() {
               </div>
               {[
                 { label: "Hot Seller's Market", days: "Under 60 Days" },
-                { label: "Slight Seller's Market", days: "60 to 89 Days" },
-                { label: "Balanced Market", days: "90 to 119 Days" },
-                { label: "Slight Buyer's Market", days: "120 to 149 Days" },
+                { label: "Slight Seller's Market", days: "60 – 89 Days" },
+                { label: "Balanced Market", days: "90 – 119 Days" },
+                { label: "Slight Buyer's Market", days: "120 – 149 Days" },
                 { label: "Buyer's Market", days: "150+ Days" },
               ].map((range) => (
                 <div
@@ -1618,7 +1617,7 @@ export function App() {
                 <div>
                   <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider font-sans">2 Years Ago</div>
                   <div className="text-xl sm:text-2xl font-black text-slate-950 pt-0.5 font-sans">
-                    {currentCityMarketData.marketTime2YearsAgo > 0 ? `${currentCityMarketData.marketTime2YearsAgo} Days` : 'N/A'}
+                    {currentCityMarketData.marketTime2YearsAgo > 0 ? `${currentCityMarketData.marketTime2YearsAgo} Days` : '—'}
                   </div>
                 </div>
                 <div className={`text-xs font-bold pt-2 border-t border-slate-200/60 mt-2 font-sans ${getMarketCondition(currentCityMarketData.marketTime2YearsAgo).accentText}`}>

@@ -75,7 +75,7 @@ export const OCFastMarketReport: React.FC<OCFastMarketReportProps> = ({
 
   // Helper for change badge / mini-pill styling
   const renderChangeBadge = (changeStr: string, numericVal?: number, invertGoodBad = false) => {
-    if (!changeStr || changeStr === 'N/A') return <span className="text-slate-400 font-mono text-xs">N/A</span>;
+    if (!changeStr || changeStr === '—') return <span className="text-slate-400 font-mono text-xs">—</span>;
     
     const isPositive = changeStr.startsWith('+') || (numericVal !== undefined && numericVal > 0);
     const isZero = changeStr === '0.0%' || changeStr === '0%' || numericVal === 0;
@@ -136,12 +136,12 @@ export const OCFastMarketReport: React.FC<OCFastMarketReportProps> = ({
         </div>
 
         {/* Bottom Bar: Rolling 12-Month & YTD Performance */}
-        {metric.rolling2026 && metric.rolling2026 !== 'N/A' ? (
+        {metric.rolling2026 && metric.rolling2026 !== '—' ? (
           <div className="pt-2.5 border-t border-slate-100 text-[11px] flex items-center justify-between text-slate-600 font-medium">
             <span className="text-slate-500">12-Mo. Rolling:</span>
             <div className="flex items-center space-x-1.5 font-bold">
               <span className="text-slate-950 font-black">{metric.rolling2026}</span>
-              {metric.rollingChange && metric.rollingChange !== 'N/A' && (
+              {metric.rollingChange && metric.rollingChange !== '—' && (
                 <span className={`text-[10px] px-1.5 py-0.2 rounded font-mono ${
                   metric.rollingChangeNumeric && metric.rollingChangeNumeric > 0 ? 'text-emerald-700 bg-emerald-50' : 'text-[#FA2D48] bg-rose-50'
                 }`}>
@@ -150,12 +150,12 @@ export const OCFastMarketReport: React.FC<OCFastMarketReportProps> = ({
               )}
             </div>
           </div>
-        ) : metric.ytd2026 && metric.ytd2026 !== 'N/A' ? (
+        ) : metric.ytd2026 && metric.ytd2026 !== '—' ? (
           <div className="pt-2.5 border-t border-slate-100 text-[11px] flex items-center justify-between text-slate-600 font-medium">
             <span className="text-slate-500">YTD Thru 7-2026:</span>
             <div className="flex items-center space-x-1.5 font-bold">
               <span className="text-slate-950 font-black">{metric.ytd2026}</span>
-              {metric.ytdChange && metric.ytdChange !== 'N/A' && (
+              {metric.ytdChange && metric.ytdChange !== '—' && (
                 <span className={`text-[10px] px-1.5 py-0.2 rounded font-mono ${
                   metric.ytdChangeNumeric && metric.ytdChangeNumeric > 0 ? 'text-emerald-700 bg-emerald-50' : 'text-[#FA2D48] bg-rose-50'
                 }`}>
