@@ -640,7 +640,9 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
             <div className="pt-3 border-t border-amber-200/60 grid grid-cols-2 gap-2 text-xs">
               <div>
                 <div className="text-[10px] font-bold text-slate-400 uppercase">Buyer Demand</div>
-                <div className="text-base font-black text-slate-950 tabular-nums">361 (30% of OC)</div>
+                <div className="text-base font-black text-slate-950 tabular-nums">
+                  30% <span className="text-xs font-bold text-slate-500 font-sans">(361 buyers)</span>
+                </div>
               </div>
               <div>
                 <div className="text-[10px] font-bold text-slate-400 uppercase">Market State</div>
@@ -676,7 +678,9 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
             <div className="pt-3 border-t border-sky-200/60 grid grid-cols-2 gap-2 text-xs">
               <div>
                 <div className="text-[10px] font-bold text-slate-400 uppercase">Buyer Demand</div>
-                <div className="text-base font-black text-slate-950 tabular-nums">732 (58% of OC)</div>
+                <div className="text-base font-black text-slate-950 tabular-nums">
+                  58% <span className="text-xs font-bold text-slate-500 font-sans">(732 buyers)</span>
+                </div>
               </div>
               <div>
                 <div className="text-[10px] font-bold text-slate-400 uppercase">Market State</div>
@@ -712,7 +716,9 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
             <div className="pt-3 border-t border-blue-200/60 grid grid-cols-2 gap-2 text-xs">
               <div>
                 <div className="text-[10px] font-bold text-slate-400 uppercase">Buyer Demand</div>
-                <div className="text-base font-black text-slate-950 tabular-nums">156 (12% of OC)</div>
+                <div className="text-base font-black text-slate-950 tabular-nums">
+                  12% <span className="text-xs font-bold text-slate-500 font-sans">(156 buyers)</span>
+                </div>
               </div>
               <div>
                 <div className="text-[10px] font-bold text-slate-400 uppercase">Market State</div>
@@ -787,9 +793,11 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
 
               <div className="bg-white p-4 rounded-2xl border border-slate-200/80 space-y-1">
                 <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Share of All OC Buyers</div>
-                <div className="text-3xl sm:text-4xl font-black text-emerald-600 tabular-nums flex items-baseline gap-1.5 flex-wrap">
-                  <span className="text-slate-950 font-black">{selectedTier.demandCount}</span>
-                  <span className="text-2xl sm:text-3xl font-black text-emerald-600">({selectedTier.pctCurrentDemand}%)</span>
+                <div className="text-3xl sm:text-4xl font-black text-emerald-600 tabular-nums flex items-baseline flex-wrap">
+                  <span>{selectedTier.pctCurrentDemand}%</span>
+                  <span className="text-xs sm:text-sm font-bold text-slate-500 font-sans ml-2">
+                    ({selectedTier.demandCount} buyers)
+                  </span>
                 </div>
                 <div className="text-xs font-bold text-slate-500">
                   Of total 1,249 pending sales
@@ -798,9 +806,11 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
 
               <div className="bg-white p-4 rounded-2xl border border-slate-200/80 space-y-1">
                 <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Share of Total Listings</div>
-                <div className="text-3xl sm:text-4xl font-black text-slate-900 tabular-nums flex items-baseline gap-1.5 flex-wrap">
-                  <span className="text-slate-950 font-black">{selectedTier.inventoryCount.toLocaleString()}</span>
-                  <span className="text-2xl sm:text-3xl font-black text-slate-500">({selectedTier.pctCurrentInventory}%)</span>
+                <div className="text-3xl sm:text-4xl font-black text-slate-900 tabular-nums flex items-baseline flex-wrap">
+                  <span>{selectedTier.pctCurrentInventory}%</span>
+                  <span className="text-xs sm:text-sm font-bold text-slate-500 font-sans ml-2">
+                    ({selectedTier.inventoryCount.toLocaleString()} listings)
+                  </span>
                 </div>
                 <div className="text-xs font-bold text-slate-500">
                   Of total 4,924 active listings
@@ -837,10 +847,9 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                     <span className="flex items-center gap-1.5 text-slate-800 font-extrabold">
                       <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0"></span>
                       <span>Buyer Demand</span>
-                      <span className="text-slate-400 font-normal text-[11px] hidden sm:inline">(Share of all OC buyers)</span>
                     </span>
                     <span className="text-sm font-black text-emerald-600 tabular-nums">
-                      {selectedTier.demandCount} ({selectedTier.pctCurrentDemand}%)
+                      {selectedTier.pctCurrentDemand}% <span className="text-xs font-bold text-slate-500 font-sans">({selectedTier.demandCount})</span>
                     </span>
                   </div>
                   <div className="w-full bg-slate-100 h-3 rounded-full overflow-hidden p-0.5 border border-slate-200/50">
@@ -857,10 +866,9 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                     <span className="flex items-center gap-1.5 text-slate-800 font-extrabold">
                       <span className="w-2.5 h-2.5 rounded-full bg-slate-900 shrink-0"></span>
                       <span>Available Supply</span>
-                      <span className="text-slate-400 font-normal text-[11px] hidden sm:inline">(Share of all OC listings)</span>
                     </span>
                     <span className="text-sm font-black text-slate-950 tabular-nums">
-                      {selectedTier.inventoryCount.toLocaleString()} ({selectedTier.pctCurrentInventory}%)
+                      {selectedTier.pctCurrentInventory}% <span className="text-xs font-bold text-slate-500 font-sans">({selectedTier.inventoryCount.toLocaleString()})</span>
                     </span>
                   </div>
                   <div className="w-full bg-slate-100 h-3 rounded-full overflow-hidden p-0.5 border border-slate-200/50">
