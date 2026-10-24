@@ -34,8 +34,8 @@ export const HousingSummarySection: React.FC<HousingSummarySectionProps> = ({
         </div>
       )}
 
-      {/* 6 Minimalist Metric Pillar Cards — Dynamic Color Identity per Metric */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4">
+      {/* 6 Minimalist Metric Pillar Cards • Dynamic Color Identity per Metric */}
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-4">
         {page9.pillars.map((pillar) => {
           const theme = (() => {
             switch (pillar.id) {
@@ -89,20 +89,20 @@ export const HousingSummarySection: React.FC<HousingSummarySectionProps> = ({
               type="button"
               key={pillar.id}
               onClick={() => setSelectedPillar(pillar)}
-              className="w-full text-left rounded-2xl bg-white border border-slate-200/90 p-4 sm:p-5 hover:border-slate-400 hover:shadow-xs transition-all font-sans group cursor-pointer active:scale-[0.99] flex flex-col justify-between space-y-2.5"
+              className="w-full text-left rounded-2xl bg-white border border-slate-200/90 p-3 sm:p-5 hover:border-slate-400 hover:shadow-xs transition-all font-sans group cursor-pointer active:scale-[0.99] flex flex-col justify-between space-y-2 sm:space-y-2.5"
               title={`Click to view ${pillar.title} breakdown`}
             >
               {/* Colored Title */}
-              <div className={`text-xs font-black uppercase tracking-wider ${theme.titleColor}`}>
+              <div className={`text-[10px] sm:text-xs font-black uppercase tracking-wider truncate ${theme.titleColor}`}>
                 {pillar.title}
               </div>
 
               {/* Number & Highly Readable Colored Description */}
               <div className="space-y-0.5">
-                <div className={`text-2xl sm:text-3xl font-black tracking-tight tabular-nums ${theme.statColor}`}>
+                <div className={`text-xl sm:text-2xl lg:text-3xl font-black tracking-tight tabular-nums truncate ${theme.statColor}`}>
                   {pillar.stat}
                 </div>
-                <div className={`text-xs sm:text-sm font-bold ${theme.unitColor}`}>
+                <div className={`text-[11px] sm:text-sm font-bold truncate ${theme.unitColor}`}>
                   {pillar.unit}
                 </div>
               </div>

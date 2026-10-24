@@ -1,5 +1,5 @@
 // =============================================================================
-// ORANGE COUNTY HOUSING REPORT DATA — STEVEN THOMAS (Reports On Housing)
+// ORANGE COUNTY HOUSING REPORT DATA • STEVEN THOMAS (Reports On Housing)
 // Single Source of Truth for Bi-Weekly Market Intelligence
 // =============================================================================
 //
@@ -81,7 +81,7 @@ export interface OCHousingSummaryBullet {
 }
 
 // =============================================================================
-// 1. BI-WEEKLY REPORT CONFIGURATION — OCTOBER 12, 2026 (RATES RISE, HOUSING STALLS)
+// 1. BI-WEEKLY REPORT CONFIGURATION • OCTOBER 12, 2026 (RATES RISE, HOUSING STALLS)
 // =============================================================================
 export const BI_WEEKLY_REPORT_CONFIG = {
   // Report Identity
@@ -446,7 +446,7 @@ export const OC_PAGE_8_LUXURY_NOTE = {
 
 // =============================================================================
 // PAGE 9: ORANGE COUNTY HOUSING SUMMARY (OCTOBER 12, 2026)
-// Rates Rise, Housing Stalls — Telemetry & Metrics (Minimalist Apple/Tesla UI)
+// Rates Rise, Housing Stalls • Telemetry & Metrics (Minimalist Apple/Tesla UI)
 // =============================================================================
 export interface OCPage9Pillar {
   id: string;
@@ -513,7 +513,7 @@ export const OC_PAGE_9_HOUSING_SUMMARY = {
       metricLabel1: "Slowest Pace Since",
       metricValue1: "April 2020 (COVID)",
       metricLabel2: "Speed Category",
-      metricValue2: "Balanced (90–120 Days)"
+      metricValue2: "Balanced (90 to 120 Days)"
     },
     {
       id: "luxury",
@@ -679,7 +679,7 @@ export const OC_HOUSING_SUMMARY_BULLETS: OCHousingSummaryBullet[] = [
     title: "Buyer Demand",
     stat: `${cfg.demand.toLocaleString()} Escrows`,
     trend: `${demandDelta2Wks} in 2 wks (${demandPct2Wks}%)`,
-    description: `30-day pending sales dropped by 7.4% to ${cfg.demand.toLocaleString()} escrows with rates rising—the lowest October demand since 2007.`
+    description: `30-day pending sales dropped by 7.4% to ${cfg.demand.toLocaleString()} escrows with rates rising, the lowest October demand since 2007.`
   },
   {
     title: "Expected Market Time",
@@ -708,7 +708,7 @@ export const OC_HOUSING_SUMMARY_BULLETS: OCHousingSummaryBullet[] = [
 ];
 
 // =============================================================================
-// 4. PAGE 10: CITY MARKET TIME REPORT (October 12, 2026 — Rates Rise, Housing Stalls)
+// 4. PAGE 10: CITY MARKET TIME REPORT (October 12, 2026 • Rates Rise, Housing Stalls)
 // Tabulated from CRMLS as of 10/8/2026
 // =============================================================================
 export const OC_MARKET_TIME_REPORT: OCMarketTimeEntry[] = [
@@ -761,7 +761,7 @@ export const OC_MARKET_TIME_REPORT: OCMarketTimeEntry[] = [
 ];
 
 // =============================================================================
-// 5. PAGE 11: PRICE RANGE REPORT (October 12, 2026 — Rates Rise, Housing Stalls)
+// 5. PAGE 11: PRICE RANGE REPORT (October 12, 2026 • Rates Rise, Housing Stalls)
 // Tabulated from CRMLS as of 10/8/2026
 // =============================================================================
 export const OC_PRICE_RANGE_REPORT_ALL: OCPriceRangeEntry[] = [

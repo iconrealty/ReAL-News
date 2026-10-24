@@ -1009,11 +1009,11 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                     onChange={(e) => handleProgramSelect(e.target.value)}
                     className="w-full pl-3.5 sm:pl-4 pr-10 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-200 focus:border-[#FA2D48] focus:bg-white focus:ring-2 focus:ring-[#FA2D48]/20 font-bold text-slate-900 text-sm sm:text-base outline-none transition-all cursor-pointer appearance-none shadow-xs"
                   >
-                    <option value="30-Yr Fixed">30-Yr Fixed — {mnd30Num}% (Live Default)</option>
-                    <option value="15-Yr Fixed">15-Yr Fixed — {mnd15Num}% (Live)</option>
-                    <option value="30-Yr Jumbo">30-Yr Jumbo — {mndJumboNum}% (Live)</option>
-                    <option value="30-Yr FHA">30-Yr FHA — {mndFhaNum}% (Live)</option>
-                    <option value="30-Yr VA">30-Yr VA — {mndVaNum}% (Live)</option>
+                    <option value="30-Yr Fixed">30-Yr Fixed • {mnd30Num}% (Live Default)</option>
+                    <option value="15-Yr Fixed">15-Yr Fixed • {mnd15Num}% (Live)</option>
+                    <option value="30-Yr Jumbo">30-Yr Jumbo • {mndJumboNum}% (Live)</option>
+                    <option value="30-Yr FHA">30-Yr FHA • {mndFhaNum}% (Live)</option>
+                    <option value="30-Yr VA">30-Yr VA • {mndVaNum}% (Live)</option>
                     <option value="custom">Custom Rate ({interestRate !== '' ? `${interestRate}%` : 'Manual'})</option>
                   </select>
                   <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3.5 sm:right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
@@ -1242,11 +1242,11 @@ export const MortgageCalculator: React.FC<MortgageCalculatorProps> = ({
                     onChange={(e) => handleProgramSelect(e.target.value)}
                     className="w-full pl-3.5 sm:pl-4 pr-10 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-slate-800/90 border border-slate-700 focus:border-[#FA2D48] focus:bg-slate-800 focus:ring-2 focus:ring-[#FA2D48]/20 font-bold text-white text-sm sm:text-base outline-none transition-all cursor-pointer appearance-none shadow-xs"
                   >
-                    <option value="30-Yr Fixed" className="bg-slate-900 text-white">30-Yr Fixed — {mnd30Num}% (Live Default)</option>
-                    <option value="15-Yr Fixed" className="bg-slate-900 text-white">15-Yr Fixed — {mnd15Num}% (Live)</option>
-                    <option value="30-Yr Jumbo" className="bg-slate-900 text-white">30-Yr Jumbo — {mndJumboNum}% (Live)</option>
-                    <option value="30-Yr FHA" className="bg-slate-900 text-white">30-Yr FHA — {mndFhaNum}% (Live)</option>
-                    <option value="30-Yr VA" className="bg-slate-900 text-white">30-Yr VA — {mndVaNum}% (Live)</option>
+                    <option value="30-Yr Fixed" className="bg-slate-900 text-white">30-Yr Fixed • {mnd30Num}% (Live Default)</option>
+                    <option value="15-Yr Fixed" className="bg-slate-900 text-white">15-Yr Fixed • {mnd15Num}% (Live)</option>
+                    <option value="30-Yr Jumbo" className="bg-slate-900 text-white">30-Yr Jumbo • {mndJumboNum}% (Live)</option>
+                    <option value="30-Yr FHA" className="bg-slate-900 text-white">30-Yr FHA • {mndFhaNum}% (Live)</option>
+                    <option value="30-Yr VA" className="bg-slate-900 text-white">30-Yr VA • {mndVaNum}% (Live)</option>
                     <option value="custom" className="bg-slate-900 text-white">Custom Rate ({interestRate !== '' ? `${interestRate}%` : 'Manual'})</option>
                   </select>
                   <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3.5 sm:right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
