@@ -37,7 +37,7 @@ export const OCFastMonthlySnapshotSection: React.FC<OCFastMonthlySnapshotSection
 
   // Top right metric change indicator - clean bold colored font without background badge
   const renderChangeBadge = (changeStr: string, numericVal?: number, invertGoodBad = false) => {
-    if (!changeStr || changeStr === '—') return <span className="text-slate-400 font-mono text-xs">—</span>;
+    if (!changeStr || changeStr === 'N/A') return <span className="text-slate-400 font-mono text-xs">N/A</span>;
     
     const isPositive = changeStr.startsWith('+') || (numericVal !== undefined && numericVal > 0);
     const isZero = changeStr === '0.0%' || changeStr === '0%' || numericVal === 0;

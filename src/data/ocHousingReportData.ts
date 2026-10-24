@@ -413,21 +413,23 @@ export interface OCPage8BreakdownRow {
   marketTimeDays: number;
   pctCurrentInventory: number;
   pctCurrentDemand: number;
+  inventoryCount: number;
+  demandCount: number;
   lastYearDays: number;
   deltaDays: number; // vs last year
   signalBars: number; // 1 to 5
 }
 
 export const OC_PAGE_8_MARKET_BREAKDOWN: OCPage8BreakdownRow[] = [
-  { priceRange: "$0 - $750k", speedCategory: "Slight Buyer's", marketTimeDays: 126, pctCurrentInventory: 22, pctCurrentDemand: 21, lastYearDays: 64, deltaDays: 62, signalBars: 2 },
-  { priceRange: "$750k - $1M", speedCategory: "Balanced Market", marketTimeDays: 117, pctCurrentInventory: 17, pctCurrentDemand: 17, lastYearDays: 62, deltaDays: 55, signalBars: 3 },
-  { priceRange: "$1M - $1.25M", speedCategory: "Balanced Market", marketTimeDays: 102, pctCurrentInventory: 12, pctCurrentDemand: 14, lastYearDays: 71, deltaDays: 31, signalBars: 3 },
-  { priceRange: "$1.25M - $1.5M", speedCategory: "Slight Seller's", marketTimeDays: 86, pctCurrentInventory: 11, pctCurrentDemand: 16, lastYearDays: 64, deltaDays: 22, signalBars: 4 },
-  { priceRange: "$1.5M - $2M", speedCategory: "Balanced Market", marketTimeDays: 103, pctCurrentInventory: 13, pctCurrentDemand: 15, lastYearDays: 87, deltaDays: 16, signalBars: 3 },
-  { priceRange: "$2M - $2.5M", speedCategory: "Slight Buyer's", marketTimeDays: 120, pctCurrentInventory: 5, pctCurrentDemand: 5, lastYearDays: 159, deltaDays: -39, signalBars: 2 },
-  { priceRange: "$2.5M - $4M", speedCategory: "Slight Buyer's", marketTimeDays: 125, pctCurrentInventory: 9, pctCurrentDemand: 8, lastYearDays: 151, deltaDays: -26, signalBars: 2 },
-  { priceRange: "$4M - $6M", speedCategory: "Buyer's Market", marketTimeDays: 224, pctCurrentInventory: 5, pctCurrentDemand: 2, lastYearDays: 183, deltaDays: 41, signalBars: 1 },
-  { priceRange: "$6M+", speedCategory: "Buyer's Market", marketTimeDays: 379, pctCurrentInventory: 6, pctCurrentDemand: 2, lastYearDays: 431, deltaDays: -52, signalBars: 1 },
+  { priceRange: "$0 - $750k", speedCategory: "Slight Buyer's", marketTimeDays: 126, pctCurrentInventory: 22, inventoryCount: 1092, pctCurrentDemand: 21, demandCount: 261, lastYearDays: 64, deltaDays: 62, signalBars: 2 },
+  { priceRange: "$750k - $1M", speedCategory: "Balanced Market", marketTimeDays: 117, pctCurrentInventory: 17, inventoryCount: 833, pctCurrentDemand: 17, demandCount: 213, lastYearDays: 62, deltaDays: 55, signalBars: 3 },
+  { priceRange: "$1M - $1.25M", speedCategory: "Balanced Market", marketTimeDays: 102, pctCurrentInventory: 12, inventoryCount: 593, pctCurrentDemand: 14, demandCount: 175, lastYearDays: 71, deltaDays: 31, signalBars: 3 },
+  { priceRange: "$1.25M - $1.5M", speedCategory: "Slight Seller's", marketTimeDays: 86, pctCurrentInventory: 11, inventoryCount: 532, pctCurrentDemand: 16, demandCount: 186, lastYearDays: 64, deltaDays: 22, signalBars: 4 },
+  { priceRange: "$1.5M - $2M", speedCategory: "Balanced Market", marketTimeDays: 103, pctCurrentInventory: 13, inventoryCount: 662, pctCurrentDemand: 15, demandCount: 193, lastYearDays: 87, deltaDays: 16, signalBars: 3 },
+  { priceRange: "$2M - $2.5M", speedCategory: "Slight Buyer's", marketTimeDays: 120, pctCurrentInventory: 5, inventoryCount: 260, pctCurrentDemand: 5, demandCount: 65, lastYearDays: 159, deltaDays: -39, signalBars: 2 },
+  { priceRange: "$2.5M - $4M", speedCategory: "Slight Buyer's", marketTimeDays: 125, pctCurrentInventory: 9, inventoryCount: 425, pctCurrentDemand: 8, demandCount: 102, lastYearDays: 151, deltaDays: -26, signalBars: 2 },
+  { priceRange: "$4M - $6M", speedCategory: "Buyer's Market", marketTimeDays: 224, pctCurrentInventory: 5, inventoryCount: 224, pctCurrentDemand: 2, demandCount: 30, lastYearDays: 183, deltaDays: 41, signalBars: 1 },
+  { priceRange: "$6M+", speedCategory: "Buyer's Market", marketTimeDays: 379, pctCurrentInventory: 6, inventoryCount: 303, pctCurrentDemand: 2, demandCount: 24, lastYearDays: 431, deltaDays: -52, signalBars: 1 },
 ];
 
 export const OC_PAGE_8_LUXURY_NOTE = {
