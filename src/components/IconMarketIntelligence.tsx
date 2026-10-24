@@ -600,7 +600,7 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
       ────────────────────────────────────────────────────────────────────────── */}
       {/* ──────────────────────────────────────────────────────────────────────────
           SECTION 2: PAGE 8 — ORANGE COUNTY MARKET BREAKDOWN
-          (Minimalist Apple / Tesla UI: 3 Macro Zones + Interactive Tier Explorer + Visual Velocity Spectrum)
+          (Minimalist Apple / Tesla UI: 3 Macro Zones + Interactive Tier Explorer)
       ────────────────────────────────────────────────────────────────────────── */}
       <div className="space-y-6 pt-6 border-t border-slate-200 font-sans">
         
@@ -735,7 +735,6 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
           <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none no-scrollbar">
             {page8.map((tier) => {
               const isSelected = tier.priceRange === selectedTier.priceRange;
-              const isSweetSpot = tier.priceRange === '$1.25M - $1.5M';
 
               return (
                 <button
@@ -749,13 +748,6 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                   }`}
                 >
                   <span>{tier.priceRange}</span>
-                  {isSweetSpot && (
-                    <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-black ${
-                      isSelected ? 'bg-amber-400 text-slate-950' : 'bg-amber-200 text-amber-900'
-                    }`}>
-                      ★ Sweet Spot
-                    </span>
-                  )}
                 </button>
               );
             })}
@@ -906,72 +898,6 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
           </div>
         </div>
 
-        {/* 3. VISUAL VELOCITY SPECTRUM (Ranking from Fastest to Slowest — NOT A TABLE) */}
-        <div className="rounded-3xl bg-white border border-slate-200/90 p-5 sm:p-7 shadow-xs space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-black text-slate-950 tracking-tight font-sans">
-              Velocity Spectrum (Fastest to Slowest)
-            </h3>
-          </div>
-
-          <div className="space-y-2 pt-1">
-            {[...page8].sort((a, b) => a.marketTimeDays - b.marketTimeDays).map((tier) => {
-              const isSelected = tier.priceRange === selectedTier.priceRange;
-              const isSweetSpot = tier.priceRange === '$1.25M - $1.5M';
-              const badge = getTierSpeedBadge(tier.speedCategory);
-              const barWidth = Math.max(14, Math.min(100, (tier.marketTimeDays / 380) * 100));
-
-              return (
-                <button
-                  key={tier.priceRange}
-                  type="button"
-                  onClick={() => setSelectedTierPrice(tier.priceRange)}
-                  className={`w-full p-3 sm:p-3.5 rounded-2xl border transition-all text-left flex items-center justify-between gap-3 sm:gap-4 cursor-pointer group ${
-                    isSelected 
-                      ? 'bg-slate-900 text-white border-slate-900 shadow-md ring-1 ring-slate-900/30' 
-                      : 'bg-white hover:bg-slate-50 text-slate-800 border-slate-200/90 hover:border-slate-300'
-                  }`}
-                >
-                  {/* Price Tier Label */}
-                  <div className="flex items-center gap-2 w-36 sm:w-48 shrink-0">
-                    <span className={`text-xs sm:text-sm font-bold tracking-tight ${isSelected ? 'text-white' : 'text-slate-900'}`}>
-                      {tier.priceRange}
-                    </span>
-                    {isSweetSpot && (
-                      <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wider ${
-                        isSelected ? 'bg-amber-400 text-slate-950' : 'bg-amber-100 text-amber-800 border border-amber-200'
-                      }`}>
-                        Sweet Spot
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Relative Velocity Bar */}
-                  <div className="flex-1 hidden sm:block">
-                    <div className={`w-full h-2 rounded-full overflow-hidden ${isSelected ? 'bg-slate-800' : 'bg-slate-100'}`}>
-                      <div 
-                        className={`h-full rounded-full transition-all duration-300 ${isSelected ? 'bg-amber-400' : badge.barColor}`}
-                        style={{ width: `${barWidth}%` }}
-                      ></div>
-                    </div>
-                  </div>
-
-                  {/* Days & Speed Status */}
-                  <div className="flex items-center gap-2.5 shrink-0 text-right">
-                    <span className={`text-xs sm:text-sm font-bold tabular-nums ${isSelected ? 'text-white' : 'text-slate-800'}`}>
-                      {tier.marketTimeDays} Days
-                    </span>
-                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md border ${
-                      isSelected ? 'bg-slate-800 text-slate-200 border-slate-700' : badge.bg
-                    }`}>
-                      {tier.speedCategory}
-                    </span>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        </div>
 
         {/* 4. LUXURY END SNAPSHOT (Page 8 Telemetry) */}
         <div className="rounded-3xl bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white p-5 sm:p-7 shadow-md border border-slate-800 space-y-4">
