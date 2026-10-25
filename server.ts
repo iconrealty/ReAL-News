@@ -2102,6 +2102,15 @@ async function startServer() {
       server: { middlewareMode: true },
       appType: "spa",
     });
+    // Prevent iOS Safari and mobile browsers from caching HTML in development
+    app.use((req, res, next) => {
+      if (req.headers.accept?.includes('text/html') || req.path === '/' || req.path.endsWith('.html')) {
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate, max-age=0');
+        res.setHeader('Pragma', 'no-cache');
+        res.setHeader('Expires', '0');
+      }
+      next();
+    });
     app.use(vite.middlewares);
   } else {
     const distPath = path.join(process.cwd(), 'dist');
