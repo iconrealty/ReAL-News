@@ -75,6 +75,24 @@ export const HousingSummarySection: React.FC<HousingSummarySectionProps> = ({
                   statColor: 'text-teal-600',
                   unitColor: 'text-slate-700',
                 };
+              case 'median-list-price':
+                return {
+                  titleColor: 'text-indigo-600',
+                  statColor: 'text-indigo-600',
+                  unitColor: 'text-slate-700',
+                };
+              case 'median-dom':
+                return {
+                  titleColor: 'text-violet-600',
+                  statColor: 'text-violet-600',
+                  unitColor: 'text-slate-700',
+                };
+              case 'median-price-sqft':
+                return {
+                  titleColor: 'text-[#FA2D48]',
+                  statColor: 'text-[#FA2D48]',
+                  unitColor: 'text-slate-700',
+                };
               default:
                 return {
                   titleColor: 'text-slate-800',
@@ -118,11 +136,11 @@ export const HousingSummarySection: React.FC<HousingSummarySectionProps> = ({
           onClick={() => setSelectedPillar(null)}
         >
           <div 
-            className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-7 max-w-lg w-full shadow-2xl space-y-5 relative animate-in zoom-in-95 duration-150 text-left font-sans"
+            className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-7 max-w-lg w-full shadow-2xl space-y-4 relative animate-in zoom-in-95 duration-150 text-left font-sans"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
-            <div className="flex items-start justify-between pb-3 border-b border-slate-100 gap-3">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100 gap-3">
               <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight font-sans">
                 {selectedPillar.title}
               </h3>
@@ -136,17 +154,17 @@ export const HousingSummarySection: React.FC<HousingSummarySectionProps> = ({
               </button>
             </div>
 
-            {/* Primary Stat Highlight Card */}
-            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-between flex-wrap gap-2">
-              <div className="space-y-0.5">
-                <div className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight font-sans tabular-nums">
+            {/* Primary Stat Highlight */}
+            <div className="flex items-baseline justify-between flex-wrap gap-2 pb-3 border-b border-slate-100">
+              <div className="flex items-baseline gap-2">
+                <span className="text-3xl sm:text-4xl font-black text-slate-950 tracking-tight font-sans tabular-nums">
                   {selectedPillar.stat}
-                </div>
-                <div className="text-xs font-medium text-slate-500 font-sans">
+                </span>
+                <span className="text-sm font-semibold text-slate-500 font-sans">
                   {selectedPillar.unit}
-                </div>
+                </span>
               </div>
-              <span className={`px-3 py-1 rounded-full text-xs font-bold tracking-wider uppercase font-sans border ${
+              <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold tracking-wider uppercase font-sans border ${
                 selectedPillar.badgeType === 'negative'
                   ? 'bg-rose-50 text-rose-700 border-rose-200'
                   : selectedPillar.badgeType === 'warning'
@@ -159,57 +177,36 @@ export const HousingSummarySection: React.FC<HousingSummarySectionProps> = ({
               </span>
             </div>
 
-            {/* 4 Clear Sub-Metrics */}
-            <div className="space-y-3">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {/* 1. 2-Week Velocity */}
-                <div className="p-4 rounded-2xl bg-slate-50/70 border border-slate-200/80 shadow-2xs space-y-1.5">
-                  <div className="text-xs font-bold uppercase tracking-wider text-slate-600 font-sans">
-                    2-Week Velocity
-                  </div>
-                  <div className={`text-base sm:text-lg font-bold tabular-nums font-sans ${
-                    selectedPillar.badgeType === 'negative' ? 'text-rose-600' : selectedPillar.badgeType === 'warning' ? 'text-amber-700' : selectedPillar.badgeType === 'positive' ? 'text-emerald-700' : 'text-slate-800'
-                  }`}>
-                    {selectedPillar.delta2Wks}
-                  </div>
-                </div>
-
-                {/* 2. Last Year Comparison */}
-                <div className="p-4 rounded-2xl bg-slate-50/70 border border-slate-200/80 shadow-2xs space-y-1.5">
-                  <div className="text-xs font-bold uppercase tracking-wider text-slate-600 font-sans">
-                    Last Year (YoY)
-                  </div>
-                  <div className="text-base sm:text-lg font-bold text-slate-800 tabular-nums font-sans">
-                    {selectedPillar.deltaYoY}
-                  </div>
-                </div>
-
-                {/* 3. Metric 1 */}
-                <div className="p-4 rounded-2xl bg-slate-50/70 border border-slate-200/80 shadow-2xs space-y-1.5">
-                  <div className="text-xs font-bold uppercase tracking-wider text-slate-600 font-sans">
-                    {selectedPillar.metricLabel1}
-                  </div>
-                  <div className="text-base sm:text-lg font-bold text-slate-800 tabular-nums font-sans">
-                    {selectedPillar.metricValue1}
-                  </div>
-                </div>
-
-                {/* 4. Metric 2 */}
-                <div className="p-4 rounded-2xl bg-slate-50/70 border border-slate-200/80 shadow-2xs space-y-1.5">
-                  <div className="text-xs font-bold uppercase tracking-wider text-slate-600 font-sans">
-                    {selectedPillar.metricLabel2}
-                  </div>
-                  <div className="text-base sm:text-lg font-bold text-slate-800 tabular-nums font-sans">
-                    {selectedPillar.metricValue2}
-                  </div>
-                </div>
+            {/* Clear Minimalistic List */}
+            <div className="divide-y divide-slate-100 text-sm">
+              <div className="py-2.5 flex items-center justify-between gap-4">
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-500">2-Week Velocity</span>
+                <span className={`font-bold tabular-nums text-right ${
+                  selectedPillar.badgeType === 'negative' ? 'text-rose-600' : selectedPillar.badgeType === 'warning' ? 'text-amber-700' : selectedPillar.badgeType === 'positive' ? 'text-emerald-700' : 'text-slate-900'
+                }`}>
+                  {selectedPillar.delta2Wks}
+                </span>
               </div>
 
-              {/* Pre-COVID Benchmark if available */}
+              <div className="py-2.5 flex items-center justify-between gap-4">
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Last Year (YoY)</span>
+                <span className="font-bold text-slate-900 tabular-nums text-right">{selectedPillar.deltaYoY}</span>
+              </div>
+
+              <div className="py-2.5 flex items-center justify-between gap-4">
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-500">{selectedPillar.metricLabel1}</span>
+                <span className="font-bold text-slate-900 tabular-nums text-right">{selectedPillar.metricValue1}</span>
+              </div>
+
+              <div className="py-2.5 flex items-center justify-between gap-4">
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-500">{selectedPillar.metricLabel2}</span>
+                <span className="font-bold text-slate-900 tabular-nums text-right">{selectedPillar.metricValue2}</span>
+              </div>
+
               {selectedPillar.compPreCovid && (
-                <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs flex items-center justify-between">
-                  <span className="font-bold text-slate-600 uppercase text-[11px] tracking-wide">Pre-COVID Benchmark:</span>
-                  <span className="font-bold text-slate-800">{selectedPillar.compPreCovid}</span>
+                <div className="py-2.5 flex items-center justify-between gap-4">
+                  <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Pre-COVID Benchmark</span>
+                  <span className="font-bold text-slate-900 tabular-nums text-right">{selectedPillar.compPreCovid}</span>
                 </div>
               )}
             </div>
@@ -221,7 +218,7 @@ export const HousingSummarySection: React.FC<HousingSummarySectionProps> = ({
                 onClick={() => setSelectedPillar(null)}
                 className="w-full sm:w-auto px-6 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-semibold font-sans transition-all cursor-pointer shadow-xs"
               >
-                Close Breakdown
+                Close
               </button>
             </div>
           </div>

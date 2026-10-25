@@ -561,6 +561,51 @@ export const OC_PAGE_9_HOUSING_SUMMARY = {
       metricValue1: "99.72% (Only 5 Distress)",
       metricLabel2: "Avg DOM / Price/SqFt",
       metricValue2: "28 Days / $715/sqft"
+    },
+    {
+      id: "median-list-price",
+      title: "MEDIAN LIST PRICE",
+      stat: "$1,200,000",
+      unit: "Page 12 Sold Report",
+      badge: "99.5% Sale-to-List",
+      badgeType: "positive" as const,
+      delta2Wks: "$1,215,000 Closed Median",
+      deltaYoY: "+4.3% vs Prior Year",
+      compPreCovid: "+45% vs Pre-COVID ($825k)",
+      metricLabel1: "Closed vs. List Ratio",
+      metricValue1: "99.5% (Very Close to Ask)",
+      metricLabel2: "Price Range Spread",
+      metricValue2: "$122,500 – $38,900,000"
+    },
+    {
+      id: "median-dom",
+      title: "MEDIAN DAYS ON MARKET",
+      stat: "19 Days",
+      unit: "Closed Resale Velocity (Page 12)",
+      badge: "Under 3 Weeks to Close",
+      badgeType: "positive" as const,
+      delta2Wks: "11 Days (At List Price)",
+      deltaYoY: "10 Days (Above List Price)",
+      compPreCovid: "38 Days (Below List Price)",
+      metricLabel1: "At Asking Price Pace",
+      metricValue1: "11 Days (18% of sales)",
+      metricLabel2: "Above Asking Price Pace",
+      metricValue2: "10 Days (28% of sales)"
+    },
+    {
+      id: "median-price-sqft",
+      title: "MEDIAN PRICE / SQ. FT.",
+      stat: "$715",
+      unit: "Closed Sales (Page 12)",
+      badge: "+4.5% YoY Growth",
+      badgeType: "positive" as const,
+      delta2Wks: "1,700 Median Sq Ft",
+      deltaYoY: "$684/sqft in 2025 (+4.5%)",
+      compPreCovid: "+47% vs Pre-COVID ($485)",
+      metricLabel1: "Top Coastal Cities",
+      metricValue1: "Corona Del Mar ($2,002) · Newport ($1,507)",
+      metricLabel2: "Median Resale Size",
+      metricValue2: "1,700 Sq. Ft. Countywide"
     }
   ]
 };
