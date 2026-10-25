@@ -764,7 +764,7 @@ async function executeFetchLiveMndRates(forceRefresh = false): Promise<CachedLiv
 fetchLiveMndRates(true).catch(err => console.warn("[Startup Rates Prefetch] Initial fetch error:", err));
 
 const app = express();
-const PORT = 3000;
+const PORT = Number(process.env.PORT) || 3000;
 
 // Disable ETags completely to prevent 304 Not Modified caching on iOS Safari and mobile Chrome
 app.set('etag', false);
@@ -2101,6 +2101,15 @@ async function startServer() {
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: "spa",
+    });
+    // Prevent iOS Safari and mobile browsers from caching HTML in development
+    app.use((req, res, next) => {
+      if (req.headers.accept?.includes('text/html') || req.path === '/' || req.path.endsWith('.html')) {
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate, max-age=0');
+        res.setHeader('Pragma', 'no-cache');
+        res.setHeader('Expires', '0');
+      }
+      next();
     });
     app.use(vite.middlewares);
   } else {
