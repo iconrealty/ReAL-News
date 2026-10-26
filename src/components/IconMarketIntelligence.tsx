@@ -899,47 +899,45 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
         </div>
 
 
-        {/* 3. LUXURY END SNAPSHOT (Clean, Minimalistic, Light) */}
-        <div className="rounded-3xl bg-white border border-slate-200/90 p-5 sm:p-7 shadow-xs space-y-5">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
-            <div className="space-y-1">
-              <span className="text-xs font-black uppercase tracking-wider text-[#FA2D48]">
-                {luxuryNote.title} ($2.5M+)
-              </span>
-              <h3 className="text-base sm:text-lg font-bold tracking-tight text-slate-950 font-sans">
-                {luxuryNote.subtitle}
-              </h3>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-slate-700 bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200">
-                Projected Pending Pace: ~ {luxuryNote.pendingPaceMonth}
-              </span>
-            </div>
+        {/* 3. LUXURY END SNAPSHOT (Clean & Minimalistic) */}
+        <div className="rounded-3xl bg-white border border-slate-200/90 p-5 sm:p-6 shadow-xs space-y-4 font-sans">
+          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+            <h3 className="text-sm font-black uppercase tracking-wider text-slate-900">
+              Luxury End ($2.5M+)
+            </h3>
           </div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 text-left">
-            <div className="bg-slate-50/80 p-4 rounded-2xl border border-slate-200/70 space-y-1">
-              <div className="text-[11px] text-slate-500 uppercase font-extrabold tracking-wider">Luxury Actives ($2.5M+)</div>
-              <div className="text-2xl sm:text-3xl font-black text-slate-950 tabular-nums">{luxuryNote.actives} Homes</div>
-              <div className="text-xs font-bold text-emerald-600">{luxuryNote.activesDelta} (-3% in 2 wks)</div>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 text-left">
+            <div className="bg-slate-50/70 p-3.5 rounded-2xl border border-slate-200/60 space-y-0.5">
+              <div className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Actives ($2.5M+)</div>
+              <div className="text-2xl font-black text-slate-950 tabular-nums">
+                {luxuryNote.actives} <span className="text-xs font-normal text-slate-400">Homes</span>
+              </div>
+              <div className="text-[11px] font-semibold text-emerald-600">{luxuryNote.activesDelta} (2 wks)</div>
             </div>
 
-            <div className="bg-slate-50/80 p-4 rounded-2xl border border-slate-200/70 space-y-1">
-              <div className="text-[11px] text-slate-500 uppercase font-extrabold tracking-wider">Luxury Demand ($2.5M+)</div>
-              <div className="text-2xl sm:text-3xl font-black text-slate-950 tabular-nums">{luxuryNote.demand} Escrows</div>
-              <div className="text-xs font-bold text-rose-500">{luxuryNote.demandDelta} (-3% in 2 wks)</div>
+            <div className="bg-slate-50/70 p-3.5 rounded-2xl border border-slate-200/60 space-y-0.5">
+              <div className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Demand ($2.5M+)</div>
+              <div className="text-2xl font-black text-slate-950 tabular-nums">
+                {luxuryNote.demand} <span className="text-xs font-normal text-slate-400">Escrows</span>
+              </div>
+              <div className="text-[11px] font-semibold text-rose-500">{luxuryNote.demandDelta} (2 wks)</div>
             </div>
 
-            <div className="bg-slate-50/80 p-4 rounded-2xl border border-slate-200/70 space-y-1">
-              <div className="text-[11px] text-slate-500 uppercase font-extrabold tracking-wider">Expected Market Time</div>
-              <div className="text-2xl sm:text-3xl font-black text-blue-700 tabular-nums">{luxuryNote.emt} Days</div>
-              <div className="text-xs font-bold text-slate-500">184d 2 wks ago · 194d last year</div>
+            <div className="bg-slate-50/70 p-3.5 rounded-2xl border border-slate-200/60 space-y-0.5">
+              <div className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Market Time</div>
+              <div className="text-2xl font-black text-slate-950 tabular-nums">
+                {luxuryNote.emt} <span className="text-xs font-normal text-slate-400">Days</span>
+              </div>
+              <div className="text-[11px] font-semibold text-slate-500">184d 2 wks ago</div>
             </div>
 
-            <div className="bg-slate-50/80 p-4 rounded-2xl border border-slate-200/70 space-y-1">
-              <div className="text-[11px] text-slate-500 uppercase font-extrabold tracking-wider">Ultra-Luxury ($6M+)</div>
-              <div className="text-2xl sm:text-3xl font-black text-slate-950 tabular-nums">379 Days</div>
-              <div className="text-xs font-bold text-emerald-600">-75d (from 454d 2 wks ago)</div>
+            <div className="bg-slate-50/70 p-3.5 rounded-2xl border border-slate-200/60 space-y-0.5">
+              <div className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Ultra-Luxury ($6M+)</div>
+              <div className="text-2xl font-black text-slate-950 tabular-nums">
+                379 <span className="text-xs font-normal text-slate-400">Days</span>
+              </div>
+              <div className="text-[11px] font-semibold text-emerald-600">-75d (2 wks)</div>
             </div>
           </div>
         </div>

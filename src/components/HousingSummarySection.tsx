@@ -59,9 +59,9 @@ export const HousingSummarySection: React.FC<HousingSummarySectionProps> = ({
                 };
               case 'luxury':
                 return {
-                  titleColor: 'text-blue-700',
-                  statColor: 'text-blue-700',
-                  unitColor: 'text-slate-700',
+                  titleColor: 'text-slate-800',
+                  statColor: 'text-slate-950',
+                  unitColor: 'text-slate-600',
                 };
               case 'distressed':
                 return {
@@ -71,27 +71,27 @@ export const HousingSummarySection: React.FC<HousingSummarySectionProps> = ({
                 };
               case 'closed-sales':
                 return {
-                  titleColor: 'text-teal-600',
-                  statColor: 'text-teal-600',
-                  unitColor: 'text-slate-700',
+                  titleColor: 'text-teal-700',
+                  statColor: 'text-slate-950',
+                  unitColor: 'text-slate-600',
                 };
               case 'median-list-price':
                 return {
-                  titleColor: 'text-indigo-600',
-                  statColor: 'text-indigo-600',
-                  unitColor: 'text-slate-700',
+                  titleColor: 'text-emerald-800',
+                  statColor: 'text-slate-950',
+                  unitColor: 'text-slate-600',
                 };
               case 'median-dom':
                 return {
-                  titleColor: 'text-violet-600',
-                  statColor: 'text-violet-600',
-                  unitColor: 'text-slate-700',
+                  titleColor: 'text-sky-800',
+                  statColor: 'text-slate-950',
+                  unitColor: 'text-slate-600',
                 };
               case 'median-price-sqft':
                 return {
                   titleColor: 'text-[#FA2D48]',
-                  statColor: 'text-[#FA2D48]',
-                  unitColor: 'text-slate-700',
+                  statColor: 'text-slate-950',
+                  unitColor: 'text-slate-600',
                 };
               default:
                 return {
