@@ -625,7 +625,7 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                   className={`px-3.5 py-2 rounded-xl text-xs font-black transition-all cursor-pointer whitespace-nowrap shrink-0 flex items-center gap-1.5 ${
                     isSelected
                       ? 'bg-slate-950 text-white shadow-sm ring-2 ring-slate-950/20'
-                      : 'bg-slate-100 hover:bg-slate-200/80 text-slate-700 border border-slate-200/60'
+                      : 'bg-slate-100 hover:bg-slate-200 text-slate-900 border border-slate-300 shadow-2xs'
                   }`}
                 >
                   <span>{tier.priceRange}</span>
@@ -646,46 +646,46 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                 </span>
               </div>
 
-              <div className="text-xs font-bold text-slate-600 bg-white px-3.5 py-2 rounded-xl border border-slate-200 self-start sm:self-auto">
+              <div className="text-xs font-bold text-slate-700 bg-white px-3.5 py-2 rounded-xl border border-slate-200 self-start sm:self-auto shadow-2xs">
                 Last Year: <span className="font-black text-slate-950">{selectedTier.lastYearDays} Days</span>
-                <span className="text-slate-400 ml-1">({selectedTier.deltaDays > 0 ? `+${selectedTier.deltaDays}d slower` : `${selectedTier.deltaDays}d faster`})</span>
+                <span className="text-slate-600 font-semibold ml-1">({selectedTier.deltaDays > 0 ? `+${selectedTier.deltaDays}d slower` : `${selectedTier.deltaDays}d faster`})</span>
               </div>
             </div>
 
             {/* 3 Large Telemetry Metrics */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div className="bg-white p-4 rounded-2xl border border-slate-200/80 space-y-1">
-                <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Days to Sell (EMT)</div>
+              <div className="bg-white p-4 rounded-2xl border border-slate-200/80 space-y-1 shadow-2xs">
+                <div className="text-xs font-black uppercase tracking-wider text-slate-950">Days to Sell (EMT)</div>
                 <div className="text-3xl sm:text-4xl font-black text-slate-950 tabular-nums">
-                  {selectedTier.marketTimeDays} <span className="text-lg font-bold text-slate-400">Days</span>
+                  {selectedTier.marketTimeDays} <span className="text-lg font-bold text-slate-600">Days</span>
                 </div>
-                <div className="text-xs font-bold text-slate-500">
+                <div className="text-xs font-bold text-slate-700">
                   {selectedTier.marketTimeDays < 90 ? 'High Speed (~2.8 months)' : selectedTier.marketTimeDays < 120 ? 'Moderate Speed (~3.8 months)' : 'Slow Speed (5+ months)'}
                 </div>
               </div>
 
-              <div className="bg-white p-4 rounded-2xl border border-slate-200/80 space-y-1">
-                <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Share of All OC Buyers</div>
+              <div className="bg-white p-4 rounded-2xl border border-slate-200/80 space-y-1 shadow-2xs">
+                <div className="text-xs font-black uppercase tracking-wider text-slate-950">Share of All OC Buyers</div>
                 <div className="text-3xl sm:text-4xl font-black text-emerald-600 tabular-nums flex items-baseline flex-wrap">
                   <span>{selectedTier.pctCurrentDemand}%</span>
-                  <span className="text-xs sm:text-sm font-bold text-slate-500 font-sans ml-2">
+                  <span className="text-xs sm:text-sm font-bold text-slate-700 font-sans ml-2">
                     ({selectedTier.demandCount} buyers)
                   </span>
                 </div>
-                <div className="text-xs font-bold text-slate-500">
+                <div className="text-xs font-bold text-slate-700">
                   Of total 1,249 pending sales
                 </div>
               </div>
 
-              <div className="bg-white p-4 rounded-2xl border border-slate-200/80 space-y-1">
-                <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Share of Total Listings</div>
+              <div className="bg-white p-4 rounded-2xl border border-slate-200/80 space-y-1 shadow-2xs">
+                <div className="text-xs font-black uppercase tracking-wider text-slate-950">Share of Total Listings</div>
                 <div className="text-3xl sm:text-4xl font-black text-slate-900 tabular-nums flex items-baseline flex-wrap">
                   <span>{selectedTier.pctCurrentInventory}%</span>
-                  <span className="text-xs sm:text-sm font-bold text-slate-500 font-sans ml-2">
+                  <span className="text-xs sm:text-sm font-bold text-slate-700 font-sans ml-2">
                     ({selectedTier.inventoryCount.toLocaleString()} listings)
                   </span>
                 </div>
-                <div className="text-xs font-bold text-slate-500">
+                <div className="text-xs font-bold text-slate-700">
                   Of total 4,924 active listings
                 </div>
               </div>
