@@ -609,123 +609,6 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
           </h2>
         </div>
 
-        {/* 1. THREE MACRO MARKET ZONES (Instant Scannability) */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* Zone 1: Sweet Spot */}
-          <div 
-            onClick={() => setSelectedTierPrice('$1.25M - $1.5M')}
-            className={`p-5 sm:p-6 rounded-3xl border transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between space-y-4 ${
-              selectedTier.priceRange === '$1.25M - $1.5M' || selectedTier.priceRange === '$1M - $1.25M'
-                ? 'bg-amber-50/60 border-amber-300 ring-2 ring-amber-400/30 shadow-xs'
-                : 'bg-white hover:bg-slate-50 border-slate-200/90'
-            }`}
-          >
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-black uppercase tracking-wider text-amber-800 bg-amber-100 px-2 py-0.5 rounded-full">
-                  Fastest Velocity
-                </span>
-                <span className="text-xs font-black text-amber-700">86–102 Days</span>
-              </div>
-              <h3 className="text-xl font-black text-slate-950 tracking-tight">
-                The Sweet Spot
-              </h3>
-              <div className="text-sm font-bold text-slate-700">
-                $1.0M – $1.5M Price Range
-              </div>
-            </div>
-
-            <div className="pt-3 border-t border-amber-200/60 grid grid-cols-2 gap-2 text-xs">
-              <div>
-                <div className="text-[10px] font-bold text-slate-400 uppercase">Buyer Demand</div>
-                <div className="text-base font-black text-slate-950 tabular-nums">
-                  30% <span className="text-xs font-bold text-slate-500 font-sans">(361 buyers)</span>
-                </div>
-              </div>
-              <div>
-                <div className="text-[10px] font-bold text-slate-400 uppercase">Market State</div>
-                <div className="text-base font-black text-amber-700">Slight Seller's</div>
-              </div>
-            </div>
-          </div>
-
-          {/* Zone 2: Balanced Core */}
-          <div 
-            onClick={() => setSelectedTierPrice('$750k - $1M')}
-            className={`p-5 sm:p-6 rounded-3xl border transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between space-y-4 ${
-              ['$0 - $750k', '$750k - $1M', '$1.5M - $2M', '$2M - $2.5M'].includes(selectedTier.priceRange)
-                ? 'bg-sky-50/60 border-sky-300 ring-2 ring-sky-400/30 shadow-xs'
-                : 'bg-white hover:bg-slate-50 border-slate-200/90'
-            }`}
-          >
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-black uppercase tracking-wider text-sky-800 bg-sky-100 px-2 py-0.5 rounded-full">
-                  Core Volume
-                </span>
-                <span className="text-xs font-black text-sky-700">103–126 Days</span>
-              </div>
-              <h3 className="text-xl font-black text-slate-950 tracking-tight">
-                Balanced Core
-              </h3>
-              <div className="text-sm font-bold text-slate-700">
-                $0–$1M & $1.5M–$2.5M
-              </div>
-            </div>
-
-            <div className="pt-3 border-t border-sky-200/60 grid grid-cols-2 gap-2 text-xs">
-              <div>
-                <div className="text-[10px] font-bold text-slate-400 uppercase">Buyer Demand</div>
-                <div className="text-base font-black text-slate-950 tabular-nums">
-                  58% <span className="text-xs font-bold text-slate-500 font-sans">(732 buyers)</span>
-                </div>
-              </div>
-              <div>
-                <div className="text-[10px] font-bold text-slate-400 uppercase">Market State</div>
-                <div className="text-base font-black text-sky-700">Balanced</div>
-              </div>
-            </div>
-          </div>
-
-          {/* Zone 3: Luxury End */}
-          <div 
-            onClick={() => setSelectedTierPrice('$4M - $6M')}
-            className={`p-5 sm:p-6 rounded-3xl border transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between space-y-4 ${
-              ['$2.5M - $4M', '$4M - $6M', '$6M+'].includes(selectedTier.priceRange)
-                ? 'bg-blue-50/60 border-blue-300 ring-2 ring-blue-400/30 shadow-xs'
-                : 'bg-white hover:bg-slate-50 border-slate-200/90'
-            }`}
-          >
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-black uppercase tracking-wider text-blue-800 bg-blue-100 px-2 py-0.5 rounded-full">
-                  High Inventory
-                </span>
-                <span className="text-xs font-black text-blue-700">183–379 Days</span>
-              </div>
-              <h3 className="text-xl font-black text-slate-950 tracking-tight">
-                Luxury Segment
-              </h3>
-              <div className="text-sm font-bold text-slate-700">
-                $2.5M and Above
-              </div>
-            </div>
-
-            <div className="pt-3 border-t border-blue-200/60 grid grid-cols-2 gap-2 text-xs">
-              <div>
-                <div className="text-[10px] font-bold text-slate-400 uppercase">Buyer Demand</div>
-                <div className="text-base font-black text-slate-950 tabular-nums">
-                  12% <span className="text-xs font-bold text-slate-500 font-sans">(156 buyers)</span>
-                </div>
-              </div>
-              <div>
-                <div className="text-[10px] font-bold text-slate-400 uppercase">Market State</div>
-                <div className="text-base font-black text-blue-700">Buyer's Market</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
         {/* 2. INTERACTIVE PRICE TIER SPOTLIGHT (Tesla HUD Telemetry) */}
         <div className="rounded-3xl bg-white border border-slate-200/90 p-5 sm:p-8 shadow-xs space-y-6">
           
@@ -812,7 +695,7 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
             <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
                 <span className="text-xs sm:text-sm font-black uppercase tracking-wider text-slate-950">
-                  Buyer Demand vs. Available Supply
+                  Demand Vs Supply
                 </span>
                 <span className={`self-start sm:self-auto px-2.5 py-1 rounded-full text-xs font-black border ${
                   selectedTier.pctCurrentDemand > selectedTier.pctCurrentInventory
