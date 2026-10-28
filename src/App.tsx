@@ -1091,7 +1091,7 @@ export function App() {
                             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                               <div className="bg-slate-50/90 rounded-2xl p-4 border border-slate-200/70">
                                 <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">Median Sales Price</div>
-                                <div className="text-2xl sm:text-3xl font-bold text-slate-900 pt-1">{soldData.medianSalesPrice}</div>
+                                <div className="text-2xl sm:text-3xl font-bold text-[#FA2D48] pt-1">{soldData.medianSalesPrice}</div>
                                 <div className="text-xs text-emerald-600 pt-1 font-bold">List: {soldData.medianListPrice}</div>
                               </div>
 

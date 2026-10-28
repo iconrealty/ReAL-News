@@ -77,8 +77,8 @@ export const HousingSummarySection: React.FC<HousingSummarySectionProps> = ({
                 };
               case 'median-list-price':
                 return {
-                  titleColor: 'text-emerald-800',
-                  statColor: 'text-slate-950',
+                  titleColor: 'text-slate-800',
+                  statColor: 'text-[#FA2D48]',
                   unitColor: 'text-slate-600',
                 };
               case 'median-dom':
@@ -89,8 +89,8 @@ export const HousingSummarySection: React.FC<HousingSummarySectionProps> = ({
                 };
               case 'median-price-sqft':
                 return {
-                  titleColor: 'text-[#FA2D48]',
-                  statColor: 'text-slate-950',
+                  titleColor: 'text-slate-800',
+                  statColor: 'text-[#FA2D48]',
                   unitColor: 'text-slate-600',
                 };
               default:

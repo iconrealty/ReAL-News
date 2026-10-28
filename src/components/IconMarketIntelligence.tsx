@@ -22,7 +22,6 @@ import {
 import {
   OC_HOUSING_REPORT_METADATA,
   OC_PAGE_8_MARKET_BREAKDOWN,
-  OC_PAGE_8_LUXURY_NOTE,
   OC_PAGE_9_HOUSING_SUMMARY,
   OC_SOLD_REPORT,
   OC_MARKET_TIME_REPORT,
@@ -59,7 +58,6 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
   const meta = OC_HOUSING_REPORT_METADATA;
   const page9 = OC_PAGE_9_HOUSING_SUMMARY;
   const page8 = OC_PAGE_8_MARKET_BREAKDOWN;
-  const luxuryNote = OC_PAGE_8_LUXURY_NOTE;
 
   // Selected Page 8 Tier for Interactive Explorer
   const selectedTier = useMemo(() => {
@@ -455,7 +453,7 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                   <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                     <div className="bg-slate-50/90 rounded-2xl p-4 border border-slate-200/70">
                       <div className="text-[11px] font-extrabold text-black uppercase tracking-wider">Median Sales Price</div>
-                      <div className="text-2xl sm:text-3xl font-bold text-slate-900 pt-1">{soldData.medianSalesPrice}</div>
+                      <div className="text-2xl sm:text-3xl font-bold text-[#FA2D48] pt-1">{soldData.medianSalesPrice}</div>
                       <div className="text-[11px] text-emerald-600 pt-1 font-bold">List Price: {soldData.medianListPrice}</div>
                     </div>
 
@@ -877,15 +875,15 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                 <span>
                   {selectedTier.pctCurrentDemand > selectedTier.pctCurrentInventory ? (
                     <span className="text-amber-800 font-bold">
-                      Demand is +{selectedTier.pctCurrentDemand - selectedTier.pctCurrentInventory}% higher than supply. Homes sell quickly.
+                      Homes sell quickly.
                     </span>
                   ) : selectedTier.pctCurrentDemand < selectedTier.pctCurrentInventory ? (
                     <span className="text-blue-800 font-bold">
-                      Supply is +{selectedTier.pctCurrentInventory - selectedTier.pctCurrentDemand}% higher than demand. Buyers have negotiating room.
+                      Buyers have negotiating room.
                     </span>
                   ) : (
                     <span className="text-slate-700 font-bold">
-                      Supply and demand are equal at {selectedTier.pctCurrentDemand}%.
+                      Supply & demand in parity.
                     </span>
                   )}
                 </span>
@@ -899,48 +897,6 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
         </div>
 
 
-        {/* 3. LUXURY END SNAPSHOT (Clean & Minimalistic) */}
-        <div className="rounded-3xl bg-white border border-slate-200/90 p-5 sm:p-6 shadow-xs space-y-4 font-sans">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-            <h3 className="text-sm font-black uppercase tracking-wider text-slate-900">
-              Luxury End ($2.5M+)
-            </h3>
-          </div>
-
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 text-left">
-            <div className="bg-slate-50/70 p-3.5 rounded-2xl border border-slate-200/60 space-y-0.5">
-              <div className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Actives ($2.5M+)</div>
-              <div className="text-2xl font-black text-slate-950 tabular-nums">
-                {luxuryNote.actives} <span className="text-xs font-normal text-slate-400">Homes</span>
-              </div>
-              <div className="text-[11px] font-semibold text-emerald-600">{luxuryNote.activesDelta} (2 wks)</div>
-            </div>
-
-            <div className="bg-slate-50/70 p-3.5 rounded-2xl border border-slate-200/60 space-y-0.5">
-              <div className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Demand ($2.5M+)</div>
-              <div className="text-2xl font-black text-slate-950 tabular-nums">
-                {luxuryNote.demand} <span className="text-xs font-normal text-slate-400">Escrows</span>
-              </div>
-              <div className="text-[11px] font-semibold text-rose-500">{luxuryNote.demandDelta} (2 wks)</div>
-            </div>
-
-            <div className="bg-slate-50/70 p-3.5 rounded-2xl border border-slate-200/60 space-y-0.5">
-              <div className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Market Time</div>
-              <div className="text-2xl font-black text-slate-950 tabular-nums">
-                {luxuryNote.emt} <span className="text-xs font-normal text-slate-400">Days</span>
-              </div>
-              <div className="text-[11px] font-semibold text-slate-500">184d 2 wks ago</div>
-            </div>
-
-            <div className="bg-slate-50/70 p-3.5 rounded-2xl border border-slate-200/60 space-y-0.5">
-              <div className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Ultra-Luxury ($6M+)</div>
-              <div className="text-2xl font-black text-slate-950 tabular-nums">
-                379 <span className="text-xs font-normal text-slate-400">Days</span>
-              </div>
-              <div className="text-[11px] font-semibold text-emerald-600">-75d (2 wks)</div>
-            </div>
-          </div>
-        </div>
 
       </div>
         </>
