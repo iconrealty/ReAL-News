@@ -637,11 +637,11 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
           {/* Active Tier Telemetry Card */}
           <div className="rounded-2xl bg-slate-50 border border-slate-200/80 p-5 sm:p-7 space-y-5">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-4">
-              <div className="flex items-center gap-2">
+              <div className="flex flex-col sm:flex-row sm:items-center items-start gap-1.5 sm:gap-2">
                 <span className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight">
                   {selectedTier.priceRange}
                 </span>
-                <span className={`px-2.5 py-0.5 rounded-full text-xs font-black border ${getTierSpeedBadge(selectedTier.speedCategory).bg}`}>
+                <span className={`self-start px-2.5 py-0.5 rounded-full text-xs font-black border ${getTierSpeedBadge(selectedTier.speedCategory).bg}`}>
                   {selectedTier.speedCategory}
                 </span>
               </div>
