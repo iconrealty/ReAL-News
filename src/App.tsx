@@ -898,12 +898,16 @@ export function App() {
                       <div className="space-y-5 pt-1">
                         {/* Dynamic City-Specific Market Speed Live Ticker */}
                         {marketData && (() => {
-                          const emtDelta = marketData.marketTimeDays - marketData.marketTime2WeeksAgo;
-                          const isFaster = emtDelta < 0;
-                          const isSlower = emtDelta > 0;
+                          const isInfinite = marketData.marketTimeDays === 0 && marketData.demand30Days === 0;
+                          const hasValidEmtDelta = marketData.marketTimeDays > 0 && marketData.marketTime2WeeksAgo > 0;
+                          const emtDelta = hasValidEmtDelta ? marketData.marketTimeDays - marketData.marketTime2WeeksAgo : 0;
+                          const isFaster = hasValidEmtDelta && emtDelta < 0;
+                          const isSlower = isInfinite || (hasValidEmtDelta && emtDelta > 0);
                           const speedLabel = isFaster ? 'FASTER' : isSlower ? 'SLOWER' : 'STEADY';
                           const speedColor = isFaster ? 'text-emerald-600' : isSlower ? 'text-[#FA2D48]' : 'text-slate-600';
-                          const cond = getMarketCondition(marketData.marketTimeDays);
+                          const cond = isInfinite
+                            ? { ...getMarketCondition(200), capitalLabel: "BUYER'S MARKET (INFINITE)", badgeText: "Buyer's Market (Infinite)" }
+                            : getMarketCondition(marketData.marketTimeDays);
 
                           return (
                             <div className="mb-2">
@@ -932,8 +936,8 @@ export function App() {
                                         <span className="text-[#FA2D48] font-black text-xl leading-none inline-block">↓</span>
                                       </span>
                                       <span className="text-slate-600 font-bold">
-                                        EMT: <span className="text-slate-950 font-black text-sm sm:text-base md:text-lg">{marketData.marketTimeDays} DAYS</span>
-                                        {emtDelta !== 0 && (
+                                        EMT: <span className="text-slate-950 font-black text-sm sm:text-base md:text-lg">{isInfinite ? 'INFINITE' : `${marketData.marketTimeDays} DAYS`}</span>
+                                        {hasValidEmtDelta && emtDelta !== 0 && (
                                           <span className={`ml-1.5 font-black inline-flex items-center gap-0.5 text-xs sm:text-sm ${isFaster ? 'text-emerald-600' : 'text-[#FA2D48]'}`}>
                                             <span className="text-xl leading-none font-black">{isFaster ? '↓' : '↑'}</span>
                                             <span>{Math.abs(emtDelta)}d {isFaster ? 'FASTER' : 'SLOWER'}</span>
@@ -959,8 +963,8 @@ export function App() {
                                         <span className="text-[#FA2D48] font-black text-xl leading-none inline-block">↓</span>
                                       </span>
                                       <span className="text-slate-600 font-bold">
-                                        EMT: <span className="text-slate-950 font-black text-sm sm:text-base md:text-lg">{marketData.marketTimeDays} DAYS</span>
-                                        {emtDelta !== 0 && (
+                                        EMT: <span className="text-slate-950 font-black text-sm sm:text-base md:text-lg">{isInfinite ? 'INFINITE' : `${marketData.marketTimeDays} DAYS`}</span>
+                                        {hasValidEmtDelta && emtDelta !== 0 && (
                                           <span className={`ml-1.5 font-black inline-flex items-center gap-0.5 text-xs sm:text-sm ${isFaster ? 'text-emerald-600' : 'text-[#FA2D48]'}`}>
                                             <span className="text-xl leading-none font-black">{isFaster ? '↓' : '↑'}</span>
                                             <span>{Math.abs(emtDelta)}d {isFaster ? 'FASTER' : 'SLOWER'}</span>
@@ -992,7 +996,10 @@ export function App() {
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                               {/* Expected Market Time - Tap to open historical pace modal */}
                               {(() => {
-                                const cond = getMarketCondition(marketData.marketTimeDays);
+                                const isInfinite = marketData.marketTimeDays === 0 && marketData.demand30Days === 0;
+                                const cond = isInfinite
+                                  ? { ...getMarketCondition(200), badgeText: "Buyer's Market (0 Escrows)" }
+                                  : getMarketCondition(marketData.marketTimeDays);
                                 return (
                                   <button
                                     type="button"
@@ -1010,7 +1017,7 @@ export function App() {
                                     </div>
 
                                     <div className="text-3xl sm:text-4xl font-black text-white tracking-tight font-sans">
-                                      {marketData.marketTimeDays} Days
+                                      {isInfinite ? 'Infinite' : `${marketData.marketTimeDays} Days`}
                                     </div>
 
                                     <div className="pt-1 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 w-full">
@@ -1161,23 +1168,23 @@ export function App() {
                               </span>
                               <span className="text-slate-600 font-bold">
                                 DEMAND: <span className="text-emerald-600 font-black text-sm sm:text-base md:text-lg">{OC_COUNTYWIDE_LIVE_METRICS.demand.toLocaleString()}</span>{' '}
-                                <span className="text-rose-500 font-black inline-flex items-center gap-0.5 text-xs sm:text-sm">
-                                  <span className="text-xl leading-none font-black">↓</span>
-                                  <span>{OC_COUNTYWIDE_LIVE_METRICS.demandDelta}</span>
+                                <span className={`font-black inline-flex items-center gap-0.5 text-xs sm:text-sm ${OC_COUNTYWIDE_LIVE_METRICS.demandDelta >= 0 ? 'text-emerald-600' : 'text-rose-500'}`}>
+                                  <span className="text-xl leading-none font-black">{OC_COUNTYWIDE_LIVE_METRICS.demandDelta >= 0 ? '↑' : '↓'}</span>
+                                  <span>{OC_COUNTYWIDE_LIVE_METRICS.demandDelta >= 0 ? `+${OC_COUNTYWIDE_LIVE_METRICS.demandDelta}` : OC_COUNTYWIDE_LIVE_METRICS.demandDelta}</span>
                                 </span>
                               </span>
                               <span className="text-slate-600 font-bold">
                                 SUPPLY: <span className="text-slate-900 font-black text-sm sm:text-base md:text-lg">{OC_COUNTYWIDE_LIVE_METRICS.supply.toLocaleString()}</span>{' '}
-                                <span className="text-emerald-600 font-black inline-flex items-center gap-0.5 text-xs sm:text-sm">
-                                  <span className="text-xl leading-none font-black">↓</span>
-                                  <span>{OC_COUNTYWIDE_LIVE_METRICS.supplyDelta}</span>
+                                <span className={`font-black inline-flex items-center gap-0.5 text-xs sm:text-sm ${OC_COUNTYWIDE_LIVE_METRICS.supplyDelta <= 0 ? 'text-emerald-600' : 'text-rose-500'}`}>
+                                  <span className="text-xl leading-none font-black">{OC_COUNTYWIDE_LIVE_METRICS.supplyDelta <= 0 ? '↓' : '↑'}</span>
+                                  <span>{OC_COUNTYWIDE_LIVE_METRICS.supplyDelta > 0 ? `+${OC_COUNTYWIDE_LIVE_METRICS.supplyDelta}` : OC_COUNTYWIDE_LIVE_METRICS.supplyDelta}</span>
                                 </span>
                               </span>
                               <span className="text-slate-600 font-bold">
                                 EMT: <span className="text-slate-950 font-black text-sm sm:text-base md:text-lg">{OC_COUNTYWIDE_LIVE_METRICS.emtDays} DAYS</span>{' '}
-                                <span className="text-emerald-600 font-black inline-flex items-center gap-0.5 text-xs sm:text-sm">
-                                  <span className="text-xl leading-none font-black">↓</span>
-                                  <span>{Math.abs(OC_COUNTYWIDE_LIVE_METRICS.emtDelta)}d FASTER</span>
+                                <span className={`font-black inline-flex items-center gap-0.5 text-xs sm:text-sm ${isCountyFaster ? 'text-emerald-600' : isCountySlower ? 'text-[#FA2D48]' : 'text-slate-600'}`}>
+                                  <span className="text-xl leading-none font-black">{isCountyFaster ? '↓' : isCountySlower ? '↑' : '→'}</span>
+                                  <span>{Math.abs(OC_COUNTYWIDE_LIVE_METRICS.emtDelta)}d {countySpeedLabel}</span>
                                 </span>
                               </span>
                               <span className="text-slate-300 font-light text-sm sm:text-base select-none">/</span>
@@ -1192,23 +1199,23 @@ export function App() {
                               </span>
                               <span className="text-slate-600 font-bold">
                                 DEMAND: <span className="text-emerald-600 font-black text-sm sm:text-base md:text-lg">{OC_COUNTYWIDE_LIVE_METRICS.demand.toLocaleString()}</span>{' '}
-                                <span className="text-rose-500 font-black inline-flex items-center gap-0.5 text-xs sm:text-sm">
-                                  <span className="text-xl leading-none font-black">↓</span>
-                                  <span>{OC_COUNTYWIDE_LIVE_METRICS.demandDelta}</span>
+                                <span className={`font-black inline-flex items-center gap-0.5 text-xs sm:text-sm ${OC_COUNTYWIDE_LIVE_METRICS.demandDelta >= 0 ? 'text-emerald-600' : 'text-rose-500'}`}>
+                                  <span className="text-xl leading-none font-black">{OC_COUNTYWIDE_LIVE_METRICS.demandDelta >= 0 ? '↑' : '↓'}</span>
+                                  <span>{OC_COUNTYWIDE_LIVE_METRICS.demandDelta >= 0 ? `+${OC_COUNTYWIDE_LIVE_METRICS.demandDelta}` : OC_COUNTYWIDE_LIVE_METRICS.demandDelta}</span>
                                 </span>
                               </span>
                               <span className="text-slate-600 font-bold">
                                 SUPPLY: <span className="text-slate-900 font-black text-sm sm:text-base md:text-lg">{OC_COUNTYWIDE_LIVE_METRICS.supply.toLocaleString()}</span>{' '}
-                                <span className="text-emerald-600 font-black inline-flex items-center gap-0.5 text-xs sm:text-sm">
-                                  <span className="text-xl leading-none font-black">↓</span>
-                                  <span>{OC_COUNTYWIDE_LIVE_METRICS.supplyDelta}</span>
+                                <span className={`font-black inline-flex items-center gap-0.5 text-xs sm:text-sm ${OC_COUNTYWIDE_LIVE_METRICS.supplyDelta <= 0 ? 'text-emerald-600' : 'text-rose-500'}`}>
+                                  <span className="text-xl leading-none font-black">{OC_COUNTYWIDE_LIVE_METRICS.supplyDelta <= 0 ? '↓' : '↑'}</span>
+                                  <span>{OC_COUNTYWIDE_LIVE_METRICS.supplyDelta > 0 ? `+${OC_COUNTYWIDE_LIVE_METRICS.supplyDelta}` : OC_COUNTYWIDE_LIVE_METRICS.supplyDelta}</span>
                                 </span>
                               </span>
                               <span className="text-slate-600 font-bold">
                                 EMT: <span className="text-slate-950 font-black text-sm sm:text-base md:text-lg">{OC_COUNTYWIDE_LIVE_METRICS.emtDays} DAYS</span>{' '}
-                                <span className="text-emerald-600 font-black inline-flex items-center gap-0.5 text-xs sm:text-sm">
-                                  <span className="text-xl leading-none font-black">↓</span>
-                                  <span>{Math.abs(OC_COUNTYWIDE_LIVE_METRICS.emtDelta)}d FASTER</span>
+                                <span className={`font-black inline-flex items-center gap-0.5 text-xs sm:text-sm ${isCountyFaster ? 'text-emerald-600' : isCountySlower ? 'text-[#FA2D48]' : 'text-slate-600'}`}>
+                                  <span className="text-xl leading-none font-black">{isCountyFaster ? '↓' : isCountySlower ? '↑' : '→'}</span>
+                                  <span>{Math.abs(OC_COUNTYWIDE_LIVE_METRICS.emtDelta)}d {countySpeedLabel}</span>
                                 </span>
                               </span>
                               <span className="text-slate-300 font-light text-sm sm:text-base select-none">/</span>
@@ -1586,20 +1593,24 @@ export function App() {
               <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 flex flex-col justify-between shadow-2xs font-sans">
                 <div>
                   <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider font-sans">2 Weeks Ago</div>
-                  <div className="text-xl sm:text-2xl font-black text-slate-950 pt-0.5 font-sans">{currentCityMarketData.marketTime2WeeksAgo} Days</div>
+                  <div className="text-xl sm:text-2xl font-black text-slate-950 pt-0.5 font-sans">
+                    {currentCityMarketData.marketTime2WeeksAgo > 0 ? `${currentCityMarketData.marketTime2WeeksAgo} Days` : 'Infinite'}
+                  </div>
                 </div>
-                <div className={`text-xs font-bold pt-2 border-t border-slate-200/60 mt-2 font-sans ${getMarketCondition(currentCityMarketData.marketTime2WeeksAgo).accentText}`}>
-                  {getMarketCondition(currentCityMarketData.marketTime2WeeksAgo).label}
+                <div className={`text-xs font-bold pt-2 border-t border-slate-200/60 mt-2 font-sans ${currentCityMarketData.marketTime2WeeksAgo > 0 ? getMarketCondition(currentCityMarketData.marketTime2WeeksAgo).accentText : 'text-emerald-700'}`}>
+                  {currentCityMarketData.marketTime2WeeksAgo > 0 ? getMarketCondition(currentCityMarketData.marketTime2WeeksAgo).label : "Buyer's Market"}
                 </div>
               </div>
 
               <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 flex flex-col justify-between shadow-2xs font-sans">
                 <div>
                   <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider font-sans">4 Weeks Ago</div>
-                  <div className="text-xl sm:text-2xl font-black text-slate-950 pt-0.5 font-sans">{currentCityMarketData.marketTime4WeeksAgo} Days</div>
+                  <div className="text-xl sm:text-2xl font-black text-slate-950 pt-0.5 font-sans">
+                    {currentCityMarketData.marketTime4WeeksAgo > 0 ? `${currentCityMarketData.marketTime4WeeksAgo} Days` : 'Infinite'}
+                  </div>
                 </div>
-                <div className={`text-xs font-bold pt-2 border-t border-slate-200/60 mt-2 font-sans ${getMarketCondition(currentCityMarketData.marketTime4WeeksAgo).accentText}`}>
-                  {getMarketCondition(currentCityMarketData.marketTime4WeeksAgo).label}
+                <div className={`text-xs font-bold pt-2 border-t border-slate-200/60 mt-2 font-sans ${currentCityMarketData.marketTime4WeeksAgo > 0 ? getMarketCondition(currentCityMarketData.marketTime4WeeksAgo).accentText : 'text-emerald-700'}`}>
+                  {currentCityMarketData.marketTime4WeeksAgo > 0 ? getMarketCondition(currentCityMarketData.marketTime4WeeksAgo).label : "Buyer's Market"}
                 </div>
               </div>
 

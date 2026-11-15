@@ -93,6 +93,7 @@ export const CitySelectorModal: React.FC<CitySelectorModalProps> = ({
               const soldData = OC_SOLD_REPORT.find(s => s.city.toLowerCase() === city.name.toLowerCase());
               const marketData = OC_MARKET_TIME_REPORT.find(m => m.city.toLowerCase() === city.name.toLowerCase());
               const dom = soldData ? soldData.medianDOM : (marketData ? marketData.marketTimeDays : null);
+              const isInfiniteDom = !soldData && marketData?.marketTimeDays === 0 && marketData?.demand30Days === 0;
               const price = soldData ? soldData.medianSalesPrice : (marketData ? marketData.medianActiveListPrice : null);
 
               return (
@@ -135,7 +136,9 @@ export const CitySelectorModal: React.FC<CitySelectorModalProps> = ({
                       {dom !== null && (
                         <div>
                           <span className="text-[10px] text-slate-500 uppercase font-medium block">Days on Mkt</span>
-                          <span className="font-black text-emerald-600 font-mono">{dom} days</span>
+                          <span className="font-black text-emerald-600 font-mono">
+                            {isInfiniteDom ? 'Infinite' : `${dom} days`}
+                          </span>
                         </div>
                       )}
                     </div>

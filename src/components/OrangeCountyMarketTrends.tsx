@@ -412,12 +412,15 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
               <div>
                 <div className="text-[10px] font-extrabold uppercase tracking-wider text-black">Total Actives</div>
                 <div className="text-2xl font-bold text-slate-900">{OC_HOUSING_REPORT_METADATA.countywideActives.toLocaleString()}</div>
-                <div className="text-[10px] text-emerald-600 font-medium">+7% Inventory</div>
+                <div className="text-[10px] text-emerald-600 font-medium">
+                  {Math.round(((OC_HOUSING_REPORT_METADATA.countywideActives - OC_HOUSING_REPORT_METADATA.countywideActivesLastYear) / OC_HOUSING_REPORT_METADATA.countywideActivesLastYear) * 100) >= 0 ? '+' : ''}
+                  {Math.round(((OC_HOUSING_REPORT_METADATA.countywideActives - OC_HOUSING_REPORT_METADATA.countywideActivesLastYear) / OC_HOUSING_REPORT_METADATA.countywideActivesLastYear) * 100)}% YoY
+                </div>
               </div>
               <div>
                 <div className="text-[10px] font-extrabold uppercase tracking-wider text-black">Market Time</div>
                 <div className="text-2xl font-bold text-[#FA2D48]">{OC_HOUSING_REPORT_METADATA.countywideMarketTime} Days</div>
-                <div className="text-[10px] text-slate-500 font-medium">1,472 Pending</div>
+                <div className="text-[10px] text-slate-500 font-medium">{OC_HOUSING_REPORT_METADATA.countywideDemand.toLocaleString()} Pending</div>
               </div>
             </div>
           </div>
@@ -489,7 +492,7 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                           id: 'orange-county',
                           name: 'Orange County',
                           state: 'CA',
-                          avgSqftPrice: '$810 sqft',
+                          avgSqftPrice: '$696 sqft',
                           tagline: 'Countywide Metro News & Real Estate Trends',
                           image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80',
                         });
@@ -549,7 +552,7 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                         id: 'orange-county',
                         name: 'Orange County',
                         state: 'CA',
-                        avgSqftPrice: '$810 sqft',
+                        avgSqftPrice: '$696 sqft',
                         tagline: 'Countywide Metro News & Real Estate Trends',
                         image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80',
                       });
@@ -659,7 +662,7 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                         id: 'orange-county',
                         name: 'Orange County',
                         state: 'CA',
-                        avgSqftPrice: '$810 sqft',
+                        avgSqftPrice: '$696 sqft',
                         tagline: 'Countywide Metro News & Real Estate Trends',
                         image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80',
                       });
@@ -730,14 +733,17 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
 
                   <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                     {(() => {
-                      const cond = getMarketCondition(marketData.marketTimeDays);
+                      const isInfinite = marketData.marketTimeDays === 0 && marketData.demand30Days === 0;
+                      const cond = isInfinite
+                        ? { ...getMarketCondition(200), badgeText: "Buyer's Market (0 Escrows)" }
+                        : getMarketCondition(marketData.marketTimeDays);
                       return (
                         <div className={`${cond.bgClass} p-4 rounded-2xl flex flex-col justify-between shadow-xs space-y-1`}>
                           <div className="flex items-center justify-between">
                             <span className="text-[11px] font-bold uppercase tracking-wider opacity-90">Expected Market Time</span>
                           </div>
                           <div className="text-3xl sm:text-4xl font-black pt-1 text-white tracking-tight">
-                            {marketData.marketTimeDays} Days
+                            {isInfinite ? 'Infinite' : `${marketData.marketTimeDays} Days`}
                           </div>
                           <div className="pt-2">
                             <span className="bg-white text-slate-950 font-extrabold text-xs px-2.5 py-1 rounded-lg inline-block shadow-xs">
@@ -774,19 +780,23 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                       <div className="bg-white p-2.5 rounded-xl border border-slate-200 flex flex-col justify-between shadow-2xs">
                         <div>
                           <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">2 Weeks Ago</div>
-                          <div className="text-base font-black text-slate-950 pt-0.5">{marketData.marketTime2WeeksAgo} Days</div>
+                          <div className="text-base font-black text-slate-950 pt-0.5">
+                            {marketData.marketTime2WeeksAgo > 0 ? `${marketData.marketTime2WeeksAgo} Days` : 'Infinite'}
+                          </div>
                         </div>
-                        <div className={`text-[11px] font-black pt-1 border-t border-slate-100 mt-1 ${getMarketCondition(marketData.marketTime2WeeksAgo).accentText}`}>
-                          {getMarketCondition(marketData.marketTime2WeeksAgo).label}
+                        <div className={`text-[11px] font-black pt-1 border-t border-slate-100 mt-1 ${marketData.marketTime2WeeksAgo > 0 ? getMarketCondition(marketData.marketTime2WeeksAgo).accentText : 'text-emerald-700'}`}>
+                          {marketData.marketTime2WeeksAgo > 0 ? getMarketCondition(marketData.marketTime2WeeksAgo).label : "Buyer's Market"}
                         </div>
                       </div>
                       <div className="bg-white p-2.5 rounded-xl border border-slate-200 flex flex-col justify-between shadow-2xs">
                         <div>
                           <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">4 Weeks Ago</div>
-                          <div className="text-base font-black text-slate-950 pt-0.5">{marketData.marketTime4WeeksAgo} Days</div>
+                          <div className="text-base font-black text-slate-950 pt-0.5">
+                            {marketData.marketTime4WeeksAgo > 0 ? `${marketData.marketTime4WeeksAgo} Days` : 'Infinite'}
+                          </div>
                         </div>
-                        <div className={`text-[11px] font-black pt-1 border-t border-slate-100 mt-1 ${getMarketCondition(marketData.marketTime4WeeksAgo).accentText}`}>
-                          {getMarketCondition(marketData.marketTime4WeeksAgo).label}
+                        <div className={`text-[11px] font-black pt-1 border-t border-slate-100 mt-1 ${marketData.marketTime4WeeksAgo > 0 ? getMarketCondition(marketData.marketTime4WeeksAgo).accentText : 'text-emerald-700'}`}>
+                          {marketData.marketTime4WeeksAgo > 0 ? getMarketCondition(marketData.marketTime4WeeksAgo).label : "Buyer's Market"}
                         </div>
                       </div>
                       <div className="bg-white p-2.5 rounded-xl border border-slate-200 flex flex-col justify-between shadow-2xs">
@@ -892,8 +902,8 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                       <span className="text-xs font-black uppercase tracking-wider text-[#FA2D48]">
                         Expected Market Time
                       </span>
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 border border-sky-200">
-                        Balanced Market
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${getMarketCondition(OC_HOUSING_REPORT_METADATA.countywideMarketTime).tickerBadgeClass}`}>
+                        {getMarketCondition(OC_HOUSING_REPORT_METADATA.countywideMarketTime).label}
                       </span>
                     </div>
 
@@ -988,7 +998,7 @@ export const OrangeCountyMarketTrends: React.FC<OrangeCountyMarketTrendsProps> =
                 <div>
                   <h3 className="text-xl sm:text-2xl font-black text-slate-950">Orange County Price Bracket Analysis</h3>
                   <p className="text-xs sm:text-sm text-slate-600 font-medium mt-0.5">
-                    August 3, 2026 Housing Report breakdown. Select a category below (All Homes, Attached, or Detached) and inspect velocity metrics by price tier.
+                    {OC_HOUSING_REPORT_METADATA.reportDate} Housing Report breakdown. Select a category below (All Homes, Attached, or Detached) and inspect velocity metrics by price tier.
                   </p>
                 </div>
 

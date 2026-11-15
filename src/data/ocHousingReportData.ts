@@ -81,102 +81,100 @@ export interface OCHousingSummaryBullet {
 }
 
 // =============================================================================
-// 1. BI-WEEKLY REPORT CONFIGURATION — OCTOBER 12, 2026 (RATES RISE, HOUSING STALLS)
+// 1. BI-WEEKLY REPORT CONFIGURATION — NOVEMBER 9, 2026 (HOLIDAY SLUMBER)
 // =============================================================================
 export const BI_WEEKLY_REPORT_CONFIG = {
   // Report Identity
-  reportDate: "October 12, 2026",
-  coverDate: "October 13, 2026",
-  priorReportDate: "September 28, 2026",
-  priorYearReportDate: "October 2025",
-  title: "Rates Rise, Housing Stalls",
-  subtitle: "Buyer demand plunged in the past two weeks, reaching its lowest October reading since 2007 as mortgage rates moved higher.",
+  reportDate: "November 9, 2026",
+  coverDate: "November 9, 2026",
+  priorReportDate: "October 26, 2026",
+  priorYearReportDate: "November 2025",
+  title: "Holiday Slumber",
+  subtitle: "The slowest season for housing, the Holiday Market, will be even slower this year due to the recent jump in mortgage rates.",
   author: "Steven Thomas",
   publisher: "Reports On Housing",
 
   // Page 5 & 9: Active Inventory
-  actives: 4924,
-  activesTwoWeeksAgo: 4952,
-  activesLastYear: 4478,
-  preCovidActivesAverage: 6306,
-  ytdNewListings: 21038,
+  actives: 4845,
+  activesTwoWeeksAgo: 4948,
+  activesLastYear: 4103,
+  preCovidActivesAverage: 5822,
+  ytdNewListings: 25926,
 
   // Page 6 & 9: 30-Day Buyer Demand (Pending Escrows)
-  demand: 1249,
-  demandTwoWeeksAgo: 1349,
-  demandLastYear: 1582,
+  demand: 1099,
+  demandTwoWeeksAgo: 1219,
+  demandLastYear: 1487,
   springPeakDemand: 1678,
-  preCovidDemandAverage: 2206,
+  preCovidDemandAverage: 2139,
 
   // Page 7 & 9: Expected Market Time (Velocity in Days)
-  marketTime: 118,
-  marketTimeTwoWeeksAgo: 110,
-  marketTimeLastYear: 85,
-  preCovidMarketTimeAverage: 87,
+  marketTime: 132,
+  marketTimeTwoWeeksAgo: 122,
+  marketTimeFourWeeksAgo: 118,
+  marketTimeLastYear: 83,
+  marketTimeTwoYearsAgo: 72,
+  preCovidMarketTimeAverage: 85,
 
-  // Page 7, 10 & 11: Property Type Breakdowns
+  // Page 6, 10 & 11: Property Type Breakdowns
   detached: {
-    marketTime: 105,
-    marketTimeTwoWeeksAgo: 99,
-    marketTimeLastYear: 86,
-    actives: 2710,
-    demand: 771,
+    marketTime: 123,
+    marketTimeTwoWeeksAgo: 115,
+    marketTimeLastYear: 77,
+    actives: 2681,
+    demand: 655,
   },
   attached: {
-    marketTime: 139,
-    marketTimeTwoWeeksAgo: 128,
-    marketTimeLastYear: 83,
-    actives: 2214,
-    demand: 478,
+    marketTime: 146,
+    marketTimeTwoWeeksAgo: 131,
+    marketTimeLastYear: 92,
+    actives: 2164,
+    demand: 444,
   },
 
   // Page 8: Luxury End ($2.5M+)
   luxury: {
-    marketTime: 183,
-    marketTimeTwoWeeksAgo: 184,
-    marketTimeLastYear: 194,
-    actives: 952,
-    activesTwoWeeksAgo: 981,
-    demand: 156,
-    demandTwoWeeksAgo: 160,
+    marketTime: 230,
+    marketTimeTwoWeeksAgo: 192,
+    marketTimeLastYear: 169,
+    actives: 943,
+    activesTwoWeeksAgo: 958,
+    demand: 123,
+    demandTwoWeeksAgo: 150,
   },
 
-  // Page 3 & 12: Closed vs Last List Price Breakdown
-  listPriceBreakdown: {
-    belowAskingPct: "54%",
-    belowAskingMedianShaved: "$35,000",
-    belowAskingMedianDOM: 38,
-    atAskingPct: "18%",
-    atAskingMedianDOM: 11,
-    aboveAskingPct: "28%",
-    aboveAskingMedianPremium: "$20,000",
-    aboveAskingMedianDOM: 10,
+  // Page 3 & 4: Holiday Market Year-End Benchmark
+  holidayMarket: {
+    priorYearInventoryDropPct: "-34%",
+    priorYearDemandDropPct: "-36%",
+    priorYearDelistedHomes: 1617,
+    mortgageRate: "7.18%",
   },
 
-  // Page 12: Closed Resale Report (August 2026 Resales)
+  // Page 12: Closed Resale Report (September 2026 Resales)
   closedSales: {
-    period: "August 2026",
-    priorYearPeriod: "August 2025",
-    unitsSold: 1755,
-    unitsSoldPriorYear: 1875,
-    medianSalesPrice: "$1,215,000",
-    medianListPrice: "$1,200,000",
-    salesToListRatio: "99.5%",
-    medianPricePerSqFt: "$715",
-    medianSqFt: 1700,
-    medianDOM: 19,
-    equitySalesPercentage: "99.72%",
+    period: "September 2026",
+    priorYearPeriod: "September 2025",
+    unitsSold: 1729,
+    unitsSoldPriorYear: 1805,
+    medianSalesPrice: "$1,209,000",
+    medianListPrice: "$1,199,999",
+    salesToListRatio: "99.1%",
+    medianPricePerSqFt: "$696",
+    medianSqFt: 1737,
+    medianDOM: 21,
+    equitySalesPercentage: "99.83%",
   },
 
   // Page 9: Distressed Properties
   distressed: {
-    actives: 17,
-    activesTwoWeeksAgo: 13,
-    lastYearActives: 10,
-    foreclosures: 6,
-    shortSales: 11,
-    listingsPct: "0.3%",
-    demandPct: "0.4%",
+    actives: 21,
+    activesTwoWeeksAgo: 18,
+    lastYearActives: 6,
+    foreclosures: 9,
+    shortSales: 12,
+    listingsPct: "0.4%",
+    demandPct: "0.6%",
   },
 };
 
@@ -185,25 +183,25 @@ export const BI_WEEKLY_REPORT_CONFIG = {
 // =============================================================================
 const cfg = BI_WEEKLY_REPORT_CONFIG;
 
-const inventoryDelta2Wks = cfg.actives - cfg.activesTwoWeeksAgo; // -43
-const inventoryPct2Wks = Math.round((inventoryDelta2Wks / cfg.activesTwoWeeksAgo) * 100); // -1%
-const inventoryDeltaYoY = cfg.actives - cfg.activesLastYear; // +181
-const inventoryPctYoY = Math.round((inventoryDeltaYoY / cfg.activesLastYear) * 100); // +4%
+const inventoryDelta2Wks = cfg.actives - cfg.activesTwoWeeksAgo; // -103
+const inventoryPct2Wks = Math.round((inventoryDelta2Wks / cfg.activesTwoWeeksAgo) * 100); // -2%
+const inventoryDeltaYoY = cfg.actives - cfg.activesLastYear; // +742
+const inventoryPctYoY = Math.round((inventoryDeltaYoY / cfg.activesLastYear) * 100); // +18%
 
-const demandDelta2Wks = cfg.demand - cfg.demandTwoWeeksAgo; // -60
-const demandPct2Wks = ((demandDelta2Wks / cfg.demandTwoWeeksAgo) * 100).toFixed(1); // -3.9%
-const demandDeltaYoY = cfg.demand - cfg.demandLastYear; // -123
-const demandPctYoY = Math.round((demandDeltaYoY / cfg.demandLastYear) * 100); // -8%
+const demandDelta2Wks = cfg.demand - cfg.demandTwoWeeksAgo; // -120
+const demandPct2Wks = ((demandDelta2Wks / cfg.demandTwoWeeksAgo) * 100).toFixed(1); // -9.8%
+const demandDeltaYoY = cfg.demand - cfg.demandLastYear; // -388
+const demandPctYoY = Math.round((demandDeltaYoY / cfg.demandLastYear) * 100); // -26%
 
-const marketTimeDelta2Wks = cfg.marketTime - cfg.marketTimeTwoWeeksAgo; // +3
-const marketTimeDeltaYoY = cfg.marketTime - cfg.marketTimeLastYear; // +11
+const marketTimeDelta2Wks = cfg.marketTime - cfg.marketTimeTwoWeeksAgo; // +10
+const marketTimeDeltaYoY = cfg.marketTime - cfg.marketTimeLastYear; // +49
 
-const luxuryMarketTimeDelta2Wks = cfg.luxury.marketTime - cfg.luxury.marketTimeTwoWeeksAgo; // +13
-const luxuryDemandDelta2Wks = cfg.luxury.demand - cfg.luxury.demandTwoWeeksAgo; // -21
-const luxuryDemandPct2Wks = Math.round((luxuryDemandDelta2Wks / cfg.luxury.demandTwoWeeksAgo) * 100); // -10%
+const luxuryMarketTimeDelta2Wks = cfg.luxury.marketTime - cfg.luxury.marketTimeTwoWeeksAgo; // +38
+const luxuryDemandDelta2Wks = cfg.luxury.demand - cfg.luxury.demandTwoWeeksAgo; // -27
+const luxuryDemandPct2Wks = Math.round((luxuryDemandDelta2Wks / cfg.luxury.demandTwoWeeksAgo) * 100); // -18%
 
-const closedSalesDeltaYoY = cfg.closedSales.unitsSold - cfg.closedSales.unitsSoldPriorYear; // -120
-const closedSalesPctYoY = Math.round((closedSalesDeltaYoY / cfg.closedSales.unitsSoldPriorYear) * 100); // -6%
+const closedSalesDeltaYoY = cfg.closedSales.unitsSold - cfg.closedSales.unitsSoldPriorYear; // -76
+const closedSalesPctYoY = Math.round((closedSalesDeltaYoY / cfg.closedSales.unitsSoldPriorYear) * 100); // -4%
 
 export const OC_HOUSING_REPORT_METADATA = {
   // Identity
@@ -222,7 +220,7 @@ export const OC_HOUSING_REPORT_METADATA = {
   closedSalesUnits: cfg.closedSales.unitsSold,
   closedSalesPriorYearUnits: cfg.closedSales.unitsSoldPriorYear,
   closedSalesYoYChange: closedSalesDeltaYoY,
-  closedSalesYoYNote: `${closedSalesDeltaYoY < 0 ? `${closedSalesDeltaYoY}` : `+${closedSalesDeltaYoY}`} sales (-6%) vs ${cfg.closedSales.priorYearPeriod} (${cfg.closedSales.unitsSoldPriorYear.toLocaleString()} sales). Average ${cfg.closedSales.salesToListRatio} sales-to-list ratio.`,
+  closedSalesYoYNote: `${closedSalesDeltaYoY < 0 ? `${closedSalesDeltaYoY}` : `+${closedSalesDeltaYoY}`} sales (${closedSalesPctYoY}%) vs ${cfg.closedSales.priorYearPeriod} (${cfg.closedSales.unitsSoldPriorYear.toLocaleString()} sales). Average ${cfg.closedSales.salesToListRatio} sales-to-list ratio.`,
 
   // Core Summary Totals (Backwards Compatible)
   countywideActives: cfg.actives,
@@ -231,7 +229,9 @@ export const OC_HOUSING_REPORT_METADATA = {
   countywideDemandLastYear: cfg.demandLastYear,
   countywideMarketTime: cfg.marketTime,
   countywideMarketTime2WksAgo: cfg.marketTimeTwoWeeksAgo,
+  countywideMarketTime4WksAgo: cfg.marketTimeFourWeeksAgo,
   countywideMarketTimeLastYear: cfg.marketTimeLastYear,
+  countywideMarketTime2YrsAgo: cfg.marketTimeTwoYearsAgo,
 
   detachedMarketTime: cfg.detached.marketTime,
   detachedMarketTime2WksAgo: cfg.detached.marketTimeTwoWeeksAgo,
@@ -256,9 +256,9 @@ export const OC_HOUSING_REPORT_METADATA = {
   closedSalesResales: cfg.closedSales.unitsSold,
   closedSalesAugust2025: cfg.closedSales.unitsSoldPriorYear,
   medianSalesPriceAugust2026: cfg.closedSales.medianSalesPrice,
-  closedSalesJuly2026: 1930,
-  closedSalesJuly2025: 1934,
-  medianSalesPriceJuly2026: "$1,220,000",
+  closedSalesJuly2026: 1755,
+  closedSalesJuly2025: 1875,
+  medianSalesPriceJuly2026: "$1,215,000",
   countywideMedianPrice: cfg.closedSales.medianSalesPrice,
   medianListPriceAugust2026: cfg.closedSales.medianListPrice,
   medianSalesPrice: cfg.closedSales.medianSalesPrice,
@@ -317,7 +317,6 @@ export function evaluateStevenThomasMarketDirection(
   const supplyTrend = supplyCurrent > supplyPrevious ? 'UP' : supplyCurrent < supplyPrevious ? 'DOWN' : 'EQUAL';
   const emtTrend = emtCurrent > emtPrevious ? 'UP' : emtCurrent < emtPrevious ? 'DOWN' : 'EQUAL';
 
-  // If any indicator is EQUAL/unchanged, direction is not clearly established by the 8 combinations:
   if (demandTrend === 'EQUAL' || supplyTrend === 'EQUAL' || emtTrend === 'EQUAL') {
     return {
       direction: 'BALANCED' as const,
@@ -350,7 +349,7 @@ export function evaluateStevenThomasMarketDirection(
   if (demandTrend === 'UP' && supplyTrend === 'DOWN' && emtTrend === 'DOWN') {
     return { direction: 'STRONG' as const, speed: 'FASTER' as const, fullText: 'MARKET SPEED: STRONG • FASTER', demandTrend, supplyTrend, emtTrend, matchedRowId: 5 };
   }
-  // 6: DOWN, UP, UP -> WEAK / SLOWER (September 28, 2026 Match)
+  // 6: DOWN, UP, UP -> WEAK / SLOWER
   if (demandTrend === 'DOWN' && supplyTrend === 'UP' && emtTrend === 'UP') {
     return { direction: 'WEAK' as const, speed: 'SLOWER' as const, fullText: 'MARKET SPEED: WEAK • SLOWER', demandTrend, supplyTrend, emtTrend, matchedRowId: 6 };
   }
@@ -358,7 +357,7 @@ export function evaluateStevenThomasMarketDirection(
   if (demandTrend === 'UP' && supplyTrend === 'UP' && emtTrend === 'DOWN') {
     return { direction: 'IMPROVING' as const, speed: 'FASTER' as const, fullText: 'MARKET SPEED: IMPROVING • FASTER', demandTrend, supplyTrend, emtTrend, matchedRowId: 7 };
   }
-  // 8: DOWN, DOWN, UP -> WEAKENING / SLOWER
+  // 8: DOWN, DOWN, UP -> WEAKENING / SLOWER (November 9, 2026 Match)
   if (demandTrend === 'DOWN' && supplyTrend === 'DOWN' && emtTrend === 'UP') {
     return { direction: 'WEAKENING' as const, speed: 'SLOWER' as const, fullText: 'MARKET SPEED: WEAKENING • SLOWER', demandTrend, supplyTrend, emtTrend, matchedRowId: 8 };
   }
@@ -384,27 +383,27 @@ export const STEVEN_THOMAS_MARKET_DIRECTION = evaluateStevenThomasMarketDirectio
 );
 
 export const OC_COUNTYWIDE_LIVE_METRICS = {
-  demand: cfg.demand, // 1249
-  demandPrior: cfg.demandTwoWeeksAgo, // 1349
-  demandDelta: cfg.demand - cfg.demandTwoWeeksAgo, // -100
-  demandTrend: 'DOWN' as const,
+  demand: cfg.demand, // 1099
+  demandPrior: cfg.demandTwoWeeksAgo, // 1219
+  demandDelta: cfg.demand - cfg.demandTwoWeeksAgo, // -120
+  demandTrend: STEVEN_THOMAS_MARKET_DIRECTION.demandTrend,
   
-  supply: cfg.actives, // 4924
-  supplyPrior: cfg.activesTwoWeeksAgo, // 4952
-  supplyDelta: cfg.actives - cfg.activesTwoWeeksAgo, // -28
-  supplyTrend: 'DOWN' as const,
+  supply: cfg.actives, // 4845
+  supplyPrior: cfg.activesTwoWeeksAgo, // 4948
+  supplyDelta: cfg.actives - cfg.activesTwoWeeksAgo, // -103
+  supplyTrend: STEVEN_THOMAS_MARKET_DIRECTION.supplyTrend,
   
-  emtDays: cfg.marketTime, // 118
-  emtDaysPrior: cfg.marketTimeTwoWeeksAgo, // 110
-  emtDelta: cfg.marketTime - cfg.marketTimeTwoWeeksAgo, // +8
-  speed: 'SLOWER' as const,
-  direction: 'WEAK' as const,
-  fullText: 'MARKET SPEED: WEAK • SLOWER',
-  matchedRowId: 5
+  emtDays: cfg.marketTime, // 132
+  emtDaysPrior: cfg.marketTimeTwoWeeksAgo, // 122
+  emtDelta: cfg.marketTime - cfg.marketTimeTwoWeeksAgo, // +10
+  speed: STEVEN_THOMAS_MARKET_DIRECTION.speed ?? ('SLOWER' as const),
+  direction: STEVEN_THOMAS_MARKET_DIRECTION.direction,
+  fullText: STEVEN_THOMAS_MARKET_DIRECTION.fullText,
+  matchedRowId: STEVEN_THOMAS_MARKET_DIRECTION.matchedRowId
 };
 
 // =============================================================================
-// PAGE 8: ORANGE COUNTY MARKET BREAKDOWN (OCTOBER 12, 2026)
+// PAGE 8: ORANGE COUNTY MARKET BREAKDOWN (NOVEMBER 9, 2026)
 // Price Ranges, Market Speed & Velocity
 // =============================================================================
 export interface OCPage8BreakdownRow {
@@ -421,34 +420,34 @@ export interface OCPage8BreakdownRow {
 }
 
 export const OC_PAGE_8_MARKET_BREAKDOWN: OCPage8BreakdownRow[] = [
-  { priceRange: "$0 - $750k", speedCategory: "Slight Buyer's", marketTimeDays: 126, pctCurrentInventory: 22, inventoryCount: 1092, pctCurrentDemand: 21, demandCount: 261, lastYearDays: 64, deltaDays: 62, signalBars: 2 },
-  { priceRange: "$750k - $1M", speedCategory: "Balanced Market", marketTimeDays: 117, pctCurrentInventory: 17, inventoryCount: 833, pctCurrentDemand: 17, demandCount: 213, lastYearDays: 62, deltaDays: 55, signalBars: 3 },
-  { priceRange: "$1M - $1.25M", speedCategory: "Balanced Market", marketTimeDays: 102, pctCurrentInventory: 12, inventoryCount: 593, pctCurrentDemand: 14, demandCount: 175, lastYearDays: 71, deltaDays: 31, signalBars: 3 },
-  { priceRange: "$1.25M - $1.5M", speedCategory: "Slight Seller's", marketTimeDays: 86, pctCurrentInventory: 11, inventoryCount: 532, pctCurrentDemand: 16, demandCount: 186, lastYearDays: 64, deltaDays: 22, signalBars: 4 },
-  { priceRange: "$1.5M - $2M", speedCategory: "Balanced Market", marketTimeDays: 103, pctCurrentInventory: 13, inventoryCount: 662, pctCurrentDemand: 15, demandCount: 193, lastYearDays: 87, deltaDays: 16, signalBars: 3 },
-  { priceRange: "$2M - $2.5M", speedCategory: "Slight Buyer's", marketTimeDays: 120, pctCurrentInventory: 5, inventoryCount: 260, pctCurrentDemand: 5, demandCount: 65, lastYearDays: 159, deltaDays: -39, signalBars: 2 },
-  { priceRange: "$2.5M - $4M", speedCategory: "Slight Buyer's", marketTimeDays: 125, pctCurrentInventory: 9, inventoryCount: 425, pctCurrentDemand: 8, demandCount: 102, lastYearDays: 151, deltaDays: -26, signalBars: 2 },
-  { priceRange: "$4M - $6M", speedCategory: "Buyer's Market", marketTimeDays: 224, pctCurrentInventory: 5, inventoryCount: 224, pctCurrentDemand: 2, demandCount: 30, lastYearDays: 183, deltaDays: 41, signalBars: 1 },
-  { priceRange: "$6M+", speedCategory: "Buyer's Market", marketTimeDays: 379, pctCurrentInventory: 6, inventoryCount: 303, pctCurrentDemand: 2, demandCount: 24, lastYearDays: 431, deltaDays: -52, signalBars: 1 },
+  { priceRange: "$0 - $750k", speedCategory: "Slight Buyer's", marketTimeDays: 129, pctCurrentInventory: 22, inventoryCount: 1081, pctCurrentDemand: 23, demandCount: 252, lastYearDays: 85, deltaDays: 44, signalBars: 2 },
+  { priceRange: "$750k - $1M", speedCategory: "Balanced Market", marketTimeDays: 102, pctCurrentInventory: 17, inventoryCount: 798, pctCurrentDemand: 21, demandCount: 234, lastYearDays: 55, deltaDays: 47, signalBars: 3 },
+  { priceRange: "$1M - $1.25M", speedCategory: "Balanced Market", marketTimeDays: 105, pctCurrentInventory: 12, inventoryCount: 575, pctCurrentDemand: 15, demandCount: 164, lastYearDays: 56, deltaDays: 49, signalBars: 3 },
+  { priceRange: "$1.25M - $1.5M", speedCategory: "Balanced Market", marketTimeDays: 111, pctCurrentInventory: 11, inventoryCount: 532, pctCurrentDemand: 13, demandCount: 144, lastYearDays: 70, deltaDays: 41, signalBars: 3 },
+  { priceRange: "$1.5M - $2M", speedCategory: "Buyer's Market", marketTimeDays: 160, pctCurrentInventory: 14, inventoryCount: 678, pctCurrentDemand: 12, demandCount: 127, lastYearDays: 88, deltaDays: 72, signalBars: 1 },
+  { priceRange: "$2M - $2.5M", speedCategory: "Slight Buyer's", marketTimeDays: 130, pctCurrentInventory: 5, inventoryCount: 238, pctCurrentDemand: 5, demandCount: 55, lastYearDays: 99, deltaDays: 31, signalBars: 2 },
+  { priceRange: "$2.5M - $4M", speedCategory: "Buyer's Market", marketTimeDays: 189, pctCurrentInventory: 9, inventoryCount: 435, pctCurrentDemand: 6, demandCount: 69, lastYearDays: 143, deltaDays: 46, signalBars: 1 },
+  { priceRange: "$4M - $6M", speedCategory: "Buyer's Market", marketTimeDays: 238, pctCurrentInventory: 4, inventoryCount: 214, pctCurrentDemand: 3, demandCount: 27, lastYearDays: 147, deltaDays: 91, signalBars: 1 },
+  { priceRange: "$6M+", speedCategory: "Buyer's Market", marketTimeDays: 327, pctCurrentInventory: 6, inventoryCount: 294, pctCurrentDemand: 2, demandCount: 27, lastYearDays: 282, deltaDays: 45, signalBars: 1 },
 ];
 
 export const OC_PAGE_8_LUXURY_NOTE = {
   title: "LUXURY END",
-  subtitle: "THE LUXURY MARKET HASN'T CHANGED MUCH OVER THE PAST COUPLE OF WEEKS.",
-  content: "Over the past couple of weeks, the luxury inventory for homes priced above $2.5 million (the top 10% of the Orange County housing market) decreased from 981 to 952, down 29 (-3%). Luxury demand decreased from 160 to 156 pending sales, down 4 (-3%). With supply and demand dropping at a similar pace, the Expected Market Time for luxury homes priced above $2.5 million decreased slightly from 184 to 183 days.\n\nYear over year, the active luxury inventory is down by 127 homes (-12%), and luxury demand is down by 11 pending sales (-7%). Last year's Expected Market Time was 194 days, similar to today.\n\nOver the past two weeks, the Expected Market Time for homes priced between $2.5 million and $4 million rose from 121 to 125 days. For homes priced between $4 million and $6 million, the Expected Market Time increased from 218 to 224 days. For homes priced above $6 million, the Expected Market Time decreased from 454 to 379 days. Luxury is at 183 days overall. At this pace, a seller would likely become a pending sale around April 2027.",
-  actives: 952,
-  activesDelta: -29,
-  demand: 156,
-  demandDelta: -4,
-  emt: 183,
-  emtDelta: -1,
-  priorYearEMT: 194,
-  pendingPaceMonth: "April 2027"
+  subtitle: "THE LUXURY MARKET SLOWED OVER THE PAST COUPLE OF WEEKS.",
+  content: "Over the past couple of weeks, the luxury inventory for homes priced above $2.5 million (the top 10% of the Orange County housing market) decreased from 958 to 943, down 15 (-2%). Luxury demand decreased from 150 to 123 pending sales, down 27 (-18%). With demand plunging faster than supply, the Expected Market Time for luxury homes priced above $2.5 million increased from 192 to 230 days, its highest level since August 2025.\n\nYear over year, the active luxury inventory is down by 30 homes (-3%), and luxury demand is down by 50 pending sales (-29%). Last year's Expected Market Time was 169 days, much faster than today.\n\nOver the past two weeks, the Expected Market Time for homes priced between $2.5 million and $4 million rose from 145 to 189 days. For homes priced between $4 million and $6 million, the Expected Market Time decreased from 260 to 238 days. For homes priced above $6 million, the Expected Market Time increased from 253 to 327 days. Luxury is at 230 days overall. At this pace, a seller would likely become a pending sale around June 2027.",
+  actives: 943,
+  activesDelta: -15,
+  demand: 123,
+  demandDelta: -27,
+  emt: 230,
+  emtDelta: 38,
+  priorYearEMT: 169,
+  pendingPaceMonth: "June 2027"
 };
 
 // =============================================================================
-// PAGE 9: ORANGE COUNTY HOUSING SUMMARY (OCTOBER 12, 2026)
-// Rates Rise, Housing Stalls — Telemetry & Metrics (Minimalist Apple/Tesla UI)
+// PAGE 9: ORANGE COUNTY HOUSING SUMMARY (NOVEMBER 9, 2026)
+// Holiday Slumber — Telemetry & Metrics
 // =============================================================================
 export interface OCPage9Pillar {
   id: string;
@@ -467,151 +466,151 @@ export interface OCPage9Pillar {
 }
 
 export const OC_PAGE_9_HOUSING_SUMMARY = {
-  reportDate: "October 12, 2026",
-  coverDate: "October 13, 2026",
-  title: "Rates Rise, Housing Stalls",
-  subtitle: "Buyer demand plunged to 1,249 pending sales (lowest October since 2007) while inventory held at 4,924 homes.",
+  reportDate: "November 9, 2026",
+  coverDate: "November 9, 2026",
+  title: "Holiday Slumber",
+  subtitle: "Buyer demand plunged to 1,099 pending sales (lowest November since tracking began in 2004) while inventory dipped to 4,845 homes.",
   pillars: [
     {
       id: "inventory",
       title: "ACTIVE INVENTORY",
-      stat: "4,924",
+      stat: "4,845",
       unit: "Homes on Market",
-      badge: "-0.6% in 2 wks",
+      badge: "-2% in 2 wks",
       badgeType: "neutral" as const,
-      delta2Wks: "-28 Homes (-0.6%)",
-      deltaYoY: "+446 (+9% vs 4,478)",
-      compPreCovid: "-22% (-1,382 vs 6,306 avg)",
+      delta2Wks: "-103 Homes (-2% / Largest Drop of Year)",
+      deltaYoY: "+742 (+18% vs 4,103 in 2025)",
+      compPreCovid: "-17% (-977 vs 5,822 avg)",
       metricLabel1: "YTD vs Pre-COVID",
-      metricValue1: "-27% (-8,605 listings)",
-      metricLabel2: "2-Yr Comparison",
-      metricValue2: "+1,963 homes vs 2024"
+      metricValue1: "-27% (-9,490 listings Jan–Oct)",
+      metricLabel2: "Multi-Year Context",
+      metricValue2: "+1,818 vs 2024 · +5,305 vs 2023"
     },
     {
       id: "demand",
       title: "BUYER DEMAND",
-      stat: "1,249",
+      stat: "1,099",
       unit: "30-Day Pending Sales",
-      badge: "Lowest Oct Since 2007",
+      badge: "Lowest Nov Since 2004",
       badgeType: "negative" as const,
-      delta2Wks: "-100 (-7.4% in 2 wks)",
-      deltaYoY: "-333 (-21% vs 1,582)",
-      compPreCovid: "-43% (-957 vs 2,206 avg)",
+      delta2Wks: "-120 (-10% in 2 wks / Largest Drop)",
+      deltaYoY: "-388 (-26% vs 1,487 in 2025)",
+      compPreCovid: "-49% (-1,040 vs 2,139 avg)",
       metricLabel1: "Historical Record",
-      metricValue1: "Lowest October in 19 Yrs",
+      metricValue1: "Lowest November Since 2004",
       metricLabel2: "Pre-COVID 3-Yr Avg",
-      metricValue2: "2,206 (77% higher)"
+      metricValue2: "2,139 (95% higher)"
     },
     {
       id: "market-time",
       title: "MARKET TIME (EMT)",
-      stat: "118 Days",
+      stat: "132 Days",
       unit: "Days to Sell Inventory",
-      badge: "+8d Slower (Balanced)",
+      badge: "+10d Slower (Slight Buyer's)",
       badgeType: "warning" as const,
-      delta2Wks: "+8 Days (from 110d)",
-      deltaYoY: "+33 Days (from 85d)",
-      compPreCovid: "+31 Days (from 87d avg)",
+      delta2Wks: "+10 Days (from 122d)",
+      deltaYoY: "+49 Days (from 83d)",
+      compPreCovid: "+47 Days (from 85d avg)",
       metricLabel1: "Slowest Pace Since",
-      metricValue1: "April 2020 (COVID)",
+      metricValue1: "Jan 2019 (Slowest Nov Since 2008)",
       metricLabel2: "Speed Category",
-      metricValue2: "Balanced (90–120 Days)"
+      metricValue2: "Slight Buyer's (120–149 Days)"
     },
     {
       id: "luxury",
       title: "LUXURY ($2.5M+)",
-      stat: "183 Days",
+      stat: "230 Days",
       unit: "Expected Market Time",
-      badge: "April 2027 Pace",
-      badgeType: "neutral" as const,
-      delta2Wks: "-1 Day (from 184d)",
-      deltaYoY: "-11 Days (from 194d)",
-      compPreCovid: "Top 10% Market Share",
+      badge: "June 2027 Pace",
+      badgeType: "warning" as const,
+      delta2Wks: "+38 Days (from 192d)",
+      deltaYoY: "+61 Days (from 169d)",
+      compPreCovid: "Highest Since August 2025",
       metricLabel1: "Luxury Active Supply",
-      metricValue1: "952 homes (-29 in 2 wks)",
+      metricValue1: "943 homes (-15 / -2% in 2 wks)",
       metricLabel2: "Luxury 30-Day Demand",
-      metricValue2: "156 pending (-4 in 2 wks)"
+      metricValue2: "123 pending (-27 / -18% in 2 wks)"
     },
     {
       id: "distressed",
       title: "DISTRESSED HOMES",
-      stat: "17",
+      stat: "21",
       unit: "Foreclosures & Short Sales",
-      badge: "0.3% of Supply",
+      badge: "0.4% of Supply",
       badgeType: "positive" as const,
-      delta2Wks: "+4 Homes (from 13)",
-      deltaYoY: "+7 Homes (vs 10 in 2025)",
-      compPreCovid: "1.5% Pre-COVID Average",
+      delta2Wks: "+3 Homes (from 18)",
+      deltaYoY: "+15 Homes (vs 6 in 2025)",
+      compPreCovid: "Historical Lows",
       metricLabel1: "Foreclosures / Short Sales",
-      metricValue1: "6 Active / 11 Active",
+      metricValue1: "9 Active / 12 Active",
       metricLabel2: "Share of Demand",
-      metricValue2: "0.4% (5 of 1,249)"
+      metricValue2: "0.6% of Pending Demand"
     },
     {
       id: "closed-sales",
-      title: "CLOSED SALES (AUG)",
-      stat: "1,755",
-      unit: "August Closed Escrows",
-      badge: "99.5% Sale-to-List",
+      title: "CLOSED SALES (SEPT)",
+      stat: "1,729",
+      unit: "September Closed Escrows",
+      badge: "99.1% Sale-to-List",
       badgeType: "positive" as const,
-      delta2Wks: "-9% MoM (vs July)",
-      deltaYoY: "-6% YoY (1,875 in 2025)",
-      compPreCovid: "Median $1,215,000 (+4.5%)",
+      delta2Wks: "-1% MoM (vs August)",
+      deltaYoY: "-4% YoY (1,805 in 2025)",
+      compPreCovid: "Median $1,209,000",
       metricLabel1: "Equity Sellers",
-      metricValue1: "99.72% (Only 5 Distress)",
-      metricLabel2: "Avg DOM / Price/SqFt",
-      metricValue2: "28 Days / $715/sqft"
+      metricValue1: "99.83% (0.12% Foreclosure · 0.06% Short)",
+      metricLabel2: "Median DOM / Price/SqFt",
+      metricValue2: "21 Days / $696/sqft"
     },
     {
       id: "median-list-price",
       title: "MEDIAN LIST PRICE",
-      stat: "$1,200,000",
+      stat: "$1,199,999",
       unit: "Page 12 Sold Report",
-      badge: "99.5% Sale-to-List",
+      badge: "99.1% Sale-to-List",
       badgeType: "positive" as const,
-      delta2Wks: "$1,215,000 Closed Median",
-      deltaYoY: "+4.3% vs Prior Year",
-      compPreCovid: "+45% vs Pre-COVID ($825k)",
+      delta2Wks: "$1,209,000 Closed Median",
+      deltaYoY: "Sept 2026 Closed Resales",
+      compPreCovid: "1,737 Median Sq. Ft.",
       metricLabel1: "Closed vs. List Ratio",
-      metricValue1: "99.5% (Very Close to Ask)",
+      metricValue1: "99.1% (Countywide Average)",
       metricLabel2: "Price Range Spread",
-      metricValue2: "$122,500 – $38,900,000"
+      metricValue2: "$18,100 – $22,700,000"
     },
     {
       id: "median-dom",
       title: "MEDIAN DAYS ON MARKET",
-      stat: "19 Days",
+      stat: "21 Days",
       unit: "Closed Resale Velocity (Page 12)",
-      badge: "Under 3 Weeks to Close",
+      badge: "3 Weeks to Pending",
       badgeType: "positive" as const,
-      delta2Wks: "11 Days (At List Price)",
-      deltaYoY: "10 Days (Above List Price)",
-      compPreCovid: "38 Days (Below List Price)",
-      metricLabel1: "At Asking Price Pace",
-      metricValue1: "11 Days (18% of sales)",
-      metricLabel2: "Above Asking Price Pace",
-      metricValue2: "10 Days (28% of sales)"
+      delta2Wks: "Sept 2026 Closed Median",
+      deltaYoY: "Faster in North/Central OC",
+      compPreCovid: "La Palma 5d · Villa Park 10d",
+      metricLabel1: "Fastest City DOM",
+      metricValue1: "La Palma (5d) · Los Alamitos (8d)",
+      metricLabel2: "Countywide Closed Volume",
+      metricValue2: "1,729 Resales in Sept 2026"
     },
     {
       id: "median-price-sqft",
       title: "MEDIAN PRICE / SQ. FT.",
-      stat: "$715",
+      stat: "$696",
       unit: "Closed Sales (Page 12)",
-      badge: "+4.5% YoY Growth",
+      badge: "Sept 2026 Closed Sales",
       badgeType: "positive" as const,
-      delta2Wks: "1,700 Median Sq Ft",
-      deltaYoY: "$684/sqft in 2025 (+4.5%)",
-      compPreCovid: "+47% vs Pre-COVID ($485)",
+      delta2Wks: "1,737 Median Sq Ft",
+      deltaYoY: "Countywide Resale Benchmark",
+      compPreCovid: "Seal Beach $429 · Laguna Woods $427",
       metricLabel1: "Top Coastal Cities",
-      metricValue1: "Corona Del Mar ($2,002) · Newport ($1,507)",
+      metricValue1: "Newport Coast ($2,185) · CDM ($1,777)",
       metricLabel2: "Median Resale Size",
-      metricValue2: "1,700 Sq. Ft. Countywide"
+      metricValue2: "1,737 Sq. Ft. Countywide"
     }
   ]
 };
 
 // =============================================================================
-// 3. EXECUTIVE SUMMARY CARDS (OCTOBER 12, 2026 REPORT)
+// 3. EXECUTIVE SUMMARY CARDS (NOVEMBER 9, 2026 REPORT)
 // =============================================================================
 export const OC_HOUSING_SUMMARY_CARDS: OCSummaryCardData[] = [
   {
@@ -623,13 +622,13 @@ export const OC_HOUSING_SUMMARY_CARDS: OCSummaryCardData[] = [
     unit: "Days to Sell",
     trend2Weeks: `+${marketTimeDelta2Wks} days (from ${cfg.marketTimeTwoWeeksAgo}d)`,
     isTrendPositive: false,
-    compLastYear: `${cfg.marketTimeLastYear} days (${marketTimeDeltaYoY}d slower)`,
-    summary: `Expected Market Time lengthened by 8 days over the past two weeks to ${cfg.marketTime} days as buyer demand plunged while active listings remained steady. At 118 days, countywide speed represents the slowest pace recorded since the April 2020 COVID lockdowns.`,
+    compLastYear: `${cfg.marketTimeLastYear} days (+${marketTimeDeltaYoY}d slower)`,
+    summary: `Expected Market Time jumped 10 days over the past two weeks from ${cfg.marketTimeTwoWeeksAgo} to ${cfg.marketTime} days as buyer demand plunged faster than supply. This marks the highest reading since January 2019 and the highest November reading since 2008.`,
     keyTakeaways: [
-      `Countywide Expected Market Time rose to ${cfg.marketTime} days (up 8 days from ${cfg.marketTimeTwoWeeksAgo}d two weeks ago).`,
+      `Countywide Expected Market Time rose to ${cfg.marketTime} days (up 10 days from ${cfg.marketTimeTwoWeeksAgo}d two weeks ago).`,
       `Attached Condominiums & Townhomes: ${cfg.attached.marketTime} days (up from ${cfg.attached.marketTimeTwoWeeksAgo}d two weeks ago; ${cfg.attached.marketTimeLastYear}d last year).`,
       `Detached Single-Family: ${cfg.detached.marketTime} days (up from ${cfg.detached.marketTimeTwoWeeksAgo}d two weeks ago; ${cfg.detached.marketTimeLastYear}d last year).`,
-      `Detached single-family homes (105 days) continue to sell significantly faster than attached condos (139 days).`
+      `Detached homes (${cfg.detached.marketTime} days) continue to outpace attached condos (${cfg.attached.marketTime} days).`
     ],
     category: "speed"
   },
@@ -643,13 +642,12 @@ export const OC_HOUSING_SUMMARY_CARDS: OCSummaryCardData[] = [
     trend2Weeks: `${demandDelta2Wks} escrows (${demandPct2Wks}%) in 2 wks`,
     isTrendPositive: false,
     compLastYear: `${cfg.demandLastYear.toLocaleString()} escrows (${demandPctYoY}% YoY / ${Math.abs(demandDeltaYoY)} fewer)`,
-    summary: `Buyer demand, the 30-day snapshot of new pending escrows, plunged by 100 sales (-7.4%) to ${cfg.demand.toLocaleString()} escrows as mortgage rates climbed back upward. This is the lowest October demand level in Orange County since 2007.`,
+    summary: `Buyer demand, the 30-day snapshot of pending escrows, plunged by 120 sales (-10%) to ${cfg.demand.toLocaleString()} escrows—its largest drop of the year and lowest November reading since tracking began in 2004.`,
     keyTakeaways: [
-      `Buyer demand stands at ${cfg.demand.toLocaleString()} pending sales (down 100 escrows or -7.4% in 2 weeks).`,
-      `Lowest October buyer demand recorded across Orange County since 2007.`,
-      `Spring peak demand was ${cfg.springPeakDemand.toLocaleString()} pending sales.`,
-      `Last year's pace: ${cfg.demandLastYear.toLocaleString()} pending sales (${demandPctYoY}% YoY).`,
-      `Pre-COVID 3-year average was ${cfg.preCovidDemandAverage.toLocaleString()} pending sales (77% higher than today).`
+      `Buyer demand stands at ${cfg.demand.toLocaleString()} pending sales (down 120 escrows or -10% in 2 weeks).`,
+      `Lowest November buyer demand recorded in Orange County since tracking began in 2004.`,
+      `Last year's pace: ${cfg.demandLastYear.toLocaleString()} pending sales (up 388 or +35% vs today).`,
+      `Pre-COVID 3-year average was ${cfg.preCovidDemandAverage.toLocaleString()} pending sales (95% higher than today).`
     ],
     category: "demand"
   },
@@ -663,34 +661,33 @@ export const OC_HOUSING_SUMMARY_CARDS: OCSummaryCardData[] = [
     trend2Weeks: `${inventoryDelta2Wks} homes (${inventoryPct2Wks}%) in 2 wks`,
     isTrendPositive: true,
     compLastYear: `${cfg.activesLastYear.toLocaleString()} homes (+${inventoryPctYoY}% YoY / ${inventoryDeltaYoY} more)`,
-    summary: `Active listing inventory decreased by 28 homes (-0.6%) over the past two weeks to ${cfg.actives.toLocaleString()} listings. 54% of closed sales closed below asking price, while well-priced inventory continues to move.`,
+    summary: `Active listing inventory fell by 103 homes (-2%) over the past two weeks to ${cfg.actives.toLocaleString()} listings—the largest drop of the year—though still the highest November inventory since 2019 (5,534).`,
     keyTakeaways: [
-      `Active inventory sits at ${cfg.actives.toLocaleString()} homes (down 28 homes in 2 weeks).`,
-      `Compared to last year's ${cfg.activesLastYear.toLocaleString()} homes (+${inventoryPctYoY}% YoY / 446 more).`,
-      `Pre-COVID 3-year average was ${cfg.preCovidActivesAverage.toLocaleString()} homes (28% higher than today).`,
-      `From Jan through Sept, 27% fewer homes came on the market than pre-COVID (8,605 fewer).`,
-      `${cfg.ytdNewListings.toLocaleString()} homes placed on the market YTD.`
+      `Active inventory sits at ${cfg.actives.toLocaleString()} homes (down 103 homes / -2% in 2 weeks).`,
+      `Last year's supply was ${cfg.activesLastYear.toLocaleString()} homes (742 fewer, -15% vs today).`,
+      `Pre-COVID 3-year average was ${cfg.preCovidActivesAverage.toLocaleString()} homes (20% higher than today).`,
+      `Jan–Oct new listings totaled ${cfg.ytdNewListings.toLocaleString()}, 9,490 fewer (-27%) than pre-COVID averages.`
     ],
     category: "supply"
   },
   {
-    id: "pricing",
-    title: "Closed vs. Last List Price",
-    shortTitle: "Pricing Trends",
-    currentStat: "54% Below Ask",
-    currentValue: 54,
-    unit: "Resale Closings",
-    trend2Weeks: "28% Sold Above Asking",
+    id: "luxury",
+    title: "Luxury End ($2.5M+)",
+    shortTitle: "Luxury ($2.5M+)",
+    currentStat: `${cfg.luxury.marketTime} Days`,
+    currentValue: cfg.luxury.marketTime,
+    unit: "Expected Market Time",
+    trend2Weeks: `+${luxuryMarketTimeDelta2Wks} days (from ${cfg.luxury.marketTimeTwoWeeksAgo}d)`,
     isTrendPositive: false,
-    compLastYear: "18% Sold at Full Asking",
-    summary: `54% of all August closed sales sold below asking price (median $35,000 shaved off after 38 days on market). 46% sold at or above asking price, verifying that realistic pricing remains essential.`,
+    compLastYear: `${cfg.luxury.marketTimeLastYear} days last year (+${cfg.luxury.marketTime - cfg.luxury.marketTimeLastYear}d slower)`,
+    summary: `Luxury inventory ($2.5M+) dipped 2% to ${cfg.luxury.actives} homes while luxury demand plunged 18% to ${cfg.luxury.demand} pending sales, pushing luxury Expected Market Time from 192 to ${cfg.luxury.marketTime} days (June 2027 pace).`,
     keyTakeaways: [
-      `54% of closed sales sold below last asking price (median discount of $35,000 after 38 days DOM).`,
-      `18% sold at the exact list price (median of 11 days on market).`,
-      `28% sold above the last list price (median premium of $20,000 and 10 days on market).`,
-      `Turnkey, realistically priced homes in prime condition continue to capture quick contracts.`
+      `$2.5M–$4M tier slowed from 145 to 189 days EMT (435 actives, 69 pending).`,
+      `$4M–$6M tier improved from 260 to 238 days EMT (214 actives, 27 pending).`,
+      `$6M+ ultra-luxury slowed from 253 to 327 days EMT (294 actives, 27 pending).`,
+      `Overall $2.5M+ pace reached ${cfg.luxury.marketTime} days, its highest level since August 2025.`
     ],
-    category: "pricing"
+    category: "luxury"
   },
   {
     id: "closed",
@@ -699,15 +696,15 @@ export const OC_HOUSING_SUMMARY_CARDS: OCSummaryCardData[] = [
     currentStat: `${cfg.closedSales.unitsSold.toLocaleString()} Sales`,
     currentValue: cfg.closedSales.unitsSold,
     unit: `${cfg.closedSales.salesToListRatio} Sale-to-List Ratio`,
-    trend2Weeks: `-6% YoY vs ${cfg.closedSales.priorYearPeriod}`,
+    trend2Weeks: `${closedSalesPctYoY}% YoY vs ${cfg.closedSales.priorYearPeriod}`,
     isTrendPositive: false,
     compLastYear: `${cfg.closedSales.unitsSoldPriorYear.toLocaleString()} sales in ${cfg.closedSales.priorYearPeriod} (${closedSalesDeltaYoY} sales)`,
-    summary: `There were ${cfg.closedSales.unitsSold.toLocaleString()} closed residential resales in ${cfg.closedSales.period}, down 6% from ${cfg.closedSales.priorYearPeriod}'s ${cfg.closedSales.unitsSoldPriorYear.toLocaleString()} sales. The countywide median sales price was ${cfg.closedSales.medianSalesPrice} with an average sales-to-list ratio of ${cfg.closedSales.salesToListRatio}.`,
+    summary: `There were ${cfg.closedSales.unitsSold.toLocaleString()} closed residential resales in ${cfg.closedSales.period}, down 4% from ${cfg.closedSales.priorYearPeriod}'s ${cfg.closedSales.unitsSoldPriorYear.toLocaleString()} sales and down 1% from August 2026. The countywide median sales price was ${cfg.closedSales.medianSalesPrice} with a ${cfg.closedSales.salesToListRatio} sales-to-list ratio.`,
     keyTakeaways: [
-      `${cfg.closedSales.unitsSold.toLocaleString()} residential sales closed in ${cfg.closedSales.period} (down 6% vs ${cfg.closedSales.priorYearPeriod}'s ${cfg.closedSales.unitsSoldPriorYear.toLocaleString()}).`,
-      `Countywide median sales price: ${cfg.closedSales.medianSalesPrice} ($715/sq ft).`,
+      `${cfg.closedSales.unitsSold.toLocaleString()} residential sales closed in ${cfg.closedSales.period} (down 4% vs ${cfg.closedSales.priorYearPeriod}'s ${cfg.closedSales.unitsSoldPriorYear.toLocaleString()}).`,
+      `Countywide median sales price: ${cfg.closedSales.medianSalesPrice} (${cfg.closedSales.medianPricePerSqFt}/sq ft).`,
       `Sales-to-list price ratio captured: ${cfg.closedSales.salesToListRatio}.`,
-      `99.72% of all sales were traditional sellers with equity; foreclosures/short sales totaled just 0.28%.`,
+      `99.83% of all sales were traditional equity sellers (0.12% foreclosures, 0.06% short sales).`,
       `Median Days on Market: ${cfg.closedSales.medianDOM} days.`
     ],
     category: "sales"
@@ -720,31 +717,31 @@ export const OC_HOUSING_SUMMARY_BULLETS: OCHousingSummaryBullet[] = [
     title: "Active Listings",
     stat: `${cfg.actives.toLocaleString()} Homes`,
     trend: `${inventoryDelta2Wks} in 2 wks (${inventoryPct2Wks}%)`,
-    description: `Active inventory dipped by 28 homes to ${cfg.actives.toLocaleString()} listings, down 22% compared to pre-COVID averages.`
+    description: `Active inventory dropped by 103 homes to ${cfg.actives.toLocaleString()} listings—the largest decline of the year, yet still the highest November inventory since 2019.`
   },
   {
     title: "Buyer Demand",
     stat: `${cfg.demand.toLocaleString()} Escrows`,
     trend: `${demandDelta2Wks} in 2 wks (${demandPct2Wks}%)`,
-    description: `30-day pending sales dropped by 7.4% to ${cfg.demand.toLocaleString()} escrows with rates rising—the lowest October demand since 2007.`
+    description: `30-day pending sales plunged 10% to ${cfg.demand.toLocaleString()} escrows with mortgage rates near ${cfg.holidayMarket.mortgageRate}—the lowest November demand since tracking began in 2004.`
   },
   {
     title: "Expected Market Time",
     stat: `${cfg.marketTime} Days`,
     trend: `+${marketTimeDelta2Wks} days vs 2 wks ago`,
-    description: `Market speed slowed by 8 days to ${cfg.marketTime} days (slowest since April 2020 lockdowns). Detached homes are at 105 days while attached condominiums are at 139 days.`
+    description: `Market speed slowed by 10 days to ${cfg.marketTime} days (highest since January 2019; highest November since 2008). Detached homes are at 123 days while attached condominiums are at 146 days.`
   },
   {
-    title: "Luxury End ($2.5M+)",
-    stat: `${cfg.luxury.marketTime} Days`,
-    trend: `${luxuryMarketTimeDelta2Wks} days vs 2 wks ago`,
-    description: `Luxury market time stands at ${cfg.luxury.marketTime} days with ${cfg.luxury.actives} active luxury listings and ${cfg.luxury.demand} pending escrows (April 2027 pace).`
+    title: "Holiday Market Outlook",
+    stat: `${cfg.holidayMarket.mortgageRate} Rates`,
+    trend: `${cfg.holidayMarket.priorYearDelistedHomes.toLocaleString()} Delisted in '25`,
+    description: `Entering the Holiday Slumber, supply and demand typically drop over 30% through New Year's while Expected Market Time remains elevated near ${cfg.marketTime} days.`
   },
   {
     title: `${cfg.closedSales.period} Closed Sales`,
     stat: `${cfg.closedSales.unitsSold.toLocaleString()} Units`,
-    trend: `-6% vs ${cfg.closedSales.priorYearPeriod}`,
-    description: `${cfg.closedSales.unitsSold.toLocaleString()} resales closed in ${cfg.closedSales.period} (median ${cfg.closedSales.medianSalesPrice}, ${cfg.closedSales.salesToListRatio} ratio) with 99.72% equity sellers.`
+    trend: `${closedSalesPctYoY}% vs ${cfg.closedSales.priorYearPeriod}`,
+    description: `${cfg.closedSales.unitsSold.toLocaleString()} resales closed in ${cfg.closedSales.period} (median ${cfg.closedSales.medianSalesPrice}, ${cfg.closedSales.salesToListRatio} ratio) with 99.83% equity sellers.`
   },
   {
     title: "Distressed Properties",
@@ -755,100 +752,100 @@ export const OC_HOUSING_SUMMARY_BULLETS: OCHousingSummaryBullet[] = [
 ];
 
 // =============================================================================
-// 4. PAGE 10: CITY MARKET TIME REPORT (October 12, 2026 — Rates Rise, Housing Stalls)
-// Tabulated from CRMLS as of 10/8/2026
+// 4. PAGE 10: CITY MARKET TIME REPORT (November 9, 2026 — Holiday Slumber)
+// Tabulated from CRMLS as of 11/5/2026
 // =============================================================================
 export const OC_MARKET_TIME_REPORT: OCMarketTimeEntry[] = [
-  { city: "Aliso Viejo", region: "South OC", currentActives: 75, demand30Days: 20, marketTimeDays: 113, marketTime2WeeksAgo: 80, marketTime4WeeksAgo: 74, marketTime1YearAgo: 59, marketTime2YearsAgo: 68, medianActiveListPrice: "$900k" },
-  { city: "Anaheim", region: "North OC", currentActives: 287, demand30Days: 71, marketTimeDays: 121, marketTime2WeeksAgo: 111, marketTime4WeeksAgo: 89, marketTime1YearAgo: 62, marketTime2YearsAgo: 67, medianActiveListPrice: "$925k" },
-  { city: "Anaheim Hills", region: "North OC", currentActives: 56, demand30Days: 10, marketTimeDays: 168, marketTime2WeeksAgo: 128, marketTime4WeeksAgo: 81, marketTime1YearAgo: 55, marketTime2YearsAgo: 81, medianActiveListPrice: "$1.3m" },
-  { city: "Brea", region: "North OC", currentActives: 41, demand30Days: 18, marketTimeDays: 68, marketTime2WeeksAgo: 71, marketTime4WeeksAgo: 77, marketTime1YearAgo: 60, marketTime2YearsAgo: 41, medianActiveListPrice: "$999k" },
-  { city: "Buena Park", region: "North OC", currentActives: 82, demand30Days: 16, marketTimeDays: 154, marketTime2WeeksAgo: 102, marketTime4WeeksAgo: 72, marketTime1YearAgo: 71, marketTime2YearsAgo: 41, medianActiveListPrice: "$900k" },
-  { city: "Corona Del Mar", region: "Coastal", currentActives: 69, demand30Days: 11, marketTimeDays: 188, marketTime2WeeksAgo: 183, marketTime4WeeksAgo: 183, marketTime1YearAgo: 353, marketTime2YearsAgo: 162, medianActiveListPrice: "$6.4m" },
-  { city: "Costa Mesa", region: "Coastal", currentActives: 121, demand30Days: 36, marketTimeDays: 101, marketTime2WeeksAgo: 84, marketTime4WeeksAgo: 74, marketTime1YearAgo: 84, marketTime2YearsAgo: 48, medianActiveListPrice: "$1.5m" },
-  { city: "Coto De Caza", region: "South OC", currentActives: 54, demand30Days: 15, marketTimeDays: 108, marketTime2WeeksAgo: 103, marketTime4WeeksAgo: 132, marketTime1YearAgo: 114, marketTime2YearsAgo: 77, medianActiveListPrice: "$2.2m" },
-  { city: "Cypress", region: "North OC", currentActives: 58, demand30Days: 22, marketTimeDays: 79, marketTime2WeeksAgo: 102, marketTime4WeeksAgo: 95, marketTime1YearAgo: 49, marketTime2YearsAgo: 39, medianActiveListPrice: "$965k" },
-  { city: "Dana Point", region: "Coastal", currentActives: 103, demand30Days: 17, marketTimeDays: 182, marketTime2WeeksAgo: 173, marketTime4WeeksAgo: 99, marketTime1YearAgo: 126, marketTime2YearsAgo: 134, medianActiveListPrice: "$2.4m" },
-  { city: "Dove Canyon", region: "South OC", currentActives: 4, demand30Days: 0, marketTimeDays: 0, marketTime2WeeksAgo: 0, marketTime4WeeksAgo: 40, marketTime1YearAgo: 65, marketTime2YearsAgo: 20, medianActiveListPrice: "$1.9m" },
-  { city: "Foothill Ranch", region: "South OC", currentActives: 14, demand30Days: 2, marketTimeDays: 210, marketTime2WeeksAgo: 113, marketTime4WeeksAgo: 128, marketTime1YearAgo: 49, marketTime2YearsAgo: 56, medianActiveListPrice: "$670k" },
-  { city: "Fountain Valley", region: "Central OC", currentActives: 39, demand30Days: 24, marketTimeDays: 49, marketTime2WeeksAgo: 40, marketTime4WeeksAgo: 44, marketTime1YearAgo: 53, marketTime2YearsAgo: 51, medianActiveListPrice: "$1.4m" },
-  { city: "Fullerton", region: "North OC", currentActives: 123, demand30Days: 37, marketTimeDays: 100, marketTime2WeeksAgo: 66, marketTime4WeeksAgo: 65, marketTime1YearAgo: 53, marketTime2YearsAgo: 57, medianActiveListPrice: "$900k" },
-  { city: "Garden Grove", region: "Central OC", currentActives: 114, demand30Days: 41, marketTimeDays: 83, marketTime2WeeksAgo: 85, marketTime4WeeksAgo: 74, marketTime1YearAgo: 71, marketTime2YearsAgo: 42, medianActiveListPrice: "$995k" },
-  { city: "Huntington Beach", region: "Coastal", currentActives: 297, demand30Days: 93, marketTimeDays: 96, marketTime2WeeksAgo: 82, marketTime4WeeksAgo: 79, marketTime1YearAgo: 75, marketTime2YearsAgo: 61, medianActiveListPrice: "$1.4m" },
-  { city: "Irvine", region: "South OC", currentActives: 706, demand30Days: 136, marketTimeDays: 156, marketTime2WeeksAgo: 145, marketTime4WeeksAgo: 156, marketTime1YearAgo: 139, marketTime2YearsAgo: 90, medianActiveListPrice: "$1.6m" },
-  { city: "La Habra", region: "North OC", currentActives: 67, demand30Days: 25, marketTimeDays: 80, marketTime2WeeksAgo: 60, marketTime4WeeksAgo: 104, marketTime1YearAgo: 70, marketTime2YearsAgo: 48, medianActiveListPrice: "$850k" },
-  { city: "La Palma", region: "North OC", currentActives: 9, demand30Days: 4, marketTimeDays: 68, marketTime2WeeksAgo: 130, marketTime4WeeksAgo: 72, marketTime1YearAgo: 270, marketTime2YearsAgo: 60, medianActiveListPrice: "$1.2m" },
-  { city: "Ladera Ranch", region: "South OC", currentActives: 55, demand30Days: 10, marketTimeDays: 165, marketTime2WeeksAgo: 132, marketTime4WeeksAgo: 134, marketTime1YearAgo: 146, marketTime2YearsAgo: 109, medianActiveListPrice: "$1.2m" },
-  { city: "Laguna Beach", region: "Coastal", currentActives: 149, demand30Days: 22, marketTimeDays: 203, marketTime2WeeksAgo: 213, marketTime4WeeksAgo: 216, marketTime1YearAgo: 194, marketTime2YearsAgo: 304, medianActiveListPrice: "$5.0m" },
-  { city: "Laguna Hills", region: "South OC", currentActives: 53, demand30Days: 18, marketTimeDays: 88, marketTime2WeeksAgo: 126, marketTime4WeeksAgo: 116, marketTime1YearAgo: 76, marketTime2YearsAgo: 52, medianActiveListPrice: "$1.1m" },
-  { city: "Laguna Niguel", region: "South OC", currentActives: 142, demand30Days: 47, marketTimeDays: 91, marketTime2WeeksAgo: 98, marketTime4WeeksAgo: 86, marketTime1YearAgo: 90, marketTime2YearsAgo: 96, medianActiveListPrice: "$1.3m" },
-  { city: "Laguna Woods", region: "South OC", currentActives: 198, demand30Days: 48, marketTimeDays: 124, marketTime2WeeksAgo: 113, marketTime4WeeksAgo: 96, marketTime1YearAgo: 64, marketTime2YearsAgo: 49, medianActiveListPrice: "$449k" },
-  { city: "Lake Forest", region: "South OC", currentActives: 207, demand30Days: 30, marketTimeDays: 207, marketTime2WeeksAgo: 151, marketTime4WeeksAgo: 151, marketTime1YearAgo: 113, marketTime2YearsAgo: 75, medianActiveListPrice: "$1.2m" },
-  { city: "Los Alamitos", region: "North OC", currentActives: 11, demand30Days: 8, marketTimeDays: 41, marketTime2WeeksAgo: 47, marketTime4WeeksAgo: 40, marketTime1YearAgo: 33, marketTime2YearsAgo: 43, medianActiveListPrice: "$1.6m" },
-  { city: "Mission Viejo", region: "South OC", currentActives: 155, demand30Days: 55, marketTimeDays: 85, marketTime2WeeksAgo: 92, marketTime4WeeksAgo: 70, marketTime1YearAgo: 78, marketTime2YearsAgo: 60, medianActiveListPrice: "$1.1m" },
-  { city: "Newport Beach", region: "Coastal", currentActives: 233, demand30Days: 32, marketTimeDays: 218, marketTime2WeeksAgo: 197, marketTime4WeeksAgo: 156, marketTime1YearAgo: 170, marketTime2YearsAgo: 175, medianActiveListPrice: "$4.7m" },
-  { city: "Newport Coast", region: "Coastal", currentActives: 46, demand30Days: 6, marketTimeDays: 230, marketTime2WeeksAgo: 223, marketTime4WeeksAgo: 201, marketTime1YearAgo: 156, marketTime2YearsAgo: 144, medianActiveListPrice: "$13.3m" },
-  { city: "North Tustin", region: "Central OC", currentActives: 29, demand30Days: 14, marketTimeDays: 62, marketTime2WeeksAgo: 96, marketTime4WeeksAgo: 101, marketTime1YearAgo: 85, marketTime2YearsAgo: 64, medianActiveListPrice: "$1.9m" },
-  { city: "Orange", region: "Central OC", currentActives: 178, demand30Days: 48, marketTimeDays: 111, marketTime2WeeksAgo: 109, marketTime4WeeksAgo: 115, marketTime1YearAgo: 60, marketTime2YearsAgo: 45, medianActiveListPrice: "$1.2m" },
-  { city: "Placentia", region: "North OC", currentActives: 72, demand30Days: 21, marketTimeDays: 103, marketTime2WeeksAgo: 120, marketTime4WeeksAgo: 129, marketTime1YearAgo: 52, marketTime2YearsAgo: 45, medianActiveListPrice: "$847k" },
-  { city: "Portola Hills", region: "South OC", currentActives: 26, demand30Days: 5, marketTimeDays: 156, marketTime2WeeksAgo: 218, marketTime4WeeksAgo: 129, marketTime1YearAgo: 150, marketTime2YearsAgo: 105, medianActiveListPrice: "$1.3m" },
-  { city: "Rancho Mission Viejo", region: "South OC", currentActives: 112, demand30Days: 14, marketTimeDays: 240, marketTime2WeeksAgo: 300, marketTime4WeeksAgo: 112, marketTime1YearAgo: 81, marketTime2YearsAgo: 47, medianActiveListPrice: "$1.0m" },
-  { city: "Rancho Santa Margarita", region: "South OC", currentActives: 82, demand30Days: 16, marketTimeDays: 154, marketTime2WeeksAgo: 146, marketTime4WeeksAgo: 101, marketTime1YearAgo: 65, marketTime2YearsAgo: 65, medianActiveListPrice: "$775k" },
-  { city: "Rossmoor", region: "North OC", currentActives: 1, demand30Days: 3, marketTimeDays: 10, marketTime2WeeksAgo: 15, marketTime4WeeksAgo: 20, marketTime1YearAgo: 150, marketTime2YearsAgo: 34, medianActiveListPrice: "$2.2m" },
-  { city: "San Clemente", region: "Coastal", currentActives: 124, demand30Days: 35, marketTimeDays: 106, marketTime2WeeksAgo: 84, marketTime4WeeksAgo: 83, marketTime1YearAgo: 124, marketTime2YearsAgo: 80, medianActiveListPrice: "$2.2m" },
-  { city: "San Juan Capistrano", region: "South OC", currentActives: 68, demand30Days: 24, marketTimeDays: 85, marketTime2WeeksAgo: 117, marketTime4WeeksAgo: 82, marketTime1YearAgo: 73, marketTime2YearsAgo: 93, medianActiveListPrice: "$1.9m" },
-  { city: "Santa Ana", region: "Central OC", currentActives: 224, demand30Days: 49, marketTimeDays: 137, marketTime2WeeksAgo: 107, marketTime4WeeksAgo: 101, marketTime1YearAgo: 72, marketTime2YearsAgo: 44, medianActiveListPrice: "$828k" },
-  { city: "Seal Beach", region: "Coastal", currentActives: 86, demand30Days: 35, marketTimeDays: 74, marketTime2WeeksAgo: 71, marketTime4WeeksAgo: 67, marketTime1YearAgo: 35, marketTime2YearsAgo: 57, medianActiveListPrice: "$382k" },
-  { city: "Stanton", region: "Central OC", currentActives: 27, demand30Days: 5, marketTimeDays: 162, marketTime2WeeksAgo: 110, marketTime4WeeksAgo: 83, marketTime1YearAgo: 45, marketTime2YearsAgo: 26, medianActiveListPrice: "$660k" },
-  { city: "Talega", region: "Coastal", currentActives: 27, demand30Days: 5, marketTimeDays: 162, marketTime2WeeksAgo: 94, marketTime4WeeksAgo: 68, marketTime1YearAgo: 98, marketTime2YearsAgo: 82, medianActiveListPrice: "$1.9m" },
-  { city: "Tustin", region: "Central OC", currentActives: 95, demand30Days: 37, marketTimeDays: 77, marketTime2WeeksAgo: 140, marketTime4WeeksAgo: 130, marketTime1YearAgo: 66, marketTime2YearsAgo: 46, medianActiveListPrice: "$1.0m" },
-  { city: "Villa Park", region: "Central OC", currentActives: 14, demand30Days: 4, marketTimeDays: 105, marketTime2WeeksAgo: 98, marketTime4WeeksAgo: 160, marketTime1YearAgo: 113, marketTime2YearsAgo: 71, medianActiveListPrice: "$3.0m" },
-  { city: "Westminster", region: "Central OC", currentActives: 44, demand30Days: 20, marketTimeDays: 66, marketTime2WeeksAgo: 66, marketTime4WeeksAgo: 92, marketTime1YearAgo: 44, marketTime2YearsAgo: 35, medianActiveListPrice: "$1.2m" },
-  { city: "Yorba Linda", region: "North OC", currentActives: 147, demand30Days: 40, marketTimeDays: 110, marketTime2WeeksAgo: 91, marketTime4WeeksAgo: 85, marketTime1YearAgo: 74, marketTime2YearsAgo: 58, medianActiveListPrice: "$1.5m" },
+  { city: "Aliso Viejo", region: "South OC", currentActives: 74, demand30Days: 16, marketTimeDays: 139, marketTime2WeeksAgo: 101, marketTime4WeeksAgo: 113, marketTime1YearAgo: 53, marketTime2YearsAgo: 25, medianActiveListPrice: "$936k" },
+  { city: "Anaheim", region: "North OC", currentActives: 279, demand30Days: 70, marketTimeDays: 120, marketTime2WeeksAgo: 105, marketTime4WeeksAgo: 121, marketTime1YearAgo: 72, marketTime2YearsAgo: 57, medianActiveListPrice: "$940k" },
+  { city: "Anaheim Hills", region: "North OC", currentActives: 45, demand30Days: 10, marketTimeDays: 135, marketTime2WeeksAgo: 153, marketTime4WeeksAgo: 168, marketTime1YearAgo: 62, marketTime2YearsAgo: 67, medianActiveListPrice: "$1.2m" },
+  { city: "Brea", region: "North OC", currentActives: 45, demand30Days: 16, marketTimeDays: 84, marketTime2WeeksAgo: 63, marketTime4WeeksAgo: 68, marketTime1YearAgo: 45, marketTime2YearsAgo: 36, medianActiveListPrice: "$1.1m" },
+  { city: "Buena Park", region: "North OC", currentActives: 73, demand30Days: 26, marketTimeDays: 84, marketTime2WeeksAgo: 104, marketTime4WeeksAgo: 154, marketTime1YearAgo: 48, marketTime2YearsAgo: 61, medianActiveListPrice: "$900k" },
+  { city: "Corona Del Mar", region: "Coastal", currentActives: 61, demand30Days: 8, marketTimeDays: 229, marketTime2WeeksAgo: 146, marketTime4WeeksAgo: 188, marketTime1YearAgo: 195, marketTime2YearsAgo: 203, medianActiveListPrice: "$6.8m" },
+  { city: "Costa Mesa", region: "Coastal", currentActives: 133, demand30Days: 26, marketTimeDays: 153, marketTime2WeeksAgo: 129, marketTime4WeeksAgo: 101, marketTime1YearAgo: 58, marketTime2YearsAgo: 62, medianActiveListPrice: "$1.5m" },
+  { city: "Coto De Caza", region: "South OC", currentActives: 58, demand30Days: 13, marketTimeDays: 134, marketTime2WeeksAgo: 129, marketTime4WeeksAgo: 108, marketTime1YearAgo: 109, marketTime2YearsAgo: 53, medianActiveListPrice: "$2.0m" },
+  { city: "Cypress", region: "North OC", currentActives: 51, demand30Days: 20, marketTimeDays: 77, marketTime2WeeksAgo: 81, marketTime4WeeksAgo: 79, marketTime1YearAgo: 81, marketTime2YearsAgo: 43, medianActiveListPrice: "$985k" },
+  { city: "Dana Point", region: "Coastal", currentActives: 99, demand30Days: 17, marketTimeDays: 175, marketTime2WeeksAgo: 115, marketTime4WeeksAgo: 182, marketTime1YearAgo: 106, marketTime2YearsAgo: 112, medianActiveListPrice: "$2.6m" },
+  { city: "Dove Canyon", region: "South OC", currentActives: 8, demand30Days: 1, marketTimeDays: 240, marketTime2WeeksAgo: 0, marketTime4WeeksAgo: 0, marketTime1YearAgo: 75, marketTime2YearsAgo: 15, medianActiveListPrice: "$1.7m" },
+  { city: "Foothill Ranch", region: "South OC", currentActives: 16, demand30Days: 0, marketTimeDays: 0, marketTime2WeeksAgo: 450, marketTime4WeeksAgo: 210, marketTime1YearAgo: 50, marketTime2YearsAgo: 90, medianActiveListPrice: "$637k" },
+  { city: "Fountain Valley", region: "Central OC", currentActives: 40, demand30Days: 17, marketTimeDays: 71, marketTime2WeeksAgo: 69, marketTime4WeeksAgo: 49, marketTime1YearAgo: 37, marketTime2YearsAgo: 57, medianActiveListPrice: "$1.3m" },
+  { city: "Fullerton", region: "North OC", currentActives: 111, demand30Days: 45, marketTimeDays: 74, marketTime2WeeksAgo: 100, marketTime4WeeksAgo: 100, marketTime1YearAgo: 58, marketTime2YearsAgo: 59, medianActiveListPrice: "$945k" },
+  { city: "Garden Grove", region: "Central OC", currentActives: 109, demand30Days: 35, marketTimeDays: 93, marketTime2WeeksAgo: 92, marketTime4WeeksAgo: 83, marketTime1YearAgo: 59, marketTime2YearsAgo: 49, medianActiveListPrice: "$995k" },
+  { city: "Huntington Beach", region: "Coastal", currentActives: 322, demand30Days: 71, marketTimeDays: 136, marketTime2WeeksAgo: 110, marketTime4WeeksAgo: 96, marketTime1YearAgo: 62, marketTime2YearsAgo: 78, medianActiveListPrice: "$1.4m" },
+  { city: "Irvine", region: "South OC", currentActives: 679, demand30Days: 105, marketTimeDays: 194, marketTime2WeeksAgo: 180, marketTime4WeeksAgo: 156, marketTime1YearAgo: 142, marketTime2YearsAgo: 87, medianActiveListPrice: "$1.6m" },
+  { city: "La Habra", region: "North OC", currentActives: 71, demand30Days: 19, marketTimeDays: 112, marketTime2WeeksAgo: 99, marketTime4WeeksAgo: 80, marketTime1YearAgo: 53, marketTime2YearsAgo: 61, medianActiveListPrice: "$850k" },
+  { city: "La Palma", region: "North OC", currentActives: 13, demand30Days: 1, marketTimeDays: 390, marketTime2WeeksAgo: 135, marketTime4WeeksAgo: 68, marketTime1YearAgo: 60, marketTime2YearsAgo: 53, medianActiveListPrice: "$1.2m" },
+  { city: "Ladera Ranch", region: "South OC", currentActives: 53, demand30Days: 7, marketTimeDays: 227, marketTime2WeeksAgo: 257, marketTime4WeeksAgo: 165, marketTime1YearAgo: 79, marketTime2YearsAgo: 88, medianActiveListPrice: "$1.5m" },
+  { city: "Laguna Beach", region: "Coastal", currentActives: 148, demand30Days: 23, marketTimeDays: 193, marketTime2WeeksAgo: 173, marketTime4WeeksAgo: 203, marketTime1YearAgo: 179, marketTime2YearsAgo: 276, medianActiveListPrice: "$5.0m" },
+  { city: "Laguna Hills", region: "South OC", currentActives: 51, demand30Days: 19, marketTimeDays: 81, marketTime2WeeksAgo: 84, marketTime4WeeksAgo: 88, marketTime1YearAgo: 104, marketTime2YearsAgo: 49, medianActiveListPrice: "$1.2m" },
+  { city: "Laguna Niguel", region: "South OC", currentActives: 133, demand30Days: 28, marketTimeDays: 143, marketTime2WeeksAgo: 140, marketTime4WeeksAgo: 91, marketTime1YearAgo: 91, marketTime2YearsAgo: 82, medianActiveListPrice: "$1.3m" },
+  { city: "Laguna Woods", region: "South OC", currentActives: 203, demand30Days: 49, marketTimeDays: 124, marketTime2WeeksAgo: 121, marketTime4WeeksAgo: 124, marketTime1YearAgo: 80, marketTime2YearsAgo: 56, medianActiveListPrice: "$435k" },
+  { city: "Lake Forest", region: "South OC", currentActives: 195, demand30Days: 39, marketTimeDays: 150, marketTime2WeeksAgo: 158, marketTime4WeeksAgo: 207, marketTime1YearAgo: 94, marketTime2YearsAgo: 79, medianActiveListPrice: "$1.2m" },
+  { city: "Los Alamitos", region: "North OC", currentActives: 16, demand30Days: 4, marketTimeDays: 120, marketTime2WeeksAgo: 78, marketTime4WeeksAgo: 41, marketTime1YearAgo: 120, marketTime2YearsAgo: 43, medianActiveListPrice: "$1.6m" },
+  { city: "Mission Viejo", region: "South OC", currentActives: 170, demand30Days: 37, marketTimeDays: 138, marketTime2WeeksAgo: 110, marketTime4WeeksAgo: 85, marketTime1YearAgo: 70, marketTime2YearsAgo: 63, medianActiveListPrice: "$1.1m" },
+  { city: "Newport Beach", region: "Coastal", currentActives: 230, demand30Days: 30, marketTimeDays: 230, marketTime2WeeksAgo: 195, marketTime4WeeksAgo: 218, marketTime1YearAgo: 133, marketTime2YearsAgo: 127, medianActiveListPrice: "$4.8m" },
+  { city: "Newport Coast", region: "Coastal", currentActives: 46, demand30Days: 3, marketTimeDays: 460, marketTime2WeeksAgo: 153, marketTime4WeeksAgo: 230, marketTime1YearAgo: 136, marketTime2YearsAgo: 206, medianActiveListPrice: "$10.6m" },
+  { city: "North Tustin", region: "Central OC", currentActives: 28, demand30Days: 10, marketTimeDays: 84, marketTime2WeeksAgo: 45, marketTime4WeeksAgo: 62, marketTime1YearAgo: 103, marketTime2YearsAgo: 69, medianActiveListPrice: "$1.9m" },
+  { city: "Orange", region: "Central OC", currentActives: 169, demand30Days: 45, marketTimeDays: 113, marketTime2WeeksAgo: 98, marketTime4WeeksAgo: 111, marketTime1YearAgo: 59, marketTime2YearsAgo: 56, medianActiveListPrice: "$1.2m" },
+  { city: "Placentia", region: "North OC", currentActives: 64, demand30Days: 19, marketTimeDays: 101, marketTime2WeeksAgo: 91, marketTime4WeeksAgo: 103, marketTime1YearAgo: 98, marketTime2YearsAgo: 42, medianActiveListPrice: "$844k" },
+  { city: "Portola Hills", region: "South OC", currentActives: 25, demand30Days: 6, marketTimeDays: 125, marketTime2WeeksAgo: 103, marketTime4WeeksAgo: 156, marketTime1YearAgo: 220, marketTime2YearsAgo: 40, medianActiveListPrice: "$1.1m" },
+  { city: "Rancho Mission Viejo", region: "South OC", currentActives: 116, demand30Days: 16, marketTimeDays: 218, marketTime2WeeksAgo: 305, marketTime4WeeksAgo: 240, marketTime1YearAgo: 86, marketTime2YearsAgo: 130, medianActiveListPrice: "$1.1m" },
+  { city: "Rancho Santa Margarita", region: "South OC", currentActives: 66, demand30Days: 23, marketTimeDays: 86, marketTime2WeeksAgo: 122, marketTime4WeeksAgo: 154, marketTime1YearAgo: 69, marketTime2YearsAgo: 97, medianActiveListPrice: "$832k" },
+  { city: "Rossmoor", region: "North OC", currentActives: 2, demand30Days: 2, marketTimeDays: 30, marketTime2WeeksAgo: 15, marketTime4WeeksAgo: 10, marketTime1YearAgo: 60, marketTime2YearsAgo: 90, medianActiveListPrice: "$2.0m" },
+  { city: "San Clemente", region: "Coastal", currentActives: 119, demand30Days: 31, marketTimeDays: 115, marketTime2WeeksAgo: 123, marketTime4WeeksAgo: 106, marketTime1YearAgo: 95, marketTime2YearsAgo: 80, medianActiveListPrice: "$2.2m" },
+  { city: "San Juan Capistrano", region: "South OC", currentActives: 69, demand30Days: 17, marketTimeDays: 122, marketTime2WeeksAgo: 130, marketTime4WeeksAgo: 85, marketTime1YearAgo: 60, marketTime2YearsAgo: 54, medianActiveListPrice: "$1.7m" },
+  { city: "Santa Ana", region: "Central OC", currentActives: 227, demand30Days: 40, marketTimeDays: 170, marketTime2WeeksAgo: 135, marketTime4WeeksAgo: 137, marketTime1YearAgo: 76, marketTime2YearsAgo: 63, medianActiveListPrice: "$825k" },
+  { city: "Seal Beach", region: "Coastal", currentActives: 92, demand30Days: 33, marketTimeDays: 84, marketTime2WeeksAgo: 61, marketTime4WeeksAgo: 74, marketTime1YearAgo: 52, marketTime2YearsAgo: 46, medianActiveListPrice: "$387k" },
+  { city: "Stanton", region: "Central OC", currentActives: 34, demand30Days: 6, marketTimeDays: 170, marketTime2WeeksAgo: 97, marketTime4WeeksAgo: 162, marketTime1YearAgo: 94, marketTime2YearsAgo: 27, medianActiveListPrice: "$729k" },
+  { city: "Talega", region: "Coastal", currentActives: 23, demand30Days: 7, marketTimeDays: 99, marketTime2WeeksAgo: 125, marketTime4WeeksAgo: 162, marketTime1YearAgo: 68, marketTime2YearsAgo: 83, medianActiveListPrice: "$1.9m" },
+  { city: "Tustin", region: "Central OC", currentActives: 95, demand30Days: 29, marketTimeDays: 98, marketTime2WeeksAgo: 79, marketTime4WeeksAgo: 77, marketTime1YearAgo: 78, marketTime2YearsAgo: 55, medianActiveListPrice: "$1.1m" },
+  { city: "Villa Park", region: "Central OC", currentActives: 11, demand30Days: 4, marketTimeDays: 83, marketTime2WeeksAgo: 90, marketTime4WeeksAgo: 105, marketTime1YearAgo: 96, marketTime2YearsAgo: 240, medianActiveListPrice: "$2.7m" },
+  { city: "Westminster", region: "Central OC", currentActives: 47, demand30Days: 18, marketTimeDays: 78, marketTime2WeeksAgo: 92, marketTime4WeeksAgo: 66, marketTime1YearAgo: 38, marketTime2YearsAgo: 51, medianActiveListPrice: "$1.2m" },
+  { city: "Yorba Linda", region: "North OC", currentActives: 133, demand30Days: 37, marketTimeDays: 108, marketTime2WeeksAgo: 134, marketTime4WeeksAgo: 110, marketTime1YearAgo: 88, marketTime2YearsAgo: 56, medianActiveListPrice: "$1.5m" },
 ];
 
 // =============================================================================
-// 5. PAGE 11: PRICE RANGE REPORT (October 12, 2026 — Rates Rise, Housing Stalls)
-// Tabulated from CRMLS as of 10/8/2026
+// 5. PAGE 11: PRICE RANGE REPORT (November 9, 2026 — Holiday Slumber)
+// Tabulated from CRMLS as of 11/5/2026
 // =============================================================================
 export const OC_PRICE_RANGE_REPORT_ALL: OCPriceRangeEntry[] = [
-  { priceRange: "All of O.C.", currentActives: 4924, demand30Days: 1249, marketTimeDays: 118, marketTime2WeeksAgo: 110, marketTime4WeeksAgo: 101, marketTime1YearAgo: 85, marketTime2YearsAgo: 69, medianActivePrice: "$1.2m" },
-  { priceRange: "$0-$500k", currentActives: 421, demand30Days: 94, marketTimeDays: 134, marketTime2WeeksAgo: 110, marketTime4WeeksAgo: 92, marketTime1YearAgo: 63, marketTime2YearsAgo: 50, medianActivePrice: "$400k" },
-  { priceRange: "$500k-$750k", currentActives: 671, demand30Days: 167, marketTimeDays: 121, marketTime2WeeksAgo: 132, marketTime4WeeksAgo: 114, marketTime1YearAgo: 64, marketTime2YearsAgo: 56, medianActivePrice: "$645k" },
-  { priceRange: "$750k-$1m", currentActives: 833, demand30Days: 213, marketTimeDays: 117, marketTime2WeeksAgo: 94, marketTime4WeeksAgo: 84, marketTime1YearAgo: 62, marketTime2YearsAgo: 46, medianActivePrice: "$889k" },
-  { priceRange: "$1m-$1.25m", currentActives: 593, demand30Days: 175, marketTimeDays: 102, marketTime2WeeksAgo: 88, marketTime4WeeksAgo: 87, marketTime1YearAgo: 71, marketTime2YearsAgo: 48, medianActivePrice: "$1.1m" },
-  { priceRange: "$1.25m-$1.5m", currentActives: 532, demand30Days: 186, marketTimeDays: 86, marketTime2WeeksAgo: 82, marketTime4WeeksAgo: 91, marketTime1YearAgo: 64, marketTime2YearsAgo: 56, medianActivePrice: "$1.4m" },
-  { priceRange: "$1.5m-$2m", currentActives: 662, demand30Days: 193, marketTimeDays: 103, marketTime2WeeksAgo: 108, marketTime4WeeksAgo: 93, marketTime1YearAgo: 87, marketTime2YearsAgo: 86, medianActivePrice: "$1.7m" },
-  { priceRange: "$2m-$2.5m", currentActives: 260, demand30Days: 65, marketTimeDays: 120, marketTime2WeeksAgo: 100, marketTime4WeeksAgo: 91, marketTime1YearAgo: 159, medianActivePrice: "$2.3m" },
-  { priceRange: "$2.5m-$4m", currentActives: 425, demand30Days: 102, marketTimeDays: 125, marketTime2WeeksAgo: 121, marketTime4WeeksAgo: 106, marketTime1YearAgo: 151, medianActivePrice: "$3.1m" },
-  { priceRange: "$4m-$6m", currentActives: 224, demand30Days: 30, marketTimeDays: 224, marketTime2WeeksAgo: 218, marketTime4WeeksAgo: 195, marketTime1YearAgo: 183, marketTime2YearsAgo: 194, medianActivePrice: "$4.8m" },
-  { priceRange: "$6m+", currentActives: 303, demand30Days: 24, marketTimeDays: 379, marketTime2WeeksAgo: 454, marketTime4WeeksAgo: 345, marketTime1YearAgo: 431, marketTime2YearsAgo: 444, medianActivePrice: "$10.5m" },
+  { priceRange: "All of O.C.", currentActives: 4845, demand30Days: 1099, marketTimeDays: 132, marketTime2WeeksAgo: 122, marketTime4WeeksAgo: 118, marketTime1YearAgo: 83, marketTime2YearsAgo: 72, medianActivePrice: "$1.2m" },
+  { priceRange: "$0-$500k", currentActives: 428, demand30Days: 109, marketTimeDays: 118, marketTime2WeeksAgo: 111, marketTime4WeeksAgo: 134, marketTime1YearAgo: 95, marketTime2YearsAgo: 57, medianActivePrice: "$400k" },
+  { priceRange: "$500k-$750k", currentActives: 653, demand30Days: 143, marketTimeDays: 137, marketTime2WeeksAgo: 127, marketTime4WeeksAgo: 121, marketTime1YearAgo: 81, marketTime2YearsAgo: 52, medianActivePrice: "$649k" },
+  { priceRange: "$750k-$1m", currentActives: 798, demand30Days: 234, marketTimeDays: 102, marketTime2WeeksAgo: 99, marketTime4WeeksAgo: 117, marketTime1YearAgo: 55, marketTime2YearsAgo: 53, medianActivePrice: "$898k" },
+  { priceRange: "$1m-$1.25m", currentActives: 575, demand30Days: 164, marketTimeDays: 105, marketTime2WeeksAgo: 109, marketTime4WeeksAgo: 102, marketTime1YearAgo: 56, marketTime2YearsAgo: 50, medianActivePrice: "$1.1m" },
+  { priceRange: "$1.25m-$1.5m", currentActives: 532, demand30Days: 144, marketTimeDays: 111, marketTime2WeeksAgo: 100, marketTime4WeeksAgo: 86, marketTime1YearAgo: 70, marketTime2YearsAgo: 62, medianActivePrice: "$1.4m" },
+  { priceRange: "$1.5m-$2m", currentActives: 678, demand30Days: 127, marketTimeDays: 160, marketTime2WeeksAgo: 119, marketTime4WeeksAgo: 103, marketTime1YearAgo: 88, marketTime2YearsAgo: 73, medianActivePrice: "$1.7m" },
+  { priceRange: "$2m-$2.5m", currentActives: 238, demand30Days: 55, marketTimeDays: 130, marketTime2WeeksAgo: 154, marketTime4WeeksAgo: 120, marketTime1YearAgo: 99, marketTime2YearsAgo: 0, medianActivePrice: "$2.3m" },
+  { priceRange: "$2.5m-$4m", currentActives: 435, demand30Days: 69, marketTimeDays: 189, marketTime2WeeksAgo: 145, marketTime4WeeksAgo: 125, marketTime1YearAgo: 143, marketTime2YearsAgo: 0, medianActivePrice: "$3.2m" },
+  { priceRange: "$4m-$6m", currentActives: 214, demand30Days: 27, marketTimeDays: 238, marketTime2WeeksAgo: 260, marketTime4WeeksAgo: 224, marketTime1YearAgo: 147, marketTime2YearsAgo: 217, medianActivePrice: "$5.0m" },
+  { priceRange: "$6m+", currentActives: 294, demand30Days: 27, marketTimeDays: 327, marketTime2WeeksAgo: 252, marketTime4WeeksAgo: 379, marketTime1YearAgo: 282, marketTime2YearsAgo: 322, medianActivePrice: "$10.1m" },
 ];
 
 export const OC_PRICE_RANGE_REPORT_ATTACHED: OCPriceRangeEntry[] = [
-  { priceRange: "All Attached", currentActives: 2214, demand30Days: 478, marketTimeDays: 139, marketTime2WeeksAgo: 128, marketTime4WeeksAgo: 115, marketTime1YearAgo: 83, marketTime2YearsAgo: 64, medianActivePrice: "$779k" },
-  { priceRange: "$0-$500k", currentActives: 413, demand30Days: 92, marketTimeDays: 135, marketTime2WeeksAgo: 109, marketTime4WeeksAgo: 92, marketTime1YearAgo: 64, marketTime2YearsAgo: 48, medianActivePrice: "$400k" },
-  { priceRange: "$500k-$750k", currentActives: 640, demand30Days: 158, marketTimeDays: 122, marketTime2WeeksAgo: 133, marketTime4WeeksAgo: 118, marketTime1YearAgo: 65, marketTime2YearsAgo: 58, medianActivePrice: "$639k" },
-  { priceRange: "$750k-$1m", currentActives: 556, demand30Days: 111, marketTimeDays: 150, marketTime2WeeksAgo: 121, marketTime4WeeksAgo: 101, marketTime1YearAgo: 70, marketTime2YearsAgo: 56, medianActivePrice: "$869k" },
-  { priceRange: "$1m-$2m", currentActives: 474, demand30Days: 96, marketTimeDays: 148, marketTime2WeeksAgo: 134, marketTime4WeeksAgo: 153, marketTime1YearAgo: 127, marketTime2YearsAgo: 85, medianActivePrice: "$1.3m" },
-  { priceRange: "$2m+", currentActives: 131, demand30Days: 21, marketTimeDays: 187, marketTime2WeeksAgo: 235, marketTime4WeeksAgo: 140, marketTime1YearAgo: 254, marketTime2YearsAgo: 148, medianActivePrice: "$3.2m" },
+  { priceRange: "All Attached", currentActives: 2164, demand30Days: 444, marketTimeDays: 146, marketTime2WeeksAgo: 131, marketTime4WeeksAgo: 139, marketTime1YearAgo: 92, marketTime2YearsAgo: 69, medianActivePrice: "$775k" },
+  { priceRange: "$0-$500k", currentActives: 419, demand30Days: 106, marketTimeDays: 119, marketTime2WeeksAgo: 112, marketTime4WeeksAgo: 135, marketTime1YearAgo: 92, marketTime2YearsAgo: 54, medianActivePrice: "$400k" },
+  { priceRange: "$500k-$750k", currentActives: 626, demand30Days: 128, marketTimeDays: 147, marketTime2WeeksAgo: 134, marketTime4WeeksAgo: 122, marketTime1YearAgo: 83, marketTime2YearsAgo: 54, medianActivePrice: "$642k" },
+  { priceRange: "$750k-$1m", currentActives: 530, demand30Days: 117, marketTimeDays: 136, marketTime2WeeksAgo: 131, marketTime4WeeksAgo: 150, marketTime1YearAgo: 77, marketTime2YearsAgo: 68, medianActivePrice: "$875k" },
+  { priceRange: "$1m-$2m", currentActives: 454, demand30Days: 75, marketTimeDays: 182, marketTime2WeeksAgo: 135, marketTime4WeeksAgo: 148, marketTime1YearAgo: 98, marketTime2YearsAgo: 97, medianActivePrice: "$1.3m" },
+  { priceRange: "$2m+", currentActives: 135, demand30Days: 18, marketTimeDays: 225, marketTime2WeeksAgo: 187, marketTime4WeeksAgo: 187, marketTime1YearAgo: 234, marketTime2YearsAgo: 128, medianActivePrice: "$3.3m" },
 ];
 
 export const OC_PRICE_RANGE_REPORT_DETACHED: OCPriceRangeEntry[] = [
-  { priceRange: "All Detached", currentActives: 2710, demand30Days: 771, marketTimeDays: 105, marketTime2WeeksAgo: 99, marketTime4WeeksAgo: 92, marketTime1YearAgo: 86, marketTime2YearsAgo: 72, medianActivePrice: "$1.7m" },
-  { priceRange: "$0-$750k", currentActives: 39, demand30Days: 11, marketTimeDays: 106, marketTime2WeeksAgo: 123, marketTime4WeeksAgo: 71, marketTime1YearAgo: 50, marketTime2YearsAgo: 50, medianActivePrice: "$650k" },
-  { priceRange: "$750k-$1m", currentActives: 277, demand30Days: 102, marketTimeDays: 81, marketTime2WeeksAgo: 63, marketTime4WeeksAgo: 63, marketTime1YearAgo: 52, marketTime2YearsAgo: 37, medianActivePrice: "$900k" },
-  { priceRange: "$1m-$1.25m", currentActives: 362, demand30Days: 133, marketTimeDays: 82, marketTime2WeeksAgo: 73, marketTime4WeeksAgo: 70, marketTime1YearAgo: 52, marketTime2YearsAgo: 44, medianActivePrice: "$1.2m" },
-  { priceRange: "$1.25m-$1.5m", currentActives: 389, demand30Days: 152, marketTimeDays: 77, marketTime2WeeksAgo: 71, marketTime4WeeksAgo: 76, marketTime1YearAgo: 55, marketTime2YearsAgo: 50, medianActivePrice: "$1.4m" },
-  { priceRange: "$1.5m-$2m", currentActives: 562, demand30Days: 173, marketTimeDays: 97, marketTime2WeeksAgo: 104, marketTime4WeeksAgo: 85, marketTime1YearAgo: 77, marketTime2YearsAgo: 76, medianActivePrice: "$1.7m" },
-  { priceRange: "$2m-$2.5m", currentActives: 229, demand30Days: 58, marketTimeDays: 118, marketTime2WeeksAgo: 100, marketTime4WeeksAgo: 88, marketTime1YearAgo: 152, medianActivePrice: "$2.3m" },
-  { priceRange: "$2.5m-$4m", currentActives: 365, demand30Days: 95, marketTimeDays: 115, marketTime2WeeksAgo: 111, marketTime4WeeksAgo: 101, marketTime1YearAgo: 141, medianActivePrice: "$3.1m" },
-  { priceRange: "$4m-$6m", currentActives: 202, demand30Days: 24, marketTimeDays: 252, marketTime2WeeksAgo: 196, marketTime4WeeksAgo: 221, marketTime1YearAgo: 173, marketTime2YearsAgo: 204, medianActivePrice: "$4.9m" },
-  { priceRange: "$6m+", currentActives: 285, demand30Days: 23, marketTimeDays: 372, marketTime2WeeksAgo: 452, marketTime4WeeksAgo: 341, marketTime1YearAgo: 450, marketTime2YearsAgo: 475, medianActivePrice: "$10.5m" },
+  { priceRange: "All Detached", currentActives: 2681, demand30Days: 655, marketTimeDays: 123, marketTime2WeeksAgo: 115, marketTime4WeeksAgo: 105, marketTime1YearAgo: 77, marketTime2YearsAgo: 75, medianActivePrice: "$1.7m" },
+  { priceRange: "$0-$750k", currentActives: 36, demand30Days: 18, marketTimeDays: 60, marketTime2WeeksAgo: 63, marketTime4WeeksAgo: 106, marketTime1YearAgo: 71, marketTime2YearsAgo: 55, medianActivePrice: "$672k" },
+  { priceRange: "$750k-$1m", currentActives: 268, demand30Days: 117, marketTimeDays: 69, marketTime2WeeksAgo: 66, marketTime4WeeksAgo: 81, marketTime1YearAgo: 37, marketTime2YearsAgo: 41, medianActivePrice: "$920k" },
+  { priceRange: "$1m-$1.25m", currentActives: 361, demand30Days: 123, marketTimeDays: 88, marketTime2WeeksAgo: 93, marketTime4WeeksAgo: 82, marketTime1YearAgo: 44, marketTime2YearsAgo: 41, medianActivePrice: "$1.2m" },
+  { priceRange: "$1.25m-$1.5m", currentActives: 401, demand30Days: 121, marketTimeDays: 99, marketTime2WeeksAgo: 94, marketTime4WeeksAgo: 77, marketTime1YearAgo: 61, marketTime2YearsAgo: 55, medianActivePrice: "$1.4m" },
+  { priceRange: "$1.5m-$2m", currentActives: 569, demand30Days: 116, marketTimeDays: 147, marketTime2WeeksAgo: 119, marketTime4WeeksAgo: 97, marketTime1YearAgo: 82, marketTime2YearsAgo: 64, medianActivePrice: "$1.7m" },
+  { priceRange: "$2m-$2.5m", currentActives: 210, demand30Days: 49, marketTimeDays: 129, marketTime2WeeksAgo: 149, marketTime4WeeksAgo: 118, marketTime1YearAgo: 87, marketTime2YearsAgo: 0, medianActivePrice: "$2.3m" },
+  { priceRange: "$2.5m-$4m", currentActives: 368, demand30Days: 62, marketTimeDays: 178, marketTime2WeeksAgo: 143, marketTime4WeeksAgo: 115, marketTime1YearAgo: 140, marketTime2YearsAgo: 0, medianActivePrice: "$3.2m" },
+  { priceRange: "$4m-$6m", currentActives: 193, demand30Days: 22, marketTimeDays: 263, marketTime2WeeksAgo: 300, marketTime4WeeksAgo: 252, marketTime1YearAgo: 135, marketTime2YearsAgo: 220, medianActivePrice: "$5.0m" },
+  { priceRange: "$6m+", currentActives: 275, demand30Days: 27, marketTimeDays: 306, marketTime2WeeksAgo: 235, marketTime4WeeksAgo: 372, marketTime1YearAgo: 272, marketTime2YearsAgo: 338, medianActivePrice: "$10.8m" },
 ];
 
 // =============================================================================
-// 6. PAGE 12: CLOSED RESALE REPORT (August 2026 Closings by Municipality)
+// 6. PAGE 12: CLOSED RESALE REPORT (September 2026 Closings by Municipality)
 // =============================================================================
 type RawSoldItem = {
   city: string;
@@ -869,53 +866,53 @@ type RawSoldItem = {
 };
 
 const RAW_SOLD_REPORT: RawSoldItem[] = [
-  { city: "Aliso Viejo", unitsSoldCurrent: 37, unitsSoldPriorYear: 25, medianSalesPrice: "$940,000", medianListPrice: "$959,000", salesToListRatio: "98.3%", lowPrice: "$550,000", highPrice: "$2,550,000", medianSqFt: 1524, medianPricePerSqFt: "$617", medianDOM: 26 },
-  { city: "Anaheim", unitsSoldCurrent: 96, unitsSoldPriorYear: 107, medianSalesPrice: "$932,745", medianListPrice: "$939,939", salesToListRatio: "100.0%", lowPrice: "$304,600", highPrice: "$1,820,000", medianSqFt: 1518, medianPricePerSqFt: "$615", medianDOM: 16 },
-  { city: "Anaheim Hills", unitsSoldCurrent: 25, unitsSoldPriorYear: 32, medianSalesPrice: "$1,115,000", medianListPrice: "$1,149,900", salesToListRatio: "100.0%", lowPrice: "$538,000", highPrice: "$2,649,888", medianSqFt: 1698, medianPricePerSqFt: "$657", medianDOM: 13 },
-  { city: "Brea", unitsSoldCurrent: 32, unitsSoldPriorYear: 20, medianSalesPrice: "$1,132,350", medianListPrice: "$1,100,000", salesToListRatio: "100.0%", lowPrice: "$610,000", highPrice: "$1,875,000", medianSqFt: 1831, medianPricePerSqFt: "$618", medianDOM: 16 },
-  { city: "Buena Park", unitsSoldCurrent: 25, unitsSoldPriorYear: 38, medianSalesPrice: "$905,000", medianListPrice: "$915,000", salesToListRatio: "99.6%", lowPrice: "$709,000", highPrice: "$1,895,565", medianSqFt: 1493, medianPricePerSqFt: "$606", medianDOM: 34 },
-  { city: "Corona Del Mar", unitsSoldCurrent: 18, unitsSoldPriorYear: 18, medianSalesPrice: "$4,835,000", medianListPrice: "$4,899,000", salesToListRatio: "99.1%", lowPrice: "$2,025,000", highPrice: "$19,000,000", medianSqFt: 2416, medianPricePerSqFt: "$2,002", medianDOM: 27 },
-  { city: "Costa Mesa", unitsSoldCurrent: 54, unitsSoldPriorYear: 47, medianSalesPrice: "$1,513,500", medianListPrice: "$1,498,500", salesToListRatio: "100.0%", lowPrice: "$420,000", highPrice: "$4,175,000", medianSqFt: 1745, medianPricePerSqFt: "$867", medianDOM: 18 },
-  { city: "Coto De Caza", unitsSoldCurrent: 12, unitsSoldPriorYear: 12, medianSalesPrice: "$1,714,500", medianListPrice: "$1,749,000", salesToListRatio: "97.6%", lowPrice: "$945,000", highPrice: "$4,840,000", medianSqFt: 2994, medianPricePerSqFt: "$573", medianDOM: 33 },
-  { city: "Cypress", unitsSoldCurrent: 29, unitsSoldPriorYear: 29, medianSalesPrice: "$995,000", medianListPrice: "$985,000", salesToListRatio: "100.0%", lowPrice: "$465,000", highPrice: "$1,950,000", medianSqFt: 1709, medianPricePerSqFt: "$582", medianDOM: 24 },
-  { city: "Dana Point", unitsSoldCurrent: 31, unitsSoldPriorYear: 34, medianSalesPrice: "$1,950,000", medianListPrice: "$1,950,000", salesToListRatio: "100.0%", lowPrice: "$600,000", highPrice: "$12,195,000", medianSqFt: 1878, medianPricePerSqFt: "$1,038", medianDOM: 9 },
-  { city: "Dove Canyon", unitsSoldCurrent: 5, unitsSoldPriorYear: 6, medianSalesPrice: "$1,800,000", medianListPrice: "$1,795,000", salesToListRatio: "97.8%", lowPrice: "$1,580,000", highPrice: "$1,835,000", medianSqFt: 2606, medianPricePerSqFt: "$691", medianDOM: 29 },
-  { city: "Foothill Ranch", unitsSoldCurrent: 6, unitsSoldPriorYear: 5, medianSalesPrice: "$1,475,000", medianListPrice: "$1,495,000", salesToListRatio: "98.6%", lowPrice: "$725,000", highPrice: "$1,795,850", medianSqFt: 2295, medianPricePerSqFt: "$643", medianDOM: 29 },
-  { city: "Fountain Valley", unitsSoldCurrent: 32, unitsSoldPriorYear: 35, medianSalesPrice: "$1,364,000", medianListPrice: "$1,383,500", salesToListRatio: "100.3%", lowPrice: "$760,000", highPrice: "$2,300,000", medianSqFt: 1822, medianPricePerSqFt: "$749", medianDOM: 9 },
-  { city: "Fullerton", unitsSoldCurrent: 75, unitsSoldPriorYear: 67, medianSalesPrice: "$999,990", medianListPrice: "$995,000", salesToListRatio: "100.0%", lowPrice: "$360,000", highPrice: "$2,065,000", medianSqFt: 1617, medianPricePerSqFt: "$618", medianDOM: 26 },
-  { city: "Garden Grove", unitsSoldCurrent: 42, unitsSoldPriorYear: 62, medianSalesPrice: "$1,027,500", medianListPrice: "$1,039,000", salesToListRatio: "100.0%", lowPrice: "$360,000", highPrice: "$1,560,000", medianSqFt: 1393, medianPricePerSqFt: "$738", medianDOM: 11 },
-  { city: "Huntington Beach", unitsSoldCurrent: 118, unitsSoldPriorYear: 132, medianSalesPrice: "$1,430,000", medianListPrice: "$1,425,000", salesToListRatio: "99.2%", lowPrice: "$122,500", highPrice: "$5,300,000", medianSqFt: 1706, medianPricePerSqFt: "$838", medianDOM: 14 },
-  { city: "Irvine", unitsSoldCurrent: 174, unitsSoldPriorYear: 186, medianSalesPrice: "$1,520,000", medianListPrice: "$1,550,000", salesToListRatio: "98.1%", lowPrice: "$470,000", highPrice: "$17,650,000", medianSqFt: 2029, medianPricePerSqFt: "$749", medianDOM: 26 },
-  { city: "La Habra", unitsSoldCurrent: 30, unitsSoldPriorYear: 27, medianSalesPrice: "$807,500", medianListPrice: "$794,500", salesToListRatio: "100.0%", lowPrice: "$330,000", highPrice: "$1,450,000", medianSqFt: 1294, medianPricePerSqFt: "$624", medianDOM: 14 },
-  { city: "La Palma", unitsSoldCurrent: 10, unitsSoldPriorYear: 6, medianSalesPrice: "$1,175,000", medianListPrice: "$1,182,500", salesToListRatio: "99.2%", lowPrice: "$655,000", highPrice: "$1,443,500", medianSqFt: 2162, medianPricePerSqFt: "$543", medianDOM: 12 },
-  { city: "Ladera Ranch", unitsSoldCurrent: 16, unitsSoldPriorYear: 16, medianSalesPrice: "$1,407,000", medianListPrice: "$1,437,499", salesToListRatio: "99.4%", lowPrice: "$740,000", highPrice: "$3,150,000", medianSqFt: 2028, medianPricePerSqFt: "$694", medianDOM: 10 },
-  { city: "Laguna Beach", unitsSoldCurrent: 32, unitsSoldPriorYear: 26, medianSalesPrice: "$3,412,500", medianListPrice: "$3,800,000", salesToListRatio: "97.1%", lowPrice: "$500,000", highPrice: "$29,000,000", medianSqFt: 2198, medianPricePerSqFt: "$1,553", medianDOM: 38 },
-  { city: "Laguna Hills", unitsSoldCurrent: 23, unitsSoldPriorYear: 22, medianSalesPrice: "$1,180,000", medianListPrice: "$1,150,000", salesToListRatio: "98.4%", lowPrice: "$540,000", highPrice: "$3,850,000", medianSqFt: 1325, medianPricePerSqFt: "$891", medianDOM: 29 },
-  { city: "Laguna Niguel", unitsSoldCurrent: 42, unitsSoldPriorYear: 58, medianSalesPrice: "$1,249,500", medianListPrice: "$1,269,500", salesToListRatio: "99.2%", lowPrice: "$480,000", highPrice: "$6,500,000", medianSqFt: 1550, medianPricePerSqFt: "$806", medianDOM: 27 },
-  { city: "Laguna Woods", unitsSoldCurrent: 52, unitsSoldPriorYear: 62, medianSalesPrice: "$442,250", medianListPrice: "$459,450", salesToListRatio: "99.8%", lowPrice: "$150,000", highPrice: "$2,000,000", medianSqFt: 1077, medianPricePerSqFt: "$411", medianDOM: 25 },
-  { city: "Lake Forest", unitsSoldCurrent: 51, unitsSoldPriorYear: 40, medianSalesPrice: "$1,230,000", medianListPrice: "$1,248,800", salesToListRatio: "99.4%", lowPrice: "$440,000", highPrice: "$3,250,000", medianSqFt: 2022, medianPricePerSqFt: "$608", medianDOM: 18 },
-  { city: "Los Alamitos", unitsSoldCurrent: 6, unitsSoldPriorYear: 8, medianSalesPrice: "$1,687,500", medianListPrice: "$1,724,500", salesToListRatio: "99.8%", lowPrice: "$1,162,500", highPrice: "$23,600,000", medianSqFt: 2054, medianPricePerSqFt: "$822", medianDOM: 48 },
-  { city: "Mission Viejo", unitsSoldCurrent: 94, unitsSoldPriorYear: 88, medianSalesPrice: "$1,270,000", medianListPrice: "$1,255,000", salesToListRatio: "99.7%", lowPrice: "$490,000", highPrice: "$2,700,000", medianSqFt: 1785, medianPricePerSqFt: "$712", medianDOM: 20 },
-  { city: "Newport Beach", unitsSoldCurrent: 48, unitsSoldPriorYear: 60, medianSalesPrice: "$3,190,000", medianListPrice: "$3,397,000", salesToListRatio: "96.5%", lowPrice: "$525,000", highPrice: "$26,800,000", medianSqFt: 2117, medianPricePerSqFt: "$1,507", medianDOM: 26 },
-  { city: "Newport Coast", unitsSoldCurrent: 9, unitsSoldPriorYear: 8, medianSalesPrice: "$4,450,000", medianListPrice: "$4,550,000", salesToListRatio: "97.8%", lowPrice: "$1,505,000", highPrice: "$38,900,000", medianSqFt: 2735, medianPricePerSqFt: "$1,627", medianDOM: 36 },
-  { city: "North Tustin", unitsSoldCurrent: 15, unitsSoldPriorYear: 10, medianSalesPrice: "$2,100,000", medianListPrice: "$2,100,000", salesToListRatio: "99.6%", lowPrice: "$1,295,000", highPrice: "$4,275,000", medianSqFt: 2831, medianPricePerSqFt: "$742", medianDOM: 14 },
-  { city: "Orange", unitsSoldCurrent: 76, unitsSoldPriorYear: 78, medianSalesPrice: "$1,100,000", medianListPrice: "$1,100,000", salesToListRatio: "100.0%", lowPrice: "$460,000", highPrice: "$3,927,500", medianSqFt: 1656, medianPricePerSqFt: "$664", medianDOM: 11 },
-  { city: "Placentia", unitsSoldCurrent: 27, unitsSoldPriorYear: 31, medianSalesPrice: "$1,100,000", medianListPrice: "$1,000,000", salesToListRatio: "99.6%", lowPrice: "$490,000", highPrice: "$1,850,000", medianSqFt: 1601, medianPricePerSqFt: "$687", medianDOM: 13 },
-  { city: "Portola Hills", unitsSoldCurrent: 3, unitsSoldPriorYear: 9, medianSalesPrice: "$975,000", medianListPrice: "$969,900", salesToListRatio: "100.5%", lowPrice: "$780,425", highPrice: "$1,660,000", medianSqFt: 1488, medianPricePerSqFt: "$655", medianDOM: 9 },
-  { city: "Rancho Mission Viejo", unitsSoldCurrent: 22, unitsSoldPriorYear: 31, medianSalesPrice: "$1,175,000", medianListPrice: "$1,162,500", salesToListRatio: "100.0%", lowPrice: "$580,000", highPrice: "$2,422,000", medianSqFt: 1705, medianPricePerSqFt: "$689", medianDOM: 26 },
-  { city: "Rancho Santa Margarita", unitsSoldCurrent: 32, unitsSoldPriorYear: 33, medianSalesPrice: "$807,000", medianListPrice: "$804,000", salesToListRatio: "100.0%", lowPrice: "$474,000", highPrice: "$1,559,900", medianSqFt: 1280, medianPricePerSqFt: "$630", medianDOM: 26 },
-  { city: "Rossmoor", unitsSoldCurrent: 6, unitsSoldPriorYear: 6, medianSalesPrice: "$1,812,500", medianListPrice: "$1,810,000", salesToListRatio: "99.5%", lowPrice: "$1,580,000", highPrice: "$2,889,000", medianSqFt: 2133, medianPricePerSqFt: "$850", medianDOM: 6 },
-  { city: "San Clemente", unitsSoldCurrent: 61, unitsSoldPriorYear: 51, medianSalesPrice: "$1,740,000", medianListPrice: "$1,740,000", salesToListRatio: "97.7%", lowPrice: "$500,000", highPrice: "$5,650,000", medianSqFt: 1948, medianPricePerSqFt: "$893", medianDOM: 17 },
-  { city: "San Juan Capistrano", unitsSoldCurrent: 31, unitsSoldPriorYear: 29, medianSalesPrice: "$1,155,000", medianListPrice: "$1,200,000", salesToListRatio: "98.8%", lowPrice: "$485,000", highPrice: "$4,600,000", medianSqFt: 1484, medianPricePerSqFt: "$778", medianDOM: 21 },
-  { city: "Santa Ana", unitsSoldCurrent: 67, unitsSoldPriorYear: 78, medianSalesPrice: "$822,500", medianListPrice: "$797,000", salesToListRatio: "100.0%", lowPrice: "$260,000", highPrice: "$2,250,000", medianSqFt: 1192, medianPricePerSqFt: "$690", medianDOM: 28 },
-  { city: "Seal Beach", unitsSoldCurrent: 39, unitsSoldPriorYear: 41, medianSalesPrice: "$379,000", medianListPrice: "$379,000", salesToListRatio: "100.0%", lowPrice: "$220,000", highPrice: "$4,100,000", medianSqFt: 1080, medianPricePerSqFt: "$351", medianDOM: 22 },
-  { city: "Stanton", unitsSoldCurrent: 14, unitsSoldPriorYear: 14, medianSalesPrice: "$744,000", medianListPrice: "$753,500", salesToListRatio: "99.8%", lowPrice: "$440,000", highPrice: "$930,000", medianSqFt: 1201, medianPricePerSqFt: "$620", medianDOM: 21 },
-  { city: "Talega", unitsSoldCurrent: 16, unitsSoldPriorYear: 6, medianSalesPrice: "$1,712,500", medianListPrice: "$1,769,400", salesToListRatio: "97.3%", lowPrice: "$875,000", highPrice: "$3,050,000", medianSqFt: 2497, medianPricePerSqFt: "$686", medianDOM: 12 },
-  { city: "Tustin", unitsSoldCurrent: 34, unitsSoldPriorYear: 45, medianSalesPrice: "$1,192,500", medianListPrice: "$1,193,500", salesToListRatio: "98.7%", lowPrice: "$540,000", highPrice: "$2,820,000", medianSqFt: 1760, medianPricePerSqFt: "$678", medianDOM: 30 },
-  { city: "Villa Park", unitsSoldCurrent: 5, unitsSoldPriorYear: 5, medianSalesPrice: "$2,698,000", medianListPrice: "$2,698,000", salesToListRatio: "100.0%", lowPrice: "$1,800,000", highPrice: "$4,890,000", medianSqFt: 4341, medianPricePerSqFt: "$622", medianDOM: 12 },
-  { city: "Westminster", unitsSoldCurrent: 23, unitsSoldPriorYear: 25, medianSalesPrice: "$1,250,000", medianListPrice: "$1,250,000", salesToListRatio: "100.0%", lowPrice: "$650,000", highPrice: "$1,588,000", medianSqFt: 1498, medianPricePerSqFt: "$834", medianDOM: 12 },
-  { city: "Yorba Linda", unitsSoldCurrent: 64, unitsSoldPriorYear: 71, medianSalesPrice: "$1,386,500", medianListPrice: "$1,355,000", salesToListRatio: "100.0%", lowPrice: "$520,000", highPrice: "$4,785,000", medianSqFt: 2214, medianPricePerSqFt: "$626", medianDOM: 19 },
-  { city: "All of O.C.", unitsSoldCurrent: cfg.closedSales.unitsSold, unitsSoldPriorYear: cfg.closedSales.unitsSoldPriorYear, medianSalesPrice: cfg.closedSales.medianSalesPrice, medianListPrice: cfg.closedSales.medianListPrice, salesToListRatio: cfg.closedSales.salesToListRatio, lowPrice: "$122,500", highPrice: "$38,900,000", medianSqFt: cfg.closedSales.medianSqFt, medianPricePerSqFt: cfg.closedSales.medianPricePerSqFt, medianDOM: cfg.closedSales.medianDOM }
+  { city: "Aliso Viejo", unitsSoldCurrent: 29, unitsSoldPriorYear: 33, medianSalesPrice: "$900,000", medianListPrice: "$900,000", salesToListRatio: "98.8%", lowPrice: "$505,000", highPrice: "$2,050,000", medianSqFt: 1476, medianPricePerSqFt: "$610", medianDOM: 21 },
+  { city: "Anaheim", unitsSoldCurrent: 101, unitsSoldPriorYear: 91, medianSalesPrice: "$940,000", medianListPrice: "$949,000", salesToListRatio: "100.0%", lowPrice: "$200,000", highPrice: "$1,667,500", medianSqFt: 1595, medianPricePerSqFt: "$589", medianDOM: 20 },
+  { city: "Anaheim Hills", unitsSoldCurrent: 17, unitsSoldPriorYear: 20, medianSalesPrice: "$1,155,000", medianListPrice: "$1,122,950", salesToListRatio: "100.0%", lowPrice: "$694,050", highPrice: "$2,200,000", medianSqFt: 2131, medianPricePerSqFt: "$542", medianDOM: 12 },
+  { city: "Brea", unitsSoldCurrent: 25, unitsSoldPriorYear: 21, medianSalesPrice: "$1,175,000", medianListPrice: "$1,190,000", salesToListRatio: "102.0%", lowPrice: "$751,000", highPrice: "$2,808,000", medianSqFt: 1970, medianPricePerSqFt: "$596", medianDOM: 18 },
+  { city: "Buena Park", unitsSoldCurrent: 34, unitsSoldPriorYear: 36, medianSalesPrice: "$902,500", medianListPrice: "$899,000", salesToListRatio: "99.6%", lowPrice: "$685,000", highPrice: "$2,580,000", medianSqFt: 1331, medianPricePerSqFt: "$678", medianDOM: 13 },
+  { city: "Corona Del Mar", unitsSoldCurrent: 22, unitsSoldPriorYear: 17, medianSalesPrice: "$4,312,500", medianListPrice: "$4,429,500", salesToListRatio: "98.1%", lowPrice: "$1,744,000", highPrice: "$7,550,000", medianSqFt: 2427, medianPricePerSqFt: "$1,777", medianDOM: 31 },
+  { city: "Costa Mesa", unitsSoldCurrent: 50, unitsSoldPriorYear: 45, medianSalesPrice: "$1,400,000", medianListPrice: "$1,457,500", salesToListRatio: "99.8%", lowPrice: "$755,000", highPrice: "$3,400,000", medianSqFt: 1711, medianPricePerSqFt: "$818", medianDOM: 18 },
+  { city: "Coto De Caza", unitsSoldCurrent: 9, unitsSoldPriorYear: 14, medianSalesPrice: "$2,600,000", medianListPrice: "$2,694,000", salesToListRatio: "95.7%", lowPrice: "$1,592,000", highPrice: "$5,178,000", medianSqFt: 3900, medianPricePerSqFt: "$667", medianDOM: 25 },
+  { city: "Cypress", unitsSoldCurrent: 24, unitsSoldPriorYear: 18, medianSalesPrice: "$930,937", medianListPrice: "$938,495", salesToListRatio: "100.0%", lowPrice: "$440,000", highPrice: "$1,725,000", medianSqFt: 1562, medianPricePerSqFt: "$596", medianDOM: 28 },
+  { city: "Dana Point", unitsSoldCurrent: 31, unitsSoldPriorYear: 35, medianSalesPrice: "$2,430,000", medianListPrice: "$2,699,000", salesToListRatio: "99.2%", lowPrice: "$1,187,500", highPrice: "$12,400,000", medianSqFt: 2215, medianPricePerSqFt: "$1,097", medianDOM: 32 },
+  { city: "Dove Canyon", unitsSoldCurrent: 2, unitsSoldPriorYear: 5, medianSalesPrice: "$1,640,000", medianListPrice: "$1,694,500", salesToListRatio: "96.9%", lowPrice: "$1,640,000", highPrice: "$1,640,000", medianSqFt: 3171, medianPricePerSqFt: "$517", medianDOM: 68 },
+  { city: "Foothill Ranch", unitsSoldCurrent: 5, unitsSoldPriorYear: 6, medianSalesPrice: "$1,270,000", medianListPrice: "$1,280,000", salesToListRatio: "99.2%", lowPrice: "$938,000", highPrice: "$1,450,000", medianSqFt: 1977, medianPricePerSqFt: "$642", medianDOM: 61 },
+  { city: "Fountain Valley", unitsSoldCurrent: 33, unitsSoldPriorYear: 32, medianSalesPrice: "$1,410,000", medianListPrice: "$1,398,000", salesToListRatio: "100.0%", lowPrice: "$415,000", highPrice: "$2,500,000", medianSqFt: 1749, medianPricePerSqFt: "$806", medianDOM: 12 },
+  { city: "Fullerton", unitsSoldCurrent: 65, unitsSoldPriorYear: 60, medianSalesPrice: "$962,000", medianListPrice: "$965,000", salesToListRatio: "100.0%", lowPrice: "$290,000", highPrice: "$5,070,000", medianSqFt: 1705, medianPricePerSqFt: "$564", medianDOM: 18 },
+  { city: "Garden Grove", unitsSoldCurrent: 59, unitsSoldPriorYear: 66, medianSalesPrice: "$1,010,000", medianListPrice: "$999,000", salesToListRatio: "100.0%", lowPrice: "$425,000", highPrice: "$1,855,000", medianSqFt: 1595, medianPricePerSqFt: "$633", medianDOM: 12 },
+  { city: "Huntington Beach", unitsSoldCurrent: 146, unitsSoldPriorYear: 131, medianSalesPrice: "$1,403,000", medianListPrice: "$1,392,250", salesToListRatio: "99.4%", lowPrice: "$345,000", highPrice: "$4,875,750", medianSqFt: 1832, medianPricePerSqFt: "$766", medianDOM: 25 },
+  { city: "Irvine", unitsSoldCurrent: 176, unitsSoldPriorYear: 181, medianSalesPrice: "$1,444,000", medianListPrice: "$1,498,000", salesToListRatio: "97.4%", lowPrice: "$430,000", highPrice: "$10,200,000", medianSqFt: 1975, medianPricePerSqFt: "$731", medianDOM: 38 },
+  { city: "La Habra", unitsSoldCurrent: 26, unitsSoldPriorYear: 31, medianSalesPrice: "$847,500", medianListPrice: "$850,000", salesToListRatio: "100.0%", lowPrice: "$460,000", highPrice: "$1,850,000", medianSqFt: 1360, medianPricePerSqFt: "$623", medianDOM: 13 },
+  { city: "La Palma", unitsSoldCurrent: 7, unitsSoldPriorYear: 7, medianSalesPrice: "$1,231,000", medianListPrice: "$1,199,000", salesToListRatio: "101.9%", lowPrice: "$918,000", highPrice: "$1,460,000", medianSqFt: 1934, medianPricePerSqFt: "$637", medianDOM: 5 },
+  { city: "Ladera Ranch", unitsSoldCurrent: 12, unitsSoldPriorYear: 20, medianSalesPrice: "$1,845,000", medianListPrice: "$1,864,500", salesToListRatio: "100.0%", lowPrice: "$698,000", highPrice: "$6,100,000", medianSqFt: 2928, medianPricePerSqFt: "$630", medianDOM: 26 },
+  { city: "Laguna Beach", unitsSoldCurrent: 26, unitsSoldPriorYear: 30, medianSalesPrice: "$3,087,500", medianListPrice: "$3,375,000", salesToListRatio: "95.7%", lowPrice: "$685,000", highPrice: "$12,700,000", medianSqFt: 2058, medianPricePerSqFt: "$1,500", medianDOM: 59 },
+  { city: "Laguna Hills", unitsSoldCurrent: 21, unitsSoldPriorYear: 19, medianSalesPrice: "$1,280,000", medianListPrice: "$1,299,000", salesToListRatio: "98.2%", lowPrice: "$490,000", highPrice: "$3,826,000", medianSqFt: 1780, medianPricePerSqFt: "$719", medianDOM: 15 },
+  { city: "Laguna Niguel", unitsSoldCurrent: 62, unitsSoldPriorYear: 54, medianSalesPrice: "$1,390,000", medianListPrice: "$1,389,450", salesToListRatio: "98.8%", lowPrice: "$495,000", highPrice: "$5,995,000", medianSqFt: 1676, medianPricePerSqFt: "$829", medianDOM: 22 },
+  { city: "Laguna Woods", unitsSoldCurrent: 49, unitsSoldPriorYear: 53, medianSalesPrice: "$470,000", medianListPrice: "$479,000", salesToListRatio: "98.9%", lowPrice: "$18,100", highPrice: "$1,550,000", medianSqFt: 1100, medianPricePerSqFt: "$427", medianDOM: 32 },
+  { city: "Lake Forest", unitsSoldCurrent: 48, unitsSoldPriorYear: 49, medianSalesPrice: "$1,112,500", medianListPrice: "$1,137,499", salesToListRatio: "98.8%", lowPrice: "$318,000", highPrice: "$2,785,000", medianSqFt: 1704, medianPricePerSqFt: "$653", medianDOM: 33 },
+  { city: "Los Alamitos", unitsSoldCurrent: 12, unitsSoldPriorYear: 13, medianSalesPrice: "$1,637,500", medianListPrice: "$1,574,000", salesToListRatio: "99.7%", lowPrice: "$820,000", highPrice: "$2,960,000", medianSqFt: 1963, medianPricePerSqFt: "$834", medianDOM: 8 },
+  { city: "Mission Viejo", unitsSoldCurrent: 79, unitsSoldPriorYear: 61, medianSalesPrice: "$1,160,000", medianListPrice: "$1,189,000", salesToListRatio: "98.6%", lowPrice: "$505,000", highPrice: "$5,850,000", medianSqFt: 1803, medianPricePerSqFt: "$643", medianDOM: 15 },
+  { city: "Newport Beach", unitsSoldCurrent: 76, unitsSoldPriorYear: 62, medianSalesPrice: "$3,742,105", medianListPrice: "$3,872,500", salesToListRatio: "97.7%", lowPrice: "$530,000", highPrice: "$13,650,000", medianSqFt: 2229, medianPricePerSqFt: "$1,679", medianDOM: 42 },
+  { city: "Newport Coast", unitsSoldCurrent: 7, unitsSoldPriorYear: 11, medianSalesPrice: "$6,475,000", medianListPrice: "$6,995,000", salesToListRatio: "96.6%", lowPrice: "$1,387,500", highPrice: "$22,700,000", medianSqFt: 2964, medianPricePerSqFt: "$2,185", medianDOM: 16 },
+  { city: "North Tustin", unitsSoldCurrent: 7, unitsSoldPriorYear: 17, medianSalesPrice: "$2,150,000", medianListPrice: "$1,899,000", salesToListRatio: "100.0%", lowPrice: "$1,400,000", highPrice: "$3,320,000", medianSqFt: 2272, medianPricePerSqFt: "$946", medianDOM: 18 },
+  { city: "Orange", unitsSoldCurrent: 39, unitsSoldPriorYear: 90, medianSalesPrice: "$1,089,115", medianListPrice: "$1,065,000", salesToListRatio: "100.0%", lowPrice: "$464,999", highPrice: "$3,380,000", medianSqFt: 1555, medianPricePerSqFt: "$700", medianDOM: 21 },
+  { city: "Placentia", unitsSoldCurrent: 24, unitsSoldPriorYear: 34, medianSalesPrice: "$1,125,000", medianListPrice: "$1,097,000", salesToListRatio: "99.7%", lowPrice: "$492,000", highPrice: "$1,750,000", medianSqFt: 1741, medianPricePerSqFt: "$646", medianDOM: 29 },
+  { city: "Portola Hills", unitsSoldCurrent: 5, unitsSoldPriorYear: 6, medianSalesPrice: "$850,000", medianListPrice: "$850,000", salesToListRatio: "98.8%", lowPrice: "$545,000", highPrice: "$2,785,000", medianSqFt: 1761, medianPricePerSqFt: "$483", medianDOM: 84 },
+  { city: "Rancho Mission Viejo", unitsSoldCurrent: 27, unitsSoldPriorYear: 27, medianSalesPrice: "$1,199,990", medianListPrice: "$1,199,990", salesToListRatio: "99.4%", lowPrice: "$660,000", highPrice: "$2,250,000", medianSqFt: 2063, medianPricePerSqFt: "$582", medianDOM: 31 },
+  { city: "Rancho Santa Margarita", unitsSoldCurrent: 25, unitsSoldPriorYear: 26, medianSalesPrice: "$1,062,000", medianListPrice: "$1,059,000", salesToListRatio: "99.5%", lowPrice: "$448,000", highPrice: "$1,625,000", medianSqFt: 1460, medianPricePerSqFt: "$727", medianDOM: 20 },
+  { city: "Rossmoor", unitsSoldCurrent: 5, unitsSoldPriorYear: 4, medianSalesPrice: "$2,560,000", medianListPrice: "$2,498,000", salesToListRatio: "100.5%", lowPrice: "$1,658,000", highPrice: "$3,750,000", medianSqFt: 3000, medianPricePerSqFt: "$853", medianDOM: 36 },
+  { city: "San Clemente", unitsSoldCurrent: 55, unitsSoldPriorYear: 58, medianSalesPrice: "$2,200,000", medianListPrice: "$2,220,000", salesToListRatio: "100.0%", lowPrice: "$475,000", highPrice: "$4,076,000", medianSqFt: 2309, medianPricePerSqFt: "$953", medianDOM: 13 },
+  { city: "San Juan Capistrano", unitsSoldCurrent: 32, unitsSoldPriorYear: 21, medianSalesPrice: "$1,825,000", medianListPrice: "$1,820,000", salesToListRatio: "98.9%", lowPrice: "$395,000", highPrice: "$4,700,000", medianSqFt: 2781, medianPricePerSqFt: "$656", medianDOM: 14 },
+  { city: "Santa Ana", unitsSoldCurrent: 72, unitsSoldPriorYear: 81, medianSalesPrice: "$862,500", medianListPrice: "$877,000", salesToListRatio: "100.0%", lowPrice: "$180,000", highPrice: "$2,700,000", medianSqFt: 1315, medianPricePerSqFt: "$656", medianDOM: 22 },
+  { city: "Seal Beach", unitsSoldCurrent: 46, unitsSoldPriorYear: 49, medianSalesPrice: "$472,000", medianListPrice: "$469,000", salesToListRatio: "98.8%", lowPrice: "$190,000", highPrice: "$2,690,000", medianSqFt: 1100, medianPricePerSqFt: "$429", medianDOM: 21 },
+  { city: "Stanton", unitsSoldCurrent: 11, unitsSoldPriorYear: 14, medianSalesPrice: "$615,000", medianListPrice: "$605,000", salesToListRatio: "101.2%", lowPrice: "$490,000", highPrice: "$1,010,000", medianSqFt: 1163, medianPricePerSqFt: "$529", medianDOM: 20 },
+  { city: "Talega", unitsSoldCurrent: 13, unitsSoldPriorYear: 8, medianSalesPrice: "$2,200,000", medianListPrice: "$2,295,000", salesToListRatio: "98.0%", lowPrice: "$807,500", highPrice: "$3,530,000", medianSqFt: 3112, medianPricePerSqFt: "$707", medianDOM: 34 },
+  { city: "Tustin", unitsSoldCurrent: 31, unitsSoldPriorYear: 37, medianSalesPrice: "$1,075,000", medianListPrice: "$1,100,000", salesToListRatio: "98.4%", lowPrice: "$463,500", highPrice: "$2,400,000", medianSqFt: 1574, medianPricePerSqFt: "$683", medianDOM: 29 },
+  { city: "Villa Park", unitsSoldCurrent: 7, unitsSoldPriorYear: 4, medianSalesPrice: "$2,475,000", medianListPrice: "$2,499,888", salesToListRatio: "98.5%", lowPrice: "$2,225,000", highPrice: "$3,200,000", medianSqFt: 3790, medianPricePerSqFt: "$653", medianDOM: 10 },
+  { city: "Westminster", unitsSoldCurrent: 18, unitsSoldPriorYear: 28, medianSalesPrice: "$1,142,500", medianListPrice: "$1,149,500", salesToListRatio: "99.0%", lowPrice: "$520,000", highPrice: "$1,700,000", medianSqFt: 1451, medianPricePerSqFt: "$788", medianDOM: 24 },
+  { city: "Yorba Linda", unitsSoldCurrent: 65, unitsSoldPriorYear: 59, medianSalesPrice: "$1,680,000", medianListPrice: "$1,695,000", salesToListRatio: "99.0%", lowPrice: "$400,000", highPrice: "$5,500,000", medianSqFt: 2740, medianPricePerSqFt: "$613", medianDOM: 24 },
+  { city: "All of O.C.", unitsSoldCurrent: cfg.closedSales.unitsSold, unitsSoldPriorYear: cfg.closedSales.unitsSoldPriorYear, medianSalesPrice: cfg.closedSales.medianSalesPrice, medianListPrice: cfg.closedSales.medianListPrice, salesToListRatio: cfg.closedSales.salesToListRatio, lowPrice: "$18,100", highPrice: "$22,700,000", medianSqFt: cfg.closedSales.medianSqFt, medianPricePerSqFt: cfg.closedSales.medianPricePerSqFt, medianDOM: cfg.closedSales.medianDOM }
 ];
 
 export const OC_SOLD_REPORT: OCSoldReportEntry[] = RAW_SOLD_REPORT.map(item => {

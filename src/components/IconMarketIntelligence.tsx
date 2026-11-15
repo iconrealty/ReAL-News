@@ -90,9 +90,9 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
         demand30Days: meta.countywideDemand,
         marketTimeDays: meta.countywideMarketTime,
         marketTime2WeeksAgo: meta.countywideMarketTime2WksAgo,
-        marketTime4WeeksAgo: 101,
+        marketTime4WeeksAgo: meta.countywideMarketTime4WksAgo,
         marketTime1YearAgo: meta.countywideMarketTimeLastYear,
-        marketTime2YearsAgo: 69,
+        marketTime2YearsAgo: meta.countywideMarketTime2YrsAgo,
         medianActiveListPrice: "$1.2m",
       };
     }
@@ -110,31 +110,23 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
       `"${page9.title.toUpperCase()}: ${page9.subtitle}"`,
       ``,
       `KEY METRICS:`,
-      `• Active Inventory: 4,924 homes (-28 in 2 wks, -0.6% | 4,478 last year)`,
-      `• Buyer Demand: 1,249 pending sales (-100 in 2 wks, -7.4% | Lowest Oct since 2007)`,
-      `• Expected Market Time (EMT): 118 Days (+8d in 2 wks | Slowest since April 2020)`,
-      `• Detached Single-Family: 105 Days | Attached Condos: 139 Days`,
-      `• Luxury Market ($2.5M+): 183 Days (952 actives, 156 demand | April 2027 pace)`,
-      `• Distressed Properties: 17 total (6 foreclosures, 11 short sales | 0.3% supply)`,
-      `• Closed Sales: 1,755 resales (Aug 2026 | 99.5% sale-to-list | 99.72% equity sellers)`,
+      `• Active Inventory: ${meta.countywideActives.toLocaleString()} homes (-103 in 2 wks, -2% | ${meta.countywideActivesLastYear.toLocaleString()} last year)`,
+      `• Buyer Demand: ${meta.countywideDemand.toLocaleString()} pending sales (-120 in 2 wks, -10% | Lowest Nov Since 2004)`,
+      `• Expected Market Time (EMT): ${meta.countywideMarketTime} Days (+10d in 2 wks | Highest since Jan 2019; highest Nov since 2008)`,
+      `• Detached Single-Family: ${meta.detachedMarketTime} Days | Attached Condos: ${meta.attachedMarketTime} Days`,
+      `• Luxury Market ($2.5M+): ${meta.luxuryMarketTime} Days (${meta.luxuryActives} actives, ${meta.luxuryDemand} demand | June 2027 pace)`,
+      `• Distressed Properties: ${meta.distressedActiveHomes} total (${meta.distressedForeclosures} foreclosures, ${meta.distressedShortSales} short sales | ${meta.distressedListingsPct} supply)`,
+      `• Closed Sales: ${meta.closedSalesUnits.toLocaleString()} resales (${meta.closedSalesPeriod} | ${meta.salesToListRatio} sale-to-list | ${meta.equitySalesPercentage} equity sellers)`,
       ``,
-      `PAGE 8 MARKET BREAKDOWN (SWEET SPOT & VELOCITY):`,
-      `• Under $750k: 126 Days (22% Inventory / 21% Demand)`,
-      `• $750k - $1M: 117 Days (17% Inventory / 17% Demand)`,
-      `• $1M - $1.25M: 102 Days (12% Inventory / 14% Demand)`,
-      `• $1.25M - $1.5M: 86 Days [Sweet Spot] (11% Inventory / 16% Demand)`,
-      `• $1.5M - $2M: 103 Days (13% Inventory / 15% Demand)`,
-      `• $2M - $2.5M: 120 Days (5% Inventory / 5% Demand)`,
-      `• $2.5M - $4M: 125 Days (9% Inventory / 8% Demand)`,
-      `• $4M - $6M: 224 Days (5% Inventory / 2% Demand)`,
-      `• $6M+: 379 Days (6% Inventory / 2% Demand)`,
+      `PAGE 8 MARKET BREAKDOWN:`,
+      ...page8.map((row) => `• ${row.priceRange}: ${row.marketTimeDays} Days (${row.pctCurrentInventory}% Inventory / ${row.pctCurrentDemand}% Demand)`),
       ``,
       `Source: Reports On Housing • Steven Thomas`
     ].join('\n');
 
     navigator.clipboard.writeText(text);
     setHasCopiedSummary(true);
-    if (onShowToast) onShowToast('October Report Summary copied to clipboard!');
+    if (onShowToast) onShowToast(`${page9.reportDate} Report Summary copied to clipboard!`);
     setTimeout(() => setHasCopiedSummary(false), 3000);
   };
 
@@ -261,12 +253,16 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
             <div className="space-y-6 pt-2 border-t border-slate-100 animate-in fade-in duration-200">
               {/* Dynamic City-Specific Market Speed Live Ticker */}
               {marketData && (() => {
-                const emtDelta = marketData.marketTimeDays - marketData.marketTime2WeeksAgo;
-                const isFaster = emtDelta < 0;
-                const isSlower = emtDelta > 0;
+                const isInfinite = marketData.marketTimeDays === 0 && marketData.demand30Days === 0;
+                const hasValidEmtDelta = marketData.marketTimeDays > 0 && marketData.marketTime2WeeksAgo > 0;
+                const emtDelta = hasValidEmtDelta ? marketData.marketTimeDays - marketData.marketTime2WeeksAgo : 0;
+                const isFaster = hasValidEmtDelta && emtDelta < 0;
+                const isSlower = isInfinite || (hasValidEmtDelta && emtDelta > 0);
                 const speedLabel = isFaster ? 'FASTER' : isSlower ? 'SLOWER' : 'STEADY';
                 const speedColor = isFaster ? 'text-emerald-600' : isSlower ? 'text-[#FA2D48]' : 'text-slate-600';
-                const cond = getMarketCondition(marketData.marketTimeDays);
+                const cond = isInfinite
+                  ? { ...getMarketCondition(200), capitalLabel: "BUYER'S MARKET (INFINITE)", badgeText: "Buyer's Market (Infinite)" }
+                  : getMarketCondition(marketData.marketTimeDays);
 
                 return (
                   <button
@@ -295,8 +291,8 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                             <span className="text-[#FA2D48] font-black text-xl leading-none inline-block">↓</span>
                           </span>
                           <span className="text-slate-600 font-bold">
-                            EMT: <span className="text-slate-950 font-black text-sm sm:text-base md:text-lg">{marketData.marketTimeDays} DAYS</span>
-                            {emtDelta !== 0 && (
+                            EMT: <span className="text-slate-950 font-black text-sm sm:text-base md:text-lg">{isInfinite ? 'INFINITE' : `${marketData.marketTimeDays} DAYS`}</span>
+                            {hasValidEmtDelta && emtDelta !== 0 && (
                               <span className={`ml-1.5 font-black inline-flex items-center gap-0.5 text-xs sm:text-sm ${isFaster ? 'text-emerald-600' : 'text-[#FA2D48]'}`}>
                                 <span className="text-xl leading-none font-black">{isFaster ? '↓' : '↑'}</span>
                                 <span>{Math.abs(emtDelta)}d {isFaster ? 'FASTER' : 'SLOWER'}</span>
@@ -322,8 +318,8 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                             <span className="text-[#FA2D48] font-black text-xl leading-none inline-block">↓</span>
                           </span>
                           <span className="text-slate-600 font-bold">
-                            EMT: <span className="text-slate-950 font-black text-sm sm:text-base md:text-lg">{marketData.marketTimeDays} DAYS</span>
-                            {emtDelta !== 0 && (
+                            EMT: <span className="text-slate-950 font-black text-sm sm:text-base md:text-lg">{isInfinite ? 'INFINITE' : `${marketData.marketTimeDays} DAYS`}</span>
+                            {hasValidEmtDelta && emtDelta !== 0 && (
                               <span className={`ml-1.5 font-black inline-flex items-center gap-0.5 text-xs sm:text-sm ${isFaster ? 'text-emerald-600' : 'text-[#FA2D48]'}`}>
                                 <span className="text-xl leading-none font-black">{isFaster ? '↓' : '↑'}</span>
                                 <span>{Math.abs(emtDelta)}d {isFaster ? 'FASTER' : 'SLOWER'}</span>
@@ -354,7 +350,10 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     {/* Expected Market Time - Tap to open historical pace modal */}
                     {(() => {
-                      const cond = getMarketCondition(marketData.marketTimeDays);
+                      const isInfinite = marketData.marketTimeDays === 0 && marketData.demand30Days === 0;
+                      const cond = isInfinite
+                        ? { ...getMarketCondition(200), badgeText: "Buyer's Market (0 Escrows)" }
+                        : getMarketCondition(marketData.marketTimeDays);
                       return (
                         <button
                           type="button"
@@ -372,7 +371,7 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                           </div>
 
                           <div className="text-3xl sm:text-4xl font-black text-white tracking-tight font-sans">
-                            {marketData.marketTimeDays} Days
+                            {isInfinite ? 'Infinite' : `${marketData.marketTimeDays} Days`}
                           </div>
 
                           <div className="pt-1 flex items-center justify-between flex-wrap gap-2 w-full">
@@ -527,23 +526,23 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                         </span>
                         <span className="text-slate-600 font-bold">
                           DEMAND: <span className="text-emerald-600 font-black text-sm sm:text-base md:text-lg">{OC_COUNTYWIDE_LIVE_METRICS.demand.toLocaleString()}</span>{' '}
-                          <span className="text-rose-500 font-black inline-flex items-center gap-0.5 text-xs sm:text-sm">
-                            <span className="text-xl leading-none font-black">↓</span>
-                            <span>{OC_COUNTYWIDE_LIVE_METRICS.demandDelta}</span>
+                          <span className={`font-black inline-flex items-center gap-0.5 text-xs sm:text-sm ${OC_COUNTYWIDE_LIVE_METRICS.demandDelta >= 0 ? 'text-emerald-600' : 'text-rose-500'}`}>
+                            <span className="text-xl leading-none font-black">{OC_COUNTYWIDE_LIVE_METRICS.demandDelta >= 0 ? '↑' : '↓'}</span>
+                            <span>{OC_COUNTYWIDE_LIVE_METRICS.demandDelta >= 0 ? `+${OC_COUNTYWIDE_LIVE_METRICS.demandDelta}` : OC_COUNTYWIDE_LIVE_METRICS.demandDelta}</span>
                           </span>
                         </span>
                         <span className="text-slate-600 font-bold">
                           SUPPLY: <span className="text-slate-900 font-black text-sm sm:text-base md:text-lg">{OC_COUNTYWIDE_LIVE_METRICS.supply.toLocaleString()}</span>{' '}
-                          <span className="text-emerald-600 font-black inline-flex items-center gap-0.5 text-xs sm:text-sm">
-                            <span className="text-xl leading-none font-black">↓</span>
-                            <span>{OC_COUNTYWIDE_LIVE_METRICS.supplyDelta}</span>
+                          <span className={`font-black inline-flex items-center gap-0.5 text-xs sm:text-sm ${OC_COUNTYWIDE_LIVE_METRICS.supplyDelta <= 0 ? 'text-emerald-600' : 'text-rose-500'}`}>
+                            <span className="text-xl leading-none font-black">{OC_COUNTYWIDE_LIVE_METRICS.supplyDelta <= 0 ? '↓' : '↑'}</span>
+                            <span>{OC_COUNTYWIDE_LIVE_METRICS.supplyDelta > 0 ? `+${OC_COUNTYWIDE_LIVE_METRICS.supplyDelta}` : OC_COUNTYWIDE_LIVE_METRICS.supplyDelta}</span>
                           </span>
                         </span>
                         <span className="text-slate-600 font-bold">
                           EMT: <span className="text-slate-950 font-black text-sm sm:text-base md:text-lg">{OC_COUNTYWIDE_LIVE_METRICS.emtDays} DAYS</span>{' '}
-                          <span className="text-emerald-600 font-black inline-flex items-center gap-0.5 text-xs sm:text-sm">
-                            <span className="text-xl leading-none font-black">↓</span>
-                            <span>{Math.abs(OC_COUNTYWIDE_LIVE_METRICS.emtDelta)}d FASTER</span>
+                          <span className={`font-black inline-flex items-center gap-0.5 text-xs sm:text-sm ${isCountyFaster ? 'text-emerald-600' : isCountySlower ? 'text-[#FA2D48]' : 'text-slate-600'}`}>
+                            <span className="text-xl leading-none font-black">{isCountyFaster ? '↓' : isCountySlower ? '↑' : '→'}</span>
+                            <span>{Math.abs(OC_COUNTYWIDE_LIVE_METRICS.emtDelta)}d {countySpeedLabel}</span>
                           </span>
                         </span>
                         <span className="text-slate-300 font-light text-sm sm:text-base select-none">/</span>
@@ -558,23 +557,23 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                         </span>
                         <span className="text-slate-600 font-bold">
                           DEMAND: <span className="text-emerald-600 font-black text-sm sm:text-base md:text-lg">{OC_COUNTYWIDE_LIVE_METRICS.demand.toLocaleString()}</span>{' '}
-                          <span className="text-rose-500 font-black inline-flex items-center gap-0.5 text-xs sm:text-sm">
-                            <span className="text-xl leading-none font-black">↓</span>
-                            <span>{OC_COUNTYWIDE_LIVE_METRICS.demandDelta}</span>
+                          <span className={`font-black inline-flex items-center gap-0.5 text-xs sm:text-sm ${OC_COUNTYWIDE_LIVE_METRICS.demandDelta >= 0 ? 'text-emerald-600' : 'text-rose-500'}`}>
+                            <span className="text-xl leading-none font-black">{OC_COUNTYWIDE_LIVE_METRICS.demandDelta >= 0 ? '↑' : '↓'}</span>
+                            <span>{OC_COUNTYWIDE_LIVE_METRICS.demandDelta >= 0 ? `+${OC_COUNTYWIDE_LIVE_METRICS.demandDelta}` : OC_COUNTYWIDE_LIVE_METRICS.demandDelta}</span>
                           </span>
                         </span>
                         <span className="text-slate-600 font-bold">
                           SUPPLY: <span className="text-slate-900 font-black text-sm sm:text-base md:text-lg">{OC_COUNTYWIDE_LIVE_METRICS.supply.toLocaleString()}</span>{' '}
-                          <span className="text-emerald-600 font-black inline-flex items-center gap-0.5 text-xs sm:text-sm">
-                            <span className="text-xl leading-none font-black">↓</span>
-                            <span>{OC_COUNTYWIDE_LIVE_METRICS.supplyDelta}</span>
+                          <span className={`font-black inline-flex items-center gap-0.5 text-xs sm:text-sm ${OC_COUNTYWIDE_LIVE_METRICS.supplyDelta <= 0 ? 'text-emerald-600' : 'text-rose-500'}`}>
+                            <span className="text-xl leading-none font-black">{OC_COUNTYWIDE_LIVE_METRICS.supplyDelta <= 0 ? '↓' : '↑'}</span>
+                            <span>{OC_COUNTYWIDE_LIVE_METRICS.supplyDelta > 0 ? `+${OC_COUNTYWIDE_LIVE_METRICS.supplyDelta}` : OC_COUNTYWIDE_LIVE_METRICS.supplyDelta}</span>
                           </span>
                         </span>
                         <span className="text-slate-600 font-bold">
                           EMT: <span className="text-slate-950 font-black text-sm sm:text-base md:text-lg">{OC_COUNTYWIDE_LIVE_METRICS.emtDays} DAYS</span>{' '}
-                          <span className="text-emerald-600 font-black inline-flex items-center gap-0.5 text-xs sm:text-sm">
-                            <span className="text-xl leading-none font-black">↓</span>
-                            <span>{Math.abs(OC_COUNTYWIDE_LIVE_METRICS.emtDelta)}d FASTER</span>
+                          <span className={`font-black inline-flex items-center gap-0.5 text-xs sm:text-sm ${isCountyFaster ? 'text-emerald-600' : isCountySlower ? 'text-[#FA2D48]' : 'text-slate-600'}`}>
+                            <span className="text-xl leading-none font-black">{isCountyFaster ? '↓' : isCountySlower ? '↑' : '→'}</span>
+                            <span>{Math.abs(OC_COUNTYWIDE_LIVE_METRICS.emtDelta)}d {countySpeedLabel}</span>
                           </span>
                         </span>
                         <span className="text-slate-300 font-light text-sm sm:text-base select-none">/</span>
@@ -645,11 +644,6 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                   {selectedTier.speedCategory}
                 </span>
               </div>
-
-              <div className="text-xs font-bold text-slate-700 bg-white px-3.5 py-2 rounded-xl border border-slate-200 self-start sm:self-auto shadow-2xs">
-                Last Year: <span className="font-black text-slate-950">{selectedTier.lastYearDays} Days</span>
-                <span className="text-slate-600 font-semibold ml-1">({selectedTier.deltaDays > 0 ? `+${selectedTier.deltaDays}d slower` : `${selectedTier.deltaDays}d faster`})</span>
-              </div>
             </div>
 
             {/* 3 Large Telemetry Metrics */}
@@ -660,7 +654,10 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                   {selectedTier.marketTimeDays} <span className="text-lg font-bold text-slate-600">Days</span>
                 </div>
                 <div className="text-xs font-bold text-slate-700">
-                  {selectedTier.marketTimeDays < 90 ? 'High Speed (~2.8 months)' : selectedTier.marketTimeDays < 120 ? 'Moderate Speed (~3.8 months)' : 'Slow Speed (5+ months)'}
+                  Last Year: <span className="font-black text-slate-950">{selectedTier.lastYearDays} Days</span>{' '}
+                  <span className={selectedTier.deltaDays > 0 ? 'text-[#FA2D48] font-bold' : 'text-emerald-600 font-bold'}>
+                    ({selectedTier.deltaDays > 0 ? `+${selectedTier.deltaDays}d slower` : `${selectedTier.deltaDays}d faster`})
+                  </span>
                 </div>
               </div>
 
@@ -673,7 +670,7 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                   </span>
                 </div>
                 <div className="text-xs font-bold text-slate-700">
-                  Of total 1,249 pending sales
+                  Of total {meta.countywideDemand.toLocaleString()} pending sales
                 </div>
               </div>
 
@@ -686,7 +683,7 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
                   </span>
                 </div>
                 <div className="text-xs font-bold text-slate-700">
-                  Of total 4,924 active listings
+                  Of total {meta.countywideActives.toLocaleString()} active listings
                 </div>
               </div>
             </div>
@@ -879,14 +876,22 @@ export const IconMarketIntelligence: React.FC<IconMarketIntelligenceProps> = ({
             <div className="grid grid-cols-2 gap-2.5 text-left font-sans">
               <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200/80 space-y-1">
                 <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">2 Weeks Ago</div>
-                <div className="text-2xl font-black text-slate-950">{currentCityMarketData.marketTime2WeeksAgo} Days</div>
-                <div className="text-xs font-bold text-slate-600">{getMarketCondition(currentCityMarketData.marketTime2WeeksAgo).label}</div>
+                <div className="text-2xl font-black text-slate-950">
+                  {currentCityMarketData.marketTime2WeeksAgo > 0 ? `${currentCityMarketData.marketTime2WeeksAgo} Days` : 'Infinite'}
+                </div>
+                <div className="text-xs font-bold text-slate-600">
+                  {currentCityMarketData.marketTime2WeeksAgo > 0 ? getMarketCondition(currentCityMarketData.marketTime2WeeksAgo).label : "Buyer's Market"}
+                </div>
               </div>
 
               <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200/80 space-y-1">
                 <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">4 Weeks Ago</div>
-                <div className="text-2xl font-black text-slate-950">{currentCityMarketData.marketTime4WeeksAgo} Days</div>
-                <div className="text-xs font-bold text-slate-600">{getMarketCondition(currentCityMarketData.marketTime4WeeksAgo).label}</div>
+                <div className="text-2xl font-black text-slate-950">
+                  {currentCityMarketData.marketTime4WeeksAgo > 0 ? `${currentCityMarketData.marketTime4WeeksAgo} Days` : 'Infinite'}
+                </div>
+                <div className="text-xs font-bold text-slate-600">
+                  {currentCityMarketData.marketTime4WeeksAgo > 0 ? getMarketCondition(currentCityMarketData.marketTime4WeeksAgo).label : "Buyer's Market"}
+                </div>
               </div>
 
               <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200/80 space-y-1">
